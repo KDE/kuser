@@ -26,7 +26,6 @@
 #endif
 
 KUser::KUser() {
-printf("KUser::KUser()\n");
   p_name.setStr("");
   p_pwd.setStr("*");
   p_dir.setStr("");
@@ -84,9 +83,6 @@ KUsers::KUsers() {
   s_saved = 0;
 
   u.setAutoDelete(TRUE);
-#ifdef _KU_DEBUG
-printf("KUsers::KUsers\n");
-#endif
 
   passwd *p;
   KUser *tmpKU = 0;

@@ -120,8 +120,8 @@ Quota::Quota(long auid) {
 #endif
 
 #ifdef HAVE_IRIX
-  for (uint i=0; i<mounts.count(); i++) {
-      if (quotactl(Q_GETQUOTA, (const char *)mounts.at(i)->fsname, id, (caddr_t) &dq) != 0) {
+  for (uint i=0; i<mounts->getMountsNumber()(); i++) {
+      if (quotactl(Q_GETQUOTA, (const char *)mounts->getMount(i)->fsname, id, (caddr_t) &dq) != 0) {
           warned++;
           QMessageBox::message(_("Error"), _("Quotas are not compiled into this kernel."), "Ok");
           sleep(3);
@@ -233,7 +233,6 @@ void Quota::save() {
 }
 
 Quotas::Quotas() {
-printf("Quotas::Quotas\n");
   q.setAutoDelete(TRUE);
 }
 
@@ -247,7 +246,6 @@ Quota *Quotas::getQuota(long uid) {
 
 void Quotas::addQuota(long uid) {
   Quota *tmpQ = NULL;
-printf("Quotas::addQuota(%lu)\n", uid);
 
   if (!q[uid]) {
     tmpQ = new Quota(uid);

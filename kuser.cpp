@@ -27,7 +27,9 @@
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-
+#ifdef HAVE_SYS_STAT_H
+#include <sys/stat.h>
+#endif
 #include <qstring.h>
 #include <qdir.h>
 

@@ -49,6 +49,7 @@
   #define PWMKDB _PATH_PWD_MKDB" -p "PASSWORD_FILE
   #define SKELDIR "/usr/share/skel"
   #define SKEL_FILE_PREFIX "dot"
+  #define CRONTAB_DIR "/var/cron/tabs"
 #else
   #define PASSWORD_FILE "/etc/passwd"
   #define PASSWORD_FILE_MASK S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH
@@ -56,14 +57,10 @@
   #define GRMKDB "cd /var/yp; make 2>&1 >> /var/log/kuser"
   #define SKELDIR "/etc/skel"
   #define SKEL_FILE_PREFIX ""
+  #define CRONTAB_DIR "/var/spool/cron"
 #endif
 
 #define GROUP_FILE "/etc/group"
 #define GROUP_FILE_MASK S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH
-
-#ifdef AIX
-extern "C" int getuid(void);
-extern "C" int unlink(const char *);
-#endif
 
 #endif // _KU_GLOBALS_H_

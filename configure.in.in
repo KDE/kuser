@@ -7,7 +7,7 @@ AC_SUBST(LIBPWDB)
 AC_CHECK_LIB(gen,getspent,[LIBGEN="-lgen"])dnl for UnixWare
 AC_SUBST(LIBGEN)
 
-C_PATH_PAM
+AC_PATH_PAM
 if test "x$no_pam" = "xyes"; then
         pam_support="no"
 else

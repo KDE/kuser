@@ -25,8 +25,6 @@ int is_shadow = 1;
 int is_shadow = 0;
 #endif
 
-char picspath[200];
-
 void initmain() {
   if (!getenv("KDEDIR")) {
     puts(_("Enviroment variable KDEDIR doesn't defined.\nPlease define it and run kuser again"));
@@ -44,7 +42,8 @@ void initmain() {
   strncat(tmp, "user.xpm", 200);
 */
   users.setAutoDelete(TRUE);
-  pic_user = kapp->getIconLoader()->loadIcon("user.xpm");
+  QString pixdir = kapp->kdedir() + QString("/share/apps/kfax/pics/");
+  pic_user.load((pixdir + "user.xpm").data());
 
   config = kapp->getConfig();
 

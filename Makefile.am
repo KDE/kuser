@@ -47,8 +47,8 @@ install-exec-local:
 	$(INSTALL) -s -m 750 ./$(TARGET) $(SBINDIR)
 
 install-data-local:
-	$(mkinstalldirs) $(kde_icondir)
-	$(INSTALL) -m 644 pic/user.xpm $(kdeicondir)
+	$(mkinstalldirs) $(kde_datadir)
+	$(INSTALL) -m 644 pic/user.xpm $(kde_datadir)/kuser/pics/
 
 updatepo:
 	$(XGETTEXT) --default-domain=kuser -a -C -l ./ -n -s --keyword=_ $(SOURCES)

@@ -61,7 +61,6 @@ Mounts::Mounts() {
     quotafilename.sprintf("%s%s%s",m->fs_file,
  	                  (m->fs_file[strlen(m->fs_file) -1] == '/') ? "" : "/",
  		          _KU_QUOTAFILENAME);
-    m=getfsent();
 #else
   fp = setmntent(MNTTAB, "r");
   while ((m = getmntent(fp)) != (struct mntent *)0) {

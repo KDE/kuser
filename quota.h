@@ -63,6 +63,7 @@
 #    define _KU_QUOTAFILENAME "quotas"
 #    else
 #      ifdef __FreeBSD__
+#      include <machine/param.h> /* for dbtob and the like */
 #      include <sys/types.h>
 #      include <ufs/ufs/quota.h>
 #      include <fstab.h>

@@ -66,27 +66,26 @@ Quota::Quota(unsigned int auid, bool doget) {
     qctl.op = Q_GETQUOTA;
     qctl.uid = uid;
     qctl.addr = (caddr_t) &dq;
-
+    
     fd = open((const char *)mounts->getMount(i)->quotafilename, O_RDONLY);
-
+    
     if ((dd = ioctl(fd, Q_QUOTACTL, &qctl)) != 0)
       if (errno == ESRCH) {
         q.append(new QuotaMnt());
         close(fd);
         continue;
       }
-      else
-      {
+      else {
 /*
         if ((errno == EOPNOTSUPP || errno == ENOSYS) && !warned) {
 */
-          warned++;
-	  //                    KMsgBox::message(0, _("Error"), _("Quotas are not compiled into this kernel."), KMsgBox::STOP);
-          printf("errno: %i, ioctl: %i\n", errno, dd);
-          sleep(3);
-          is_quota = 0;
-          close(fd);
-	  break;
+	warned++;
+	KMsgBox::message(0, _("Error"), _("Quotas are not compiled into this kernel."), KMsgBox::STOP);
+	printf("errno: %i, ioctl: %i\n", errno, dd);
+	sleep(3);
+	is_quota = 0;
+	close(fd);
+	break;
       }
     q.append(new QuotaMnt(dbtob(dq.dqb_curblocks)/1024,
                           dbtob(dq.dqb_bsoftlimit)/1024,
@@ -104,50 +103,50 @@ Quota::Quota(unsigned int auid, bool doget) {
   int qcmd = QCMD(Q_GETQUOTA, USRQUOTA);
 
   for (uint i=0; i<mounts->getMountsNumber(); i++) {
-      if (quotactl(qcmd, (const char *)mounts->getMount(i)->fsname, uid, (caddr_t) &dq) != 0) {
+    if (quotactl(qcmd, (const char *)mounts->getMount(i)->fsname, uid, (caddr_t) &dq) != 0) {
 /*
         if ((errno == EOPNOTSUPP || errno == ENOSYS) && !warned) {
 */
-          warned++;
-          KMsgBox::message(0, _("Error"), _("Quotas are not compiled into this kernel."), KMsgBox::STOP);
-          sleep(3);
-          is_quota = 0;
-	  break;
-/*
-        }
-*/
+	warned++;
+	KMsgBox::message(0, _("Error"), _("Quotas are not compiled into this kernel."), KMsgBox::STOP);
+	sleep(3);
+	is_quota = 0;
+	break;
+	/*
+	  }
+	*/
       }
       q.append(new QuotaMnt(dbtob(dq.dqb_curblocks)/1024,
-                          dbtob(dq.dqb_bsoftlimit)/1024,
-        		  dbtob(dq.dqb_bhardlimit)/1024,
-			  dq.dqb_curinodes,
-			  dq.dqb_isoftlimit,
-			  dq.dqb_ihardlimit,
-                          dq.dqb_btime,
-                          dq.dqb_itime));
-    }
+			    dbtob(dq.dqb_bsoftlimit)/1024,
+			    dbtob(dq.dqb_bhardlimit)/1024,
+			    dq.dqb_curinodes,
+			    dq.dqb_isoftlimit,
+			    dq.dqb_ihardlimit,
+			    dq.dqb_btime,
+			    dq.dqb_itime));
+  }
 #endif
 
 #ifdef HAVE_IRIX
   for (uint i=0; i<mounts->getMountsNumber(); i++) {
-      if (quotactl(Q_GETQUOTA, (const char *)mounts->getMount(i)->fsname, uid, (caddr_t) &dq) != 0) {
-          if(!warned) {
+    if (quotactl(Q_GETQUOTA, (const char *)mounts->getMount(i)->fsname, uid, (caddr_t) &dq) != 0) {
+	if(!warned) {
             warned++;
             printf("errno: %i\n", errno);
             sleep(3);
             is_quota = 0;
-		}
-        break;
+	  }
+	  break;
       }
       q.append(new QuotaMnt(dbtob(dq.dqb_curblocks)/1024,
-                          dbtob(dq.dqb_bsoftlimit)/1024,
-                          dbtob(dq.dqb_bhardlimit)/1024,
-                          dq.dqb_curfiles,
-                          dq.dqb_fsoftlimit,
-                          dq.dqb_fhardlimit,
-                          dq.dqb_btimelimit,
-                          dq.dqb_ftimelimit));
-    }
+                            dbtob(dq.dqb_bsoftlimit)/1024,
+                            dbtob(dq.dqb_bhardlimit)/1024,
+                            dq.dqb_curfiles,
+                            dq.dqb_fsoftlimit,
+                            dq.dqb_fhardlimit,
+                            dq.dqb_btimelimit,
+                            dq.dqb_ftimelimit));
+  }
 #endif
 #ifdef __FreeBSD__
   int qcmd = QCMD(Q_GETQUOTA, USRQUOTA);
@@ -155,20 +154,21 @@ Quota::Quota(unsigned int auid, bool doget) {
     if (quotactl((const char *)mounts.at(i)->fsname,qcmd,id,(caddr_t) &dq) !=0) {
       //  printf("%d\n",errno);
       warned++;
-      QMessageBox::message(_("Error"), _("Quotas are not compiled into this kernel."), "Ok");
+      KMsgBox::message(0, _("Error"), _("Quotas are not compiled into this kernel."), KMsgBox::STOP);
+      printf("errno: %i while calling quotactl\n", errno);
       sleep(3);
       is_quota = 0;
       break;
     }
-    q->append(new Quota(dbtob(dq.dqb_curblocks)/1024,
-			dbtob(dq.dqb_bsoftlimit)/1024,
-			dbtob(dq.dqb_bhardlimit)/1024,
-			dq.dqb_curinodes,
-			dq.dqb_isoftlimit,
-			dq.dqb_ihardlimit,
-			dq.dqb_btime,
-			dq.dqb_btime));
- 	}
+    q->append(new QuotaMnt(dbtob(dq.dqb_curblocks)/1024,
+			   dbtob(dq.dqb_bsoftlimit)/1024,
+			   dbtob(dq.dqb_bhardlimit)/1024,
+			   dq.dqb_curinodes,
+			   dq.dqb_isoftlimit,
+			   dq.dqb_ihardlimit,
+			   dq.dqb_btime,
+			   dq.dqb_btime));
+  }
 #endif
 }
 

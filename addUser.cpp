@@ -40,7 +40,7 @@ addUser::addUser(KUser *AUser, QWidget *parent, const char *name, int isprep) :
   createhome = new QCheckBox(i18n("Create home directory"), group);
   createhome->setChecked(true);
   copyskel = new QCheckBox(i18n("Copy skeleton"), group);
-  usePrivateGroup = new QCheckBox(i18n("Use Private Group"), group);
+  usePrivateGroup = new QCheckBox(i18n("Use private group"), group);
   connect(createhome, SIGNAL(toggled(bool)), copyskel, SLOT(setEnabled(bool)));
   frontlayout->addMultiCellWidget(group, frontrow, frontrow, 0, 2);
 }

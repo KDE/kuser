@@ -70,7 +70,7 @@ userDefaultsPage::userDefaultsPage(
   copySkel->setFixedSize(copySkel->sizeHint());
   tl->addWidget(copySkel, 0, AlignLeft);
 
-  userPrivateGroup = new QCheckBox(i18n("User Private Group"), this);
+  userPrivateGroup = new QCheckBox(i18n("User private group"), this);
   userPrivateGroup->setFixedSize(userPrivateGroup->sizeHint());
   tl->addWidget(userPrivateGroup, 0, AlignLeft);
   tl->activate();

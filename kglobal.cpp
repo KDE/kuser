@@ -64,6 +64,7 @@ KUserGlobals::~KUserGlobals()
 {
   delete users;
   delete groups;
+  delete cfg;
 }
 
 KUsers &KUserGlobals::getUsers() 

@@ -65,4 +65,5 @@ int main(int argc, char **argv)
   a.exec();
 
   kug->kcfg()->writeConfig();
+  delete kug;
 }

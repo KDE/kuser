@@ -36,7 +36,7 @@ edit::
 
 # I don't care, what Denis does in his free time ;)
 messages:
-	@XGETTEXT@ -k_ -o ../po/kuser.pot -d kuser -C -n *.cpp 		
+	@XGETTEXT@ -k_ -o ../po/kuser.pot -x ../../kdelibs/po/kde.pot -d kuser -C -n *.cpp 		
 
 pot::
 	/usr/local/bin/xgettext -k_ -o kuser.pot -p ../po -d kuser -C -n *.cpp

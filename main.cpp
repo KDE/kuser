@@ -1,4 +1,6 @@
 #include "includes.h"
+#include "misc.h"
+#include "maindlg.h"
 
 QList<KUser> users;
 QList<MntEnt> mounts;

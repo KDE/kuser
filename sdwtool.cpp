@@ -1,4 +1,6 @@
 #include "includes.h"
+#include "misc.h"
+#include "sdwtool.h"
 
 int s_saved = 0;
 
@@ -105,3 +107,4 @@ void shadow_cp(KUser *up, spwd const *src)
 }
 
 #endif // _XU_SHADOW
+

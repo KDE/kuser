@@ -1,6 +1,9 @@
 #include "maindlg.h"
 #include "propdlg.h"
 #include "pwddlg.h"
+#include "pwdtool.h"
+#include "sdwtool.h"
+#include "misc.h"
 #include "maindlg.moc"
 #include "usernamedlg.h"
 
@@ -153,7 +156,7 @@ void maindlg::del() {
   bool islast = FALSE;
   
   if (QMessageBox::query(_("WARNING"),
-                         _("Do you really wont to delete user ?"),
+                         _("Do you really want to delete user ?"),
                          _("Delete"), _("Cancel"))) {
 
     i = list->currentItem();
@@ -184,7 +187,7 @@ void maindlg::add() {
   KUser *tk;
   tk = new KUser();
   u = new usernamedlg(tk, this);
-  if (!u->exec())
+  if (u->exec() == 0)
     return;
 
   delete u;
@@ -212,12 +215,13 @@ void maindlg::add() {
   tk->quota.at(0)->ihard = readnumentry("quota.ihard");
 
   editUser = new propdlg(tk, this, "userin");
-  if (editUser->exec())
-   users.append(tk);
+  if (editUser->exec() != 0)
+    users.append(tk);
+  else
+    delete tk;
 
   reload(users.count()-1);
 
-  delete tk;
   delete editUser;
 }
 
@@ -302,7 +306,7 @@ void maindlg::properties() {
   tk->quota.at(0)->ihard = readnumentry("quota.ihard");
 
   editUser = new propdlg(tk, this, "userin");
-  if (editUser->exec()) {
+  if (editUser->exec() != 0) {
     config->writeEntry("shell", tk->p_shell);
     config->writeEntry("homeprefix", tk->p_dir);
     config->writeEntry("gid", tk->p_gid);
@@ -334,7 +338,7 @@ void maindlg::selected(int i) {
   KUser *user = NULL;
 
   editUser = new propdlg(user = new KUser(users.at(i)), this, "userin");
-  if (propdlg->exec returns %d\n", editUser->exec()) {
+  if (editUser->exec != 0) {
     highlighted(list->currentItem());
   }
 

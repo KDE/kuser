@@ -16,6 +16,7 @@
 #include <limits.h>
 #include <paths.h>
 #include "includes.h"
+#include "misc.h"
 
 #if defined(__alpha__)
 #include <syscall.h>
@@ -66,9 +67,30 @@ void setmntprivs(long id, QList<Quota> *q);
 int getentry(const char *name, int quotatype);
 int alldigits(const char *s);
 
-/*
- * Check to see if a particular quota is to be enabled.
- */
+int isquotainkernel() {
+  int qcmd, fd;
+  char *qfpathname = NULL;
+  static int warned = 0;
+  extern int errno;
+  struct dqblk dq;
+
+  if (is_quota == 0)
+    return;
+
+  qcmd = QCMD(Q_GETQUOTA, USRQUOTA);
+
+  if (quotactl(qcmd, (const char *)mounts.at(0)->fsname, 0, (caddr_t) &dq) != 0) {
+    if ((errno == EOPNOTSUPP || errno == ENOSYS) && !warned) {
+      warned++;
+      QMessageBox::message(_("Error"), _("Quotas are not compiled into this kernel."), "Ok");
+      sleep(3);
+      is_quota = 0;
+    }
+  }
+
+  return (is_quota);
+}
+
 int hasquota(struct MntEnt *mnt, int type, char **qfnamep)
 {
   char *buf, *option, *pathname;
@@ -266,14 +288,38 @@ void quota_read() {
     return;
 
   for (uint i=0; i<users.count(); i++) {
+printf("%d\n",i);
     getquota(users.at(i)->p_name, &users.at(i)->quota);
   }
 }
 
 void quota_write() {
-  if (is_quota != 0)
-    for (uint i=0; i<users.count(); i++)
-      setquota(users.at(i)->p_name, &users.at(i)->quota);
+  if (is_quota == 0)
+    return;
+
+  for (uint i=0; i<users.count(); i++)
+    setquota(users.at(i)->p_name, &users.at(i)->quota);
+}
+
+Quota::Quota() {
+  fcur = 0; fsoft = 0; fhard = 0;
+  icur = 0; isoft = 0; ihard = 0;
+}
+  
+Quota::Quota(int afcur, int afsoft, int afhard, int aicur, int aisoft, int aihard) {
+  fcur = afcur; fsoft = afsoft; fhard = afhard;
+  icur = aicur; isoft = aisoft; ihard = aihard;
+}
+
+Quota& Quota::operator= (const Quota& q) {
+  fcur = q.fcur; fsoft = q.fsoft; fhard = q.fhard;
+  icur = q.icur; isoft = q.isoft; ihard = q.ihard;
+}
+
+Quota::Quota(const Quota *q) {
+  fcur = q->fcur; fsoft = q->fsoft; fhard = q->fhard;
+  icur = q->icur; isoft = q->isoft; ihard = q->ihard;
 }
 
 #endif
+

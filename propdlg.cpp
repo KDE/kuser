@@ -1,6 +1,11 @@
 #include "propdlg.h"
 #include "propdlg.moc"
 #include "pwddlg.h"
+#include "misc.h"
+#include "pwdtool.h"
+#include "sdwtool.h"
+#include "kdatectl.h"
+#include "quotatool.h"
 
 propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int isprep)
        :QTabDialog(parent, name, FALSE,
@@ -226,23 +231,7 @@ int propdlg::change() {
 #endif
 
 /*
-#ifdef _XU_QUOTA
-  if (is_quota != 0) {
-    int q = leqmnt->getCurrentItem();
-    
-    if (getValue(user->quota.at(q).fhard, leqfh->text(), _("Hard block quota must be an integer")))
-      return (-1);
-
-    if (getValue(user->quota.at(q).fsoft, leqfs->text(), _("Soft block quota must be an integer")))
-      return (-1);
-
-    if (getValue(user->quota.at(q).ihard, leqih->text(), _("Hard inode quota must be an integer")))
-      return (-1);
-
-    if (getValue(user->quota.at(q).isoft, leqis->text(), _("Soft inode quota must be an integer")))
-      return (-1);
-  }
-#endif
+Here we should get a quota info
 */
   return (0);
 }

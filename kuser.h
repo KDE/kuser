@@ -1,7 +1,9 @@
 #ifndef _KUSER_H_
 #define _KUSER_H_
 
-#include "includes.h"
+#include <qstring.h>
+#include <qlist.h>
+#include "quotatool.h"
 
 class KUser {
 public:
@@ -39,6 +41,7 @@ public:
 
   KUser();
   KUser(KUser *copy);
+  ~KUser();
 };
 
 #endif // _KUSER_H_

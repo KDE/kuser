@@ -1,4 +1,5 @@
 #include "kuser.h"
+#include "misc.h"
 
 KUser::KUser() {
   p_name.setStr("");
@@ -21,6 +22,11 @@ KUser::KUser() {
   s_inact   = 99999;
   s_expire  = 99999;
   s_flag    = 0;
+#endif
+
+#ifdef _XU_QUOTA
+  if (is_quota = 1) {
+  }
 #endif
 }
   
@@ -48,7 +54,10 @@ KUser::KUser(KUser *copy) {
 #endif
 
 #ifdef _XU_QUOTA
-  quota = copy.quota;
+  quota = copy->quota;
 #endif 
+}
+
+KUser::~KUser() {
 }
 

@@ -1,4 +1,5 @@
 #include "includes.h"
+#include "misc.h"
 
 int p_saved = 0;
 
@@ -64,8 +65,6 @@ void pwd_read() {
 
   endpwent();
 
-  delete tmpKU;
-
   return;
 }
 
@@ -95,3 +94,4 @@ void pwd_write() {
 
   chmod(PASSWORD_FILE, PASSWORD_FILE_MASK);
 }
+

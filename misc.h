@@ -1,6 +1,9 @@
 #ifndef _XU_MISC_H
 #define _XU_MISC_H
 
+#include "kuser.h"
+#include "includes.h"
+
 #define _(Text) gettext (Text)
 
 KUser *user_lookup(const char *name);

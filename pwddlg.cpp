@@ -1,5 +1,6 @@
 #include "pwddlg.h"
 #include "pwddlg.moc"
+#include "misc.h"
 
 pwddlg::pwddlg(KUser *auser, QWidget* parent, const char* name)
            :QDialog(parent, name, TRUE)

@@ -3,8 +3,6 @@
 
 #ifdef _XU_QUOTA
 
-#include "includes.h"                                                          
-
 class Quota {
 public:
   long int
@@ -14,20 +12,17 @@ public:
     icur,
     isoft,
     ihard;
-  Quota() {
-    fcur = 0; fsoft = 0; fhard = 0;
-    icur = 0; isoft = 0; ihard = 0;
-  }
-  
-  Quota(int afcur, int afsoft, int afhard, int aicur, int aisoft, int aihard) {
-    fcur = afcur; fsoft = afsoft; fhard = afhard;
-    icur = aicur; isoft = aisoft; ihard = aihard;
-  }
+  Quota();
+  Quota(int afcur, int afsoft, int afhard, int aicur, int aisoft, int aihard);
+  Quota(const Quota *q);
+  Quota& operator= (const Quota& q);
 };
 
 extern void quota_read();
 extern void quota_write();
+extern int isquotainkernel();
 
 #endif // _XU_QUOTA
 
 #endif // _XU_EDQUOTA_H_
+

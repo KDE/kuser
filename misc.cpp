@@ -1,10 +1,14 @@
 #include "includes.h"
+#include "misc.h"
+#include "pwdtool.h"
+#include "sdwtool.h"
+#include "quotatool.h"
 
 extern "C" int unlink __P ((__const char *__name));
 
 KUser *user_lookup(const char *name) {                                               
   for (uint i = 0; i<users.count(); i++)                                       
-    if (!strcmp(name,users.at(i)->p_name))                                     
+    if (!strcmp(name, users.at(i)->p_name))                                     
       return (users.at(i));                                                    
   return (NULL);                                                               
 }                                                                               
@@ -137,11 +141,13 @@ int getValue(unsigned int &data, const char *text, const char *msg) {
 }
 
 void getmounts() {
+#ifdef _XU_QUOTA
   struct mntent *m;
   FILE *fp;
   MntEnt *mnt = NULL;
 
-  is_quota = 0;
+  if (is_quota == 0)
+    return;
 
   fp = setmntent(MNTTAB, "r");
   while ((m = getmntent(fp)) != (struct mntent *)0)
@@ -152,6 +158,7 @@ void getmounts() {
      is_quota = 1;
     }
   endmntent(fp);
+#endif
 }
 
 void init() {
@@ -168,5 +175,6 @@ void init() {
   if (is_quota != 0)
 puts("quota_read");
     quota_read();
+puts("quota_read done");
 #endif
 }

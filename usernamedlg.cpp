@@ -1,5 +1,6 @@
 #include "usernamedlg.h"
 #include "usernamedlg.moc"
+#include "misc.h"
 
 usernamedlg::usernamedlg(KUser *auser, QWidget* parent, const char* name)
            :QDialog(parent, name, TRUE)

@@ -2,6 +2,7 @@
 #define _XU_PROPDLG_H_
 
 #include "includes.h"
+#include "kdatectl.h"
 
 class propdlg : public QTabDialog
 {

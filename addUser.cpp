@@ -1,3 +1,18 @@
+#include <sys/file.h>
+#include <errno.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <pwd.h>
+#include <grp.h>
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+
+#ifdef HAVE_FCNTL_H
+#include <fcntl.h>
+#endif
+
 #include <qdir.h>
 
 #include <kmsgbox.h>
@@ -67,14 +82,14 @@ void addUser::createHome() {
     err->display();
   }
   
-  if (mkdir(user->getp_dir(), 0700) != 0) {
+  if (mkdir((const char *)user->getp_dir(), 0700) != 0) {
     QString tmp;
     tmp.sprintf(_("Cannot create home directory\nError: %s"), strerror(errno));
     err->addMsg(tmp, STOP);
     err->display();
   }
 
-  if (chown(user->getp_dir(), user->getp_uid(), user->getp_gid()) != 0) {
+  if (chown((const char *)user->getp_dir(), user->getp_uid(), user->getp_gid()) != 0) {
     QString tmp;
     tmp.sprintf(_("Cannot change owner of home directory\nError: %s"), strerror(errno));
     err->addMsg(tmp, STOP);

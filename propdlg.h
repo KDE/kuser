@@ -109,9 +109,9 @@ protected:
   QLineEdit   *leoffice2;
   QLineEdit   *leaddress;
 
+  QComboBox   *cbpgrp;
 #ifdef _KU_QUOTA
   QComboBox   *leqmnt;
-  QComboBox   *cbpgrp;
   QLineEdit   *leqfs;
   QLineEdit   *leqfh;
   QLineEdit   *leqft;

@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/file.h>
-#ifdef _SCO_DS
+#ifdef HAVE_SYS_FCNTL_H
 #include <sys/fcntl.h>
 #endif
 #include <sys/stat.h>

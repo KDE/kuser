@@ -24,19 +24,7 @@ int is_shadow = 1;
 int is_shadow = 0;
 #endif
 
-char picspath[200];
-
 void initmain() {
-  if (!getenv("KDEDIR")) {
-    puts(_("Enviroment variable KDEDIR doesn't defined.\nPlease define it and run kuser again"));
-    exit(1);
-  }
-  setlocale (LC_MESSAGES, "");
-  strncpy(picspath, getenv("KDEDIR"), 200);
-  strncat(picspath, "/lib/locale", 200);
-  bindtextdomain("kuser", picspath);
-  textdomain("kuser");
-  
   users.setAutoDelete(TRUE);
 
   config = kapp->getConfig();

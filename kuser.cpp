@@ -108,6 +108,7 @@ void KUser::copy(const KUser *user)
     sam_profile = user->sam_profile;
     sam_homedrive = user->sam_homedrive;
     sam_homepath = user->sam_homepath;
+    sam_workstations = user->sam_workstations;
     sid = user->sid;
     pgroup_sid = user->pgroup_sid;
 
@@ -317,6 +318,11 @@ const QString &KUser::getHomePath() const //sam_homepath;
   return sam_homepath;
 }
 
+const QString &KUser::getWorkstations() const //sam_workstation;
+{
+  return sam_workstations;
+}
+
 const SID &KUser::getSID() const //sid,
 {
   return sid;
@@ -478,6 +484,11 @@ void KUser::setHomeDrive( const QString &data ) //sam_homedrive,
 void KUser::setHomePath( const QString &data ) //sam_homepath;
 {
   sam_homepath = data;
+}
+
+void KUser::setWorkstations( const QString &data ) //sam_workstation;
+{
+  sam_workstations = data;
 }
 
 void KUser::setSID( const SID &data ) //sid,

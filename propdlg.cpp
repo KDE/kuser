@@ -285,6 +285,11 @@ void propdlg::initDlg()
     addRow(frame, layout, row++, lehomepath, i18n("Home path:"), whatstr);
     connect(lehomepath, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
 
+    leworkstations = new KLineEdit(frame);
+//  whatstr = i18n("WHAT IS THIS: Login script");
+    addRow(frame, layout, row++, leworkstations, i18n("User workstations:"), whatstr);
+    connect(leworkstations, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
+
     ledomsid = new KLineEdit(frame);
 //  whatstr = i18n("WHAT IS THIS: Login script");
     addRow(frame, layout, row++, ledomsid, i18n("Domain SID:"), whatstr);
@@ -368,6 +373,7 @@ void propdlg::cbsambaChanged()
   leprofile->setEnabled( samba );
   lehomedrive->setEnabled( samba );
   lehomepath->setEnabled( samba );
+  leworkstations->setEnabled( samba );
   ledomsid->setEnabled( samba );
 }
 
@@ -502,6 +508,7 @@ void propdlg::selectuser()
       home = user->getHomePath();
       if ( !one ) home.replace( user->getName(), "%U" );
       setLE( lehomepath, home, first );
+      setLE( leworkstations, user->getWorkstations(), first );
       setLE( ledomsid, user->getSID().getDOM(), first );
       setCB( cbsamba, !(user->getCaps() & KUser::Cap_Samba), first );
     }
@@ -720,6 +727,8 @@ void propdlg::mergeUser( KUser *user, KUser *newuser )
       mergeLE( lehomedrive, user->getHomeDrive(), one ) : QString::null );
     newuser->setHomePath( samba ? 
       mergeLE( lehomepath, user->getHomePath(), one ).replace( "%U", newuser->getName() ) : QString::null );
+    newuser->setWorkstations( samba ? 
+      mergeLE( leworkstations, user->getWorkstations(), one ) : QString::null );
   }
 
   if ( kug->getUsers().getCaps() & KUsers::Cap_BSD ) {

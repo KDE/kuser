@@ -185,6 +185,8 @@ void KUserLDAP::data( KIO::Job *, const QByteArray& data )
           mUser->setLoginScript( val );
         else if ( name == "sambaprofilepath" )
           mUser->setProfilePath( val );
+        else if ( name == "sambauserworkstations" )
+          mUser->setWorkstations( val );
         else if ( name == "sambapwdlastset" )
           mUser->setLastChange( val.toLong() );
         break;
@@ -449,7 +451,9 @@ void KUserLDAP::getLDIF( KUser *user, bool mod )
 
   if ( caps & Cap_Samba ) {
     if ( user->getCaps() & KUser::Cap_Samba ) {
-      if ( mod ) ldif += "replace: sambahomepath\n";
+      if ( mod ) ldif += "replace: sambauserworkstations\n";
+      ldif += KABC::LDIF::assembleLine( "sambauserworkstations", user->getWorkstations() ) + "\n";
+      if ( mod ) ldif += "-\nreplace: sambahomepath\n";
       ldif += KABC::LDIF::assembleLine( "sambahomepath", user->getHomePath() ) + "\n";
       if ( mod ) ldif += "-\nreplace: sambahomedrive\n";
       ldif += KABC::LDIF::assembleLine( "sambahomedrive", user->getHomeDrive() ) + "\n";

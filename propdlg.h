@@ -142,6 +142,7 @@ protected:
   KLineEdit   *leprofile;
   KLineEdit   *lehomedrive;
   KLineEdit   *lehomepath;
+  KLineEdit   *leworkstations;
   KLineEdit   *ledomsid;
 };
 

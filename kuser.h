@@ -83,6 +83,7 @@ public:
   const QString &getProfilePath() const; //  sam_profile,
   const QString &getHomeDrive() const; //sam_homedrive,
   const QString &getHomePath() const; //sam_homepath;
+  const QString &getWorkstations() const; //sam_workstations
   const SID &getSID() const; //sid,
   const SID &getPGSID() const; //pgroup_sid;
 
@@ -123,6 +124,7 @@ public:
   void setProfilePath( const QString &data); //  sam_profile,
   void setHomeDrive( const QString &data ); //sam_homedrive,
   void setHomePath( const QString &data ); //sam_homepath;
+  void setWorkstations( const QString &data ); //sam_workstations
   void setSID( const SID &data ); //sid,
   void setPGSID( const SID &data ); //pgroup_sid;
   
@@ -184,7 +186,8 @@ protected:
     sam_loginscript,
     sam_profile,
     sam_homedrive,
-    sam_homepath;
+    sam_homepath,
+    sam_workstations;
   SID 
     sid,
     pgroup_sid;

@@ -174,7 +174,7 @@ void KRowTable::focusOutEvent( QFocusEvent * )
 	}
 }
 
-void KRowTable::paletteChange( const QPalette &oldPalette )
+void KRowTable::paletteChange( const QPalette & )
 {
 	setBackgroundColor( colorGroup().base() );
 }
@@ -292,7 +292,7 @@ void KRowTable::mousePressEvent( QMouseEvent *e )
 		setCurrentRow( findRow( e->pos().y() ), -1 );
 }
 
-void KRowTable::mouseDoubleClickEvent( QMouseEvent *e )
+void KRowTable::mouseDoubleClickEvent( QMouseEvent * )
 {
 	if( m_flags == SelectRow ) {
 		if( current_row != -1 )

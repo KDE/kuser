@@ -128,7 +128,7 @@ bool addUser::checkMailBox() {
            (const char *)user->getp_name());
   r = stat(mailboxpath, &s);
   
-  if ((r == -1) && (r == ENOENT))
+  if ((r == -1) && (errno == ENOENT))
     return true;
 
   if (r == 0)

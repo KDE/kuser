@@ -101,16 +101,14 @@ printf("mainDlg::init()\n");
   help->insertSeparator();
   help->insertItem(_("Help"), this, SLOT(help()));
 
-  KMenuBar *menu = new KMenuBar( this );
-  CHECK_PTR( menu );
-  menu->setFont(rufont);
-  menu->insertItem(_("File"), file );
-  menu->insertItem(_("User"), user );
-  menu->insertItem(_("Help"), help );
+  menubar = new KMenuBar( this );
+  CHECK_PTR( menubar );
+  menubar->setFont(rufont);
+  menubar->insertItem(_("File"), file );
+  menubar->insertItem(_("User"), user );
+  menubar->insertItem(_("Help"), help );
 
-  setMenu(menu);
-
-  KToolBar *toolbar;
+  setMenu(menubar);
 
   toolbar = new KToolBar(this, "toolbar");
   QPixmap pixmap;
@@ -125,6 +123,9 @@ printf("mainDlg::init()\n");
 }
 
 mainDlg::~mainDlg() {
+  delete menubar;
+  delete toolbar;
+
   delete u;
 
 #ifdef _KU_QUOTA
@@ -278,6 +279,7 @@ void mainDlg::quit() {
 #endif
     }
 
+  delete this;
   qApp->quit();
 }
 
@@ -431,7 +433,7 @@ void mainDlg::resizeEvent (QResizeEvent *rse) {
   QSize sz;
 
   sz = rse->size();
-printf("width = %d, height = %d\n", sz.width(), sz.height());
+
   list->setGeometry(10,80,sz.width()-20,sz.height()-192);
 
   pbquit->move(sz.width()/8, sz.height()-50);

@@ -3,6 +3,8 @@
 
 #include <ktablistbox.h>
 #include <ktopwidget.h>
+#include <ktoolbar.h>
+#include <kmenubar.h>
 #include <qevent.h>
 #include <qlist.h>
 #include <qpushbt.h>
@@ -62,6 +64,9 @@ private:
   QPushButton *pbedit;
   QPushButton *pbdel;
   QPushButton *pbadd;
+
+  KToolBar *toolbar;
+  KMenuBar *menubar;
   int sort;
   bool changed;
 };

@@ -56,6 +56,6 @@ int main( int argc, char **argv )
 
   a.exec();
 
-  delete md;
+  //  delete md;
   donemain();
 }

@@ -38,6 +38,7 @@
 #include "misc.h"
 #include <kstandarddirs.h>
 #include <kmessagebox.h>
+#include <kprocess.h>
 #include "editDefaults.h"	
 
 #ifdef _KU_QUOTA
@@ -1302,9 +1303,9 @@ int KUser::removeHome() {
   if (!stat(QFile::encodeName(p_dir), &sb))
     if (S_ISDIR(sb.st_mode) && sb.st_uid == p_uid) {
 #ifdef MINIX
-      command = QString::fromLatin1("/usr/bin/rm -rf -- %1").arg(p_dir);
+      command = QString::fromLatin1("/usr/bin/rm -rf -- %1").arg(KProcess::quote(p_dir));
 #else
-      command = QString::fromLatin1("/bin/rm -rf -- %1").arg(p_dir);
+      command = QString::fromLatin1("/bin/rm -rf -- %1").arg(KProcess::quote(p_dir));
 #endif
       if (system(QFile::encodeName(command)) != 0) {
              err->addMsg(i18n("Cannot remove home directory %1\nError: %2")
@@ -1332,7 +1333,7 @@ int KUser::removeCrontabs() {
 
   file = QString::fromLatin1("/var/cron/tabs/%1").arg(p_name);
   if (access(QFile::encodeName(file), F_OK) == 0) {
-    command = QString::fromLatin1("crontab -u %1 -r").arg(p_name);
+    command = QString::fromLatin1("crontab -u %1 -r").arg(KProcess::quote(p_name));
     if (system(QFile::encodeName(command)) != 0) {
       err->addMsg(i18n("Cannot remove crontab %1\nError: %2")
                   .arg(command).arg(QString::fromLocal8Bit(strerror(errno))));

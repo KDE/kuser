@@ -222,7 +222,7 @@ void mainDlg::add() {
   tk->setp_address(readentry("p_address"));
 
 #ifdef _KU_SHADOW
-  tk->sets_lstchg(readnumentry("s_lstchg"));
+  tk->sets_lstchg(today());
   tk->sets_min(readnumentry("s_min"));
   tk->sets_max(readnumentry("s_max"));
   tk->sets_warn(readnumentry("s_warn"));

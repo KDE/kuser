@@ -22,5 +22,6 @@ char *updateString(char *d, const char *t);
 int getValue(long int &data, const char *text, const char *msg);
 int getValue(int &data, const char *text, const char *msg);
 int getValue(unsigned int &data, const char *text, const char *msg);
+long today();
 
 #endif // _KU_MISC_H

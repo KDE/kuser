@@ -79,6 +79,10 @@ char *convertdate(char *buf, const long int base, const long int days) {
   return buf;
 }
 
+long today() {
+  return (time(NULL)/(24*60*60));
+}
+
 QLabel *addLabel(QWidget *parent, const char *name, int x, int y, int w, int h, const char *text) {
 
   QLabel *tmpLabel = new QLabel(parent, name);

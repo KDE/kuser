@@ -2,16 +2,17 @@
 #define nisDefaultsPage_included
 
 #include <kcontainer.h>
+#include <klocale.h>
 #include <qlineedit.h>
 #include <qcheckbox.h>
 #include <sys/types.h>
 
-#define NONNISPWD "Local passwd source:"
-#define NONNISGRP "Local group source:"
-#define NISPWD    "NIS passwd source:"
-#define NISGRP    "NIS group source:"
-#define NISMINUID "NIS minimum UID:"
-#define NISMINGID "NIS minimum GID:"
+#define NONNISPWD I18N_NOOP("Local passwd source:")
+#define NONNISGRP I18N_NOOP("Local group source:")
+#define NISPWD    I18N_NOOP("NIS passwd source:")
+#define NISGRP    I18N_NOOP("NIS group source:")
+#define NISMINUID I18N_NOOP("NIS minimum UID:")
+#define NISMINGID I18N_NOOP("NIS minimum GID:")
 
 class nisDefaultsPage : public QWidget {
     Q_OBJECT
@@ -25,7 +26,7 @@ public:
   ~nisDefaultsPage();
 
   void    addOne(KContainerLayout *layout, int row, bool homogeneous,
-                 bool expand, bool fill); 
+                 bool expand, bool fill);
 
   QString getPasswdSrc() const;
   QString getNISPasswdSrc() const;

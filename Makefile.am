@@ -47,7 +47,7 @@ edit::
 	xemacs -fn "-edict-fixed-medium-r-*-*-*-120-*-*-*-*-koi8-r" -geometry 142x41+0+0 $(EDITABLE)&
 
 messages: rc.cpp
-	$(XGETTEXT) rc.cpp $(kuser_SOURCES) -o $(podir)/kuser.pot
+	$(XGETTEXT) *.cpp *.h -o $(podir)/kuser.pot
 
 pot::
 	/usr/local/bin/xgettext -ki18n -o kuser.pot -p ../po -d kuser -C -n *.cpp

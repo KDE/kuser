@@ -27,20 +27,6 @@
 #include "misc.h"
 #include "kglobal_.h"
 
-QString readentry(const QString &name, const QString def) {
-  if (config->hasKey(name))
-    return config->readEntry(name);
-  else
-    return def;
-}
-
-int readnumentry(const QString &name) {
-  if (config->hasKey(name))
-    return config->readNumEntry(name);
-  else
-    return (0);
-}
-
 void backup(const QString & name)
 {
   QString tmp = name + QString::fromLatin1(KU_BACKUP_EXT);
@@ -162,7 +148,7 @@ QStringList readShells()
 
         s[strlen(s)-1]=0;
         if ((s[0])&&(s[0]!='#'))
-          shells.append(s);
+          shells.append(QFile::decodeName(s));
       }
       fclose(f);
     }
@@ -178,7 +164,7 @@ void addShell(const QString &shell)
     FILE *f = fopen(SHELL_FILE,"a");
     if (f)
     {
-        fputs(shell.latin1(), f);
+        fputs(QFile::encodeName(shell).data(), f);
         fputc('\n', f); 
     }
     fclose(f);

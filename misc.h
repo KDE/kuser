@@ -10,8 +10,6 @@
 
 class KUser;
 
-QString readentry(const QString &name, const QString def = QString::null);
-int readnumentry(const QString &name);
 void backup(const QString & name);
 char *updateString(char *d, const char *t);
 int getValue(long int &data, const QString & text, const QString & msg);

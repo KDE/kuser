@@ -8,6 +8,7 @@
 #include <qwhatsthis.h>
 #include <qlayout.h>
 #include <qgroupbox.h>
+#include <qfile.h>
 
 #include <kseparator.h>
 #include <kmessagebox.h>
@@ -260,7 +261,7 @@ propdlg::propdlg(KUser *AUser, QWidget *parent, const char *name, int)
     {
       QGroupBox *group = new QGroupBox( frame );
       layout->addMultiCellWidget(group, 1, 1, 0, 1);
-      group->setTitle("Disk Space");
+      group->setTitle(i18n("Disk Space"));
       QGridLayout *groupLayout = new QGridLayout(group, 6, 2, marginHint(), spacingHint()); 
       groupLayout->addRowSpacing(0, group->fontMetrics().lineSpacing());
       groupLayout->setColStretch(0,1);
@@ -295,7 +296,7 @@ propdlg::propdlg(KUser *AUser, QWidget *parent, const char *name, int)
     {
       QGroupBox *group = new QGroupBox( frame );
       layout->addMultiCellWidget(group, 2, 2, 0, 1);
-      group->setTitle("Number of Files");
+      group->setTitle(i18n("Number of Files"));
       QGridLayout *groupLayout = new QGridLayout(group, 6, 2, marginHint(), spacingHint()); 
       groupLayout->addRowSpacing(0, group->fontMetrics().lineSpacing());
       groupLayout->setColStretch(0,1);
@@ -421,7 +422,6 @@ void propdlg::setpgroup(const QString &) {
      QString groupName = item->text();
      if (groupName  == prevPrimaryGroup)
      {
-        KGroup *group = kug->getGroups().lookup(groupName);
         item->setEnabled(true);
         item->setOn(prevPrimaryGroupWasOn);
         item->repaint();
@@ -473,7 +473,6 @@ void propdlg::save() {
 #endif
 
   user->setHomeDir(lehome->text());
-qWarning("Shell = '%s'", leshell->currentText().latin1());
   user->setShell(leshell->currentText());
   // TODO: Check shell.
 
@@ -569,6 +568,8 @@ void propdlg::mntsel(int) {
 
 bool propdlg::checkShell(const QString &shell)
 {
+   if (shell.isEmpty())
+      return true;
    QStringList shells = readShells();
    return shells.contains(shell);
 }
@@ -599,7 +600,7 @@ bool propdlg::check() {
 void propdlg::selectuser() {
   leuser->setText(user->getName());
 
-  leid->setText(QString("%1").arg(user->getUID()));
+  leid->setText(QString::fromLatin1("%1").arg(user->getUID()));
   olduid = user->getUID();
 
 //  sprintf(uname, "%i", user->getp_gid());
@@ -643,16 +644,17 @@ void propdlg::selectuser() {
       q = chquota;
 
       QuotaMnt *qm = (*quota)[q];
-      leqfs->setText(QString("%1").arg(qm->getfsoft()));
-      leqfh->setText(QString("%1").arg(qm->getfhard()));
-      leqis->setText(QString("%1").arg(qm->getisoft()));
-      leqih->setText(QString("%1").arg(qm->getihard()));
-      leqfcur->setText(QString("%1").arg(qm->getfcur()));
-      leqicur->setText(QString("%1").arg(qm->geticur()));
+      QString tmp = QString::fromLatin1("%1");
+      leqfs->setText(tmp.arg(qm->getfsoft()));
+      leqfh->setText(tmp.arg(qm->getfhard()));
+      leqis->setText(tmp.arg(qm->getisoft()));
+      leqih->setText(tmp.arg(qm->getihard()));
+      leqfcur->setText(tmp.arg(qm->getfcur()));
+      leqicur->setText(tmp.arg(qm->geticur()));
 
 #ifndef BSD
-      leqft->setText(QString("%1").arg(qm->getftime()));
-      leqit->setText(QString("%1").arg(qm->getitime()));
+      leqft->setText(tmp.arg(qm->getftime()));
+      leqit->setText(tmp.arg(qm->getitime()));
 #endif
     }
   }
@@ -689,7 +691,7 @@ void propdlg::slotOk() {
       		i18n("<p>The shell %1 is not yet listed in the file %2. "
       		     "In order to use this shell you must add it to "
       		     "this file first."
-      		     "<p>Do you want to add it now?").arg(newshell).arg(SHELL_FILE),
+      		     "<p>Do you want to add it now?").arg(newshell).arg(QFile::decodeName(SHELL_FILE)),
       		i18n("Unlisted Shell"),
       		i18n("&Add Shell"),
       		i18n("Do &Not Add"));

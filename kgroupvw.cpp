@@ -20,7 +20,7 @@ QString KListViewGroup::text(int num) const
 {
   switch(num)
   {
-     case 0: return QString("%1 ").arg(group->getGID(),6);
+     case 0: return QString::fromLatin1("%1 ").arg(group->getGID(),6);
      case 1: return group->getName();
   }
   return QString::null;

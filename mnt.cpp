@@ -130,10 +130,10 @@ Mounts::Mounts() {
     if (!CORRECT_FSTYPE((const char *)mt->mnt_type))
       continue;
 
-    quotafilename = QString("%1%2%3")
-                          .arg(mt->mnt_dir)
-                          .arg((mt->mnt_dir[strlen(mt->mnt_dir) - 1] == '/') ? "" : "/")
-                          .arg(_KU_QUOTAFILENAME);
+    quotafilename = QString::fromLatin1("%1%2%3")
+                          .arg(QFile::decodeName(mt->mnt_dir))
+                          .arg((mt->mnt_dir[strlen(mt->mnt_dir) - 1] == '/') ? QString::null : QString::fromLatin1("/"))
+                          .arg(QFile::decodeName(_KU_QUOTAFILENAME));
 
 #endif
 
@@ -144,15 +144,15 @@ Mounts::Mounts() {
     }
     printf("Quota file name %s found\n", quotafilename.local8Bit().data());
 #ifdef OLD_GETMNTENT
-    mnt = new MntEnt(mt->mnt_special, mt->mnt_mountp, mt->mnt_fstype,
-                     mt->mnt_mntopts, quotafilename);
+    mnt = new MntEnt(QString::fromLocal8Bit(mt->mnt_special), QString::fromLocal8Bit(mt->mnt_mountp), QString::fromLocal8Bit(mt->mnt_fstype),
+                     QString::fromLocal8Bit(mt->mnt_mntopts), quotafilename);
     m.append(mnt);
     is_quota = 1;
   }
   fclose(fp);
 #elif defined(BSD)
-    mnt = new MntEnt(mt->fs_spec,mt->fs_file,mt->fs_vfstype,
-		   mt->fs_mntops,quotafilename);
+    mnt = new MntEnt(QString::fromLocal8Bit(mt->fs_spec), QString::fromLocal8Bit(mt->fs_file), QString::fromLocal8Bit(mt->fs_vfstype),
+		     QString::fromLocal8Bit(mt->fs_mntops), quotafilename);
     m.append(mnt);
     is_quota = 1;
   }
@@ -161,8 +161,8 @@ Mounts::Mounts() {
       /* Are the mount options parsed away by the mount helpers?
        * I can't find them in the structures.
        */
-      mnt = new MntEnt(mt->fs_spec,mt->fs_file,vt->vfsent_name,
-		     "",quotafilename);
+      mnt = new MntEnt(QString::fromLocal8Bit(mt->fs_spec), QString::fromLocal8Bit(mt->fs_file), QString::fromLocal8Bit(vt->vfsent_name),
+		       QString::null, quotafilename);
       m.append(mnt);
       is_quota = 1;
     }
@@ -170,8 +170,8 @@ Mounts::Mounts() {
   }
   endvfsent();
 #else
-    mnt = new MntEnt(mt->mnt_fsname, mt->mnt_dir, mt->mnt_type,
-                     mt->mnt_opts, quotafilename);
+    mnt = new MntEnt(QString::fromLocal8Bit(mt->mnt_fsname), QString::fromLocal8Bit(mt->mnt_dir), QString::fromLocal8Bit(mt->mnt_type),
+                     QString::fromLocal8Bit(mt->mnt_opts), quotafilename);
     m.append(mnt);
     is_quota = 1;
   }

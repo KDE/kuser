@@ -10,6 +10,7 @@
 
 #include <qtooltip.h>
 #include <qsplitter.h>
+#include <qfile.h>
 
 #include <klineeditdlg.h>
 #include <ktoolbar.h>
@@ -191,42 +192,43 @@ void mainView::useradd() {
   }
 
   config->setGroup("template");
-  tk->setShell(readentry("shell"));
-  tk->setHomeDir(readentry("homeBase", KU_HOMEPREFIX)+"/"+tk->getName());
-  tk->setGID(readnumentry("gid"));
-  tk->setFullName(readentry("p_fname"));
+  tk->setShell(config->readEntry("shell", QString::fromLatin1("/bin/bash")));
+  tk->setHomeDir(config->readEntry("homeBase", QFile::decodeName(KU_HOMEPREFIX))+
+  	QString::fromLatin1("/")+tk->getName());
+  tk->setGID(config->readNumEntry("gid"));
+  tk->setFullName(config->readEntry("p_fname"));
 #if defined(__FreeBSD__) || defined(__bsdi__)
-  tk->setOffice(readentry("p_office"));
-  tk->setWorkPhone(readentry("p_ophone"));
-  tk->setHomePhone(readentry("p_hphone"));
-  tk->setClass(readentry("p_class"));
-  tk->setLastChange(readnumentry("p_change"));
-  tk->setExpire(readnumentry("p_expire"));
+  tk->setOffice(config->readEntry("p_office"));
+  tk->setWorkPhone(config->readEntry("p_ophone"));
+  tk->setHomePhone(config->readEntry("p_hphone"));
+  tk->setClass(config->readEntry("p_class"));
+  tk->setLastChange(config->readNumEntry("p_change"));
+  tk->setExpire(config->readNumEntry("p_expire"));
 #else
-  tk->setOffice1(readentry("p_office1"));
-  tk->setOffice2(readentry("p_office2"));
-  tk->setAddress(readentry("p_address"));
+  tk->setOffice1(config->readEntry("p_office1"));
+  tk->setOffice2(config->readEntry("p_office2"));
+  tk->setAddress(config->readEntry("p_address"));
 #endif
 
 #ifdef HAVE_SHADOW
   tk->setLastChange(today());
   if (config->hasKey("s_min"))
-    tk->setMin(readnumentry("s_min"));
+    tk->setMin(config->readNumEntry("s_min"));
 
   if (config->hasKey("s_max"))
-    tk->setMax(readnumentry("s_max"));
+    tk->setMax(config->readNumEntry("s_max"));
 
   if (config->hasKey("s_warn"))
-    tk->setWarn(readnumentry("s_warn"));
+    tk->setWarn(config->readNumEntry("s_warn"));
 
   if (config->hasKey("s_inact"))
-    tk->setInactive(readnumentry("s_inact"));
+    tk->setInactive(config->readNumEntry("s_inact"));
 
   if (config->hasKey("s_expire"))
-    tk->setExpire(readnumentry("s_expire"));
+    tk->setExpire(config->readNumEntry("s_expire"));
 
   if (config->hasKey("s_flag"))
-    tk->setFlag(readnumentry("s_flag"));
+    tk->setFlag(config->readNumEntry("s_flag"));
 #endif
 
 #ifdef _KU_QUOTA
@@ -323,22 +325,23 @@ void mainView::properties() {
   eddlg.setCaption(i18n("Edit Defaults"));
 
   config->setGroup("template");
-  eddlg.setShell(config->readEntry("shell", ""));
-  eddlg.setHomeBase(config->readEntry("homeBase", "/home"));	
+  eddlg.setShell(config->readEntry("shell", QString::fromLatin1("/bin/bash")));
+  eddlg.setHomeBase(config->readEntry("homeBase", QString::fromLatin1("/home")));	
   eddlg.setCreateHomeDir(config->readBoolEntry("createHomeDir", true));
   eddlg.setCopySkel(config->readBoolEntry("copySkel", true));
   eddlg.setUserPrivateGroup(config->readBoolEntry("userPrivateGroup", KU_USERPRIVATEGROUP));
   config->setGroup("sources");
-  eddlg.setPasswdSrc(config->readEntry("passwdsrc", PASSWORD_FILE)); 
-  eddlg.setGroupSrc(config->readEntry("groupsrc", GROUP_FILE));
-  eddlg.setNISPasswdSrc(config->readEntry("nispasswdsrc", ""));
-  eddlg.setNISGroupSrc(config->readEntry("nisgroupsrc", ""));
-  eddlg.setMINUID(config->readEntry("nisminuid", ""));
-  eddlg.setMINGID(config->readEntry("nismingid", ""));
+  eddlg.setPasswdSrc(config->readEntry("passwdsrc", QFile::decodeName(PASSWORD_FILE)));
+  eddlg.setGroupSrc(config->readEntry("groupsrc", QFile::decodeName(GROUP_FILE)));
+  eddlg.setNISPasswdSrc(config->readEntry("nispasswdsrc"));
+  eddlg.setNISGroupSrc(config->readEntry("nisgroupsrc"));
+  eddlg.setMINUID(config->readEntry("nisminuid"));
+  eddlg.setMINGID(config->readEntry("nismingid"));
 //  eddlg.setEnableNIS(config->readBoolEntry("enableNIS", true));
 
 
-  if (eddlg.exec() != 0) {
+  if (eddlg.exec() != 0)
+  {
     config->setGroup("template");
     config->writeEntry("shell", eddlg.getShell());
     config->writeEntry("homeBase", eddlg.getHomeBase());
@@ -353,6 +356,7 @@ void mainView::properties() {
     config->writeEntry("nisminuid", eddlg.getMINUID());
     config->writeEntry("nismingid", eddlg.getMINGID());
 //    config->writeEntry("enableNIS", eddlg.getEnableNIS());
+    config->sync();
   }
 }
 

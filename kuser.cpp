@@ -55,7 +55,7 @@
 
 // class KUser
 
-KUser::KUser() : p_pwd("*") {
+KUser::KUser() : p_pwd(QString::fromLatin1("*")) {
 #if defined(__FreeBSD__) || defined(__bsdi__)
   p_change = 0;
   p_expire = 0;
@@ -388,13 +388,11 @@ void KUsers::fillGecos(KUser *user, const char *gecos) {
   // At least one part of the string exists
   for(;;) {
     pos = strchr(s, ',');
-    char val[200];
+    QString val;
     if(pos == NULL)
-      strcpy(val, s);
-    else {
-      strncpy(val, s, (int)(pos-s));
-      val[(int)(pos-s)] = 0;
-    }
+      val = QString::fromLocal8Bit(s);
+    else
+      val = QString::fromLocal8Bit(s, (int)(pos-s));
 
     switch(no) {
       case 0: user->setFullName(val); break;
@@ -467,7 +465,7 @@ bool KUsers::loadpwd() {
   for(int i = 0; i < MAXFILES; i++) {
     rc = stat(QFile::encodeName(filename), &st);		
     if(rc != 0) {						
-      err->addMsg(i18n("stat call on file %1 failed: %2\nCheck KUser Settings (Sources)\n").arg(filename).arg(strerror(errno)));	
+      err->addMsg(i18n("stat call on file %1 failed: %2\nCheck KUser Settings (Sources)\n").arg(filename).arg(QString::fromLocal8Bit(strerror(errno))));	
       err->display();						
       if( (processing_file & PASSWD) != 0 ) {			
         passwd_errno = errno;					
@@ -508,10 +506,10 @@ bool KUsers::loadpwd() {
       tmpKU = new KUser();
       tmpKU->setUID(p->pw_uid);
       tmpKU->setGID(p->pw_gid);
-      tmpKU->setName(p->pw_name);
-      tmpKU->setPwd(p->pw_passwd);
-      tmpKU->setHomeDir(p->pw_dir);
-      tmpKU->setShell(p->pw_shell);
+      tmpKU->setName(QString::fromLocal8Bit(p->pw_name));
+      tmpKU->setPwd(QString::fromLocal8Bit(p->pw_passwd));
+      tmpKU->setHomeDir(QString::fromLocal8Bit(p->pw_dir));
+      tmpKU->setShell(QString::fromLocal8Bit(p->pw_shell));
 #if defined(__FreeBSD__) || defined(__bsdi__)
       tmpKU->setClass(p->pw_class);
       tmpKU->setLastChange(p->pw_change);
@@ -577,14 +575,14 @@ bool KUsers::loadsdw() {
   setspent();
 
   while ((spw = getspent())) {     // read a shadow password structure
-    if ((up = lookup(spw->sp_namp)) == NULL) {
+    if ((up = lookup(QString::fromLocal8Bit(spw->sp_namp))) == NULL) {
       err->addMsg(i18n("No /etc/passwd entry for %1.\nEntry will be removed at the next `Save'-operation.")
-		  .arg(spw->sp_namp));
+		  .arg(QString::fromLocal8Bit(spw->sp_namp)));
       err->display();
       continue;
     }
 
-    up->setSPwd(spw->sp_pwdp);        // cp the encrypted pwd
+    up->setSPwd(QString::fromLocal8Bit(spw->sp_pwdp));        // cp the encrypted pwd
     up->setLastChange(spw->sp_lstchg);
     up->setMin(spw->sp_min);
     up->setMax(spw->sp_max);
@@ -686,9 +684,7 @@ bool KUsers::savepwd() {
   QString nispasswd_filename;
   QString qs_minuid;			
 
-  const char *c_minuid;			
-  const char *pw_filename;		
-  const char *pn_filename;		
+
   char errors_found = '\0';		
     #define NOMINUID    0x01		
     #define NONISPASSWD 0x02		
@@ -698,25 +694,27 @@ bool KUsers::savepwd() {
   config->setGroup("sources");		
   passwd_filename = config->readEntry("passwdsrc");		
   nispasswd_filename = config->readEntry("nispasswdsrc");	
-  qs_minuid = config->readEntry("nisminuid");			
+  qs_minuid = config->readEntry("nisminuid");
+  QCString tmp1 = QFile::encodeName(passwd_filename);
+  const char *pw_filename = tmp1.data();   
+  QCString tmp2 = QFile::encodeName(nispasswd_filename);
+  const char *pn_filename = tmp2.data();
+
   if( (!qs_minuid.isEmpty()) && (nispasswd_filename != passwd_filename) ) {
-    c_minuid = qs_minuid.latin1();				
-    minuid = atoi(c_minuid);		
+    minuid = atoi(qs_minuid.latin1());		
   }
 
   // Backup file(s)			
 
   if(!passwd_filename.isEmpty()) {	
     if (!pw_backuped) {			
-      pw_filename = passwd_filename.latin1();   
-      backup(pw_filename);		
+      backup(passwd_filename);
       pw_backuped = TRUE;		
     }
   }
   if(!nispasswd_filename.isEmpty() && (nispasswd_filename != passwd_filename)){	
     if (!pn_backuped) {			
-      pn_filename = nispasswd_filename.latin1();   
-      backup(pn_filename);		
+      backup(nispasswd_filename);
       pn_backuped = TRUE;		
     }
   }
@@ -724,12 +722,12 @@ bool KUsers::savepwd() {
   // Open file(s)			
 
   if(!passwd_filename.isEmpty()) {	
-    if ((passwd_fd = fopen(QFile::encodeName(passwd_filename),"w")) == NULL) 
+    if ((passwd_fd = fopen(pw_filename,"w")) == NULL) 
       err->addMsg(i18n("Error opening %1 for writing").arg(passwd_filename));
   }					
 
   if(!nispasswd_filename.isEmpty() && (nispasswd_filename != passwd_filename)){	
-    if ((nispasswd_fd = fopen(QFile::encodeName(nispasswd_filename),"w")) == NULL) 
+    if ((nispasswd_fd = fopen(pn_filename,"w")) == NULL) 
       err->addMsg(i18n("Error opening %1 for writing").arg(nispasswd_filename));
   }					
 
@@ -749,20 +747,20 @@ bool KUsers::savepwd() {
         .arg(user->getLastChange())
 	.arg(user->getExpire());
 
-      s1 = QString("%1,%2,%3,%4")
+      s1 = QString::fromLatin1("%1,%2,%3,%4")
          .arg(user->getFullName())
          .arg(user->getOffice())
          .arg(user->getWorkPhone())
          .arg(user->getHomePhone());
 #else
 
-      s = QString("%1:%2:%3:%4:")
+      s = QString::fromLatin1("%1:%2:%3:%4:")
         .arg(user->getName())
         .arg(user->getPwd())
 	.arg(user->getUID())
         .arg(user->getGID());
 
-      s1 = QString("%1,%2,%3,%4")
+      s1 = QString::fromLatin1("%1,%2,%3,%4")
          .arg(user->getFullName())
 	 .arg(user->getOffice1())
 	 .arg(user->getOffice2())
@@ -777,46 +775,48 @@ bool KUsers::savepwd() {
         s1.truncate(j);
       }
 
-      s += s1+":"+user->getHomeDir()+":"+user->getShell()+"\n";
+      s += s1+QString::fromLatin1(":")+
+           user->getHomeDir()+QString::fromLatin1(":")+
+           user->getShell()+QString::fromLatin1("\n");
 
       if( (nispasswd_fd != 0) && (minuid != 0) ) {
         if (minuid <= tmp_uid) {
-      	  fputs(QFile::encodeName(s), nispasswd_fd);	
+      	  fputs(s.local8Bit().data(), nispasswd_fd);	
           nis_users_written++;		
           continue;				
         }
         else{
-      	  fputs(QFile::encodeName(s), passwd_fd);	
+      	  fputs(s.local8Bit().data(), passwd_fd);	
           continue;				
         }
       }
 
       if( (nispasswd_fd != 0) && (minuid == 0) ) {
 	errors_found = errors_found | NOMINUID;  
-      	fputs(QFile::encodeName(s), passwd_fd);	
+      	fputs(s.local8Bit().data(), passwd_fd);	
         continue;
       }
 
       if( (nispasswd_fd == 0) && (minuid != 0) ) {
 	errors_found = errors_found | NONISPASSWD;	
-      	fputs(QFile::encodeName(s), passwd_fd);	
+      	fputs(s.local8Bit().data(), passwd_fd);	
         continue;
       }
 
-      fputs(QFile::encodeName(s), passwd_fd);	
+      fputs(s.local8Bit().data(), passwd_fd);	
 
     }		/* end for i loop */
 
     if(passwd_fd) {					
       fclose(passwd_fd);
-      chmod(QFile::encodeName(passwd_filename), pwd_mode);	
-      chown(QFile::encodeName(passwd_filename), pwd_uid, pwd_gid);	
+      chmod(pw_filename, pwd_mode);	
+      chown(pw_filename, pwd_uid, pwd_gid);	
     }							
 
     if(nispasswd_fd) {					
       fclose(nispasswd_fd);				
-      chmod(QFile::encodeName(nispasswd_filename), pwd_mode);	
-      chown(QFile::encodeName(nispasswd_filename), pwd_uid, pwd_gid);	
+      chmod(pn_filename, pwd_mode);	
+      chown(pn_filename, pwd_uid, pwd_gid);	
     }							
 
     if( (errors_found & NOMINUID) != 0 ) {	
@@ -857,19 +857,20 @@ bool KUsers::savesdw() {
   struct spwd *spwp;
   struct spwd s;
   KUser *up;
+  QString shadow_file = QString::fromLatin1(SHADOW_FILE);
 
   if (!is_shadow)
     return TRUE;
 
   if (!s_backuped) {
-    backup(SHADOW_FILE);
+    backup(shadow_file);
     s_backuped = TRUE;
   }
 
   umask(0077);
 
   if ((f = fopen(SHADOW_FILE, "w")) == NULL) {
-    err->addMsg(i18n("Error opening %1 for writing").arg(SHADOW_FILE));
+    err->addMsg(i18n("Error opening %1 for writing").arg(shadow_file));
     return FALSE;
   }
 
@@ -1011,20 +1012,20 @@ int KUser::createKDE() {
 	if((kdehome = getenv(KDEHOME)) != NULL) {
 	    dot_kde = strstr(kdehome,DOT_KDE);
 	    if(dot_kde) {
-	        levels.append(dot_kde);	
-	        levels.append("/share");	
-	        levels.append("/doc");	
+	        levels.append(QFile::decodeName(dot_kde));
+	        levels.append(QFile::decodeName("/share"));
+	        levels.append(QFile::decodeName("/doc"));
 	    }
 	    else {
-	        levels.append("/.kde");	
-	        levels.append("/share");	
-	        levels.append("/doc");	
+	        levels.append(QFile::decodeName("/.kde"));
+	        levels.append(QFile::decodeName("/share"));
+	        levels.append(QFile::decodeName("/doc"));
 	    }
 	}
 	else {
-	    levels.append("/.kde");	
-	    levels.append("/share");	
-	    levels.append("/doc");	
+	    levels.append(QFile::decodeName("/.kde"));
+	    levels.append(QFile::decodeName("/share"));
+	    levels.append(QFile::decodeName("/doc"));
 	}
 
 	for (uint level=0; level<levels.count(); level++) {
@@ -1039,7 +1040,7 @@ int KUser::createKDE() {
 		k_dir = p_dir;
 		k_dir.append(levels[0]);
 		// if(dot_kde)
-		k_dir.append("/");
+		k_dir.append(QString::fromLatin1("/"));
 		const char *ctype = types[i].latin1();
 		QString tpath = KStandardDirs::kde_default(ctype);
 		k_dir.append(tpath);
@@ -1064,11 +1065,11 @@ int	rc = 0;
 KMessageBox::Continue) {
  		if (chown(QFile::encodeName(dir), p_uid, p_gid) != 0) {
    		    err->addMsg(i18n("Cannot change owner of %1 directory\nError: %2")
-.arg(dir).arg(strerror(errno)));
+.arg(dir).arg(QString::fromLocal8Bit(strerror(errno))));
 		    err->display();
  		}
 	  	if (chmod(QFile::encodeName(dir), KU_KDEDIRS_PERM) != 0) {
-   			err->addMsg(i18n("Cannot change permissions on %1 directory\nError: %2").arg(dir).arg(strerror(errno)));
+   			err->addMsg(i18n("Cannot change permissions on %1 directory\nError: %2").arg(dir).arg(QString::fromLocal8Bit(strerror(errno))));
    			err->display();
  		}
 			return(0);
@@ -1089,24 +1090,24 @@ KMessageBox::Continue) {
 	if (errno == ENOENT) {
  	    if (mkdir(QFile::encodeName(dir), 0700) != 0) {
    		err->addMsg(i18n("Cannot create %1 directory\nError: %2").arg(dir)
-		    .arg(strerror(errno)));
+		    .arg(QString::fromLocal8Bit(strerror(errno))));
    		err->display();
 		return(-1);
   	    }
 	    if (chown(QFile::encodeName(dir), p_uid, p_gid) != 0) {
    		err->addMsg(i18n("Cannot change owner of %1 directory\nError: %2")
-		    .arg(dir).arg(strerror(errno)));
+		    .arg(dir).arg(QString::fromLocal8Bit(strerror(errno))));
    		err->display();
  	    }
 	    if (chmod(QFile::encodeName(dir), KU_KDEDIRS_PERM) != 0) {
-   		err->addMsg(i18n("Cannot change permissions on %1 directory\nError: %2").arg(dir).arg(strerror(errno)));
+   		err->addMsg(i18n("Cannot change permissions on %1 directory\nError: %2").arg(dir).arg(QString::fromLocal8Bit(strerror(errno))));
 		err->display();
  	    }
 	    return(0);
  	}
 	else {
    	    err->addMsg(i18n("stat call on %1 failed.\nError: %2").arg(dir)
-		.arg(strerror(errno)));
+		.arg(QString::fromLocal8Bit(strerror(errno))));
 	    err->display();
 	    return(-1);
 	}
@@ -1118,7 +1119,7 @@ bool KUser::findKDE(const QString &dir) {
    const QFileInfo	*fi   = NULL;
    const QFileInfoList	*list = NULL;
    QDir		t(dir);
-   QString	dot_KDE = ".kde";
+   QString	dot_KDE = QString::fromLatin1(".kde");
    bool		foundKDE;
 
    foundKDE = false;
@@ -1142,7 +1143,7 @@ bool KUser::findKDE(const QString &dir) {
 int KUser::createMailBox() {
   QString mailboxpath;
   int fd;
-  mailboxpath = QString("%1/%2").arg(MAIL_SPOOL_DIR).arg(p_name);
+  mailboxpath = QString::fromLatin1("%1/%2").arg(QFile::decodeName(MAIL_SPOOL_DIR)).arg(p_name);
   if((fd = open(QFile::encodeName(mailboxpath), O_CREAT|O_EXCL|O_WRONLY,
                 S_IRUSR|S_IWUSR)) < 0) {
     if (errno != EEXIST)
@@ -1178,17 +1179,20 @@ void KUser::copyDir(const QString &srcPath, const QString &dstPath) {
   struct stat st;
   QDir s(srcPath);
   QDir d(dstPath);
-  QString prefix(SKEL_FILE_PREFIX);
+  QString prefix = QFile::decodeName(SKEL_FILE_PREFIX);
   int len = prefix.length();
 
   s.setFilter(QDir::Dirs | QDir::Hidden);
 
+  QString dot = QString::fromLatin1(".");
+  QString dotdot = QString::fromLatin1("..");
+
   for (uint i=0; i<s.count(); i++) {
     QString name(s[i]);
 
-    if (name == ".")
+    if (name == dot)
       continue;
-    if (name == "..")
+    if (name == dotdot)
       continue;
 
     QString filename(s.filePath(name));
@@ -1248,7 +1252,7 @@ void KUser::copyDir(const QString &srcPath, const QString &dstPath) {
 }
 
 int KUser::copySkel() {
-  QDir s(SKELDIR);
+  QDir s(QFile::decodeName(SKELDIR));
   QDir d(p_dir);
 
   umask(0777);
@@ -1281,13 +1285,13 @@ int KUser::removeHome() {
   if (!stat(QFile::encodeName(p_dir), &sb))
     if (S_ISDIR(sb.st_mode) && sb.st_uid == p_uid) {
 #ifdef MINIX
-      command = QString("/usr/bin/rm -rf -- %1").arg(p_dir);
+      command = QString::fromLatin1("/usr/bin/rm -rf -- %1").arg(p_dir);
 #else
-      command = QString("/bin/rm -rf -- %1").arg(p_dir);
+      command = QString::fromLatin1("/bin/rm -rf -- %1").arg(p_dir);
 #endif
       if (system(QFile::encodeName(command)) != 0) {
              err->addMsg(i18n("Cannot remove home directory %1\nError: %2")
-                       .arg(command).arg(strerror(errno)));
+                       .arg(command).arg(QString::fromLocal8Bit(strerror(errno))));
              err->display();
       }
     } else {
@@ -1296,7 +1300,7 @@ int KUser::removeHome() {
     }
   else {
     err->addMsg(i18n("stat call on file %1 failed\nError: %2")
-                 .arg(p_dir).arg(strerror(errno)));
+                 .arg(p_dir).arg(QString::fromLocal8Bit(strerror(errno))));
     err->display();
   }
 
@@ -1309,9 +1313,9 @@ int KUser::removeCrontabs() {
   QString file;
   QString command;
 
-  file = QString("/var/cron/tabs/%1").arg(p_name);
+  file = QString::fromLatin1("/var/cron/tabs/%1").arg(p_name);
   if (access(QFile::encodeName(file), F_OK) == 0) {
-    command = QString("crontab -u %1 -r").arg(p_name);
+    command = QString::fromLatin1("crontab -u %1 -r").arg(p_name);
     if (system(QFile::encodeName(command)) != 0) {
       err->addMsg(i18n("Cannot remove crontab %1\nError: %2")
                   .arg(command).arg(QString::fromLocal8Bit(strerror(errno))));
@@ -1325,7 +1329,7 @@ int KUser::removeCrontabs() {
 int KUser::removeMailBox() {
   QString file;
 
-  file = QString("%1/%2").arg(MAIL_SPOOL_DIR).arg(p_name);
+  file = QString::fromLatin1("%1/%2").arg(QFile::decodeName(MAIL_SPOOL_DIR)).arg(p_name);
   if (remove(QFile::encodeName(file)) != 0) {
     err->addMsg(i18n("Cannot remove mailbox %1\nError: %2")
                 .arg(file).arg(QString::fromLocal8Bit(strerror(errno))));

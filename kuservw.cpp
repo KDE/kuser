@@ -20,7 +20,7 @@ QString KListViewUser::text(int num) const
 {
   switch(num)
   {
-     case 0: return QString("%1 ").arg(user->getUID(),6);
+     case 0: return QString::fromLatin1("%1 ").arg(user->getUID(),6);
      case 1: return user->getName();
      case 2: return user->getFullName();
   }

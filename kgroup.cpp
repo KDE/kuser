@@ -37,7 +37,7 @@
 #define _KU_FIRST_GID 1001 
 #endif
 
-KGroup::KGroup() : pwd("*") {
+KGroup::KGroup() : pwd(QString::fromLatin1("*")) {
   gid = 0;
 }
   
@@ -143,7 +143,7 @@ bool KGroups::load() {
   for(int k = 0; k < MAXFILES; k++) {
     rc = stat(QFile::encodeName(filename), &st);
     if(rc != 0) {
-      err->addMsg(i18n("stat call on file %1 failed: %2\nCheck KUser Settings (Sources)\n").arg(filename).arg(strerror(errno)));
+      err->addMsg(i18n("stat call on file %1 failed: %2\nCheck KUser Settings (Sources)\n").arg(filename).arg(QString::fromLatin1(strerror(errno))));
       err->display();
       if( (processing_file & GROUP) != 0 ) {
         group_errno = errno;
@@ -180,13 +180,13 @@ bool KGroups::load() {
 #endif
       tmpKG = new KGroup();
       tmpKG->setGID(p->gr_gid);
-      tmpKG->setName(p->gr_name);
-      tmpKG->setPwd(p->gr_passwd);
+      tmpKG->setName(QString::fromLocal8Bit(p->gr_name));
+      tmpKG->setPwd(QString::fromLocal8Bit(p->gr_passwd));
 
       char *u_name;
       int i = 0;
       while ((u_name = p->gr_mem[i])!=0) {
-        tmpKG->addUser(u_name);
+        tmpKG->addUser(QString::fromLocal8Bit(u_name));
         i++;
       }
 
@@ -231,9 +231,6 @@ bool KGroups::save() {
   QString nisgroup_filename;
   QString qs_mingid;
 
-  const char *c_mingid;
-  const char *gr_filename;
-  const char *gn_filename;
   char errors_found = '\0';
     #define NOMINGID    0x01
     #define NONISGROUP  0x02
@@ -245,24 +242,20 @@ bool KGroups::save() {
   nisgroup_filename = config->readEntry("nisgroupsrc");
   qs_mingid = config->readEntry("nismingid");
   if( (!qs_mingid.isEmpty()) && (nisgroup_filename != group_filename) ) {
-    c_mingid = qs_mingid.latin1();
-    mingid = atoi(c_mingid);
+    mingid = atoi(qs_mingid.latin1());
   }
 
   // Backup file(s)
 
-
   if(!group_filename.isEmpty()) {
     if (!gr_backuped) {
-      gr_filename = group_filename.latin1();
-      backup(gr_filename);
+      backup(group_filename);
       gr_backuped = TRUE;
     }
   }
   if(!nisgroup_filename.isEmpty() && (nisgroup_filename != group_filename)) {
     if (!gn_backuped) {
-      gn_filename = nisgroup_filename.latin1();
-      backup(gn_filename);
+      backup(nisgroup_filename);
       gn_backuped = TRUE;
     }
   }

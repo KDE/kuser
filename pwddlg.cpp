@@ -28,7 +28,7 @@ pwddlg::pwddlg(KUser *AUser, QWidget* parent, const char* name)
   leusername1 = new QLineEdit(page, "LineEdit_1");
 
   // ensure it fits at least 12 characters
-  leusername1->setText("XXXXXXXXXXXX");
+  leusername1->setText(QString::fromLatin1("XXXXXXXXXXXX"));
   leusername1->setMinimumSize(leusername1->sizeHint());
 
   // clear text
@@ -44,7 +44,7 @@ pwddlg::pwddlg(KUser *AUser, QWidget* parent, const char* name)
   leusername2 = new QLineEdit(page, "LineEdit_2");
 
   // ensure it fits at least 12 characters
-  leusername2->setText("XXXXXXXXXXXX");
+  leusername2->setText(QString::fromLatin1("XXXXXXXXXXXX"));
   leusername2->setMinimumSize(leusername2->sizeHint());
 
   // clear text
@@ -79,12 +79,12 @@ void pwddlg::slotOk() {
 
 #ifdef HAVE_SHADOW
     if (is_shadow != 0) {
-      user->setSPwd(tmp);
-      user->setPwd("x");
+      user->setSPwd(QString::fromLocal8Bit(tmp));
+      user->setPwd(QString::fromLatin1("x"));
     }
     else
 #endif
-      user->setPwd(tmp);
+      user->setPwd(QString::fromLocal8Bit(tmp));
     accept();
   }
 }

@@ -11,6 +11,7 @@
 #include <kapplication.h>
 #include <qlayout.h>
 #include <qlabel.h>
+#include "misc.h"
 #include "globals.h"
 #include "userDefaultsPage.h"
 #include <klocale.h>
@@ -29,25 +30,13 @@ userDefaultsPage::userDefaultsPage(
   l->setFixedSize(l->sizeHint());
   tl->addWidget(l, 0, AlignLeft);
   shell = new QComboBox(this);  
+
+  QStringList shells = readShells();
   
   shell->clear();
   shell->insertItem(i18n("<Empty>"));
+  shell->insertStringList(shells);
 
-  FILE *f = fopen(SHELL_FILE,"r");
-  if (f) {
-    while (!feof(f)) {
-      char s[200];
-
-      fgets(s, 200, f);
-      if (feof(f))
-        break;
-
-      s[strlen(s)-1]=0;
-      if ((s[0])&&(s[0]!='#'))
-        shell->insertItem(s);
-    }
-    fclose(f);
-  }
   shell->setMinimumSize(shell->sizeHint());
   tl->addWidget(shell, 0, AlignLeft);
 

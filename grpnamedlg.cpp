@@ -24,7 +24,7 @@ grpnamedlg::grpnamedlg(KGroup &AGroup, QWidget* parent, const char* name)
 
   legrpname = new QLineEdit( page, "LineEdit_1" );
   // ensure it fits at least 20 characters
-  legrpname->setText("XXXXXXXXXXXXXXXXXXX");
+  legrpname->setText(QString::fromLatin1("XXXXXXXXXXXXXXXXXXX"));
   legrpname->setMinimumSize( legrpname->sizeHint() );
 
   // clear text
@@ -39,11 +39,11 @@ grpnamedlg::grpnamedlg(KGroup &AGroup, QWidget* parent, const char* name)
 
   legid = new QLineEdit(page, "LineEdit_2");
   // ensure it fits at least 20 characters
-  legid->setText("XXXXXXXXXXXXXXXXXXX");
+  legid->setText(QString::fromLatin1("XXXXXXXXXXXXXXXXXXX"));
   legid->setMinimumSize(legid->sizeHint());
   
   // clear text
-  legid->setText(QString("%1").arg(group.getGID()));
+  legid->setText(QString::fromLatin1("%1").arg(group.getGID()));
   legid->setValidator(new QIntValidator(this, "val1"));
   lb2->setBuddy(legid);
 }

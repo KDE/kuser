@@ -23,7 +23,9 @@
 #define _KU_VERSION "1.0"
 
 #include <config.h>
+#ifdef HAVE_PATHS_H
 #include <paths.h>
+#endif
 #include <kconfig.h>
 #include "kerror.h"
 
@@ -40,8 +42,8 @@ extern int is_shadow;
   #define SHELL_FILE _PATH_SHELLS
   #define MAIL_SPOOL_DIR _PATH_MAILDIR
 #else
-  #define SHELL_FILE /etc/shells
-  #define MAIL_SPOOL_DIR /var/spool/mail
+  #define SHELL_FILE "/etc/shells"
+  #define MAIL_SPOOL_DIR "/var/spool/mail"
 #endif
 
 #if defined(__FreeBSD__) || defined(__bsdi__)

@@ -496,6 +496,8 @@ bool KUserFiles::savepwd()
   return TRUE;
 }
 
+#undef escstr
+
 // Save shadow passwords file
 
 bool KUserFiles::savesdw()

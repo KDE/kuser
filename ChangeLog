@@ -1,3 +1,4 @@
+28/04/2000: Move KUser to actions.
 24/03/2000: Move quota ifdef code to kuqconf.h.
              Error messages are without flags now.
 12/07/1999: fgetpwent/getpwent/fgetgrent/getgrent issue fixed (FreeBSD have no

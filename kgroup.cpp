@@ -31,9 +31,9 @@
 
 KGroup::KGroup() {
   u.setAutoDelete(TRUE);
-  name.setStr("");
-  pwd.setStr("*");
-  gid     = 0;
+  name = "";
+  pwd  = "*";
+  gid  = 0;
 }
   
 KGroup::KGroup(KGroup *copy) {
@@ -61,11 +61,11 @@ unsigned int KGroup::getgid() {
 }
 
 void KGroup::setname(const char *data) {
-  name.setStr(data);
+  name = data;
 }
 
 void KGroup::setpwd(const char *data) {
-  pwd.setStr(data);
+  pwd = data;
 }
 
 void KGroup::setgid(unsigned int data) {

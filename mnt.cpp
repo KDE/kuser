@@ -7,11 +7,11 @@
 MntEnt::MntEnt(const char *afsname, const char *adir,
                const char *atype, const char *aopts,
                const char *aquotafilename){
-    fsname.setStr(afsname);
-    dir.setStr(adir);
-    type.setStr(atype);
-    opts.setStr(aopts);
-    quotafilename.setStr(aquotafilename);
+    fsname = afsname;
+    dir    = adir;
+    type   = atype;
+    opts   = aopts;
+    quotafilename = aquotafilename;
 }
 
 MntEnt::~MntEnt() {
@@ -38,23 +38,23 @@ QString MntEnt::getquotafilename() {
 }
 
 void MntEnt::setfsname(const char *data) {
-  fsname.setStr(data);
+  fsname = data;
 }
 
 void MntEnt::setdir(const char *data) {
-  dir.setStr(data);
+  dir = data;
 }
 
 void MntEnt::settype(const char *data) {
-  type.setStr(data);
+  type = data;
 }
 
 void MntEnt::setopts(const char *data) {
-  opts.setStr(data);
+  opts = data;
 }
 
 void MntEnt::setquotafilename(const char *data) {
-  quotafilename.setStr(data);
+  quotafilename = data;
 }
 
 Mounts::Mounts() {

@@ -92,7 +92,7 @@ void grpnamedlg::ok()
 {
   QString tmp;
   QString s;
-  s.setStr(legid->text());
+  s = legid->text();
 
   if (groups->lookup(legrpname->text()) != NULL) {
     ksprintf(&tmp, i18n("Group with name %s already exists."), legrpname->text());

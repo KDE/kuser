@@ -65,7 +65,7 @@ void addUser::setUsePrivateGroup(bool data) {
 void addUser::ok() {
   QString tmp;
   uint newuid;
-  tmp.setStr(leid->text());
+  tmp = leid->text();
   newuid = tmp.toInt();
   
   if (users->lookup(newuid) != NULL) {

@@ -459,7 +459,7 @@ void propdlg::charchanged(const char *) {
 void propdlg::save() {
   QString tmp;
   uint newuid;
-  tmp.setStr(leid->text());
+  tmp = leid->text();
   newuid = tmp.toInt();
 #ifdef __FreeBSD__
   QDateTime *epoch = new QDateTime();
@@ -676,7 +676,7 @@ void propdlg::setpwd() {
 void propdlg::ok() {
   QString tmp;
   uint newuid;
-  tmp.setStr(leid->text());
+  tmp = leid->text();
   newuid = tmp.toInt();
 
 printf("propdlg::ok\n");

@@ -3,7 +3,7 @@
 #include "kerror.h"
 
 KErrorMsg::KErrorMsg(const char *amsg, KErrorType aerr) {
-  msg.setStr(amsg);
+  msg = amsg;
   err = aerr;
 }
 

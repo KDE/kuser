@@ -348,7 +348,7 @@ void mainDlg::setpwd() {
 }
 
 void mainDlg::help() {
-  kapp->invokeHTMLHelp(0,0);
+  kapp->invokeHTMLHelp("","");
 }
 
 void mainDlg::properties() {

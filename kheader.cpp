@@ -9,7 +9,7 @@ class KHeaderItem {
 public:
     KHeaderItem( QWidget *parent, int aflags,
 				 int size = 0, QString *label = 0,
-                 int alignment = AlignCenter );
+                 int alignment = Qt::AlignCenter );
 	virtual ~KHeaderItem();
     void setSize( int size );
     int size();
@@ -78,7 +78,7 @@ void KHeaderItem::paint(QPainter *paint, QColorGroup *g, int style, int pos, int
 	{
 		if( pos>height || pos+m_size<0 )
 			return;
-		if(style==MotifStyle)
+		if(style==Qt::MotifStyle)
 			qDrawShadePanel(paint,0,pos,width,m_size,*g,state,1,0);
 		else
 			qDrawWinPanel(paint,0,pos,width,m_size,*g,state,0);
@@ -89,7 +89,7 @@ void KHeaderItem::paint(QPainter *paint, QColorGroup *g, int style, int pos, int
 	{
 		if( pos>width || pos+m_size<0 )
 			return;
-		if(style==MotifStyle)
+		if(style==Qt::MotifStyle)
 			qDrawShadePanel(paint,pos,0,m_size,height,*g,state,1,0);
 		else
 			qDrawWinPanel(paint,pos,0,m_size,height,*g,state,0);
@@ -154,12 +154,12 @@ void KHeader::fontChange( const QFont &oldfont )
 
 bool KHeader::eventFilter( QObject *obj, QEvent *ev )
 {
-	if( ev->type()==Event_MouseButtonPress && divider!=-1 ) {
+	if( ev->type()==QEvent::MouseButtonPress && divider!=-1 ) {
 		m_resizing=TRUE;
 		return TRUE;
 	}
 
-	if( ev->type()==Event_MouseMove ) {
+	if( ev->type()==QEvent::MouseMove ) {
 		QMouseEvent *mev = (QMouseEvent*)ev;
 		if(m_resizing) {
 			if( m_flags & Vertical ) {
@@ -190,7 +190,7 @@ bool KHeader::eventFilter( QObject *obj, QEvent *ev )
 		}
 	}
 
-	if( ev->type()==Event_MouseButtonRelease && m_resizing ) {
+	if( ev->type()==QEvent::MouseButtonRelease && m_resizing ) {
 		emit sizeChanged( divider, labels[divider]->size() );
 		m_resizing = FALSE;
 		return TRUE;

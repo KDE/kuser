@@ -43,28 +43,28 @@
 // class KUser
 
 KUser::KUser() {
-  p_name.setStr("");
-  p_pwd.setStr("*");
-  p_dir.setStr("");
-  p_shell.setStr("");
-  p_fname.setStr("");
+  p_name  = "";
+  p_pwd   = "*";
+  p_dir   = "";
+  p_shell = "";
+  p_fname = "";
 #ifdef __FreeBSD__
-  p_office.setStr("");
-  p_ophone.setStr("");
-  p_hphone.setStr("");
-  p_class.setStr("");
+  p_office = "";
+  p_ophone = "";
+  p_hphone = "";
+  p_class  = "";
   p_change = 0;
   p_expire = 0;
 #else
-  p_office1.setStr("");
-  p_office2.setStr("");
-  p_address.setStr("");
+  p_office1 = "";
+  p_office2 = "";
+  p_address = "";
 #endif
   p_uid     = 0;
   p_gid     = 100;
 
 #ifdef _KU_SHADOW   
-  s_pwd.setStr("");
+  s_pwd     = "";
   s_lstchg  = 0;
   s_min     = 0;
   s_max     = -1;
@@ -201,43 +201,43 @@ int KUser::gets_flag() {
 #endif
 
 void KUser::setp_name(const char *data) {
-  p_name.setStr(data);
+  p_name = data;
 }
 
 void KUser::setp_pwd(const char *data) {
-  p_pwd.setStr(data);
+  p_pwd = data;
 }
 
 void KUser::setp_dir(const char *data) {
-  p_dir.setStr(data);
+  p_dir = data;
 }
 
 void KUser::setp_shell(const char *data) {
-  p_shell.setStr(data);
+  p_shell = data;
 }
 
 void KUser::setp_fname(const char *data) {
-  p_fname.setStr(data);
+  p_fname = data;
 }
 
 #ifdef __FreeBSD__
 // FreeBSD apparently uses the GECOS fields differently than other Unices.
 // Create some better named functions to make the FreeBSD code clear
 void KUser::setp_office(const char *data) {
-  p_office.setStr(data);
+  p_office = data;
 }
 
 void KUser::setp_ophone(const char *data) {
-  p_ophone.setStr(data);
+  p_ophone = data;
 }
 
 void KUser::setp_hphone(const char *data) {
-  p_hphone.setStr(data);
+  p_hphone = data;
 }
 
 // New fields needed for the FreeBSD /etc/master.passwd file
 void KUser::setp_class(const char *data) {
-  p_class.setStr(data);
+  p_class = data;
 }
 
 void KUser::setp_change(time_t data) {
@@ -251,15 +251,15 @@ void KUser::setp_expire(time_t data) {
 #else
 
 void KUser::setp_office1(const char *data) {
-  p_office1.setStr(data);
+  p_office1 = data;
 }
 
 void KUser::setp_office2(const char *data) {
-  p_office2.setStr(data);
+  p_office2 = data;
 }
 
 void KUser::setp_address(const char *data) {
-  p_address.setStr(data);
+  p_address = data;
 }
 
 #endif
@@ -274,7 +274,7 @@ void KUser::setp_gid(unsigned int data) {
 
 #ifdef _KU_SHADOW
 void KUser::sets_pwd(const char *data) {
-  s_pwd.setStr(data);
+  s_pwd = data;
 }
 
 void KUser::sets_lstchg(long data) {

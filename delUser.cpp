@@ -34,7 +34,7 @@ delUser::delUser(KUser *AUser, QWidget *parent, const char *name)
   m_deleteHomeDir = new QCheckBox(i18n("Delete &home folder: %1").arg(AUser->getHomeDir()), page);
   QString mailboxpath = QString::fromLatin1("%1/%2").arg(QString::fromLatin1(MAIL_SPOOL_DIR)).arg(AUser->getName());
   m_deleteMailBox = new QCheckBox(i18n("Delete &mailbox: %1").arg(mailboxpath), page);
-  setButtonText(Ok, i18n("&Delete"));
+  setButtonGuiItem(KDialogBase::Ok, KGuiItem(i18n("&Delete"), QString::fromLatin1("editdelete")) );
 }
 
 #include "delUser.moc"

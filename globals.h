@@ -53,7 +53,6 @@ extern int is_shadow;
   #endif
 #endif
 
-extern char picspath[200];
 extern KConfig *config;
 extern KError *err;
 
@@ -66,5 +65,10 @@ extern KError *err;
 extern "C" int getuid(void);
 extern "C" int unlink(const char *);
 #endif
+
+#define KU_HOMEDIR_PERM 0755
+#define KU_MAILBOX_PERM 0660
+
+#define KU_MAILBOX_GID 0
 
 #endif // _KU_GLOBALS_H_

@@ -817,7 +817,7 @@ void KUser::createHome() {
     err->display();
   }
 
-  if (chmod((const char *)p_dir, 0755) != 0) {
+  if (chmod((const char *)p_dir, KU_HOMEDIR_PERM) != 0) {
     QString tmp;
     ksprintf(&tmp, i18n("Cannot change permissions on home directory\nError: %s"), strerror(errno));
     err->addMsg(tmp, STOP);
@@ -838,14 +838,26 @@ int KUser::createMailBox() {
     err->display();
     return -1;
   }
-  if(fchown(fd, p_uid, 0) < 0) {
+
+  close(fd);
+
+  if (chown((const char *)mailboxpath, p_uid, KU_MAILBOX_GID) != 0) {
     QString tmp;
-    ksprintf(&tmp, "Cannot chown %s: %s", (const char *)mailboxpath,
-             strerror(errno));
+    ksprintf(&tmp, "Cannot change owner on mailbox: %s\nError: %s",
+             (const char *)mailboxpath, strerror(errno));
     err->addMsg(tmp, STOP);
     err->display();
     return -1;
   }
+
+  if (chmod((const char *)mailboxpath, KU_MAILBOX_PERM) != 0) {
+    QString tmp;
+    ksprintf(&tmp, i18n("Cannot change permissions on mailbox: %s\nError: %s"),
+             (const char *)mailboxpath, strerror(errno));
+    err->addMsg(tmp, STOP);
+    err->display();
+  }
+
   return 0;
 }
 

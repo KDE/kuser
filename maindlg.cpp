@@ -31,9 +31,7 @@
 
 #include "editDefaults.h"
 
-mainDlg::mainDlg(QWidget *parent) :
-QWidget(parent)
-{
+mainDlg::mainDlg(QWidget *parent) : QWidget(parent) {
   changed = FALSE;
   prev = 0;
 
@@ -394,8 +392,6 @@ void mainDlg::groupSelected(int i) {
   }
 
   egdlg = new editGroup(tmpKG);
-
-  egdlg->setCaption(i18n("Group properties"));
 
   if (egdlg->exec() != 0)
     changed = TRUE;

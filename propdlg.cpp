@@ -365,7 +365,7 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
   isqchanged = FALSE;
 #endif
 
-  setCaption(i18n("Edit User"));
+  setCaption(i18n("User properties"));
 }
 
 propdlg::~propdlg() {

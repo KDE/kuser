@@ -7,17 +7,16 @@
 
  *********************************************************************/
 
+#include <kapp.h>
+
 #include "maindlg.h"
 #include "editGroup.moc"
 #include "editGroupData.moc"
 
 #define Inherited editGroupData
 
-editGroup::editGroup(KGroup *akg,
-		       QWidget* parent,
-		       const char* name)
-  :Inherited( parent, name )
-{
+editGroup::editGroup(KGroup *akg, QWidget* parent, const char* name) 
+: Inherited(parent, name) {
   uint i;
 
   kg = akg;
@@ -33,12 +32,11 @@ editGroup::editGroup(KGroup *akg,
     m_Users->setCurrentItem(0);
   if (m_Group->count() != 0)
     m_Group->setCurrentItem(0);
+
+  setCaption(i18n("Group properties"));
 }
 
-
-
-editGroup::~editGroup()
-{
+editGroup::~editGroup() {
 }
 
 void editGroup::ok() {

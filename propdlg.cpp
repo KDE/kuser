@@ -40,7 +40,7 @@ static void addRow(QWidget *parent, QGridLayout *layout, int row, QWidget *widge
       layout->addWidget(widget, row, 1);
 }
 
-#ifdef _KU_SHADOW
+#ifdef HAVE_SHADOW
 #if 0
 KDateWidget *propdlg::addDateGroup(QWidget *parent, QGridLayout *layout, int row, 
 	const QString &title, int days)
@@ -257,7 +257,7 @@ propdlg::propdlg(KUser *AUser, QWidget *parent, const char *name, int)
     frontrow = row;
   }
 
-#ifdef _KU_SHADOW
+#ifdef HAVE_SHADOW
   // Tab 2 : Password Management
   if (is_shadow != 0) {
     QFrame *frame = addPage(i18n("Password Managment"));
@@ -539,7 +539,7 @@ void propdlg::save() {
   else
     user->setShell("");
 
-#ifdef _KU_SHADOW
+#ifdef HAVE_SHADOW
   if (is_shadow) {
     QDate epoch(1970,1,1);
     if (lesmin->isEnabled())

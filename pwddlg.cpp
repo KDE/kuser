@@ -78,7 +78,7 @@ void pwddlg::slotOk() {
 
     strcpy(tmp, crypt(QFile::encodeName(leusername1->text()), salt));
 
-#ifdef _KU_SHADOW
+#ifdef HAVE_SHADOW
     if (is_shadow != 0) {
       user->setSPwd(tmp);
       user->setPwd("x");

@@ -13,7 +13,7 @@
 #endif
 
 #if defined(__FreeBSD__) || defined(__bsdi__)
-#undef _KU_SHADOW
+#undef HAVE_SHADOW
 #endif
 
 class KUsers;
@@ -49,7 +49,7 @@ public:
 
 #endif
 
-#ifdef _KU_SHADOW
+#ifdef HAVE_SHADOW
   const QString &getSPwd() const;
   long getLastChange() const;
   int getMin() const;
@@ -82,7 +82,7 @@ public:
   void setAddress(const QString &data);
 #endif
 
-#ifdef _KU_SHADOW
+#ifdef HAVE_SHADOW
   void setSPwd(const QString &data);
   void setLastChange(long data);
   void setMin(int data);
@@ -139,7 +139,7 @@ protected:
   uid_t p_uid;
   gid_t p_gid;
 
-#ifdef _KU_SHADOW
+#ifdef HAVE_SHADOW
   QString
     s_pwd;                         // parsed shadow information
   long

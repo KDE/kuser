@@ -12,7 +12,7 @@
 #include <limits.h>
 #include <stdlib.h>
 
-#ifdef _KU_SHADOW
+#ifdef HAVE_SHADOW
 #include <shadow.h>
 #endif
 

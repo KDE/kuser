@@ -196,7 +196,7 @@ void mainView::useradd() {
   tk->setAddress(readentry("p_address"));
 #endif
 
-#ifdef _KU_SHADOW
+#ifdef HAVE_SHADOW
   tk->setLastChange(today());
   if (config->hasKey("s_min"))
     tk->setMin(readnumentry("s_min"));

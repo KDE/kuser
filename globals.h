@@ -24,14 +24,14 @@ extern int is_shadow;
   #define PASSWORD_FILE_MASK S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH
   #define GROUP_FILE "/etc/group"
   #define GROUP_FILE_MASK S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH
-  #undef _KU_SHADOW
+  #undef HAVE_SHADOW
   #define PWMKDB "cd /var/yp; make 2>&1 >> /var/log/kuser"
   #define GRMKDB "cd /var/yp; make 2>&1 >> /var/log/kuser"
   #define SKELDIR "/etc/skel"
   #define SKEL_FILE_PREFIX ""
 #else
   #if	defined(__FreeBSD__) || defined(__bsdi__)
-    #undef _KU_SHADOW
+    #undef HAVE_SHADOW
     #include <pwd.h>
     #include <paths.h>
     #define SHELL_FILE _PATH_SHELLS
@@ -56,7 +56,7 @@ extern int is_shadow;
 extern KConfig *config;
 extern KError *err;
 
-#ifdef _KU_SHADOW
+#ifdef HAVE_SHADOW
 #define SHADOW_FILE "/etc/shadow"
 #define SHADOW_FILE_MASK S_IRUSR | S_IWUSR
 #endif

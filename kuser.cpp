@@ -26,7 +26,7 @@
 #include <signal.h>
 #endif
 
-#ifdef _KU_SHADOW
+#ifdef HAVE_SHADOW
 #include <shadow.h>
 #endif
 
@@ -63,7 +63,7 @@ KUser::KUser() : p_pwd("*") {
   p_uid     = 0;
   p_gid     = 100;
 
-#ifdef _KU_SHADOW   
+#ifdef HAVE_SHADOW   
   s_lstchg  = 0;
   s_min     = 0;
   s_max     = -1;
@@ -103,7 +103,7 @@ void KUser::copy(const KUser *user) {
   p_uid     = user->p_uid;
   p_gid     = user->p_gid;
 
-#ifdef _KU_SHADOW   
+#ifdef HAVE_SHADOW   
   s_pwd = user->s_pwd;
   s_lstchg  = user->s_lstchg;
   s_min     = user->s_min;
@@ -206,7 +206,7 @@ gid_t KUser::getGID() const {
   return p_gid;
 }
 
-#ifdef _KU_SHADOW
+#ifdef HAVE_SHADOW
 const QString &KUser::getSPwd() const {
   return s_pwd;
 }
@@ -312,7 +312,7 @@ void KUser::setGID(gid_t data) {
   p_gid = data;
 }
 
-#ifdef _KU_SHADOW
+#ifdef HAVE_SHADOW
 void KUser::setSPwd(const QString &data) {
   s_pwd = data;
 }
@@ -536,7 +536,7 @@ bool KUsers::loadpwd() {
 // Load shadow passwords
 
 bool KUsers::loadsdw() {
-#ifdef _KU_SHADOW
+#ifdef HAVE_SHADOW
   QString tmp;
   struct spwd *spw;
   KUser *up = NULL;
@@ -583,7 +583,7 @@ bool KUsers::loadsdw() {
   }
 
   endspent();
-#endif // _KU_SHADOW
+#endif // HAVE_SHADOW
   return TRUE;
 }
 
@@ -826,7 +826,7 @@ bool KUsers::savepwd() {
 // Save shadow passwords file
 
 bool KUsers::savesdw() {
-#ifdef _KU_SHADOW
+#ifdef HAVE_SHADOW
   QString tmp;
   FILE *f;
   struct spwd *spwp;
@@ -879,7 +879,7 @@ bool KUsers::savesdw() {
 
   free(s.sp_namp);
   free(s.sp_pwdp);
-#endif // _KU_SHADOW
+#endif // HAVE_SHADOW
   return TRUE;
 }
 

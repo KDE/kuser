@@ -53,7 +53,7 @@ protected:
   int chquota;
   bool isqchanged;
 #endif
-#ifdef _KU_SHADOW
+#ifdef HAVE_SHADOW
   KDateWidget *addDateGroup(QWidget  *parent, QGridLayout *layout, int row, const QString &title, int days);
   KIntSpinBox *addDaysGroup(QWidget  *parent, QGridLayout *layout, int row, const QString &title, const QString &title2, int days, bool never=true);
 #endif
@@ -111,7 +111,7 @@ protected:
   QLabel      *leqicur;
 #endif
 
-#ifdef _KU_SHADOW
+#ifdef HAVE_SHADOW
   QLabel *leslstchg;
   KIntSpinBox *lesmin;
   KIntSpinBox *lesmax;

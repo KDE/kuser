@@ -33,7 +33,7 @@ int is_quota = 1;
 int is_quota = 0;
 #endif
 
-#ifdef _KU_SHADOW
+#ifdef HAVE_SHADOW
 int is_shadow = 1;
 #else
 int is_shadow = 0;

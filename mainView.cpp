@@ -170,7 +170,6 @@ void mainView::useradd() {
 
   KLineEditDlg dlg(i18n("Enter user name:"), QString::null, this);
   dlg.setCaption(i18n("Add User"));
-  tk->setName(dlg.text());
   
   if (!dlg.exec())  {
     delete tk;
@@ -179,6 +178,7 @@ void mainView::useradd() {
 #endif
     return;
   }
+  tk->setName(dlg.text());
 
   if (kug->getUsers().lookup(dlg.text())) {
     KMessageBox::error( 0, i18n("User with name %1 already exists.").arg(dlg.text()) );

@@ -23,7 +23,7 @@
   <group name="connection-$(connection)">
     <entry name="source" type="Enum">
     <label>The source of the user and group database</label>
-    <whatsthis>This option allows to select where the user/group data stored. Currently three storage backends supported. &lt;BR&gt;&lt;B&gt;Files&lt;/B&gt; stores user/group data in traditional /etc/passwd and /etc/group flat files. &lt;BR&gt;&lt;B&gt;LDAP&lt;/B&gt; stores data in a directory server using the posixAccount and posixGroup object classes. Also this backend allows to manage Samba users/groups via the sambaSamAccount object class&lt;BR&gt;&lt;B&gt;System&lt;/B&gt; provides a read-only access to all users and groups which your installation knows about.</whatsthis>
+    <whatsthis>This option allows you to select where the user/group data stored. Currently three storage backends are supported. &lt;BR&gt;&lt;B&gt;Files&lt;/B&gt; stores user/group data in traditional /etc/passwd and /etc/group flat files. &lt;BR&gt;&lt;B&gt;LDAP&lt;/B&gt; stores data in a directory server using the posixAccount and posixGroup object classes; this backend allows allows the management of Samba users/groups via the sambaSamAccount object class.&lt;BR&gt;&lt;B&gt;System&lt;/B&gt; provides a read-only access to all users and groups which your installation knows about.</whatsthis>
     <choices>
       <choice name="Files"/>
       <choice name="LDAP"/>

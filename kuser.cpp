@@ -134,43 +134,43 @@ bool KUser::getCopySkel() {
   return isCopySkel;
 }
 
-const QString &KUser::getName() const {
+QString KUser::getName() const {
   return p_name;
 }
 
-const QString &KUser::getPwd() const {
+QString KUser::getPwd() const {
   return p_pwd;
 }
 
-const QString &KUser::getHomeDir() const {
+QString KUser::getHomeDir() const {
   return p_dir;
 }
 
-const QString &KUser::getShell() const {
+QString KUser::getShell() const {
   return p_shell;
 }
 
-const QString &KUser::getFullName() const {
+QString KUser::getFullName() const {
   return p_fname;
 }
 
 #if defined(__FreeBSD__) || defined(__bsdi__)
 // FreeBSD apparently uses the GECOS fields differently than other Unices.
 // Create some better named functions to make the FreeBSD code clear
-const QString &KUser::getOffice() const {
+QString KUser::getOffice() const {
   return p_office;
 }
 
-const QString &KUser::getWorkPhone() const {
+QString KUser::getWorkPhone() const {
   return p_ophone;
 }
 
-const QString &KUser::getHomePhone() const {
+QString KUser::getHomePhone() const {
   return p_hphone;
 }
 
 // New fields needed for the FreeBSD /etc/master.passwd file
-const QString &KUser::getClass() const {
+QString KUser::getClass() const {
   return p_class;
 }
 
@@ -184,15 +184,15 @@ time_t KUser::getExpire() const {
 
 #else
 
-const QString &KUser::getOffice1() const {
+QString KUser::getOffice1() const {
   return p_office1;
 }
 
-const QString &KUser::getOffice2() const {
+QString KUser::getOffice2() const {
   return p_office2;
 }
 
-const QString &KUser::getAddress() const {
+QString KUser::getAddress() const {
   return p_address;
 }
 
@@ -207,7 +207,7 @@ gid_t KUser::getGID() const {
 }
 
 #ifdef HAVE_SHADOW
-const QString &KUser::getSPwd() const {
+QString KUser::getSPwd() const {
   return s_pwd;
 }
 

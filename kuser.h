@@ -26,31 +26,31 @@ public:
 
   void copy(const KUser *user);
 
-  const QString &getName() const;
-  const QString &getPwd() const;
-  const QString &getHomeDir() const;
-  const QString &getShell() const;
-  const QString &getFullName() const;
+  QString getName() const;
+  QString getPwd() const;
+  QString getHomeDir() const;
+  QString getShell() const;
+  QString getFullName() const;
 
   uid_t getUID() const;
   uid_t getGID() const;
 
 #if defined(__FreeBSD__) || defined(__bsdi__)
-  const QString &getOffice() const;
-  const QString &getWorkPhone() const;
-  const QString &getHomePhone() const;
-  const QString &getClass() const;
+  QString getOffice() const;
+  QString getWorkPhone() const;
+  QString getHomePhone() const;
+  QString getClass() const;
   time_t getLastChange() const;
   time_t getExpire() const;
 #else
-  const QString &getOffice1() const;
-  const QString &getOffice2() const;
-  const QString &getAddress() const;
+  QString getOffice1() const;
+  QString getOffice2() const;
+  QString getAddress() const;
 
 #endif
 
 #ifdef HAVE_SHADOW
-  const QString &getSPwd() const;
+  QString getSPwd() const;
   long getLastChange() const;
   int getMin() const;
   int getMax() const;

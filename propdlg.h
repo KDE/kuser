@@ -56,6 +56,7 @@ protected:
   void saveg();
   bool check();
   void loadgroups();
+  bool checkShell(const QString &shell);
 
 #ifdef _KU_QUOTA
   void saveq();
@@ -76,6 +77,7 @@ protected:
   bool ischanged;
   bool isgchanged;
   uid_t olduid;
+  QString oldshell;
 
   KListView *lstgrp;
 

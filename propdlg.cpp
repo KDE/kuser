@@ -10,6 +10,7 @@
 #include <qgroupbox.h>
 
 #include <kseparator.h>
+#include <kmessagebox.h>
 #include <kglobal.h>
 
 #include <qvalidator.h>
@@ -163,26 +164,11 @@ propdlg::propdlg(KUser *AUser, QWidget *parent, const char *name, int)
     leshell->clear();
     leshell->insertItem(i18n("<Empty>"));
 
-    QStringList shells;
-
-    FILE *f = fopen(SHELL_FILE,"r");
-    if (f) {
-      while (!feof(f)) {
-        char s[200];
-
-        fgets(s, 200, f);
-        if (feof(f))
-          break;
-
-        s[strlen(s)-1]=0;
-        if ((s[0])&&(s[0]!='#'))
-          shells.append(s);
-      }
-      fclose(f);
-    }
+    QStringList shells = readShells();
     shells.sort();
     leshell->insertStringList(shells);
     QObject::connect(leshell, SIGNAL(activated(const QString &)), this, SLOT(changed()));
+    QObject::connect(leshell, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
 //    whatstr = i18n("WHAT IS THIS: Login Shell");
     addRow(frame, layout, row++, leshell, i18n("Login shell:"), whatstr);
 
@@ -487,10 +473,10 @@ void propdlg::save() {
 #endif
 
   user->setHomeDir(lehome->text());
-  if (leshell->currentItem() != 0)
-    user->setShell(leshell->text(leshell->currentItem()));
-  else
-    user->setShell("");
+qWarning("Shell = '%s'", leshell->currentText().latin1());
+  user->setShell(leshell->currentText());
+  // TODO: Check shell.
+
 
 #ifdef HAVE_SHADOW
   if (is_shadow) {
@@ -581,6 +567,12 @@ void propdlg::mntsel(int) {
 }
 #endif
 
+bool propdlg::checkShell(const QString &shell)
+{
+   QStringList shells = readShells();
+   return shells.contains(shell);
+}
+
 bool propdlg::check() {
   bool ret = false;
 
@@ -615,16 +607,17 @@ void propdlg::selectuser() {
 
   lefname->setText(user->getFullName());
 
-  if (user->getShell().isEmpty() != TRUE) {
+  oldshell = user->getShell();
+  if (oldshell.isEmpty() != TRUE) {
     bool tested = FALSE;
     for (int i=0; i<leshell->count(); i++)
-      if (leshell->text(i) == user->getShell()) {
+      if (leshell->text(i) == oldshell) {
         tested = TRUE;
         leshell->setCurrentItem(i);
         break;
       }
     if (!tested) {
-      leshell->insertItem(user->getShell());
+      leshell->insertItem(oldshell);
       leshell->setCurrentItem(leshell->count()-1);
     }
   } else
@@ -679,11 +672,34 @@ void propdlg::slotOk() {
   uid_t newuid = leid->text().toInt();
 
   if (olduid != newuid)
+  {
     if (kug->getUsers().lookup(newuid)) {
       err->addMsg(i18n("User with UID %1 already exists").arg(newuid));
       err->display();
       return;
     }
+  }
+  
+  QString newshell = leshell->currentText();
+  
+  if (oldshell != newshell)
+  {
+    if (!checkShell(newshell)) {
+      int result = KMessageBox::warningYesNoCancel(this,
+      		i18n("<p>The shell %1 is not yet listed in the file %2. "
+      		     "In order to use this shell you must add it to "
+      		     "this file first."
+      		     "<p>Do you want to add it now?").arg(newshell).arg(SHELL_FILE),
+      		i18n("Unlisted Shell"),
+      		i18n("&Add Shell"),
+      		i18n("Do &Not Add"));
+      	if (result == KMessageBox::Cancel)
+      	  return;
+      	
+      	if (result == KMessageBox::Yes)
+      	  addShell(newshell);
+    }
+  }
     
   if (check())
     accept();

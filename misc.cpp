@@ -146,3 +146,40 @@ int copyFile(const QString & from, const QString & to) {
     
   return (0);
 }
+
+QStringList readShells()
+{
+    QStringList shells;
+
+    FILE *f = fopen(SHELL_FILE,"r");
+    if (f) {
+      while (!feof(f)) {
+        char s[200];
+
+        fgets(s, 200, f);
+        if (feof(f))
+          break;
+
+        s[strlen(s)-1]=0;
+        if ((s[0])&&(s[0]!='#'))
+          shells.append(s);
+      }
+      fclose(f);
+    }
+    return shells;
+}
+
+void addShell(const QString &shell)
+{
+    QStringList shells = readShells();
+    if (shells.contains(shell))
+       return;
+    
+    FILE *f = fopen(SHELL_FILE,"a");
+    if (f)
+    {
+        fputs(shell.latin1(), f);
+        fputc('\n', f); 
+    }
+    fclose(f);
+}

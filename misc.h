@@ -19,5 +19,7 @@ int getValue(int &data, const QString & text, const QString & msg);
 int getValue(unsigned int &data, const QString & text, const QString & msg);
 long today();
 int copyFile(const QString & from, const QString & to);
+QStringList readShells();
+void addShell(const QString &shell);
 
 #endif // _KU_MISC_H

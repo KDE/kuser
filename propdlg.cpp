@@ -423,6 +423,7 @@ void propdlg::add() {
 
   m_Group->insertItem(m_Other->text(cur));
   m_Other->removeItem(cur);
+	saveg();										/* save groups user added to */
 
   if (((uint)cur) == m_Other->count())
     m_Other->setCurrentItem(cur-1);
@@ -443,6 +444,7 @@ void propdlg::del() {
 
   m_Other->insertItem(m_Group->text(cur));
   m_Group->removeItem(cur);
+	saveg();										/* save groups user removed from */
 
   if (((uint)cur) == m_Group->count())
     m_Group->setCurrentItem(cur-1);
@@ -516,13 +518,15 @@ void propdlg::save() {
 
 void propdlg::saveg() {
   uint i;
+  uint G_cnt = m_Group->count();				/* determine #groups included in */
+  uint O_cnt = m_Other->count();				/* determine #groups excluded from */
 
   const QString &userName = user.getName();
-  for (i=0;i<m_Group->count();i++)
-    if (kug->getGroups().lookup(m_Group->text(i))->lookup_user(userName))
+  for (i=0;i<G_cnt;i++)
+    if (!kug->getGroups().lookup(m_Group->text(i))->lookup_user(userName))
       kug->getGroups().lookup(m_Group->text(i))->addUser(userName);
   
-  for (i=0;i<m_Other->count();i++)
+  for (i=0;i<O_cnt;i++)
     if (kug->getGroups().lookup(m_Other->text(i))->lookup_user(userName))
       kug->getGroups().lookup(m_Other->text(i))->removeUser(userName);
 
@@ -574,7 +578,6 @@ bool propdlg::check() {
 
   if (ischanged) {
     save();
-    saveg();
     ret = TRUE;
   }
 

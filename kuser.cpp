@@ -827,7 +827,7 @@ int KUser::createKDE() {
 	for(uint i=0; i<types.count(); i++) {					/* build kde subdirectories */
 		k_dir = p_dir;															/* start with $HOME dir			*/
 		k_dir.append(levels[0]);										/* add base dir "/.kde/"		*/
-		const char *ctype = types[i].latin1();						/* convert to char for call	*/
+		const char *ctype = types[i].latin1();			/* convert to char for call	*/
   	QString tpath = KStandardDirs::kde_default(ctype);		/* get deflt path */
 		k_dir.append(tpath);												/* complete full path name	*/
 		if (tryCreate(k_dir))												/* able to create it?				*/

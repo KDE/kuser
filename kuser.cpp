@@ -38,6 +38,7 @@
 #include "misc.h"
 #include <kstddirs.h>
 #include <kmessagebox.h>
+#include "editDefaults.h"	
 
 #ifdef _KU_QUOTA
 #include "mnt.h"
@@ -359,7 +360,8 @@ void KUser::setCopySkel(bool data) {
 }
 
 KUsers::KUsers() {
-  p_backuped = FALSE;
+  pw_backuped = FALSE;		
+  pn_backuped = FALSE;		
   s_backuped = FALSE;
 
   pwd_mode = 0644;
@@ -425,58 +427,111 @@ bool KUsers::load() {
 bool KUsers::loadpwd() {
   passwd *p;
   KUser *tmpKU = 0;
-
-  // Start reading passwd file
-
   struct stat st;
+  QString filename;				
+  QString passwd_filename;			
+  QString nispasswd_filename;			
+  int rc = 0;					
+  int passwd_errno = 0;				
+  int nispasswd_errno = 0;			
+  char processing_file = '\0';			
+  #define PASSWD    0x01			
+  #define NISPASSWD 0x02			
 
-  stat(PASSWORD_FILE, &st);
-  pwd_mode = st.st_mode & 0666;
-  pwd_uid = st.st_uid;
-  pwd_gid = st.st_gid;
+  // Prepare to read KUser configuration	
 
-  // We are reading our PASSWORD_FILE
-  QString tmp;
-#ifdef HAVE_FGETPWENT
-  FILE *fpwd = fopen(PASSWORD_FILE, "r");
-  if(fpwd == NULL) {
-     err->addMsg(i18n("Error opening %1 for reading").arg(PASSWORD_FILE));
-     return FALSE;
+  config->setGroup("template");		
+  passwd_filename = config->readEntry("passwdsrc");	
+  if(!passwd_filename.isEmpty()) {			
+    processing_file = processing_file | PASSWD;		
+    filename.append(passwd_filename);			
   }
 
-  while ((p = fgetpwent(fpwd)) != NULL) {
+  // Start reading passwd file(s)
+
+  for(int i = 0; i < 2; i++) {
+    rc = stat(QFile::encodeName(filename), &st);		
+    if(rc != 0) {						
+      err->addMsg(i18n("stat call on file %1 failed: %2\nCheck KUser Settings (Sources)\n").arg(filename).arg(strerror(errno)));	
+      err->display();						
+      if( (processing_file & PASSWD) != 0 ) {			
+        passwd_errno = rc;					
+        nispasswd_filename = config->readEntry("nispasswdsrc");	
+        if(!nispasswd_filename.isEmpty()) {			
+          processing_file = processing_file & ~PASSWD;		
+          processing_file = processing_file | NISPASSWD;	
+          filename.truncate(0);					
+          filename.append(nispasswd_filename);	
+        } 
+        continue;				
+      }						
+      else{					
+        nispasswd_errno = rc;					
+        break;					
+      }						
+    }						
+
+    pwd_mode = st.st_mode & 0666;
+    pwd_uid = st.st_uid;
+    pwd_gid = st.st_gid;
+
+    // We are reading our configuration specified passwd file
+    QString tmp;
+#ifdef HAVE_FGETPWENT
+    FILE *fpwd = fopen(QFile::encodeName(filename), "r");		
+    if(fpwd == NULL) {
+      err->addMsg(i18n("Error opening %1 for reading").arg(filename));	
+      return FALSE;
+    }
+
+    while ((p = fgetpwent(fpwd)) != NULL) {
 #else
-  while ((p = getpwent()) != NULL) {
+    while ((p = getpwent()) != NULL) {
 #endif
 #ifdef _KU_QUOTA
-    kug->getQuotas().addQuota(p->pw_uid);
+      kug->getQuotas().addQuota(p->pw_uid);
 #endif
-    tmpKU = new KUser();
-    tmpKU->setUID(p->pw_uid);
-    tmpKU->setGID(p->pw_gid);
-    tmpKU->setName(p->pw_name);
-    tmpKU->setPwd(p->pw_passwd);
-    tmpKU->setHomeDir(p->pw_dir);
-    tmpKU->setShell(p->pw_shell);
+      tmpKU = new KUser();
+      tmpKU->setUID(p->pw_uid);
+      tmpKU->setGID(p->pw_gid);
+      tmpKU->setName(p->pw_name);
+      tmpKU->setPwd(p->pw_passwd);
+      tmpKU->setHomeDir(p->pw_dir);
+      tmpKU->setShell(p->pw_shell);
 #if defined(__FreeBSD__) || defined(__bsdi__)
-    tmpKU->setClass(p->pw_class);
-    tmpKU->setLastChange(p->pw_change);
-    tmpKU->setExpire(p->pw_expire);
+      tmpKU->setClass(p->pw_class);
+      tmpKU->setLastChange(p->pw_change);
+      tmpKU->setExpire(p->pw_expire);
 #endif
 
-    if ((p->pw_gecos != 0) && (p->pw_gecos[0] != 0))
-      fillGecos(tmpKU, p->pw_gecos);
+      if ((p->pw_gecos != 0) && (p->pw_gecos[0] != 0)) 
+        fillGecos(tmpKU, p->pw_gecos);
+      u.append(tmpKU);
+    }
 
-    u.append(tmpKU);
-  }
-
-  // End reading passwd file
+    // End reading passwd_filename				
 
 #ifdef HAVE_FGETPWENT
-  fclose(fpwd);
+    fclose(fpwd);
 #endif
+    nispasswd_filename = config->readEntry("nispasswdsrc");	
+    if(!nispasswd_filename.isEmpty()) {				
+      processing_file = processing_file & ~PASSWD;		
+      processing_file = processing_file | NISPASSWD;		
+      filename.truncate(0);				
+      filename.append(nispasswd_filename);		
+    } 
+    else						
+      break;						
 
-  return (TRUE);
+  }	// end of processing files, for loop			
+
+  if( (passwd_errno == 0) && (nispasswd_errno == 0) )	
+    return (TRUE);
+  if( (passwd_errno != 0) && (nispasswd_errno != 0) )	
+    return (FALSE);
+  else
+    return(TRUE);						
 }
 
 // Load shadow passwords
@@ -593,29 +648,73 @@ bool KUsers::doDelete() {
 // Save password file
 
 bool KUsers::savepwd() {
-  FILE *passwd;
+  FILE *passwd_fd = NULL;			
+  FILE *nispasswd_fd = NULL;			
+  int minuid = 0;			
+  int nis_users_written = 0;		
+  uid_t tmp_uid = 0;			
   QString s;
   QString s1;
-
   QString tmp;
+  QString passwd_filename;		
+  QString nispasswd_filename;		
+  QString qs_minuid;			
 
-  if (!p_backuped) {
-    backup(PASSWORD_FILE);
-    p_backuped = TRUE;
+  const char *c_minuid;			
+  const char *pw_filename;		
+  const char *pn_filename;		
+  char errors_found = '\0';		
+    #define NOMINUID    0x01		
+    #define NONISPASSWD 0x02		
+
+  // Read KUser configuration info	
+
+  config->setGroup("template");		
+  passwd_filename = config->readEntry("passwdsrc");		
+  nispasswd_filename = config->readEntry("nispasswdsrc");	
+  qs_minuid = config->readEntry("nisminuid");			
+  if(!qs_minuid.isEmpty()) {					
+    c_minuid = qs_minuid.latin1();				
+    minuid = atoi(c_minuid);		
   }
 
-  umask(0077);
+  // Backup file(s)			
 
-  if ((passwd = fopen(PASSWORD_FILE,"w")) == NULL) {
-    err->addMsg(i18n("Error opening %1 for writing").arg(PASSWORD_FILE));
-    return FALSE;
+  if(!passwd_filename.isEmpty()) {	
+    if (!pw_backuped) {			
+      pw_filename = passwd_filename.latin1();   
+      backup(pw_filename);		
+      pw_backuped = TRUE;		
+    }
+  }
+  if(!nispasswd_filename.isEmpty()) {	
+    if (!pn_backuped) {			
+      pn_filename = nispasswd_filename.latin1();   
+      backup(pn_filename);		
+      pn_backuped = TRUE;		
+    }
   }
 
-  for (unsigned int i=0; i<u.count(); i++) {
-    KUser *user = u.at(i);
+  // Open file(s)			
+
+  if(!passwd_filename.isEmpty()) {	
+    if ((passwd_fd = fopen(QFile::encodeName(passwd_filename),"w")) == NULL) 
+      err->addMsg(i18n("Error opening %1 for writing").arg(passwd_filename));
+  }					
+
+  if(!nispasswd_filename.isEmpty()) {	
+    if ((nispasswd_fd = fopen(QFile::encodeName(nispasswd_filename),"w")) == NULL) 
+      err->addMsg(i18n("Error opening %1 for writing").arg(nispasswd_filename));
+  }					
+
+    umask(0077);
+
+    for (unsigned int i=0; i<u.count(); i++) {
+      KUser *user = u.at(i);
+      tmp_uid = user->getUID();	 	
 
 #if defined(__FreeBSD__) || defined(__bsdi__)
-    s = QString("%1:%2:%3:%4:%5:%6:%7:")
+      s = QString("%1:%2:%3:%4:%5:%6:%7:")
         .arg(user->getName())
         .arg(user->getPwd())
 	.arg(user->getUID())
@@ -624,20 +723,20 @@ bool KUsers::savepwd() {
         .arg(user->getLastChange())
 	.arg(user->getExpire());
 
-    s1 = QString("%1,%2,%3,%4")
+      s1 = QString("%1,%2,%3,%4")
          .arg(user->getFullName())
          .arg(user->getOffice())
          .arg(user->getWorkPhone())
          .arg(user->getHomePhone());
 #else
 
-    s = QString("%1:%2:%3:%4:")
+      s = QString("%1:%2:%3:%4:")
         .arg(user->getName())
         .arg(user->getPwd())
 	.arg(user->getUID())
         .arg(user->getGID());
 
-    s1 = QString("%1,%2,%3,%4")
+      s1 = QString("%1,%2,%3,%4")
          .arg(user->getFullName())
 	 .arg(user->getOffice1())
 	 .arg(user->getOffice2())
@@ -645,28 +744,74 @@ bool KUsers::savepwd() {
 
 #endif
 
-    for (int j=(s1.length()-1); j>=0; j--) {
-      if (s1[j] != ',')
-        break;
+      for (int j=(s1.length()-1); j>=0; j--) {
+        if (s1[j] != ',')
+          break;
 
-      s1.truncate(j);
-    }
+        s1.truncate(j);
+      }
 
-    s += s1+":"+user->getHomeDir()+":"+user->getShell()+"\n";
-    fputs(QFile::encodeName(s), passwd);
-  }
-  fclose(passwd);
+      s += s1+":"+user->getHomeDir()+":"+user->getShell()+"\n";
 
-  chmod(PASSWORD_FILE, pwd_mode);
-  chown(PASSWORD_FILE, pwd_uid, pwd_gid);
+      if( (nispasswd_fd != 0) && (minuid != 0) ) {
+        if (minuid <= tmp_uid) {
+      	  fputs(QFile::encodeName(s), nispasswd_fd);	
+          nis_users_written++;		
+          continue;				
+        }
+        else{
+      	  fputs(QFile::encodeName(s), passwd_fd);	
+          continue;				
+        }
+      }
+
+      if( (nispasswd_fd != 0) && (minuid == 0) ) {
+	errors_found = errors_found | NOMINUID;  
+      	fputs(QFile::encodeName(s), passwd_fd);	
+        continue;
+      }
+
+      if( (nispasswd_fd == 0) && (minuid != 0) ) {
+	errors_found = errors_found | NONISPASSWD;	
+      	fputs(QFile::encodeName(s), passwd_fd);	
+        continue;
+      }
+
+      fputs(QFile::encodeName(s), passwd_fd);	
+
+    }		/* end for i loop */
+
+    if(passwd_fd) {					
+      fclose(passwd_fd);
+      chmod(QFile::encodeName(passwd_filename), pwd_mode);	
+      chown(QFile::encodeName(passwd_filename), pwd_uid, pwd_gid);	
+    }							
+
+    if(nispasswd_fd) {					
+      fclose(nispasswd_fd);				
+      chmod(QFile::encodeName(nispasswd_filename), pwd_mode);	
+      chown(QFile::encodeName(nispasswd_filename), pwd_uid, pwd_gid);	
+    }							
+
+    if( (errors_found & NOMINUID) != 0 ) {	
+      err->addMsg(i18n("Unable to process NIS passwd file without a minimum UID specified\nPlease update KUser Settings (Sources)"));	
+      err->display();				
+    }						
+
+    if( (errors_found & NONISPASSWD) != 0 ) {	
+      err->addMsg(i18n("Specifying NIS minimum UID requires NIS file(s)\nPlease update KUser Settings (Sources)"));	
+      err->display();				
+    }						
 
 #ifdef PWMKDB
   // need to run a utility program to build /etc/passwd, /etc/pwd.db
   // and /etc/spwd.db from /etc/master.passwd
-  if (system(PWMKDB) != 0) {
-     err->addMsg(i18n("Unable to build password database"));
-     return FALSE;
-  }
+  if(nis_users_written > 0) {		
+    if (system(PWMKDB) != 0) {
+      err->addMsg(i18n("Unable to build password database(s)"));
+      return FALSE;
+    }
+  }					
 #endif
 
   return TRUE;
@@ -843,9 +988,9 @@ struct stat sb;
 int	rc = 0;
 
 rc = stat(QFile::encodeName(dir), &sb);
-	if (rc == 0) {                                      /* dir exists		 	*/
+	if (rc == 0) {                                      /* dir exists */
    	if (S_ISDIR(sb.st_mode)) {												/* is directory?	*/
-																											/* yes it is...		*/
+																					/* yes it is...		*/
 			if (KMessageBox::
 				warningContinueCancel(0, i18n("Directory %1 already exists!\nWill make  %2 owner and change permissions.\nDo you want to continue?")
 .arg(dir).arg(p_name), QString::null, i18n("&Continue")) ==

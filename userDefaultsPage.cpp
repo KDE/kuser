@@ -42,7 +42,7 @@ userDefaultsPage::userDefaultsPage(
 
   tl->addStretch(1);
 
-  l = new QLabel(i18n("Base of home folder:"), this);
+  l = new QLabel(i18n("Base of home folders:"), this);
   l->setFixedSize(l->sizeHint());
   tl->addWidget(l, 0, AlignLeft);
   home=new QLineEdit(this);

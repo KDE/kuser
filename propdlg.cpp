@@ -151,6 +151,7 @@ propdlg::propdlg(KUser *AUser, QWidget *parent, const char *name, int)
     leid = new QLineEdit(frame);
 //    whatstr = i18n("WHAT IS THIS: User Id");
     addRow(frame, layout, row++, leid, i18n("User ID:"), whatstr);
+    connect(leid, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
 
     pbsetpwd = new QPushButton(i18n("Set Password..."), frame);
     layout->addWidget(pbsetpwd, 0, 2);

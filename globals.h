@@ -3,7 +3,7 @@
 
 #define _KU_VERSION "0.3"
 
-#ifdef __FreeBSD__
+#ifdef BSD
 #undef _KU_SHADOW
 #endif
 

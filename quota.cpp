@@ -218,7 +218,7 @@ Quota::Quota(unsigned int auid, bool doget) {
   }
 #endif
 
-#ifdef __FreeBSD__
+#ifdef BSD
   int qcmd = QCMD(Q_GETQUOTA, USRQUOTA);
 
   for (uint i=0; i<mounts->getMountsNumber(); i++) {
@@ -374,7 +374,7 @@ bool Quota::save() {
   }
 #endif
 
-#ifdef __FreeBSD__
+#ifdef BSD
   int dd = 0;
   int qcmd = QCMD(Q_SETQUOTA,USRQUOTA);
 

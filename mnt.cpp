@@ -62,12 +62,12 @@ Mounts::Mounts() {
 
 #ifdef OLD_GETMNTENT
   struct mnttab *mt = NULL;
-#elif __FreeBSD__
+#elif BSD
   struct fstab *mt = NULL;
 #else
   struct mntent *mt = NULL;
 #endif
-#ifndef __FreeBSD__
+#ifndef BSD
   FILE *fp;
 #endif
   MntEnt *mnt = NULL;
@@ -92,7 +92,7 @@ Mounts::Mounts() {
     quotafilename.sprintf("%s%s%s", mt->mnt_mountp,
                           (mt->mnt_mountp[strlen(mt->mnt_mountp) - 1] == '/') ? "" : "/",
                           _KU_QUOTAFILENAME);
-#elif __FreeBSD__ /* Heh, heh, so much for standards, eh FreeBSD? */
+#elif BSD /* Heh, heh, so much for standards, eh Bezerkely? */
   while ((mt=getfsent()) != NULL) {
     if (strstr(mt->fs_mntops,"quota")==NULL)
       continue;
@@ -122,7 +122,7 @@ Mounts::Mounts() {
 #ifdef OLD_GETMNTENT
     mnt = new MntEnt(mt->mnt_special, mt->mnt_mountp, mt->mnt_fstype,
                      mt->mnt_mntopts, quotafilename);
-#elif __FreeBSD__
+#elif BSD
   mnt = new MntEnt(mt->fs_spec,mt->fs_file,mt->fs_vfstype,
 		   mt->fs_mntops,quotafilename);
 #else
@@ -134,7 +134,7 @@ Mounts::Mounts() {
   }
 #ifdef OLD_GETMNTENT
   fclose(fp);
-#elif __FreeBSD__
+#elif BSD
   endfsent();
 #else
   endmntent(fp);

@@ -70,7 +70,7 @@
 #    define CORRECT_FSTYPE(type) (!strcmp(type,MNTTYPE_EFS) || !strcmp(type,MNTTYPE_XFS))
 #    define _KU_QUOTAFILENAME "quotas"
 #    else
-#      ifdef __FreeBSD__
+#      ifdef BSD /* I'm not 100% sure about this, but it should work with Net/OpenBSD */
 #      include <machine/param.h> /* for dbtob and the like */
 #      include <sys/types.h>
 #      include <ufs/ufs/quota.h>

@@ -63,3 +63,4 @@ DocPath=kuser/index.html
 Terminal=0
 X-KDE-StartupNotify=true
 X-KDE-SubstituteUID=true
+Categories=QT;KDE;System

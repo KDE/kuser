@@ -37,8 +37,15 @@ void init();
 #define _KU_QUOTAFILENAME "quota.user"
 #define _KU_EXT2_QUOTA
 #else
+#ifdef sgi
+#include <sys/quota.h>
+#define CORRECT_FSTYPE(type) (!strcmp(type,MNTTYPE_EFS) || !strcmp(type,MNTTYPE
+_XFS))
+#define _KU_QUOTAFILENAME "quotas"
+#else
 #error "Your platform is not supported"
-#endif  // HAVE_SYS_FS_UFS_QUOTA_H
+#endif // sgi
+#endif // HAVE_SYS_FS_UFS_QUOTA_H
 #endif // HAVE_LINUX_QUOTA_H
 
 #endif // _KU_QUOTA

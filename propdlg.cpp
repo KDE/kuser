@@ -63,17 +63,21 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
   leshell->insertItem("<Empty>");
 
   FILE *f = fopen("/etc/shells","r");
-  while (!feof(f)) {
-    char s[200];
+  if (f) {
+    while (!feof(f)) {
+      char s[200];
 
-    fgets(s, 200, f);
-    if (feof(f))
-      break;
-    s[strlen(s)-1]=0;
-    if ((s[0])&&(s[0]!='#'))
-      leshell->insertItem(s);
+      fgets(s, 200, f);
+      if (feof(f))
+        break;
+
+      s[strlen(s)-1]=0;
+      if ((s[0])&&(s[0]!='#'))
+        leshell->insertItem(s);
+    }
+    fclose(f);
   }
-  fclose(f);
+
   leshell->setGeometry(10, 122, 160, 27);
   QObject::connect(leshell, SIGNAL(activated(const char *)), this, SLOT(shactivated(const char *)));
 

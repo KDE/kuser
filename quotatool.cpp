@@ -137,6 +137,24 @@ void getquota(long int id, QList<Quota> *q)
 			  dq.dqb_ihardlimit));
     }
 #endif
+
+#ifdef sgi
+  for (uint i=0; i<mounts.count(); i++) {
+      if (quotactl(Q_GETQUOTA, (const char *)mounts.at(i)->fsname, id, (caddr_t) &dq) != 0) {
+          warned++;
+          QMessageBox::message(_("Error"), _("Quotas are not compiled into this kernel."), "Ok");
+          sleep(3);
+          is_quota = 0;
+         break;
+      }
+      q->append(new Quota(dbtob(dq.dqb_curblocks)/1024,
+                          dbtob(dq.dqb_bsoftlimit)/1024,
+                         dbtob(dq.dqb_bhardlimit)/1024,
+                        dq.dqb_curfiles,
+                         dq.dqb_fsoftlimit,
+                         dq.dqb_fhardlimit));
+    }
+#endif
 }
 
 void setquota(long int id, QList<Quota> *q) 
@@ -200,6 +218,24 @@ void setquota(long int id, QList<Quota> *q)
       continue;
     }
   }
+#endif
+
+#ifdef sgi
+  int dd = 0;
+  for (uint i=0; i<mounts.count(); i++) {
+    dq.dqb_curblocks  = btodb(q->at(i)->fcur*1024);
+    dq.dqb_bsoftlimit = btodb(q->at(i)->fsoft*1024);
+    dq.dqb_bhardlimit = btodb(q->at(i)->fhard*1024);
+    dq.dqb_curfiles  = q->at(i)->icur;
+   dq.dqb_fsoftlimit = q->at(i)->isoft;
+    dq.dqb_fhardlimit = q->at(i)->ihard;
+    dq.dqb_btimelimit = DQ_BTIMELIMIT;
+    dq.dqb_ftimelimit = DQ_FTIMELIMIT;
+
+    if ((dd =quotactl(Q_SETQUOTA, (const char *)mounts.at(i)->fsname, id, (caddr_t) &dq)) != 0) {
+      printf("Quotactl returned: %d\n", dd);
+      continue;
+    }
 #endif
 }
 

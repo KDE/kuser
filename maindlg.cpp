@@ -194,10 +194,12 @@ void maindlg::add() {
 #endif
 
 #ifdef _KU_QUOTA
-  tk->quota.at(0)->fsoft = readnumentry("quota.fsoft");
-  tk->quota.at(0)->fhard = readnumentry("quota.fhard");
-  tk->quota.at(0)->isoft = readnumentry("quota.isoft");
-  tk->quota.at(0)->ihard = readnumentry("quota.ihard");
+  if (is_quota) {
+    tk->quota.at(0)->fsoft = readnumentry("quota.fsoft");
+    tk->quota.at(0)->fhard = readnumentry("quota.fhard");
+    tk->quota.at(0)->isoft = readnumentry("quota.isoft");
+    tk->quota.at(0)->ihard = readnumentry("quota.ihard");
+  }
 #endif
 
   editUser = new propdlg(tk, this, "userin");
@@ -290,10 +292,12 @@ void maindlg::properties() {
 #endif
 
 #ifdef _KU_QUOTA
-  tk->quota.at(0)->fsoft = readnumentry("quota.fsoft");
-  tk->quota.at(0)->fhard = readnumentry("quota.fhard");
-  tk->quota.at(0)->isoft = readnumentry("quota.isoft");
-  tk->quota.at(0)->ihard = readnumentry("quota.ihard");
+  if (is_quota) {
+    tk->quota.at(0)->fsoft = readnumentry("quota.fsoft");
+    tk->quota.at(0)->fhard = readnumentry("quota.fhard");
+    tk->quota.at(0)->isoft = readnumentry("quota.isoft");
+    tk->quota.at(0)->ihard = readnumentry("quota.ihard");
+  }
 #endif
 
   editUser = new propdlg(tk, this, "userin");
@@ -317,10 +321,12 @@ void maindlg::properties() {
 #endif
 
 #ifdef _KU_QUOTA
-    config->writeEntry("quota.fsoft", tk->quota.at(0)->fsoft);
-    config->writeEntry("quota.fhard", tk->quota.at(0)->fhard);
-    config->writeEntry("quota.isoft", tk->quota.at(0)->isoft);
-    config->writeEntry("quota.ihard", tk->quota.at(0)->ihard);
+    if (is_quota) {
+      config->writeEntry("quota.fsoft", tk->quota.at(0)->fsoft);
+      config->writeEntry("quota.fhard", tk->quota.at(0)->fhard);
+      config->writeEntry("quota.isoft", tk->quota.at(0)->isoft);
+      config->writeEntry("quota.ihard", tk->quota.at(0)->ihard);
+    }
 #endif
   }
 

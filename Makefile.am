@@ -14,7 +14,7 @@ kuser_SOURCES	=	\
 	kuser.cpp kgroup.cpp main.cpp mainView.cpp mnt.cpp \
 	propdlg.cpp quota.cpp misc.cpp usernamedlg.cpp pwddlg.cpp \
 	grpnamedlg.cpp kerror.cpp addUser.cpp editDefaults.cpp \
-	userDefaultsPage.cpp kglobal.cpp
+	nisDefaultsPage.cpp userDefaultsPage.cpp kglobal.cpp
 
 kuser_METASOURCES =	USE_AUTOMOC
 
@@ -24,7 +24,8 @@ noinst_HEADERS	=	\
 	kuser.h mainView.h kgroup.h \
 	kgroupvw.h propdlg.h mnt.h quota.h globals.h misc.h \
 	usernamedlg.h pwddlg.h grpnamedlg.h kerror.h addUser.h \
-	userDefaultsPage.h editDefaults.h kglobal_.h
+	nisDefaultsPage.h userDefaultsPage.h editDefaults.h \
+	kglobal_.h
 
 EDITABLE	=	$(DISTFILES) $(noinst_HEADERS) $(kuser_SOURCES) Makefile.am
 

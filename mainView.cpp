@@ -262,6 +262,7 @@ void mainView::useradd() {
     delete tq;
 #endif
   }
+
 }
 
 
@@ -306,10 +307,18 @@ void mainView::properties() {
 
   config->setGroup("template");
   eddlg.setShell(config->readEntry("shell", ""));
-  eddlg.setHomeBase(config->readEntry("homeBase", "/home"));
+  eddlg.setHomeBase(config->readEntry("homeBase", "/home"));	
   eddlg.setCreateHomeDir(config->readBoolEntry("createHomeDir", true));
   eddlg.setCopySkel(config->readBoolEntry("copySkel", true));
   eddlg.setUserPrivateGroup(config->readBoolEntry("userPrivateGroup", KU_USERPRIVATEGROUP));
+  eddlg.setPasswdSrc(config->readEntry("passwdsrc", PASSWORD_FILE)); 
+  eddlg.setGroupSrc(config->readEntry("groupsrc", GROUP_FILE));
+  eddlg.setNISPasswdSrc(config->readEntry("nispasswdsrc", ""));
+  eddlg.setNISGroupSrc(config->readEntry("nisgroupsrc", ""));
+  eddlg.setMINUID(config->readEntry("nisminuid", ""));
+  eddlg.setMINGID(config->readEntry("nismingid", ""));
+  eddlg.setEnableNIS(config->readBoolEntry("enableNIS", true));
+
 
   if (eddlg.exec() != 0) {
     config->setGroup("template");
@@ -318,6 +327,13 @@ void mainView::properties() {
     config->writeEntry("createHomeDir", eddlg.getCreateHomeDir());
     config->writeEntry("copySkel", eddlg.getCopySkel());
     config->writeEntry("userPrivateGroup", eddlg.getUserPrivateGroup());
+    config->writeEntry("passwdsrc", eddlg.getPasswdSrc());
+    config->writeEntry("nispasswdsrc", eddlg.getNISPasswdSrc());
+    config->writeEntry("groupsrc", eddlg.getGroupSrc());
+    config->writeEntry("nisgroupsrc", eddlg.getNISGroupSrc());
+    config->writeEntry("nisminuid", eddlg.getMINUID());
+    config->writeEntry("nismingid", eddlg.getMINGID());
+    config->writeEntry("enableNIS", eddlg.getEnableNIS());
   }
 }
 

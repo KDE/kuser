@@ -6,3 +6,4 @@
 - Allow to edit Group name in group properties.
 - First available UID and GID in preferences dialog.
 - Group quotas.
+- Update last change field when changed

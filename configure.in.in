@@ -66,6 +66,60 @@ else
 fi
 AC_DEFINE_UNQUOTED(KU_USERPRIVATEGROUP, $ku_userprivategroup, [private groups])
 
-AC_CHECK_FGETPWENT
-AC_CHECK_FGETGRENT
+AC_LANG_CPLUSPLUS
+save_CXXFLAGS="$CXXFLAGS"
+if test "$GCC" = "yes"; then
+CXXFLAGS="$CXXFLAGS -pedantic-errors"
+fi
+AC_MSG_CHECKING(for fgetpwent)
+AC_CACHE_VAL(ac_cv_func_fgetpwent,
+[
+AC_TRY_COMPILE([
+#include <stdlib.h>
+#include <unistd.h>
+#include <pwd.h>
+],
+[
+passwd *p;
+FILE *f;
+p = fgetpwent(f);
+],
+ac_cv_func_fgetpwent=yes,
+ac_cv_func_fgetpwent=no)
+])
+AC_MSG_RESULT($ac_cv_func_fgetpwent)
+if eval "test \"`echo $ac_cv_func_fgetpwent`\" = yes"; then
+  AC_DEFINE(HAVE_FGETPWENT, 1, [Define if you have fgetpwent])
+fi
+CXXFLAGS="$save_CXXFLAGS"
+
+AC_LANG_CPLUSPLUS
+save_CXXFLAGS="$CXXFLAGS"
+if test "$GCC" = "yes"; then
+CXXFLAGS="$CXXFLAGS -pedantic-errors"
+fi
+AC_MSG_CHECKING(for fgetgrent)
+AC_CACHE_VAL(ac_cv_func_fgetgrent,
+[
+AC_TRY_COMPILE([
+#include <stdlib.h>
+#include <unistd.h>
+#include <grp.h>
+],
+[
+group *g;
+FILE *f;
+g = fgetgrent(f);
+],
+ac_cv_func_fgetgrent=yes,
+ac_cv_func_fgetgrent=no)
+])
+AC_MSG_RESULT($ac_cv_func_fgetgrent)
+if eval "test \"`echo $ac_cv_func_fgetgrent`\" = yes"; then
+  AC_DEFINE(HAVE_FGETGRENT, 1, [Define if you have fgetgrent])
+fi
+CXXFLAGS="$save_CXXFLAGS"
+
+
+
 

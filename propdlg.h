@@ -77,7 +77,7 @@ protected:
   int mergeSB( KIntSpinBox *sb, int val, bool one );
 
   KIntSpinBox *addDaysGroup( QWidget  *parent, QGridLayout *layout, int row, 
-    const QString &title, const QString &title2, bool never=true );
+    const QString &title, bool never=true );
 
   QFrame *frontpage;
   QGridLayout *frontlayout;

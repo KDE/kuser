@@ -64,12 +64,12 @@ void propdlg::addRow(QWidget *parent, QGridLayout *layout, int row,
 }
 
 KIntSpinBox *propdlg::addDaysGroup(QWidget *parent, QGridLayout *layout, int row,
-  const QString &title, const QString &title2, bool never)
+  const QString &title, bool never)
 {
     KIntSpinBox *days;
 
     QLabel *label = new QLabel( title, parent );
-    layout->addWidget( label, row, 0, AlignRight );
+    layout->addMultiCellWidget( label, row, row, 0, 1, AlignRight );
 
     days = new KIntSpinBox( parent );
     label->setBuddy( days );
@@ -84,10 +84,7 @@ KIntSpinBox *propdlg::addDaysGroup(QWidget *parent, QGridLayout *layout, int row
     {
       days->setMinValue( 0 );
     }
-    layout->addWidget( days, row, 1 );
-
-    label = new QLabel( title2, parent );
-    layout->addWidget( label, row, 2 );
+    layout->addWidget( days, row, 2 );
 
     connect(days, SIGNAL(valueChanged(int)), this, SLOT(changed()));
 
@@ -229,11 +226,10 @@ void propdlg::initDlg()
     row++;
 
     if ( kug->getUsers().getCaps() & KUsers::Cap_Shadow ) {
-
-      lesmin = addDaysGroup(frame, layout, row++, i18n("Password may &not be changed before"), i18n("after last password change."), false);
-      lesmax = addDaysGroup(frame, layout, row++, i18n("Password &expires"), i18n("after last password change.") );
-      leswarn = addDaysGroup(frame, layout, row++, i18n("&Issue expire warning"), i18n("before password expires."));
-      lesinact = addDaysGroup(frame, layout, row++, i18n("Account will be &disabled"), i18n("after expiration of password."));
+      lesmin = addDaysGroup(frame, layout, row++, i18n("Time before password may &not be changed after last password change:"), false);
+      lesmax = addDaysGroup(frame, layout, row++, i18n("Time when password &expires after last password change:") );
+      leswarn = addDaysGroup(frame, layout, row++, i18n("Time when &issue expire warning before password expires:"));
+      lesinact = addDaysGroup(frame, layout, row++, i18n("Time when account will be &disabled after expiration of password:"));
     }
     layout->addMultiCellWidget(new KSeparator(KSeparator::HLine, frame), row, row, 0, 3);
     row++;

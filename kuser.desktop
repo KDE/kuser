@@ -26,7 +26,6 @@ Name[sv]=Användarhanterare
 Name[zh_CN.GB2312]=ÕÊºÅ¹ÜÀíÆ÷
 Exec=kuser
 Icon=kuser
-MiniIcon=kuser
 Type=Application
 DocPath=kuser/index.html
 Comment=Full Featured User Manager

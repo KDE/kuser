@@ -32,6 +32,10 @@ void init();
 #define _KU_UFS_QUOTA
 #else
 #ifdef HAVE_LINUX_QUOTA_H
+#if defined __GLIBC__ && __GLIBC__ >= 2
+typedef unsigned int __u32;
+#define MNTTYPE_EXT2 "ext2"
+#endif
 #include <linux/quota.h>
 #define CORRECT_FSTYPE(type) (!strcmp(type,MNTTYPE_EXT2))
 #define _KU_QUOTAFILENAME "quota.user"

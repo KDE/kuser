@@ -1,3 +1,4 @@
 Great thanks to:
 
 Paul Kendall <paul@orion.co.nz> ( for Irix quota support and some minor patches )
+Bernhard Rosenkraenzer <root@bero-online.ml.org> (for some glibc2 fixes)

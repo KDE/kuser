@@ -11,13 +11,13 @@
 #include <qtooltip.h>
 #include <qsplitter.h>
 
+#include <klineeditdlg.h>
 #include <ktoolbar.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
 
 #include "misc.h"
 #include "kglobal_.h"
-#include "usernamedlg.h"
 #include "grpnamedlg.h"
 #include "propdlg.h"
 #include "addUser.h"
@@ -168,9 +168,20 @@ void mainView::useradd() {
   tq = new Quota(tk->getUID(), FALSE);
 #endif // _KU_QUOTA
 
-  usernamedlg ud(tk, this);
-  if (ud.exec() == 0)
-  {
+  KLineEditDlg dlg(i18n("Enter user name:"), QString::null, this);
+  dlg.setCaption(i18n("Add User"));
+  tk->setName(dlg.text());
+  
+  if (!dlg.exec())  {
+    delete tk;
+#ifdef _KU_QUOTA
+    delete tq;
+#endif
+    return;
+  }
+
+  if (kug->getUsers().lookup(dlg.text())) {
+    KMessageBox::error( 0, i18n("User with name %1 already exists.").arg(dlg.text()) );
     delete tk;
 #ifdef _KU_QUOTA
     delete tq;

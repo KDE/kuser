@@ -12,7 +12,7 @@ kuser_SOURCES	=	\
 	mainWidget.cpp editGroup.cpp kuservw.cpp \
 	kgroupvw.cpp \
 	kuser.cpp kgroup.cpp main.cpp mainView.cpp mnt.cpp \
-	propdlg.cpp quota.cpp misc.cpp usernamedlg.cpp pwddlg.cpp \
+	propdlg.cpp quota.cpp misc.cpp pwddlg.cpp \
 	grpnamedlg.cpp kerror.cpp addUser.cpp editDefaults.cpp \
 	nisDefaultsPage.cpp userDefaultsPage.cpp kglobal.cpp kcontainer.cpp
 
@@ -23,7 +23,7 @@ noinst_HEADERS	=	\
 	mainWidget.h editGroup.h kuservw.h \
 	kuser.h mainView.h kgroup.h \
 	kgroupvw.h propdlg.h mnt.h quota.h globals.h misc.h \
-	usernamedlg.h pwddlg.h grpnamedlg.h kerror.h addUser.h \
+	pwddlg.h grpnamedlg.h kerror.h addUser.h \
 	nisDefaultsPage.h userDefaultsPage.h editDefaults.h \
 	kglobal_.h
 

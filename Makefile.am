@@ -1,7 +1,7 @@
 INCLUDES	= -I.. -I$(top_srcdir)/kuser $(all_includes)
 
 # May be -D_XU_QUOTA -D_XU_SHADOW
-AM_CXXFLAGS = 	$(KU_NIS) $(KU_SHADOW) $(KU_QUOTA) $(QUOTACTL) -D_KU_DEBUG -D_SVID_SOURCE -D_GNU_SOURCE
+AM_CXXFLAGS = 	$(KU_NIS) $(KU_QUOTA) $(QUOTACTL) -D_KU_DEBUG -D_SVID_SOURCE -D_GNU_SOURCE
 
 kuser_LDFLAGS	=	$(all_libraries) $(KDE_RPATH)
 kuser_LDADD	=	$(LIB_KDEUI) $(LIBCRYPT) $(LIBSHADOW) $(LIBGEN)
@@ -16,7 +16,7 @@ kuser_SOURCES	=	\
 	grpnamedlg.cpp kerror.cpp addUser.cpp editDefaults.cpp \
 	nisDefaultsPage.cpp userDefaultsPage.cpp kglobal.cpp kcontainer.cpp
 
-kuser_METASOURCES =	USE_AUTOMOC
+kuser_METASOURCES = AUTO
 
 # the following are only useful, if you want to use "make dist"
 noinst_HEADERS	=	\
@@ -27,7 +27,7 @@ noinst_HEADERS	=	\
 	nisDefaultsPage.h userDefaultsPage.h editDefaults.h \
 	kglobal_.h
 
-EDITABLE	=	$(DISTFILES) $(noinst_HEADERS) $(kuser_SOURCES) Makefile.am
+EDITABLE	=	$(noinst_HEADERS) $(kuser_SOURCES) Makefile.am
 
 EXTRA_DIST = README AUTHORS THANKS kuser.desktop
 

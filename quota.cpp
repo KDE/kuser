@@ -109,7 +109,6 @@ Quota::Quota(unsigned int auid, bool doget) {
   uid = auid;
 
   q.setAutoDelete(TRUE);
-
   if (is_quota == 0)
     return;
 
@@ -126,9 +125,6 @@ Quota::Quota(unsigned int auid, bool doget) {
   struct quotctl qctl;
   int dd = 0;
 #endif
-
-  if (is_quota == 0)
-    return;
 
 #ifdef _KU_UFS_QUOTA
   for (uint i=0; i<mounts->getMountsNumber(); i++) {

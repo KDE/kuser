@@ -75,7 +75,6 @@ Mounts::Mounts() {
 
   if (is_quota == 0)
     return;
-
   is_quota = 0;
 
 #ifdef OLD_GETMNTENT
@@ -113,17 +112,20 @@ Mounts::Mounts() {
     quotafilename.sprintf("%s%s%s", mt->mnt_dir,
                           (mt->mnt_dir[strlen(mt->mnt_dir) - 1] == '/') ? "" : "/",
                           _KU_QUOTAFILENAME);
+
 #endif
 
     QFile *f = new QFile(quotafilename);
-    if (f->exists() == FALSE)
+    if (f->exists() == FALSE) {
+      printf("Quota file name %s does not exist\n", (const char *)quotafilename);
       continue;
-
+    }
+    printf("Quota file name %s found\n", (const char *)quotafilename);
 #ifdef OLD_GETMNTENT
     mnt = new MntEnt(mt->mnt_special, mt->mnt_mountp, mt->mnt_fstype,
                      mt->mnt_mntopts, quotafilename);
 #elif BSD
-  mnt = new MntEnt(mt->fs_spec,mt->fs_file,mt->fs_vfstype,
+    mnt = new MntEnt(mt->fs_spec,mt->fs_file,mt->fs_vfstype,
 		   mt->fs_mntops,quotafilename);
 #else
     mnt = new MntEnt(mt->mnt_fsname, mt->mnt_dir, mt->mnt_type,

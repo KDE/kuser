@@ -47,22 +47,20 @@
 #  define _KU_UFS_QUOTA
 #else
 #  ifdef HAVE_LINUX
-#    ifdef HAVE_LINUX_QUOTA_H
-#      if defined __GLIBC__ && __GLIBC__ >= 2
-         typedef unsigned int __u32;
-#        define MNTTYPE_EXT2 "ext2"
-#      endif
-#      ifdef HAVE_SYS_QUOTA_H
-#        include <sys/quota.h>
-#      elif HAVE_LINUX_QUOTA_H
-#        include <linux/quota.h>
-#      else
-#        error cannot find your quota.h
-#      endif
-#      define CORRECT_FSTYPE(type) (!strcmp(type,MNTTYPE_EXT2))
-#      define _KU_QUOTAFILENAME "quota.user"
-#      define _KU_EXT2_QUOTA
+#    if defined __GLIBC__ && __GLIBC__ >= 2
+       typedef unsigned int __u32;
+#      define MNTTYPE_EXT2 "ext2"
 #    endif
+#    ifdef HAVE_SYS_QUOTA_H
+#      include <sys/quota.h>
+#    elif HAVE_LINUX_QUOTA_H
+#      include <linux/quota.h>
+#    else
+#      error cannot find your quota.h
+#    endif
+#    define CORRECT_FSTYPE(type) (!strcmp(type,MNTTYPE_EXT2))
+#    define _KU_QUOTAFILENAME "quota.user"
+#    define _KU_EXT2_QUOTA
 #  else
 #    ifdef HAVE_IRIX
 #    include <sys/quota.h>

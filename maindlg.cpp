@@ -233,7 +233,7 @@ void mainDlg::useradd() {
 #endif
 
 #ifdef _KU_QUOTA
-  if (is_quota)
+  if (is_quota != 0)
     au = new addUser(tk, tq, this, "userin");
   else
     au = new addUser(tk, NULL, this, "userin");
@@ -272,7 +272,7 @@ void mainDlg::quit() {
       if (!g->save())
         err->display();
 #ifdef _KU_QUOTA
-      if (is_quota)
+      if (is_quota != 0)
         if (!q->save())
           err->display();
 #endif
@@ -328,7 +328,7 @@ void mainDlg::properties() {
 #endif
 
 #ifdef _KU_QUOTA
-  if (is_quota) {
+  if (is_quota != 0) {
     /*
     tk->quota.at(0)->fsoft = readnumentry("quota.fsoft");
     tk->quota.at(0)->fhard = readnumentry("quota.fhard");
@@ -363,7 +363,7 @@ void mainDlg::properties() {
 #endif
 
 #ifdef _KU_QUOTA
-    if (is_quota) {
+    if (is_quota != 0) {
       /*
       config->writeEntry("quota.fsoft", tk->quota.at(0)->fsoft);
       config->writeEntry("quota.fhard", tk->quota.at(0)->fhard);
@@ -423,8 +423,6 @@ void mainDlg::userSelected(int i) {
     }
   }
   
-  tmpQ = NULL;
-
   editUser = new propdlg(tmpKU, tmpQ, this, "userin");
 #else
   editUser = new propdlg(tmpKU, this, "userin");

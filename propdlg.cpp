@@ -173,11 +173,11 @@ propdlg::propdlg(KUser *AUser, QWidget *parent, const char *name, int)
     frontlayout = layout;
 
     leuser = new QLabel(frame);
-    whatstr = i18n("WHAT IS THIS: User Login");
+//    whatstr = i18n("WHAT IS THIS: User Login");
     addRow(frame, layout, row++, leuser, i18n("User Login:"), whatstr, false);
 
     leid = new QLineEdit(frame);
-    whatstr = i18n("WHAT IS THIS: User Id");
+//    whatstr = i18n("WHAT IS THIS: User Id");
     addRow(frame, layout, row++, leid, i18n("User Id:"), whatstr, false);
 
     pbsetpwd = new QPushButton(i18n("Set password"), frame);
@@ -185,7 +185,7 @@ propdlg::propdlg(KUser *AUser, QWidget *parent, const char *name, int)
     QObject::connect(pbsetpwd, SIGNAL(clicked()), this, SLOT(setpwd()));
 
     lefname = new QLineEdit(frame);
-    whatstr = i18n("WHAT IS THIS: Full Name");
+//    whatstr = i18n("WHAT IS THIS: Full Name");
     addRow(frame, layout, row++, lefname, i18n("Full Name:"), whatstr);
     QObject::connect(lefname, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
 
@@ -213,12 +213,12 @@ propdlg::propdlg(KUser *AUser, QWidget *parent, const char *name, int)
     shells.sort();
     leshell->insertStringList(shells);
     QObject::connect(leshell, SIGNAL(activated(const QString &)), this, SLOT(changed()));
-    whatstr = i18n("WHAT IS THIS: Login Shell");
+//    whatstr = i18n("WHAT IS THIS: Login Shell");
     addRow(frame, layout, row++, leshell, i18n("Login Shell:"), whatstr);
 
     lehome = new QLineEdit(frame);
     QObject::connect(lehome, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
-    whatstr = i18n("WHAT IS THIS: Home Directory");
+//    whatstr = i18n("WHAT IS THIS: Home Directory");
     addRow(frame, layout, row++, lehome, i18n("Home Directory:"), whatstr);
 
 #if defined(__FreeBSD__) || defined(__bsdi__)
@@ -226,32 +226,32 @@ propdlg::propdlg(KUser *AUser, QWidget *parent, const char *name, int)
     // differently than Linux.
     leoffice = new QLineEdit(frame);  
     QObject::connect(leoffice, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
-    whatstr = i18n("WHAT IS THIS: Office");
+//    whatstr = i18n("WHAT IS THIS: Office");
     addRow(frame, layout, row++, leoffice, i18n("Office:"), whatstr);
 
     leophone = new QLineEdit(frame);
     QObject::connect(leophone, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
-    whatstr = i18n("WHAT IS THIS: Office Phone");
+//    whatstr = i18n("WHAT IS THIS: Office Phone");
     addRow(frame, layout, row++, leophone, i18n("Office Phone:"), whatstr);
 
     lehphone = new QLineEdit(frame);
     QObject::connect(lehphone, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
-    whatstr = i18n("WHAT IS THIS: Home Phone");
+//    whatstr = i18n("WHAT IS THIS: Home Phone");
     addRow(frame, layout, row++, lehphone, i18n("Home Phone:"), whatstr);
 #else
     leoffice1 = new QLineEdit(frame);
     QObject::connect(leoffice1, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
-    whatstr = i18n("WHAT IS THIS: Office1");
+//    whatstr = i18n("WHAT IS THIS: Office1");
     addRow(frame, layout, row++, leoffice1, i18n("Office #1:"), whatstr);
 
     leoffice2 = new QLineEdit(frame);
     QObject::connect(leoffice2, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
-    whatstr = i18n("WHAT IS THIS: Office2");
+//    whatstr = i18n("WHAT IS THIS: Office2");
     addRow(frame, layout, row++, leoffice2, i18n("Office #2:"), whatstr);
 
     leaddress = new QLineEdit(frame);
     QObject::connect(leaddress, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
-    whatstr = i18n("WHAT IS THIS: Address");
+//    whatstr = i18n("WHAT IS THIS: Address");
     addRow(frame, layout, row++, leaddress, i18n("Address:"), whatstr);
 #endif
     frontrow = row;
@@ -291,7 +291,7 @@ propdlg::propdlg(KUser *AUser, QWidget *parent, const char *name, int)
     QGridLayout *layout = new QGridLayout(frame, 3, 2, marginHint(), spacingHint());
 
     leqmnt = new QComboBox(false, frame);
-    whatstr = i18n("WHAT IS THIS: Select filesystem");
+//    whatstr = i18n("WHAT IS THIS: Select filesystem");
     addRow(frame, layout, 0, leqmnt, i18n("Filesystem with quotas:"), whatstr, false);
 
     leqmnt->clear();
@@ -313,24 +313,24 @@ propdlg::propdlg(KUser *AUser, QWidget *parent, const char *name, int)
       leqfs = new QLineEdit(group);
       leqfs->setValidator(new QIntValidator(group));
       QObject::connect(leqfs, SIGNAL(textChanged(const QString &)), this, SLOT(qchanged()));
-      whatstr = i18n("WHAT IS THIS: Disk space soft quota");
+//      whatstr = i18n("WHAT IS THIS: Disk space soft quota");
       addRow(group, groupLayout, row++, leqfs, i18n("Disk space soft quota:"), whatstr, false);
 
       leqfh = new QLineEdit(group);
       leqfh->setValidator(new QIntValidator(group));
       QObject::connect(leqfh, SIGNAL(textChanged(const QString &)), this, SLOT(qchanged()));
-      whatstr = i18n("WHAT IS THIS: Disk space hard quota");
+//      whatstr = i18n("WHAT IS THIS: Disk space hard quota");
       addRow(group, groupLayout, row++, leqfh, i18n("Disk space hard quota:"), whatstr, false);
 
       leqfcur = new QLabel(group);
-      whatstr = i18n("WHAT IS THIS: Disk usage");
+//      whatstr = i18n("WHAT IS THIS: Disk usage");
       addRow(group, groupLayout, row++, leqfcur, i18n("Disk space in use:"), whatstr, false);
 
 #ifndef BSD
       leqft = new QLineEdit(group);
       leqft->setValidator(new QIntValidator(group));
       QObject::connect(leqft, SIGNAL(textChanged(const QString &)), this, SLOT(qchanged()));
-      whatstr = i18n("WHAT IS THIS: Time limit allowed for soft quota");
+//      whatstr = i18n("WHAT IS THIS: Time limit allowed for soft quota");
       addRow(group, groupLayout, row++, leqft, i18n("Grace period:"), whatstr, false);
 #endif
     }
@@ -348,24 +348,24 @@ propdlg::propdlg(KUser *AUser, QWidget *parent, const char *name, int)
       leqis = new QLineEdit(group);
       leqis->setValidator(new QIntValidator(group));
       QObject::connect(leqis, SIGNAL(textChanged(const QString &)), this, SLOT(qchanged()));
-      whatstr = i18n("WHAT IS THIS: File number soft quota");
+//      whatstr = i18n("WHAT IS THIS: File number soft quota");
       addRow(group, groupLayout, row++, leqis, i18n("File number soft quota:"), whatstr, false);
 
       leqih = new QLineEdit(group);
       leqih->setValidator(new QIntValidator(group));
       QObject::connect(leqih, SIGNAL(textChanged(const QString &)), this, SLOT(qchanged()));
-      whatstr = i18n("WHAT IS THIS: File number hard quota");
+//      whatstr = i18n("WHAT IS THIS: File number hard quota");
       addRow(group, groupLayout, row++, leqih, i18n("File number hard quota:"), whatstr, false);
 
       leqicur = new QLabel(group);
-      whatstr = i18n("WHAT IS THIS: File number usage");
+//      whatstr = i18n("WHAT IS THIS: File number usage");
       addRow(group, groupLayout, row++, leqicur, i18n("Number of files in use:"), whatstr, false);
 
 #ifndef BSD
       leqit = new QLineEdit(group);
       leqit->setValidator(new QIntValidator(group));
       QObject::connect(leqit, SIGNAL(textChanged(const QString &)), this, SLOT(qchanged()));
-      whatstr = i18n("WHAT IS THIS: Time limit allowed for file number soft quota");
+//      whatstr = i18n("WHAT IS THIS: Time limit allowed for file number soft quota");
       addRow(group, groupLayout, row++, leqit, i18n("Grace period:"), whatstr, false);
 #endif
     }
@@ -378,7 +378,7 @@ propdlg::propdlg(KUser *AUser, QWidget *parent, const char *name, int)
     QGridLayout *layout = new QGridLayout(frame, 20, 3, marginHint(), spacingHint());
     int row = 0;
 
-    whatstr = i18n("WHATSTHIS: Primary Group");
+//    whatstr = i18n("WHATSTHIS: Primary Group");
     cbpgrp = new QComboBox(false, frame, "cbpgrp");
     addRow(frame, layout, row++, cbpgrp, i18n("Primary Group:"), whatstr, false);
     QObject::connect(cbpgrp, SIGNAL(activated(const QString &)), this, SLOT(setpgroup(const QString &)));
@@ -386,7 +386,7 @@ propdlg::propdlg(KUser *AUser, QWidget *parent, const char *name, int)
     lstgrp = new KListView(frame);
     lstgrp->setFullWidth(); // Single column, full widget width.
     lstgrp->addColumn(i18n("Groups user '%1' belongs to:").arg(user->getName()));
-    QString whatstr = i18n("Select the groups that this user belongs to.");
+//    QString whatstr = i18n("Select the groups that this user belongs to.");
     QWhatsThis::add(lstgrp, whatstr);
     layout->addMultiCellWidget(lstgrp, row, row, 0, 1);
     row++;    
@@ -402,7 +402,7 @@ propdlg::propdlg(KUser *AUser, QWidget *parent, const char *name, int)
 
     leclass = new QLineEdit(frame);
     QObject::connect(leclass, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
-    whatstr = i18n("WHAT IS THIS: Login class");
+//    whatstr = i18n("WHAT IS THIS: Login class");
     addRow(group, groupLayout, row++, leclass, i18n("Login class:"), whatstr, true);
 
 #if 0

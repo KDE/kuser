@@ -105,7 +105,7 @@ long int KDateCtl::getDate() {
   delete base;
   delete qd;
   
-  return (r);
+  return (r+1);
 }
 
 void KDateCtl::updateControls() {

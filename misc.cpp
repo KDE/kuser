@@ -80,6 +80,7 @@ char *convertdate(char *buf, const long int base, const long int days) {
 }
 
 long today() {
+printf("today = %d\n", (time(NULL)/(24*60*60)));
   return (time(NULL)/(24*60*60));
 }
 

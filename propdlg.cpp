@@ -371,6 +371,7 @@ void propdlg::save() {
     user->sets_warn(leswarn->getDate()-user->gets_lstchg());
     user->sets_inact(lesinact->getDate()-user->gets_lstchg());
     user->sets_expire(lesexpire->getDate()-user->gets_lstchg());
+    user->sets_lstchg(today());
   }
 #endif
 }

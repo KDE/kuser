@@ -169,32 +169,32 @@ void KGroups::save() {
 
 KGroup *KGroups::group_lookup(const char *name) {
   for (uint i = 0; i<g.count(); i++)
-    if (name == g.at(i)->getname())
+    if (g.at(i)->getname() == name)
       return (g.at(i));
   return (NULL);
 }
 
 KGroup *KGroups::group_lookup(unsigned int gid) {
   for (uint i = 0; i<g.count(); i++)
-    if (gid == g.at(i)->getgid())
+    if (g.at(i)->getgid() == gid)
       return (g.at(i));
   return (NULL);
 }
 
 unsigned int KGroups::first_free() {
-  unsigned int t = 1001;
+  uint i = 0;
+  uint t = 1001;
 
-  for (uint i=0;i<g.count();i++)
-  {
-    if (g.at(i)->getgid() == t)
-    {
-      t++;
-      i = 0;
-      continue;
-    }
+  for (t=1001; t<65534; t++) {
+    while ((i<g.count()) && (g.at(i)->getgid() != t))
+      i++;
+
+    if (i == g.count())
+      return (t);
   }
 
-  return t;
+  KMsgBox::message(0, _("Error"), _("You have more than 65534 groups!?!? You have ran out of gid space!"), KMsgBox::STOP);
+  return (-1);
 }
 
 KGroups::~KGroups() {

@@ -303,7 +303,7 @@ bool KUsers::loadsdw() {
         tmp.sprintf(_("No /etc/passwd entry for %s.\nEntry will be removed at the next `Save'-operation."),
 		    spw->sp_namp);
         KMsgBox::message(0, _("Error"), tmp, KMsgBox::STOP);
-	continue;
+        continue;
       }
 
       up->sets_pwd(spw->sp_pwdp);        // cp the encrypted pwd
@@ -432,21 +432,21 @@ bool KUsers::savesdw() {
 
 KUser *KUsers::user_lookup(const char *name) {
   for (uint i = 0; i<u.count(); i++)
-    if (name == u.at(i)->getp_name())
+    if (u.at(i)->getp_name() == name)
       return (u.at(i));
   return (NULL);
 }
 
 KUser *KUsers::user_lookup(unsigned int uid) {
   for (uint i = 0; i<u.count(); i++)
-    if (uid == u.at(i)->getp_uid())
+    if (u.at(i)->getp_uid() == uid)
       return (u.at(i));
   return (NULL);
 }
 
 unsigned int KUsers::first_free() {
-  uint t = 1001;
   uint i = 0;
+  uint t = 1001;
 
   for (t=1001; t<65534; t++) {
     while ((i<u.count()) && (u.at(i)->getp_uid() != t))
@@ -457,7 +457,7 @@ unsigned int KUsers::first_free() {
   }
 
   KMsgBox::message(0, _("Error"), _("You have more than 65534 users!?!? You have ran out of uid space!"), KMsgBox::STOP);
-  return (65537l);
+  return (-1);
 }
 
 KUsers::~KUsers() {

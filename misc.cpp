@@ -150,7 +150,9 @@ int copyFile(QString from, QString to) {
   QFile fo;
   char buf[4096];
 
+#ifdef _KU_DEBUG
   printf("%s -> %s\n", (const char *)from, (const char *)to);
+#endif
   
   fi.setName(from);
   fo.setName(to);

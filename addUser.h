@@ -16,7 +16,7 @@ protected slots:
   virtual void ok();
 protected:
   void createHome();
-  void copySkel();
+  int copySkel();
 
   QCheckBox *createhome;
   QCheckBox *copyskel;

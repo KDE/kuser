@@ -51,7 +51,8 @@ void addUser::ok() {
     createHome();
 
   if (copyskel->isChecked())
-    copySkel();
+    if (copySkel() == -1)
+      return;
 
   accept();
 }
@@ -59,17 +60,14 @@ void addUser::ok() {
 void addUser::createHome() {
   QDir d = QDir::root();
 
-  printf("createHome\n");
-
   if (d.cd(user->getp_dir())) {
     QString tmp;
-    tmp.sprintf(_("Directory %s already exist"), (const char *)user->getp_dir());
+    tmp.sprintf(_("Directory %s already exists"), (const char *)user->getp_dir());
     err->addMsg(tmp, STOP);
     err->display();
   }
   
   if (mkdir(user->getp_dir(), 0700) != 0) {
-printf("Cannot create home directory\nError: %s", strerror(errno));
     QString tmp;
     tmp.sprintf(_("Cannot create home directory\nError: %s"), strerror(errno));
     err->addMsg(tmp, STOP);
@@ -84,7 +82,6 @@ printf("Cannot create home directory\nError: %s", strerror(errno));
   }
 
   if (chmod(user->getp_dir(), 0755) != 0) {
-printf("Cannot change permissions on home directory\nError: %s", strerror(errno));
     QString tmp;
     tmp.sprintf(_("Cannot change permissions on home directory\nError: %s"), strerror(errno));
     err->addMsg(tmp, STOP);
@@ -93,15 +90,34 @@ printf("Cannot change permissions on home directory\nError: %s", strerror(errno)
 
 }
 
-void addUser::copySkel() {
+int addUser::copySkel() {
   QDir s("/etc/skel");
   QDir d(user->getp_dir());
   QString tmp;
 
   s.setFilter(QDir::Files | QDir::Hidden);
 
+  if (!s.exists()) {
+    QString tmp;
+    tmp.sprintf(_("Directory %s does not exist"), (const char *)s.dirName());
+    err->addMsg(tmp, STOP);
+    err->display();
+    return (-1);
+  }
+
+  if (!d.exists()) {
+    QString tmp;
+    tmp.sprintf(_("Directory %s does not exist"), (const char *)d.dirName());
+    err->addMsg(tmp, STOP);
+    err->display();
+    return (-1);
+  }
+
   for (uint i=0; i<s.count(); i++) {
-    copyFile(s.filePath(s[i]), d.filePath(s[i]));
+    if (copyFile(s.filePath(s[i]), d.filePath(s[i])) == -1) {
+      err->display();
+      continue;
+    }
 
     if (chown(d.filePath(s[i]), user->getp_uid(), user->getp_gid()) != 0) {
       QString tmp;
@@ -118,5 +134,5 @@ void addUser::copySkel() {
     }
   }
   
-  printf("copySkel\n");
+  return (0);
 }

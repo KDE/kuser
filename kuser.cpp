@@ -988,27 +988,27 @@ void KUsers::del(KUser *au, bool deleteHome, bool deleteMailBox) {
 int KUser::createHome() {
 
   if(p_dir.isNull() || p_dir.isEmpty()) {
-    err->addMsg(i18n("Cannot create home directory for %1: it is null or empty\n").arg(p_name));
+    err->addMsg(i18n("Cannot create home folder for %1: it is null or empty\n").arg(p_name));
     err->display();
     return(0);
   }
   if (mkdir(QFile::encodeName(p_dir), 0700) != 0) {
     if (errno != EEXIST)
     {
-      err->addMsg(i18n("Cannot create home directory %1\nError: %2").arg(p_dir).arg(QString::fromLocal8Bit(strerror(errno))));
+      err->addMsg(i18n("Cannot create home folder %1\nError: %2").arg(p_dir).arg(QString::fromLocal8Bit(strerror(errno))));
       err->display();
       return(0);
     }
   }
 
   if (chown(QFile::encodeName(p_dir), p_uid, p_gid) != 0) {
-    err->addMsg(i18n("Cannot change owner of home directory %1\nError: %2").arg(p_dir).arg(QString::fromLocal8Bit(strerror(errno))));
+    err->addMsg(i18n("Cannot change owner of home folder %1\nError: %2").arg(p_dir).arg(QString::fromLocal8Bit(strerror(errno))));
     err->display();
     return(1);
   }
 
   if (chmod(QFile::encodeName(p_dir), KU_HOMEDIR_PERM) != 0) {
-    err->addMsg(i18n("Cannot change permissions on home directory %1\nError: %2").arg(p_dir).arg(QString::fromLocal8Bit(strerror(errno))));
+    err->addMsg(i18n("Cannot change permissions on home folder %1\nError: %2").arg(p_dir).arg(QString::fromLocal8Bit(strerror(errno))));
     err->display();
     return(1);
   }
@@ -1078,28 +1078,28 @@ int	rc = 0;
     if (rc == 0) {
    	if (S_ISDIR(sb.st_mode)) {
 	    if (KMessageBox::
-		warningContinueCancel(0, i18n("Directory %1 already exists!\nWill make %2 owner and change permissions.\nDo you want to continue?")
+		warningContinueCancel(0, i18n("Folder %1 already exists!\nWill make %2 owner and change permissions.\nDo you want to continue?")
 .arg(dir).arg(p_name), QString::null, i18n("&Continue")) ==
 KMessageBox::Continue) {
  		if (chown(QFile::encodeName(dir), p_uid, p_gid) != 0) {
-   		    err->addMsg(i18n("Cannot change owner of %1 directory\nError: %2")
+   		    err->addMsg(i18n("Cannot change owner of %1 folder\nError: %2")
 .arg(dir).arg(QString::fromLocal8Bit(strerror(errno))));
 		    err->display();
  		}
 	  	if (chmod(QFile::encodeName(dir), KU_KDEDIRS_PERM) != 0) {
-   			err->addMsg(i18n("Cannot change permissions on %1 directory\nError: %2").arg(dir).arg(QString::fromLocal8Bit(strerror(errno))));
+   			err->addMsg(i18n("Cannot change permissions on %1 folder\nError: %2").arg(dir).arg(QString::fromLocal8Bit(strerror(errno))));
    			err->display();
  		}
 			return(0);
 			}
 	    else {
-   		err->addMsg(i18n("Directory %1 left 'as is'.\nVerify ownership and permissions for user %2 who may not be able to log in!").arg(dir).arg(p_name));
+   		err->addMsg(i18n("Folder %1 left 'as is'.\nVerify ownership and permissions for user %2 who may not be able to log in!").arg(dir).arg(p_name));
    		err->display();
 		return(-1);
 	    }
 	}
 	else {
-   	    err->addMsg(i18n("%1 exists and is not a directory. User %2 will not be able to log in!").arg(dir).arg(p_name));
+   	    err->addMsg(i18n("%1 exists and is not a folder. User %2 will not be able to log in!").arg(dir).arg(p_name));
    	    err->display();
 	    return(-1);
 	}
@@ -1107,18 +1107,18 @@ KMessageBox::Continue) {
     else {
 	if (errno == ENOENT) {
  	    if (mkdir(QFile::encodeName(dir), 0700) != 0) {
-   		err->addMsg(i18n("Cannot create %1 directory\nError: %2").arg(dir)
+   		err->addMsg(i18n("Cannot create %1 folder\nError: %2").arg(dir)
 		    .arg(QString::fromLocal8Bit(strerror(errno))));
    		err->display();
 		return(-1);
   	    }
 	    if (chown(QFile::encodeName(dir), p_uid, p_gid) != 0) {
-   		err->addMsg(i18n("Cannot change owner of %1 directory\nError: %2")
+   		err->addMsg(i18n("Cannot change owner of %1 folder\nError: %2")
 		    .arg(dir).arg(QString::fromLocal8Bit(strerror(errno))));
    		err->display();
  	    }
 	    if (chmod(QFile::encodeName(dir), KU_KDEDIRS_PERM) != 0) {
-   		err->addMsg(i18n("Cannot change permissions on %1 directory\nError: %2").arg(dir).arg(QString::fromLocal8Bit(strerror(errno))));
+   		err->addMsg(i18n("Cannot change permissions on %1 folder\nError: %2").arg(dir).arg(QString::fromLocal8Bit(strerror(errno))));
 		err->display();
  	    }
 	    return(0);
@@ -1225,13 +1225,13 @@ void KUser::copyDir(const QString &srcPath, const QString &dstPath) {
     d.mkdir(name, FALSE);
 
     if (chown(QFile::encodeName(d.filePath(name)), p_uid, p_gid) != 0) {
-      err->addMsg(i18n("Cannot change owner of directory %1\nError: %2")
+      err->addMsg(i18n("Cannot change owner of folder %1\nError: %2")
                   .arg(d.filePath(s[i])).arg(QString::fromLocal8Bit(strerror(errno))));
       err->display();
     }
 
     if (chmod(QFile::encodeName(d.filePath(name)), st.st_mode & 07777) != 0) {
-      err->addMsg(i18n("Cannot change permissions on directory %1\nError: %2")
+      err->addMsg(i18n("Cannot change permissions on folder %1\nError: %2")
                   .arg(d.filePath(s[i])).arg(QString::fromLocal8Bit(strerror(errno))));
       err->display();
     }
@@ -1276,13 +1276,13 @@ int KUser::copySkel() {
   umask(0777);
 
   if (!s.exists()) {
-    err->addMsg(i18n("Directory %1 does not exist, cannot copy skeleton for %2").arg(s.absPath()).arg(p_name));
+    err->addMsg(i18n("Folder %1 does not exist, cannot copy skeleton for %2").arg(s.absPath()).arg(p_name));
     err->display();
     return (-1);
   }
 
   if (!d.exists()) {
-    err->addMsg(i18n("Directory %1 does not exist, cannot copy skeleton").arg(d.absPath()));
+    err->addMsg(i18n("Folder %1 does not exist, cannot copy skeleton").arg(d.absPath()));
     err->display();
     return (-1);
   }
@@ -1308,12 +1308,12 @@ int KUser::removeHome() {
       command = QString::fromLatin1("/bin/rm -rf -- %1").arg(KProcess::quote(p_dir));
 #endif
       if (system(QFile::encodeName(command)) != 0) {
-             err->addMsg(i18n("Cannot remove home directory %1\nError: %2")
+             err->addMsg(i18n("Cannot remove home folder %1\nError: %2")
                        .arg(command).arg(QString::fromLocal8Bit(strerror(errno))));
              err->display();
       }
     } else {
-      err->addMsg(i18n("Removal of home directory %1 failed (uid = %2, gid = %3)").arg(p_dir).arg(sb.st_uid).arg(sb.st_gid));
+      err->addMsg(i18n("Removal of home folder %1 failed (uid = %2, gid = %3)").arg(p_dir).arg(sb.st_uid).arg(sb.st_gid));
       err->display();
     }
   else {

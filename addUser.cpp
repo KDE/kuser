@@ -37,7 +37,7 @@ addUser::addUser(KUser *AUser, QWidget *parent, const char *name, int isprep) :
   QVBoxLayout *groupLayout = new QVBoxLayout(group, marginHint(), spacingHint());
   groupLayout->addSpacing(group->fontMetrics().lineSpacing());
   groupLayout->setAutoAdd(true);
-  createhome = new QCheckBox(i18n("Create home directory"), group);
+  createhome = new QCheckBox(i18n("Create home folder"), group);
   createhome->setChecked(true);
   copyskel = new QCheckBox(i18n("Copy skeleton"), group);
   usePrivateGroup = new QCheckBox(i18n("Use private group"), group);
@@ -91,12 +91,12 @@ bool addUser::checkHome() {
   if (r == 0) {
     if (S_ISDIR(s.st_mode)) {
        if (KMessageBox::
-         warningContinueCancel (0, i18n("Directory %1 already exists!\n%2 may become owner and permissions may change.\nDo you really want to use %3?").arg(h_dir).arg(user->getName()).arg(h_dir), QString::null, i18n("&Continue")) == KMessageBox::Cancel)
+         warningContinueCancel (0, i18n("Folder %1 already exists!\n%2 may become owner and permissions may change.\nDo you really want to use %3?").arg(h_dir).arg(user->getName()).arg(h_dir), QString::null, i18n("&Continue")) == KMessageBox::Cancel)
                   return false;
             else
                   return true;
        } else
-	  err->addMsg(i18n("%1 is not a directory").arg(h_dir));
+	  err->addMsg(i18n("%1 is not a folder").arg(h_dir));
   } else
     err->addMsg(QString::fromLatin1("checkHome: stat: %1 ").arg(QString::fromLocal8Bit(strerror(errno))));
   

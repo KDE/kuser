@@ -179,7 +179,7 @@ propdlg::propdlg(KUser *AUser, QWidget *parent, const char *name, int)
     lehome = new QLineEdit(frame);
     QObject::connect(lehome, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
 //    whatstr = i18n("WHAT IS THIS: Home Directory");
-    addRow(frame, layout, row++, lehome, i18n("&Home directory:"), whatstr);
+    addRow(frame, layout, row++, lehome, i18n("&Home folder:"), whatstr);
 
 #ifdef EXTENDED_GECOS_BSD
     // FreeBSD appears to use the comma separated fields in the GECOS entry

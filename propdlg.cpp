@@ -56,7 +56,7 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
 //  ld3 = addLabel(w1, "mld3", 200, 60, 50, 20, _("Primary group id"));
 
   pbsetpwd = new QPushButton(w1, "pbsetpwd");
-  pbsetpwd->setGeometry(260, 150, 120, 30);
+  pbsetpwd->setGeometry(260, 160, 120, 30);
   pbsetpwd->setText(_("Set password"));
   QObject::connect(pbsetpwd, SIGNAL(clicked()), this, SLOT(setpwd()));
 
@@ -556,6 +556,8 @@ void propdlg::ok() {
   uint newuid;
   tmp.setStr(leid->text());
   newuid = tmp.toInt();
+
+printf("propdlg::ok\n");
   
   if (olduid != newuid)
     if (users->user_lookup(newuid) != NULL) {

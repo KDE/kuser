@@ -28,7 +28,7 @@ public:
   ~propdlg();
 
 protected slots:
-  void ok();
+  virtual void ok();
   void cancel();
   void setpwd();
   void mntsel(int index);

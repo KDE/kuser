@@ -19,6 +19,7 @@
 #include "usernamedlg.h"
 #include "grpnamedlg.h"
 #include "propdlg.h"
+#include "addUser.h"
 #include "pwddlg.h"
 #include "editGroup.h"
 
@@ -170,7 +171,7 @@ void mainDlg::userdel() {
 
 void mainDlg::useradd() {
   usernamedlg *ud;
-  propdlg *editUser;
+  addUser *au;
 
   KUser *tk;
 #ifdef _KU_QUOTA
@@ -229,14 +230,14 @@ void mainDlg::useradd() {
 
 #ifdef _KU_QUOTA
   if (is_quota)
-    editUser = new propdlg(tk, tq, this, "userin");
+    au = new addUser(tk, tq, this, "userin");
   else
-    editUser = new propdlg(tk, NULL, this, "userin");
+    au = new addUser(tk, NULL, this, "userin");
 #else
-  editUser = new propdlg(tk, this, "userin");
+  au = new addUser(tk, this, "userin");
 #endif
 
-  if (editUser->exec() != 0) {
+  if (au->exec() != 0) {
     u->addUser(tk);
 #ifdef _KU_QUOTA
     q->addQuota(tq);
@@ -252,7 +253,7 @@ void mainDlg::useradd() {
 
   reloadUsers(u->getUsersNumber()-1);
 
-  delete editUser;
+  delete au;
 }
 
 void mainDlg::quit() {

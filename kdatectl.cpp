@@ -13,8 +13,6 @@ const char *checktitle, const char *title,
 long int adate, int ax, int ay) {
   char tmp[200];
 
-  printf("adate = %d, %s\n", adate, name);
-
   x = ax; y = ay;
 
   sprintf(tmp, "%s_day", name);

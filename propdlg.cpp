@@ -143,20 +143,20 @@ propdlg::propdlg(KUser *AUser, QWidget *parent, const char *name, int)
     frontlayout = layout;
 
     leuser = new QLabel(frame);
-//    whatstr = i18n("WHAT IS THIS: User Login");
-    addRow(frame, layout, row++, leuser, i18n("User Login:"), whatstr, false);
+//    whatstr = i18n("WHAT IS THIS: User login");
+    addRow(frame, layout, row++, leuser, i18n("User login:"), whatstr, false);
 
     leid = new QLineEdit(frame);
 //    whatstr = i18n("WHAT IS THIS: User Id");
-    addRow(frame, layout, row++, leid, i18n("User Id:"), whatstr, false);
+    addRow(frame, layout, row++, leid, i18n("User ID:"), whatstr);
 
-    pbsetpwd = new QPushButton(i18n("Set Password"), frame);
-    layout->addMultiCellWidget(pbsetpwd, 0, 1, 2, 2, AlignBottom);
+    pbsetpwd = new QPushButton(i18n("Set Password..."), frame);
+    layout->addWidget(pbsetpwd, 0, 2);
     QObject::connect(pbsetpwd, SIGNAL(clicked()), this, SLOT(setpwd()));
 
     lefname = new QLineEdit(frame);
 //    whatstr = i18n("WHAT IS THIS: Full Name");
-    addRow(frame, layout, row++, lefname, i18n("Full Name:"), whatstr);
+    addRow(frame, layout, row++, lefname, i18n("Full name:"), whatstr);
     QObject::connect(lefname, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
 
     leshell = new QComboBox(true, frame);
@@ -184,12 +184,12 @@ propdlg::propdlg(KUser *AUser, QWidget *parent, const char *name, int)
     leshell->insertStringList(shells);
     QObject::connect(leshell, SIGNAL(activated(const QString &)), this, SLOT(changed()));
 //    whatstr = i18n("WHAT IS THIS: Login Shell");
-    addRow(frame, layout, row++, leshell, i18n("Login Shell:"), whatstr);
+    addRow(frame, layout, row++, leshell, i18n("Login shell:"), whatstr);
 
     lehome = new QLineEdit(frame);
     QObject::connect(lehome, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
 //    whatstr = i18n("WHAT IS THIS: Home Directory");
-    addRow(frame, layout, row++, lehome, i18n("Home Directory:"), whatstr);
+    addRow(frame, layout, row++, lehome, i18n("Home directory:"), whatstr);
 
 #ifdef EXTENDED_GECOS_BSD
     // FreeBSD appears to use the comma separated fields in the GECOS entry
@@ -237,7 +237,7 @@ propdlg::propdlg(KUser *AUser, QWidget *parent, const char *name, int)
     QDate lastChange = QDate(1970,1,1).addDays(user->getLastChange());
     leslstchg = new QLabel(frame);
     leslstchg->setText(KGlobal::locale()->formatDate(lastChange));
-    addRow(frame, layout, row++, leslstchg, i18n("Last Password Change:"), QString::null, true);
+    addRow(frame, layout, row++, leslstchg, i18n("Last password change:"), QString::null, true);
  
     layout->addMultiCellWidget(new KSeparator(KSeparator::HLine, frame), row, row, 0, 3);
     row++;
@@ -350,7 +350,7 @@ propdlg::propdlg(KUser *AUser, QWidget *parent, const char *name, int)
 
 //    whatstr = i18n("WHATSTHIS: Primary Group");
     cbpgrp = new QComboBox(false, frame, "cbpgrp");
-    addRow(frame, layout, row++, cbpgrp, i18n("Primary Group:"), whatstr, false);
+    addRow(frame, layout, row++, cbpgrp, i18n("Primary group:"), whatstr, false);
     QObject::connect(cbpgrp, SIGNAL(activated(const QString &)), this, SLOT(setpgroup(const QString &)));
 
     lstgrp = new KListView(frame);

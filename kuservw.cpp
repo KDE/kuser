@@ -62,8 +62,8 @@ void KUserView::init()
   setAllColumnsShowFocus(true);
   addColumn(i18n("UID"));
   setColumnAlignment(0, AlignRight);
-  addColumn(i18n("User login"));
-  addColumn(i18n("Full name"));
+  addColumn(i18n("User Login"));
+  addColumn(i18n("Full Name"));
 }
 
 KUser *KUserView::getCurrentUser() {

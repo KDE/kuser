@@ -21,7 +21,7 @@ pwddlg::pwddlg(KUser *AUser, QWidget* parent, const char* name)
   QGrid *page = makeGridMainWidget(2, QGrid::Horizontal);  
 
   QLabel* lb1 = new QLabel(page, "lb1");
-  lb1->setText(i18n("Password"));
+  lb1->setText(i18n("Password:"));
   lb1->setMinimumSize(lb1->sizeHint());
   lb1->setAlignment(AlignRight|AlignVCenter);
 
@@ -37,7 +37,7 @@ pwddlg::pwddlg(KUser *AUser, QWidget* parent, const char* name)
   leusername1->setEchoMode(QLineEdit::Password);
 
   QLabel* lb2 = new QLabel(page, "lb2");
-  lb2->setText(i18n("Retype password"));
+  lb2->setText(i18n("Verify:"));
   lb2->setMinimumSize(lb2->sizeHint());
   lb2->setAlignment(AlignRight|AlignVCenter);
 

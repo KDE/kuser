@@ -48,7 +48,7 @@ mainDlg *md = NULL;
 int main(int argc, char **argv) {
   
   KAboutData aboutData( "kuser", I18N_NOOP("KUser"), 
-    _KU_VERSION, description, KAboutData::GPL, 
+    _KU_VERSION, description, KAboutData::License_GPL, 
     "(c) 1999-2000, Denis Pershin");
   aboutData.addAuthor("Denis Pershin",0, "dyp@inetlab.com");
   KCmdLineArgs::init( argc, argv, &aboutData );

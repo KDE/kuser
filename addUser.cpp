@@ -24,7 +24,7 @@
 #include "addUser.moc"
 
 #ifdef _KU_QUOTA
-addUser::addUser(KUser *auser, Quota *aquota, QWidget *parent = 0, const char *name = 0, int isprep = false) :
+addUser::addUser(KUser *auser, Quota *aquota, QWidget *parent, const char *name, int isprep) :
   propdlg(auser, aquota, parent, name, isprep) {
 
   createhome = new QCheckBox(w1, "createHome");

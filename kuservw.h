@@ -25,7 +25,7 @@ public:
   void repaint();
 
 protected:
-  virtual void KUserView::resizeEvent( QResizeEvent *rev );
+  virtual void resizeEvent( QResizeEvent *rev );
 
 signals:
   void selected(int item);

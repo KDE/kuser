@@ -468,7 +468,7 @@ bool KUsers::loadpwd() {
       else{					
         nispasswd_errno = errno;					
         break;					
-      }						
+      }
     }						
 
     pwd_mode = st.st_mode & 0666;
@@ -515,7 +515,7 @@ bool KUsers::loadpwd() {
     fclose(fpwd);
 #endif
     if(!nispasswd_filename.isEmpty()) {				
-      processing_file = processing_file & ~PASSWD;		
+      processing_file = processing_file & ~PASSWD;
       processing_file = processing_file | NISPASSWD;		
       filename.truncate(0);				
       filename.append(nispasswd_filename);		
@@ -656,7 +656,7 @@ bool KUsers::savepwd() {
   QString s1;
   QString tmp;
   QString passwd_filename;		
-  QString nispasswd_filename;		
+  QString nispasswd_filename;
   QString qs_minuid;			
 
   const char *c_minuid;			
@@ -797,7 +797,7 @@ bool KUsers::savepwd() {
       err->display();				
     }						
 
-    if( (errors_found & NONISPASSWD) != 0 ) {	
+    if( (errors_found & NONISPASSWD) != 0 ) {
       err->addMsg(i18n("Specifying NIS minimum UID requires NIS file(s).\nPlease update KUser Settings (Sources)"));	
       err->display();				
     }						
@@ -998,7 +998,7 @@ rc = stat(QFile::encodeName(dir), &sb);
    	if (S_ISDIR(sb.st_mode)) {												/* is directory?	*/
 																					/* yes it is...		*/
 			if (KMessageBox::
-				warningContinueCancel(0, i18n("Directory %1 already exists!\nWill make  %2 owner and change permissions.\nDo you want to continue?")
+				warningContinueCancel(0, i18n("Directory %1 already exists!\nWill make %2 owner and change permissions.\nDo you want to continue?")
 .arg(dir).arg(p_name), QString::null, i18n("&Continue")) ==
 KMessageBox::Continue) {
 																											/* user continued */

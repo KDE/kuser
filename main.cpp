@@ -17,8 +17,8 @@
 #include "misc.h"
 #include "mainWidget.h"
 
-static const char *description = 
-	I18N_NOOP("KDE User editor");
+static const char *description =
+	I18N_NOOP("KDE User Editor");
 
 char tmp[1024];
 KConfig *config;

@@ -134,14 +134,14 @@ void mainView::userdel() {
 
   if (!group)
     return;
-    
-  if (KMessageBox::warningContinueCancel(0, 
+
+  if (KMessageBox::warningContinueCancel(0,
         i18n("You are using private groups.\n"
-             "Do you want delete user's private group '%1'?")
-	       .arg(group->getName()), QString::null, 
+             "Do you want to delete the user's private group '%1'?")
+	       .arg(group->getName()), QString::null,
 	     i18n("&Delete")) != KMessageBox::Continue)
     return;
-    
+
   kug->getGroups().del(group);
   lbgroups->removeItem(group);
 }

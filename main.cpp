@@ -55,7 +55,7 @@ int main( int argc, char **argv )
   mw = new mainWidget("kuser");
   
   a.setMainWidget(mw);
-  mw->setCaption("KDE User Manager");
+  mw->setCaption(i18n("KDE User Manager"));
   mw->show();
 
   a.exec();

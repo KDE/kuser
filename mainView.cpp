@@ -39,7 +39,7 @@
 #include "pwddlg.h"
 #include "editGroup.h"
 
-mainView::mainView(QWidget *parent) : QTabWidget(parent) 
+mainView::mainView(QWidget *parent) : QTabWidget(parent)
 {
   init();
 }
@@ -61,7 +61,7 @@ void mainView::init() {
   connect(this, SIGNAL(currentChanged(QWidget *)), this, SLOT(slotTabChanged()));
 }
 
-mainView::~mainView() 
+mainView::~mainView()
 {
 }
 
@@ -89,14 +89,14 @@ void mainView::clearGroups()
   lbgroups->clear();
 }
 
-void mainView::reloadUsers() 
+void mainView::reloadUsers()
 {
   KUser *ku;
 
   lbusers->clear();
   lbusers->init();
   uid_t uid = kug->kcfg()->firstUID();
-  
+
   ku = kug->getUsers().first();
   while ( ku ) {
     if ( ku->getUID() >= uid || mShowSys ) lbusers->insertItem( ku );
@@ -106,7 +106,7 @@ void mainView::reloadUsers()
     lbusers->setSelected(lbusers->firstChild(), true);
 }
 
-void mainView::reloadGroups() 
+void mainView::reloadGroups()
 {
   KGroup *kg;
 
@@ -121,12 +121,12 @@ void mainView::reloadGroups()
   }
 }
 
-void mainView::useredit() 
+void mainView::useredit()
 {
   userSelected();
 }
 
-void mainView::userdel() 
+void mainView::userdel()
 {
   KUser *user = lbusers->getCurrentUser();
   if (!user)
@@ -141,10 +141,10 @@ void mainView::userdel()
 
   user->setDeleteHome( dlg.getDeleteHomeDir() );
   user->setDeleteMailBox( dlg.getDeleteMailBox() );
-  
+
   kug->getUsers().del( user );
   if ( !updateUsers() ) return;
-    
+
   KGroup *group = 0;
   group = kug->getGroups().first();
   while ( group ) {
@@ -157,7 +157,7 @@ void mainView::userdel()
     }
     group = kug->getGroups().next();
   }
-  
+
   if ( kug->kcfg()->userPrivateGroup() ) {
 
     group = kug->getGroups().lookup( gid );
@@ -174,7 +174,7 @@ void mainView::userdel()
   updateGroups();
 }
 
-void mainView::useradd() 
+void mainView::useradd()
 {
   KUser *tk;
 
@@ -193,21 +193,21 @@ void mainView::useradd()
   }
 
   bool ok;
-  QString name = KInputDialog::getText( QString::null, 
-    i18n("Please type the name of the new user."), 
+  QString name = KInputDialog::getText( QString::null,
+    i18n("Please type the name of the new user:"),
     QString::null, &ok );
-    
+
   if ( !ok ) return;
-  
+
   if ( kug->getUsers().lookup( name ) ) {
     KMessageBox::sorry( 0, i18n("User with name %1 already exists.").arg( name ) );
     return;
   }
-    
+
   tk = new KUser();
   tk->setUID( uid );
   tk->setName( name );
-  
+
   if ( samba ) {
     SID sid;
     sid.setDOM( kug->getUsers().getDOMSID() );
@@ -218,7 +218,7 @@ void mainView::useradd()
     tk->setHomeDrive( kug->kcfg()->samhomedrive() );
     tk->setLoginScript( kug->kcfg()->samloginscript() );
   }
-  
+
   tk->setShell( kug->kcfg()->shell() );
   tk->setHomeDir( kug->kcfg()->homepath().replace( "%U", name ) );
   if ( kug->getUsers().getCaps() & KUsers::Cap_Shadow || samba ) {
@@ -229,16 +229,16 @@ void mainView::useradd()
   tk->setMax( kug->kcfg()->smax() );
   tk->setWarn( kug->kcfg()->swarn() );
   tk->setInactive( kug->kcfg()->sinact() );
-  tk->setExpire( kug->kcfg()->sneverexpire() ? (uint) -1 : 
+  tk->setExpire( kug->kcfg()->sneverexpire() ? (uint) -1 :
     (kug->kcfg()->sexpire()).toTime_t() );
-  
+
   bool privgroup = kug->kcfg()->userPrivateGroup();
 
   addUser au( tk, privgroup, this );
-  
+
   au.setCreateHomeDir( kug->kcfg()->createHomeDir() );
   au.setCopySkel( kug->kcfg()->copySkel() );
-  
+
   if ( au.exec() == QDialog::Rejected ) {
     delete tk;
     return;
@@ -283,21 +283,21 @@ bool mainView::queryClose()
   return true;
 }
 
-void mainView::setpwd() 
+void mainView::setpwd()
 {
   int count = lbusers->selectedItems().count();
   if ( count == 0 ) return;
   if ( count > 1 ) {
-    if ( KMessageBox::questionYesNo( 0, 
+    if ( KMessageBox::questionYesNo( 0,
       i18n("You have selected %1 users. Do you really want to change the password for all the selected users?")
 		.arg( count ) ) == KMessageBox::No ) return;
   }
   pwddlg d( this );
   if ( d.exec() != QDialog::Accepted ) return;
-  
+
   KUser newuser, *user;
   QListViewItem *item;
-  
+
   item = lbusers->firstChild();
   while ( item ) {
     if ( item->isSelected() ) {
@@ -312,7 +312,7 @@ void mainView::setpwd()
   updateUsers();
 }
 
-void mainView::groupSelected() 
+void mainView::groupSelected()
 {
   bool samba = kug->getGroups().getCaps() & KGroups::Cap_Samba;
   KGroup *tmpKG = lbgroups->getCurrentGroup();
@@ -333,11 +333,11 @@ void mainView::groupSelected()
   }
 }
 
-void mainView::userSelected() 
+void mainView::userSelected()
 {
   QListViewItem *item;
   QPtrList<KUser> ulist;
-  
+
   item = lbusers->firstChild();
   while ( item ) {
     if ( item->isSelected() ) {
@@ -346,10 +346,10 @@ void mainView::userSelected()
     item = item->nextSibling();
   }
   if ( ulist.isEmpty() ) return;
-  
+
   propdlg editUser( ulist, this );
   if ( editUser.exec() == QDialog::Rejected ) return;
-    
+
   KUser *user, newuser;
   user = ulist.first();
   while ( user ) {
@@ -361,14 +361,14 @@ void mainView::userSelected()
   updateGroups();
 }
 
-void mainView::grpadd() 
+void mainView::grpadd()
 {
   showPage(lbgroups);
 
   gid_t gid;
   uid_t rid = 0;
   bool samba;
-  
+
   samba = kug->getGroups().getCaps() & KGroups::Cap_Samba;
 
   if ( (gid = kug->getGroups().first_free()) == KGroups::NO_FREE )
@@ -379,7 +379,7 @@ void mainView::grpadd()
   if ( samba && (rid = kug->getGroups().first_free_sam()) == 0 )
   {
     KMessageBox::sorry( 0, i18n("You have run out of group RID space.") );
-    return;  
+    return;
   }
 
   KGroup *tk = new KGroup();
@@ -391,7 +391,7 @@ void mainView::grpadd()
     tk->setSID( sid );
   }
   editGroup egdlg( tk, samba, true );
-  
+
   if ( egdlg.exec() == QDialog::Rejected ) {
     delete tk;
     return;
@@ -400,24 +400,24 @@ void mainView::grpadd()
   updateGroups();
 }
 
-void mainView::grpedit() 
+void mainView::grpedit()
 {
   groupSelected();
 }
 
-void mainView::grpdel() 
+void mainView::grpdel()
 {
   QListViewItem *item;
   KGroup *group = NULL;
   int selected = 0;
-  
+
   item = lbgroups->firstChild();
   while ( item ) {
     if ( item->isSelected() ) {
-    
+
       selected++;
       group = ((KGroupViewItem*) item)->group();
-      
+
       KUser *user = kug->getUsers().first();
       while ( user ) {
         if ( user->getGID() == group->getGID() ) {
@@ -432,17 +432,17 @@ void mainView::grpdel()
 
   switch ( selected ) {
     case 0: return;
-    case 1: 
-      if (KMessageBox::warningContinueCancel( 0, 
+    case 1:
+      if (KMessageBox::warningContinueCancel( 0,
         i18n("Do you really want to delete the group '%1'?").arg(group->getName()),
         QString::null, i18n("&Delete")) != KMessageBox::Continue) return;
       break;
     default:
-      if (KMessageBox::warningContinueCancel( 0, 
+      if (KMessageBox::warningContinueCancel( 0,
         i18n("Do you really want to delete the %1 selected groups?").arg(selected),
         QString::null, i18n("&Delete")) != KMessageBox::Continue) return;
   }
-  
+
   item = lbgroups->firstChild();
   while ( item ) {
     if ( item->isSelected() ) {
@@ -459,11 +459,11 @@ bool mainView::updateGroups()
   bool ret;
   kdDebug() << "updateGroups() " << endl;
   ret = kug->getGroups().dbcommit();
-  
+
   KGroup *group;
   KGroups::DelIt dit( kug->getGroups().mDelSucc );
   KGroups::AddIt ait( kug->getGroups().mAddSucc );
-    
+
   while ( (group = dit.current()) != 0 ) {
     ++dit;
     lbgroups->removeItem( group );
@@ -481,11 +481,11 @@ bool mainView::updateUsers()
   bool ret;
   kdDebug() << "updateUsers() " << endl;
   ret = kug->getUsers().dbcommit();
-  
+
   KUser *user;
   KUsers::DelIt dit( kug->getUsers().mDelSucc );
   KUsers::AddIt ait( kug->getUsers().mAddSucc );
-    
+
   while ( (user = dit.current()) != 0 ) {
     ++dit;
     lbusers->removeItem( user );
@@ -497,6 +497,6 @@ bool mainView::updateUsers()
   kug->getUsers().commit();
   return ret;
 }
-  
+
 
 #include "mainView.moc"

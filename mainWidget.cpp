@@ -90,7 +90,7 @@ void mainWidget::setupActions()
   (void) new KAction(i18n("&Delete..."), QIconSet(BarIconC("delete_user")), 0, md,
     SLOT(userdel()), actionCollection(), "delete_user");
 
-  (void) new KAction(i18n("&Set Password..."), QIconSet(BarIconC("set_password_user")),
+  (void) new KAction(i18n("&Set Password..."),
     0, md, SLOT(setpwd()), actionCollection(), "set_password_user");
 
   (void) new KAction(i18n("&Add..."), QIconSet(BarIconC("add_group")), 0, md,
@@ -103,7 +103,7 @@ void mainWidget::setupActions()
     SLOT(grpdel()), actionCollection(), "delete_group");
 
   (void) new KAction(i18n("&Select Connection..."),
-    QIconSet(BarIconC("select_conn")), 0, this,
+    0, this,
     SLOT(selectconn()), actionCollection(), "select_conn");
 
   mShowSys = new KToggleAction(i18n("Show System Users/Groups"),
@@ -173,18 +173,18 @@ void mainWidget::showSys()
   md->reloadGroups();
 }
 
-void mainWidget::properties() 
+void mainWidget::properties()
 {
   editDefaults *eddlg = new editDefaults( kug->kcfg(), this );
   connect(eddlg, SIGNAL(settingsChanged()), this, SLOT(slotApplySettings()));
 
   eddlg->show();
 }
-  
+
 void mainWidget::init()
 {
   bool rw;
-  
+
   md->clearUsers();
   md->clearGroups();
   kug->init();
@@ -195,25 +195,25 @@ void mainWidget::init()
   actionCollection()->action("delete_user")->setEnabled( rw );
   actionCollection()->action("set_password_user")->setEnabled( rw );
   if ( rw ) {
-    connect( md, SIGNAL(userSelected(bool)), 
+    connect( md, SIGNAL(userSelected(bool)),
       actionCollection()->action("edit_user"), SLOT(setEnabled(bool)) );
-    connect( md, SIGNAL(userSelected(bool)), 
+    connect( md, SIGNAL(userSelected(bool)),
       actionCollection()->action("delete_user"), SLOT(setEnabled(bool)) );
-    connect( md, SIGNAL(userSelected(bool)), 
+    connect( md, SIGNAL(userSelected(bool)),
       actionCollection()->action("set_password_user"), SLOT(setEnabled(bool)) );
   } else {
     disconnect( md, SIGNAL(userSelected(bool)), 0, 0 );
   }
-  
+
   rw = ! ( kug->getGroups().getCaps() & KGroups::Cap_ReadOnly );
   kdDebug() << "Groups rw()" << rw << endl;
   actionCollection()->action("add_group")->setEnabled( rw );
   actionCollection()->action("edit_group")->setEnabled( rw );
   actionCollection()->action("delete_group")->setEnabled( rw );
   if ( rw ) {
-    connect( md, SIGNAL(groupSelected(bool)), 
+    connect( md, SIGNAL(groupSelected(bool)),
       actionCollection()->action("edit_group"), SLOT(setEnabled(bool)) );
-    connect( md, SIGNAL(groupSelected(bool)), 
+    connect( md, SIGNAL(groupSelected(bool)),
       actionCollection()->action("delete_group"), SLOT(setEnabled(bool)) );
   } else {
     disconnect( md, SIGNAL(groupSelected(bool)), 0, 0 );

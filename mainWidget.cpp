@@ -1,6 +1,9 @@
 #include "maindlg.h"
 
 #include "globals.h"
+
+#include <stdio.h>
+
 #include <qtooltip.h>
 #include <ktoolbar.h>
 #include <kglobal.h>
@@ -31,26 +34,29 @@ mainWidget::mainWidget(const char *name) : KTMainWindow(name) {
 
   QPopupMenu *group = new QPopupMenu;
   CHECK_PTR(group);
-  group->insertItem(i18n("&Edit..."), md, SLOT(grpedit()) );
-  group->insertItem(i18n("&Delete..."), md, SLOT(grpdel()) );
-  group->insertItem(i18n("&Add..."), md, SLOT(grpadd()) );
+  group->insertItem(i18n("&Edit..."), md, SLOT(grpedit()));
+  group->insertItem(i18n("&Delete..."), md, SLOT(grpdel()));
+  group->insertItem(i18n("&Add..."), md, SLOT(grpadd()));
 
-  QString tmp;
-  tmp = i18n("KUser version %1\n"
-		"KDE project\n"
-		"This program was created by\n"
-		"Denis Pershin\n"
-		"dyp@inetlab.com\n"
-		"Copyright 1997, 1998, 1999 (c)").arg(_KU_VERSION);
-  QPopupMenu *help = helpMenu(tmp);
+  QPopupMenu *help = helpMenu(
+    i18n("KUser version %1\n"
+         "KDE project\n"
+         "This program was created by\n"
+         "%2\n"
+         "%3\n"
+         "Copyright %4 (c)")
+         .arg(_KU_VERSION)
+         .arg("Denis Perchine")
+         .arg("dyp@perchine.com")
+         .arg("1997-2000"));
 
-  menubar = new KMenuBar( this );
-  CHECK_PTR( menubar );
-  menubar->insertItem(i18n("&File"), file );
-  menubar->insertItem(i18n("&User"), user );
-  menubar->insertItem(i18n("&Group"), group );
+  menubar = new KMenuBar(this);
+  CHECK_PTR(menubar);
+  menubar->insertItem(i18n("&File"), file);
+  menubar->insertItem(i18n("&User"), user);
+  menubar->insertItem(i18n("&Group"), group);
   menubar->insertSeparator();
-  menubar->insertItem(i18n("&Help"), help );
+  menubar->insertItem(i18n("&Help"), help);
 
   setMenu(menubar);
 
@@ -81,11 +87,11 @@ mainWidget::mainWidget(const char *name) : KTMainWindow(name) {
   // restore geometry settings
   KConfig *config = kapp->config();
   config->setGroup( "Appearance" );
-  QString geom = config->readEntry( "Geometry" );
+  QString geom = config->readEntry("Geometry");
   if (!geom.isEmpty()) {
     int width, height;
-    sscanf( geom, "%dx%d", &width, &height );
-    resize( width, height );
+    sscanf(geom, "%dx%d", &width, &height);
+    resize(width, height);
   }
   sbar->changeItem(i18n("Ready"), 0);
 }
@@ -107,10 +113,10 @@ mainWidget::~mainWidget() {
 void mainWidget::resizeEvent (QResizeEvent *) {
   // save size of the application window
   KConfig *config = kapp->config();
-  config->setGroup( "Appearance" );
+  config->setGroup("Appearance");
   QString geom;
-  geom = QString( "%1x%2").arg(geometry().width()).arg(geometry().height());
-  config->writeEntry( "Geometry", geom );
+  geom = QString("%1x%2").arg(geometry().width()).arg(geometry().height());
+  config->writeEntry("Geometry", geom);
   updateRects();
 }
 

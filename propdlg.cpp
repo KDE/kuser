@@ -652,8 +652,7 @@ void propdlg::ok() {
 
   if (olduid != newuid)
     if (users->lookup(newuid) != NULL) {
-      err->addMsg(QString(i18n("User with UID %1 already exists"))
-                  .arg(newuid), STOP);
+      err->addMsg(i18n("User with UID %1 already exists").arg(newuid));
       err->display();
       return;
     }

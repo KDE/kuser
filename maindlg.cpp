@@ -3,13 +3,17 @@
 
 #include "globals.h"
 
-#include <qtooltip.h>
-
-#include <ktoolbar.h>
-#include <kiconloader.h>
+#include <stdio.h>
 
 #include <unistd.h>
 #include <signal.h>
+
+#include <qtooltip.h>
+#include <qmessagebox.h>
+#include <qsplitter.h>
+
+#include <ktoolbar.h>
+#include <kiconloader.h>
 
 #ifdef _KU_QUOTA
 #include "quota.h"
@@ -26,8 +30,6 @@
 #include "editGroup.h"
 
 #include "editDefaults.h"
-#include <qmessagebox.h>
-#include <qsplitter.h>
 
 mainDlg::mainDlg(QWidget *parent) : QWidget(parent) {
   changed = FALSE;

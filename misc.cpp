@@ -161,31 +161,22 @@ int copyFile(QString from, QString to) {
   fo.setName(to);
   
   if (!fi.exists()) {
-    QString tmp;
-    
-    tmp = i18n("File %1 does not exist.").arg(from);
-    err->addMsg(tmp, STOP);
+    err->addMsg(i18n("File %1 does not exist.").arg(from));
     return (-1);
   }
 
   if (!fi.open(IO_ReadOnly)) {
-    QString tmp;
-    
-    tmp = i18n("Can not open file %1 for reading.").arg(from);
-    err->addMsg(tmp, STOP);
+    err->addMsg(i18n("Can not open file %1 for reading.").arg(from));
     return (-1);
   }
     
   if (!fo.open(IO_Raw | IO_WriteOnly | IO_Truncate)) {
-    QString tmp;
-    
-    tmp = i18n("Can not open file %1 for writing.").arg(to);
-    err->addMsg(tmp, STOP);
+    err->addMsg(i18n("Can not open file %1 for writing.").arg(to));
     return (-1);
   }
   
   while (!fi.atEnd()) {
-    int len = fi.readBlock(buf, 4096);
+    int len = fi.readBlock(buf, 65536);
     fo.writeBlock(buf, len);
   }
   

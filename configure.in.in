@@ -28,7 +28,7 @@ AC_HEADER_STDC
 AC_CHECK_HEADERS(crypt.h fcntl.h mntent.h linux/quota.h linux/unistd.h \
                  paths.h sys/fs/ufs_quota.h sys/mntent.h sys/mnttab.h \
                  sys/quota.h sys/time.h unistd.h sys/params.h sys/param.h \
-                 signal.h)
+                 signal.h sys/mount.h)
 
 case "$host" in 
 *irix*) AC_DEFINE(HAVE_IRIX, 1, [Irix])

@@ -135,7 +135,7 @@ bool KGroups::load() {
   FILE *fgrp = fopen(GROUP_FILE, "r");
   QString tmp;
   if (fgrp == 0) {
-    err->addMsg(QString(i18n("Error opening %1 for reading")).arg(GROUP_FILE), STOP);
+    err->addMsg(i18n("Error opening %1 for reading").arg(GROUP_FILE));
     return FALSE;
   }
 
@@ -179,7 +179,7 @@ bool KGroups::save() {
   umask(0077);
 
   if ((grp = fopen(GROUP_FILE, "w")) == NULL) {
-    err->addMsg(QString(i18n("Error opening %1 for writing")).arg(GROUP_FILE), STOP);
+    err->addMsg(i18n("Error opening %1 for writing").arg(GROUP_FILE));
     return FALSE;
   }
 
@@ -235,7 +235,7 @@ int KGroups::first_free() {
       return (t);
   }
 
-  err->addMsg(i18n("You have more than 65534 groups!?!? You have ran out of gid space!"), STOP);
+  err->addMsg(i18n("You have more than 65534 groups!?!? You have ran out of gid space!"));
   return (-1);
 }
 

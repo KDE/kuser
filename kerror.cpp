@@ -2,41 +2,21 @@
 #include "kerror.h"
 #include <qmessagebox.h>
 
-KErrorMsg::KErrorMsg(QString amsg, KErrorType aerr) {
-  msg = amsg;
-  err = aerr;
-}
-
-KErrorMsg::~KErrorMsg() {
-}
-
-QString KErrorMsg::getMsg() {
-  return (msg);
-}
-
-KErrorType KErrorMsg::getErr() {
-  return (err);
-}
-
 KError::KError() {
-  msgs.setAutoDelete(TRUE);
 }
 
 KError::~KError() {
   display();
 }
 
-void KError::addMsg(QString amsg, KErrorType aerr) {
-  msgs.append(new KErrorMsg(amsg, aerr));
+void KError::addMsg(QString amsg) {
+  msgs.append(amsg);
 }
 
 void KError::display() {
   for (uint i=0;i<msgs.count();i++)
-#warning TODO add support for KErrorType
-    QMessageBox::information(0, i18n("Message"), 
-			     msgs.at(i)->getMsg(), 
-			     i18n("OK"));
-    
+     QMessageBox::information(0, i18n("Message"),
+       msgs[i], i18n("OK"));
   msgs.clear();
 }
 

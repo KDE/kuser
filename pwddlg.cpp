@@ -100,7 +100,7 @@ void pwddlg::ok()
   const char * set = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./";
 
   if (strcmp(leusername1->text(), leusername2->text())) {
-    err->addMsg(i18n("Passwords are not identical.\nTry again"), STOP);
+    err->addMsg(i18n("Passwords are not identical.\nTry again"));
     err->display();
     leusername1->clear();
     leusername2->clear();

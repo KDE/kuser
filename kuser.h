@@ -4,6 +4,8 @@
 #include <qstring.h>
 #include <qlist.h>
 
+#include "globals.h"
+
 #ifdef _KU_QUOTA
 #include "quota.h"
 #endif

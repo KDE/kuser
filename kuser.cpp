@@ -435,7 +435,7 @@ bool KUsers::loadpwd() {
 #ifdef HAVE_FGETPWENT
   FILE *fpwd = fopen(PASSWORD_FILE, "r");
   if(fpwd == NULL) {
-     err->addMsg(QString(i18n("Error opening %1 for reading")).arg(PASSWORD_FILE), STOP);
+     err->addMsg(i18n("Error opening %1 for reading").arg(PASSWORD_FILE));
      return FALSE;
   }
 
@@ -506,7 +506,7 @@ bool KUsers::loadsdw() {
   while ((spw = getspent())) {     // read a shadow password structure
     if ((up = lookup(spw->sp_namp)) == NULL) {
       err->addMsg(i18n("No /etc/passwd entry for %1.\nEntry will be removed at the next `Save'-operation.")
-		  .arg(spw->sp_namp), STOP);
+		  .arg(spw->sp_namp));
       err->display();
       continue;
     }
@@ -599,8 +599,7 @@ bool KUsers::savepwd() {
   umask(0077);
 
   if ((passwd = fopen(PASSWORD_FILE,"w")) == NULL) {
-    err->addMsg(i18n("Error opening %1 for writing")
-                .arg(PASSWORD_FILE), STOP);
+    err->addMsg(i18n("Error opening %1 for writing").arg(PASSWORD_FILE));
     return FALSE;
   }
 
@@ -686,7 +685,7 @@ bool KUsers::savesdw() {
   umask(0077);
 
   if ((f = fopen(SHADOW_FILE, "w")) == NULL) {
-    err->addMsg(QString(i18n("Error opening %1 for writing")).arg(SHADOW_FILE), STOP);
+    err->addMsg(i18n("Error opening %1 for writing").arg(SHADOW_FILE));
     return FALSE;
   }
 
@@ -696,7 +695,7 @@ bool KUsers::savesdw() {
   for (uint index = 0; index < u.count(); index++) {
     up = u.at(index);
     if (!(const char *)up->getSPwd()) {
-      err->addMsg(QString(i18n("No shadow entry for %1.")).arg(up->getName()), STOP);
+      err->addMsg(i18n("No shadow entry for %1.").arg(up->getName()));
       continue;
     }
 
@@ -752,7 +751,7 @@ int KUsers::first_free() {
     i = 0;
   }
 
-  err->addMsg(i18n("You have more than 65534 users!?!? You have ran out of uid space!"), STOP);
+  err->addMsg(i18n("You have more than 65534 users!?!? You have ran out of uid space!"));
   return (-1);
 }
 
@@ -791,26 +790,22 @@ void KUser::createHome() {
   QDir d = QDir::root();
 
   if (d.cd(p_dir)) {
-    QString tmp;
-    err->addMsg(QString(i18n("Directory %1 already exists")).arg(p_dir), STOP);
+    err->addMsg(i18n("Directory %1 already exists").arg(p_dir));
     err->display();
   }
 
   if (mkdir((const char *)p_dir, 0700) != 0) {
-    QString tmp;
-    err->addMsg(QString(i18n("Cannot create home directory\nError: %1")).arg(strerror(errno)), STOP);
+    err->addMsg(i18n("Cannot create home directory\nError: %1").arg(strerror(errno)));
     err->display();
   }
 
   if (chown((const char *)p_dir, p_uid, p_gid) != 0) {
-    QString tmp;
-    err->addMsg(QString(i18n("Cannot change owner of home directory\nError: %1")).arg(strerror(errno)), STOP);
+    err->addMsg(i18n("Cannot change owner of home directory\nError: %1").arg(strerror(errno)));
     err->display();
   }
 
   if (chmod((const char *)p_dir, KU_HOMEDIR_PERM) != 0) {
-    QString tmp;
-    err->addMsg(QString(i18n("Cannot change permissions on home directory\nError: %1")).arg(strerror(errno)), STOP);
+    err->addMsg(i18n("Cannot change permissions on home directory\nError: %1").arg(strerror(errno)));
     err->display();
   }
 }
@@ -821,9 +816,9 @@ int KUser::createMailBox() {
   mailboxpath = QString("%1/%2").arg(MAIL_SPOOL_DIR).arg(p_name);
   if((fd = open((const char *)mailboxpath, O_CREAT|O_EXCL|O_WRONLY,
                 S_IRUSR|S_IWUSR)) < 0) {
-    err->addMsg(QString(i18n("Cannot create %1: %2"))
+    err->addMsg(i18n("Cannot create %1: %2")
                 .arg(mailboxpath)
-                .arg(strerror(errno)), STOP);
+                .arg(strerror(errno)));
     err->display();
     return -1;
   }
@@ -831,15 +826,15 @@ int KUser::createMailBox() {
   close(fd);
 
   if (chown((const char *)mailboxpath, p_uid, KU_MAILBOX_GID) != 0) {
-    err->addMsg(QString(i18n("Cannot change owner on mailbox: %1\nError: %2"))
-                .arg(mailboxpath).arg(strerror(errno)), STOP);
+    err->addMsg(i18n("Cannot change owner on mailbox: %1\nError: %2")
+                .arg(mailboxpath).arg(strerror(errno)));
     err->display();
     return -1;
   }
 
   if (chmod((const char *)mailboxpath, KU_MAILBOX_PERM) != 0) {
-    err->addMsg(QString(i18n("Cannot change permissions on mailbox: %1\nError: %2"))
-                .arg(mailboxpath).arg(strerror(errno)), STOP);
+    err->addMsg(i18n("Cannot change permissions on mailbox: %1\nError: %2")
+                .arg(mailboxpath).arg(strerror(errno)));
     err->display();
   }
 
@@ -874,14 +869,14 @@ void KUser::copyDir(const QString &srcPath, const QString &dstPath) {
 
     d.mkdir(name, FALSE);
     if (chown(d.filePath(name), p_uid, p_gid) != 0) {
-      err->addMsg(QString(i18n("Cannot change owner of directory %1\nError: %2"))
-                  .arg(d.filePath(s[i])).arg(strerror(errno)), STOP);
+      err->addMsg(i18n("Cannot change owner of directory %1\nError: %2")
+                  .arg(d.filePath(s[i])).arg(strerror(errno)));
       err->display();
     }
 
     if (chmod(d.filePath(name), st.st_mode & 07777) != 0) {
-      err->addMsg(QString(i18n("Cannot change permissions on directory %1\nError: %2"))
-                  .arg(d.filePath(s[i])).arg(strerror(errno)), STOP);
+      err->addMsg(i18n("Cannot change permissions on directory %1\nError: %2")
+                  .arg(d.filePath(s[i])).arg(strerror(errno)));
       err->display();
     }
 
@@ -906,14 +901,14 @@ void KUser::copyDir(const QString &srcPath, const QString &dstPath) {
     }
 
     if (chown(d.filePath(name), p_uid, p_gid) != 0) {
-      err->addMsg(QString(i18n("Cannot change owner of file %1\nError: %2"))
-                  .arg(d.filePath(s[i])).arg(strerror(errno)), STOP);
+      err->addMsg(i18n("Cannot change owner of file %1\nError: %2")
+                  .arg(d.filePath(s[i])).arg(strerror(errno)));
       err->display();
     }
 
     if (chmod(d.filePath(name), st.st_mode & 07777) != 0) {
-      err->addMsg(QString(i18n("Cannot change permissions on file %1\nError: %2"))
-                  .arg(d.filePath(s[i])).arg(strerror(errno)), STOP);
+      err->addMsg(i18n("Cannot change permissions on file %1\nError: %2")
+                  .arg(d.filePath(s[i])).arg(strerror(errno)));
       err->display();
     }
   }
@@ -926,14 +921,13 @@ int KUser::copySkel() {
   umask(0777);
 
   if (!s.exists()) {
-    err->addMsg(QString(i18n("Directory %1 does not exist")).arg(s.dirName()), STOP);
+    err->addMsg(i18n("Directory %1 does not exist").arg(s.dirName()));
     err->display();
     return (-1);
   }
 
   if (!d.exists()) {
-    QString tmp;
-    err->addMsg(QString(i18n("Directory %1 does not exist")).arg(d.dirName()), STOP);
+    err->addMsg(i18n("Directory %1 does not exist").arg(d.dirName()));
     err->display();
     return (-1);
   }
@@ -944,8 +938,8 @@ int KUser::copySkel() {
 }
 
 // Temporarily use rm
-// TODO: replace by our own procedure cause calling other programs
-//       for things we are know how to do is not a good idea
+//TODO: replace by our own procedure cause calling other programs
+//      for things we are know how to do is not a good idea
 
 int KUser::removeHome() {
   struct stat sb;
@@ -959,8 +953,8 @@ int KUser::removeHome() {
       command = QString("/bin/rm -rf -- %1").arg(p_dir);
 #endif
     if (system((const char *)command) != 0) {
-      err->addMsg(QString(i18n("Cannot remove home directory %1\nError: %2"))
-                  .arg(command).arg(strerror(errno)), STOP);
+      err->addMsg(i18n("Cannot remove home directory %1\nError: %2")
+                  .arg(command).arg(strerror(errno)));
       err->display();
      }
    }
@@ -968,7 +962,7 @@ int KUser::removeHome() {
   return 0;
 }
 
-// TODO: remove at jobs too.
+//TODO: remove at jobs too.
 
 int KUser::removeCrontabs() {
   QString file;
@@ -978,8 +972,8 @@ int KUser::removeCrontabs() {
   if (access((const char *)file, F_OK) == 0) {
     command = QString("crontab -u %1 -r").arg(p_name);
     if (system((const char *)command) != 0) {
-      err->addMsg(QString(i18n("Cannot remove crontab %1\nError: %2"))
-                  .arg(command).arg(strerror(errno)), STOP);
+      err->addMsg(i18n("Cannot remove crontab %1\nError: %2")
+                  .arg(command).arg(strerror(errno)));
       err->display();
      }
   }
@@ -992,8 +986,8 @@ int KUser::removeMailBox() {
 
   file = QString("%1/%2").arg(MAIL_SPOOL_DIR).arg(p_name);
   if (remove((const char *)file) != 0) {
-    err->addMsg(QString(i18n("Cannot remove mailbox %1\nError: %2"))
-                .arg(file).arg(strerror(errno)), STOP);
+    err->addMsg(i18n("Cannot remove mailbox %1\nError: %2")
+                .arg(file).arg(strerror(errno)));
     err->display();
   }
 
@@ -1011,7 +1005,7 @@ int KUser::removeProcesses() {
         _exit(0);
         break;
       case -1:
-        err->addMsg(i18n("Cannot fork()"), STOP);
+        err->addMsg(i18n("Cannot fork()"));
         err->display();
         perror("fork");
         break;

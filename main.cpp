@@ -47,12 +47,11 @@ mainDlg *md = NULL;
 
 int main(int argc, char **argv) {
   
-  KAboutData aboutData( "kuser", I18N_NOOP("KUser"), 
+  KAboutData aboutData("kuser", I18N_NOOP("KUser"),
     _KU_VERSION, description, KAboutData::License_GPL, 
-    "(c) 1999-2000, Denis Pershin");
-  aboutData.addAuthor("Denis Pershin",0, "dyp@inetlab.com");
-  KCmdLineArgs::init( argc, argv, &aboutData );
-//  KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
+    "(c) 1997-2000, Denis Perchine");
+  aboutData.addAuthor("Denis Perchine", 0, "dyp@perchine.com");
+  KCmdLineArgs::init(argc, argv, &aboutData);
   mainWidget *mw = NULL;
 
   KApplication a;
@@ -60,7 +59,7 @@ int main(int argc, char **argv) {
   initmain();
 
   if (getuid()) {
-    err->addMsg(i18n("Only root is allowed to manage users."), STOP);
+    err->addMsg(i18n("Only root is allowed to manage users."));
     err->display();
     exit(1);
   }

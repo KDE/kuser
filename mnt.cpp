@@ -1,8 +1,10 @@
 #ifdef _KU_QUOTA
 #include <stdlib.h>
 #include <stdio.h>
+
 #include "mnt.h"
-#include "quota.h"
+#include "kuqconf.h"
+
 #include <qfile.h>
 
 MntEnt::MntEnt(const char *afsname, const char *adir,
@@ -101,8 +103,8 @@ Mounts::Mounts() {
       continue;
     quotafilename = QString("%1%2%3")
                           .arg(mt->fs_file)
- 	                  .arg((mt->fs_file[strlen(mt->fs_file) -1] == '/') ? "" : "/")
- 		          .arg(_KU_QUOTAFILENAME);
+                          .arg((mt->fs_file[strlen(mt->fs_file) -1] == '/') ? "" : "/")
+ 		                      .arg(_KU_QUOTAFILENAME);
 #else
   fp = setmntent(MNTTAB, "r");
   while ((mt = getmntent(fp)) != (struct mntent *)0) {

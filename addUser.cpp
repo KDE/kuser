@@ -96,9 +96,8 @@ void addUser::ok() {
   newuid = tmp.toInt();
   
   if (users->lookup(newuid) != NULL) {
-    tmp = i18n("User with UID %1 already exists").arg(newuid);
-    QMessageBox::information(0, i18n("Message"), tmp, 
-			     i18n("OK"));
+    err->addMsg(i18n("User with UID %1 already exists").arg(newuid));
+    err->display();
     return;
   }
 
@@ -127,7 +126,6 @@ void addUser::createHomeChecked(bool data) {
 bool addUser::checkHome() {
   struct stat s;
   int r;
-  QString tmp;
 
   r = stat(user->getHomeDir(), &s);
 
@@ -136,16 +134,15 @@ bool addUser::checkHome() {
 
   if (r == 0)
     if (S_ISDIR(s.st_mode))
-      tmp = i18n("Directory %1 already exists (uid = %2, gid = %3)") 
+      err->addMsg(i18n("Directory %1 already exists (uid = %2, gid = %3)")
                  .arg(user->getHomeDir())
                  .arg(s.st_uid)
-                 .arg(s.st_gid);
+                 .arg(s.st_gid));
     else
-      tmp = i18n("%1 is not a directory").arg(user->getHomeDir());
+      err->addMsg(i18n("%1 is not a directory").arg(user->getHomeDir()));
   else
-    tmp = QString("checkHome: stat: %1 ").arg(strerror(errno));
+    err->addMsg(QString("checkHome: stat: %1 ").arg(strerror(errno)));
   
-  err->addMsg(tmp, STOP);
   err->display();
 
   return false;
@@ -153,14 +150,11 @@ bool addUser::checkHome() {
 
 bool addUser::checkMailBox() {
   QString mailboxpath;
-  QString tmp;
 
   struct stat s;
   int r;
 
-  mailboxpath = QString("%s/%s")
-	.arg(MAIL_SPOOL_DIR)
-	.arg(user->getFullName());
+  mailboxpath = QString("%s/%s").arg(MAIL_SPOOL_DIR).arg(user->getFullName());
   r = stat(mailboxpath, &s);
   
   if ((r == -1) && (errno == ENOENT))
@@ -168,16 +162,15 @@ bool addUser::checkMailBox() {
 
   if (r == 0)
     if (S_ISREG(s.st_mode))
-      tmp = i18n("Mailbox %1 already exist (uid=%2)")
+      err->addMsg(i18n("Mailbox %1 already exist (uid=%2)")
                  .arg(mailboxpath)
-                 .arg(s.st_uid);
+                 .arg(s.st_uid));
     else
-      tmp = i18n("%1 exists but is not a regular file")
-                 .arg(mailboxpath);
+      err->addMsg(i18n("%1 exists but is not a regular file")
+                 .arg(mailboxpath));
   else
-    tmp = QString("checkMail: stat: %s ").arg(strerror(errno));
+    err->addMsg(QString("checkMail: stat: %s ").arg(strerror(errno)));
   
-  err->addMsg(tmp, STOP);
   err->display();
 
   return false;

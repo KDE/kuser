@@ -4,6 +4,7 @@
 #include "maindlg.h"
 #include "mnt.h"
 #include "quota.h"
+#include "kuqconf.h"
 
 #ifdef HAVE_LINUX_QUOTA_H
 #  ifndef QUOTACTL_IN_LIBC

@@ -224,7 +224,7 @@ removed.</para>
 &underGPL;
 
 </chapter>
-<![ %addindex; [ &kdedocindex; ]]>
+<![ %addindex; [ &documentation.index; ]]>
 
 </book>
 <!--

@@ -616,6 +616,9 @@ bool KUsers::save() {
 }
 
 bool KUsers::doCreate() {
+
+  QString h_dir;
+
   for (unsigned int i=0; i<u.count(); i++) {
     KUser *user = u.at(i);
 
@@ -625,17 +628,25 @@ bool KUsers::doCreate() {
     }
 
     if(user->getCreateHome()) {
-       user->createHome();
-       user->setCreateHome(false);
+       if(user->createHome()) {
+           user->setCreateHome(false);
+           if(!user->getCopySkel())
+       	       user->createKDE();
+       }
+       else
+	  continue;	// if createHome fails, copySkel is irrelevant!
     }
 
     if(user->getCopySkel()) {
-       user->copySkel();
-       user->setCopySkel(false);
-       user->createKDE();
+       if((user->copySkel()) == 0) {
+          user->setCopySkel(false);
+       	  h_dir = user->getHomeDir();
+          if(!user->findKDE(h_dir))
+             user->createKDE();
+       }
     }
-  }
 
+  }
   return TRUE;
 }
 
@@ -949,50 +960,82 @@ void KUsers::del(KUser *au) {
   u.remove(au);
 }
 
-void KUser::createHome() {
+int KUser::createHome() {
 
+  if(p_dir.isNull() || p_dir.isEmpty()) {
+    err->addMsg(i18n("Cannot create Home directory for %1, is null or empty\n").arg(p_name));
+    err->display();
+    return(0);
+  }
   if (mkdir(QFile::encodeName(p_dir), 0700) != 0) {
     err->addMsg(i18n("Cannot create home directory %1\nError: %2").arg(p_dir).arg(QString::fromLocal8Bit(strerror(errno))));
     err->display();
-    return;
+    return(0);
   }
 
   if (chown(QFile::encodeName(p_dir), p_uid, p_gid) != 0) {
-    err->addMsg(i18n("Cannot change owner of home directory\nError: %1").arg(QString::fromLocal8Bit(strerror(errno))));
+    err->addMsg(i18n("Cannot change owner of home directory %1\nError: %2").arg(p_dir).arg(QString::fromLocal8Bit(strerror(errno))));
     err->display();
-    return;
+    return(1);
   }
 
   if (chmod(QFile::encodeName(p_dir), KU_HOMEDIR_PERM) != 0) {
-    err->addMsg(i18n("Cannot change permissions on home directory\nError: %1").arg(QString::fromLocal8Bit(strerror(errno))));
+    err->addMsg(i18n("Cannot change permissions on home directory %1\nError: %2").arg(p_dir).arg(QString::fromLocal8Bit(strerror(errno))));
     err->display();
-    return;
+    return(1);
   }
+  return(1);
 }
 
 int KUser::createKDE() {
 
-	const QStringList levels = QStringList() << "/.kde/" << "share/" << "doc/";	
+	QStringList levels;	
 	QStringList types;		
 	QString k_dir = p_dir;
-	KStandardDirs kstddirs;	
+	KStandardDirs kstddirs;
+	const char *KDEHOME = "KDEHOME";
+	const char *DOT_KDE = "/.kde";
+	const char *kdehome;
+	const char *dot_kde = NULL;
 
-	for (uint level=0; level<levels.count(); level++) {	/* build kde base dirs */
+
+	if((kdehome = getenv(KDEHOME)) != NULL) {
+	    dot_kde = strstr(kdehome,DOT_KDE);
+	    if(dot_kde) {
+	        levels.append(dot_kde);	
+	        levels.append("/share");	
+	        levels.append("/doc");	
+	    }
+	    else {
+	        levels.append("/.kde");	
+	        levels.append("/share");	
+	        levels.append("/doc");	
+	    }
+	}
+	else {
+	    levels.append("/.kde");	
+	    levels.append("/share");	
+	    levels.append("/doc");	
+	}
+
+	for (uint level=0; level<levels.count(); level++) {
 		k_dir.append(levels[level]);	
 		if (tryCreate(k_dir))
 			return(-1);
  	}
 
-  types = kstddirs.KStandardDirs::allTypes();		/* retrieve kde deflt types */
+	types = kstddirs.KStandardDirs::allTypes();
 
-	for(uint i=0; i<types.count(); i++) {					/* build kde subdirectories */
-		k_dir = p_dir;															/* start with $HOME dir			*/
-		k_dir.append(levels[0]);										/* add base dir "/.kde/"		*/
-		const char *ctype = types[i].latin1();			/* convert to char for call	*/
-  	QString tpath = KStandardDirs::kde_default(ctype);		/* get deflt path */
-		k_dir.append(tpath);												/* complete full path name	*/
-		if (tryCreate(k_dir))												/* able to create it?				*/
-			return(-1);																/* -no, exit stage left			*/
+	for(uint i=0; i<types.count(); i++) {
+		k_dir = p_dir;
+		k_dir.append(levels[0]);
+		// if(dot_kde)
+		k_dir.append("/");
+		const char *ctype = types[i].latin1();
+		QString tpath = KStandardDirs::kde_default(ctype);
+		k_dir.append(tpath);
+		if (tryCreate(k_dir))
+			return(-1);
 	}
 
   return(0);
@@ -1003,64 +1046,88 @@ int KUser::tryCreate(const QString &dir) {
 struct stat sb;
 int	rc = 0;
 
-rc = stat(QFile::encodeName(dir), &sb);
-	if (rc == 0) {                                      /* dir exists */
-   	if (S_ISDIR(sb.st_mode)) {												/* is directory?	*/
-																					/* yes it is...		*/
-			if (KMessageBox::
-				warningContinueCancel(0, i18n("Directory %1 already exists!\nWill make %2 owner and change permissions.\nDo you want to continue?")
+    rc = stat(QFile::encodeName(dir), &sb);
+    if (rc == 0) {
+   	if (S_ISDIR(sb.st_mode)) {
+	    if (KMessageBox::
+		warningContinueCancel(0, i18n("Directory %1 already exists!\nWill make %2 owner and change permissions.\nDo you want to continue?")
 .arg(dir).arg(p_name), QString::null, i18n("&Continue")) ==
 KMessageBox::Continue) {
-																											/* user continued */
- 				if (chown(QFile::encodeName(dir), p_uid, p_gid) != 0) {
-   				err->addMsg(i18n("Cannot change owner of %1 directory\nError: %2")
-						.arg(dir).arg(strerror(errno)));
-   				err->display();
- 				}
-		  	if (chmod(QFile::encodeName(dir), KU_KDEDIRS_PERM) != 0) {
-   				err->addMsg(i18n("Cannot change permissions on %1 directory\nError: %2").arg(dir).arg(strerror(errno)));
-   				err->display();
- 				}
-				return(0);
-			}
-			else {																					/* user cancelled	*/
-   			err->addMsg(i18n("Directory %1 left 'as is'.\nVerify ownership and permissions for user %2 who may not be able to log in!").arg(dir).arg(p_name));
-   			err->display();
-				return(-1);
-			}
-		}
-		else {																			/* exists but not as dir */
-   		err->addMsg(i18n("%1 exists and is not a directory. User %2 will not be able to log in!").arg(dir).arg(p_name));
-   		err->display();
-			return(-1);
-		}
-	}
-	else {																					/* stat rc = -1					*/
-		if (errno == ENOENT) {										/* good! dir doesn't exist	*/
- 			if (mkdir(QFile::encodeName(dir), 0700) != 0) {
-   			err->addMsg(i18n("Cannot create %1 directory\nError: %2").arg(dir)
-					.arg(strerror(errno)));
-   			err->display();
-				return(-1);
- 		 	}
- 			if (chown(QFile::encodeName(dir), p_uid, p_gid) != 0) {
-   			err->addMsg(i18n("Cannot change owner of %1 directory\nError: %2")
-					.arg(dir).arg(strerror(errno)));
-   			err->display();
- 			}
- 			if (chmod(QFile::encodeName(dir), KU_KDEDIRS_PERM) != 0) {
-   			err->addMsg(i18n("Cannot change permissions on %1 directory\nError: %2")					.arg(dir).arg(strerror(errno)));
-   			err->display();
- 			}
-			return(0);
+ 		if (chown(QFile::encodeName(dir), p_uid, p_gid) != 0) {
+   		    err->addMsg(i18n("Cannot change owner of %1 directory\nError: %2")
+.arg(dir).arg(strerror(errno)));
+		    err->display();
  		}
-		else {																		/* some other error on stat   */
-   		err->addMsg(i18n("stat call on %1 failed.\nError: %2").arg(dir)
-				.arg(strerror(errno)));
+	  	if (chmod(QFile::encodeName(dir), KU_KDEDIRS_PERM) != 0) {
+   			err->addMsg(i18n("Cannot change permissions on %1 directory\nError: %2").arg(dir).arg(strerror(errno)));
+   			err->display();
+ 		}
+			return(0);
+			}
+	    else {
+   		err->addMsg(i18n("Directory %1 left 'as is'.\nVerify ownership and permissions for user %2 who may not be able to log in!").arg(dir).arg(p_name));
    		err->display();
-			return(-1);
-		}
+		return(-1);
+	    }
+	}
+	else {
+   	    err->addMsg(i18n("%1 exists and is not a directory. User %2 will not be able to log in!").arg(dir).arg(p_name));
+   	    err->display();
+	    return(-1);
+	}
+    }
+    else {
+	if (errno == ENOENT) {
+ 	    if (mkdir(QFile::encodeName(dir), 0700) != 0) {
+   		err->addMsg(i18n("Cannot create %1 directory\nError: %2").arg(dir)
+		    .arg(strerror(errno)));
+   		err->display();
+		return(-1);
+  	    }
+	    if (chown(QFile::encodeName(dir), p_uid, p_gid) != 0) {
+   		err->addMsg(i18n("Cannot change owner of %1 directory\nError: %2")
+		    .arg(dir).arg(strerror(errno)));
+   		err->display();
+ 	    }
+	    if (chmod(QFile::encodeName(dir), KU_KDEDIRS_PERM) != 0) {
+   		err->addMsg(i18n("Cannot change permissions on %1 directory\nError: %2").arg(dir).arg(strerror(errno)));
+		err->display();
+ 	    }
+	    return(0);
  	}
+	else {
+   	    err->addMsg(i18n("stat call on %1 failed.\nError: %2").arg(dir)
+		.arg(strerror(errno)));
+	    err->display();
+	    return(-1);
+	}
+    }
+}
+
+bool KUser::findKDE(const QString &dir) {
+   int		kde_count     = 0;
+   const QFileInfo	*fi   = NULL;
+   const QFileInfoList	*list = NULL;
+   QDir		t(dir);
+   QString	dot_KDE = ".kde";
+   bool		foundKDE;
+
+   foundKDE = false;
+   t.setFilter( QDir::Dirs | QDir::Hidden );
+   list = t.entryInfoList();
+   QFileInfoListIterator it( *list );
+
+   while ( (fi = it.current()) != 0 ) {
+      kde_count = fi->fileName().contains(dot_KDE, TRUE);
+      if(kde_count > 0)
+      foundKDE = true;
+      ++it;
+   }
+
+   if(foundKDE)
+	return TRUE;
+   else
+	return FALSE;
 }
 
 int KUser::createMailBox() {
@@ -1175,13 +1242,13 @@ int KUser::copySkel() {
   umask(0777);
 
   if (!s.exists()) {
-    err->addMsg(i18n("Directory %1 does not exist").arg(s.dirName()));
+    err->addMsg(i18n("Directory %1 does not exist, cannot copy skeleton for %2").arg(s.absPath()).arg(p_name));
     err->display();
     return (-1);
   }
 
   if (!d.exists()) {
-    err->addMsg(i18n("Directory %1 does not exist").arg(d.dirName()));
+    err->addMsg(i18n("Directory %1 does not exist, cannot copy skeleton").arg(d.absPath()));
     err->display();
     return (-1);
   }

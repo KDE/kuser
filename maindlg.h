@@ -5,6 +5,7 @@
 #include <qlist.h>
 #include <qpushbt.h>
 #include <qpixmap.h>
+#include <knewpanner.h>
 
 #ifdef _KU_QUOTA
 #include "mnt.h"
@@ -25,9 +26,6 @@ public:
 
   void init();
 
-  KUserView *lbusers;
-  KGroupView *lbgroups;
-  int prev;
   QPixmap pic_user;
 
   KUsers *getUsers();
@@ -62,12 +60,11 @@ protected:
   void reloadGroups(int gid);
   virtual void resizeEvent (QResizeEvent *rse);
 
+  KUserView *lbusers;
+  KGroupView *lbgroups;
+  int prev;
+  KNewPanner *kp;
 private:
-  QPushButton *pbquit;
-  QPushButton *pbedit;
-  QPushButton *pbdel;
-  QPushButton *pbadd;
-
   int usort;
   int gsort;
   bool changed;

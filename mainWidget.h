@@ -3,6 +3,7 @@
 
 #include <ktopwidget.h>
 #include <ktoolbar.h>
+#include <kstatusbar.h>
 #include <kmenubar.h>
 #include <qevent.h>
 #include <qpixmap.h>
@@ -18,8 +19,9 @@ protected:
   virtual void resizeEvent (QResizeEvent *);
 
 private:
-  KMenuBar *menubar;
-  KToolBar *toolbar;
+  KMenuBar   *menubar;
+  KToolBar   *toolbar;
+  KStatusBar *sbar;
 };
 
 #endif // _KU_MAINWIDGET_H

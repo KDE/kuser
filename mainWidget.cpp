@@ -44,13 +44,22 @@ KTopLevelWidget(name)
   setMenu(menubar);
 
   toolbar = new KToolBar(this, "toolbar");
-  QPixmap pixmap;
+  QPixmap pix;
 
-  pixmap = kapp->getIconLoader()->loadIcon("profile_bw.xpm");
-  toolbar->insertButton(pixmap, 0, SIGNAL(clicked()), md, SLOT(edit()), TRUE, _("Edit user"));
+  pix = kapp->getIconLoader()->loadIcon("useradd.xpm");
+  toolbar->insertButton(pix, 0, SIGNAL(clicked()), md, SLOT(add()), TRUE, _("Add user"));
+  pix = kapp->getIconLoader()->loadIcon("userdel.xpm");
+  toolbar->insertButton(pix, 0, SIGNAL(clicked()), md, SLOT(del()), TRUE, _("Delete user"));
+  pix = kapp->getIconLoader()->loadIcon("useredit.xpm");
+  toolbar->insertButton(pix, 0, SIGNAL(clicked()), md, SLOT(edit()), TRUE, _("Edit user"));
   toolbar->setBarPos(KToolBar::Top);
 
   addToolBar(toolbar);
+  
+  sbar = new KStatusBar(this);
+  sbar->insertItem("Reading config", 0);
+  
+  setStatusBar(sbar);
 
   setView(md);
 
@@ -69,8 +78,9 @@ KTopLevelWidget(name)
 
 mainWidget::~mainWidget() {
   delete md;
-  delete menubar;
+  delete sbar;
   delete toolbar;
+  delete menubar;
 }
 
 void mainWidget::resizeEvent (QResizeEvent *) {

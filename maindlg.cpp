@@ -21,6 +21,8 @@
 #include "pwddlg.h"
 #include "editGroup.h"
 
+#include <knewpanner.h>
+
 mainDlg::mainDlg(QWidget *parent) :
 QWidget(parent)
 {
@@ -40,12 +42,17 @@ void mainDlg::init() {
   u = new KUsers();
   g = new KGroups();
 
-  lbusers = new KUserView(this, "lbusers");
+  kp = new KNewPanner(this, "panner", KNewPanner::Horizontal);
+  kp->setGeometry(10, 80, 380, 416);
+  
+  lbusers = new KUserView(kp, "lbusers");
   //  lbusers->setGeometry(10,80,380,208);
 
-  lbgroups = new KGroupView(this, "lbgroups");
+  lbgroups = new KGroupView(kp, "lbgroups");
   //  lbgroups->setGeometry(10,400,380,208);
 
+  kp->activate(lbusers, lbgroups);
+  
   QObject::connect(lbusers, SIGNAL(headerClicked(int)), this, SLOT(setUsersSort(int)));
   QObject::connect(lbusers, SIGNAL(selected(int)), this, SLOT(userSelected(int)));
 
@@ -54,41 +61,12 @@ void mainDlg::init() {
 
   reloadUsers(0);
   reloadGroups(0);
-
-  pbquit = new QPushButton( this, "pbquit" );
-  QToolTip::add(pbquit, _("Quit KUser"));
-
-  pbquit->resize(100, 30);
-  pbquit->setText(_("Quit"));
-  QObject::connect(pbquit, SIGNAL(clicked()), this, SLOT(quit()));
-
-  pbedit = new QPushButton( this, "pbedit" );
-  QToolTip::add(pbedit, _("Edit user profile"));
-  pbedit->resize(100, 30);
-  pbedit->setText(_("Edit"));
-  QObject::connect(pbedit, SIGNAL(clicked()), this, SLOT(edit()));
-
-  pbdel = new QPushButton( this, "pbdel" );
-  QToolTip::add(pbdel, _("Delete user"));
-  pbdel->resize(100, 30);
-  pbdel->setText(_("Delete"));
-  QObject::connect(pbdel, SIGNAL(clicked()), this, SLOT(del()));
-
-  pbadd = new QPushButton(this, "pbadd");
-  QToolTip::add(pbadd, _("Add user"));
-  pbadd->resize(100, 30);
-  pbadd->setText(_("Add"));
-  QObject::connect(pbadd, SIGNAL(clicked()), this, SLOT(add()));
 }
 
 mainDlg::~mainDlg() {
   delete lbusers;
   delete lbgroups;
-
-  delete pbquit;
-  delete pbedit;
-  delete pbdel;
-  delete pbadd;
+  delete kp;
   
   delete u;
   delete g;
@@ -451,12 +429,8 @@ void mainDlg::resizeEvent (QResizeEvent *rse) {
 
   sz = rse->size();
 
-  lbusers->setGeometry(10, 10, sz.width()-20, sz.height()/2-70);
-  lbgroups->setGeometry(10, sz.height()/2+60, sz.width()-20, sz.height()/2-70);
-
-  pbquit->move(sz.width()/8, sz.height()/2-40);
-  pbedit->move(sz.width()*7/8-100, sz.height()/2-40);
-  pbdel->move(sz.width()/8, sz.height()/2+10);
-  pbadd->move(sz.width()*7/8-100, sz.height()/2+10);
+  kp->setGeometry(10, 10, sz.width()-20, sz.height()-20);
+//  lbusers->setGeometry(10, 10, sz.width()-20, sz.height()/2-70);
+//  lbgroups->setGeometry(10, sz.height()/2+60, sz.width()-20, sz.height()/2-70);
 }
 

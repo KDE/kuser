@@ -9,26 +9,24 @@
 #define max(a,b) ((a>b) ? (a) : (b) )
 #endif
 
-KUserRow::KUserRow(KUser *aku, QPixmap *pUser)
-{
+KUserRow::KUserRow(KUser *aku, QPixmap *pUser) {
   ku = aku;
   pmUser = pUser;
 }
 
-void KUserRow::paint( QPainter *p, int col, int width )
-{
+void KUserRow::paint( QPainter *p, int col, int width ) {
   int fontpos = (max( p->fontMetrics().lineSpacing(), pmUser->height()) - p->fontMetrics().lineSpacing())/2;
   switch(col) {
     case 0: {	// pixmap & Filename
       int start = 1 + pmUser->width() + 2;
       width -= 2 + pmUser->width();
 
-      p->drawPixmap( 1, 0, *pmUser );
-      p->drawText( start, fontpos, width, p->fontMetrics().lineSpacing(), AlignLeft, ku->getp_name());
+      p->drawPixmap(1, 0, *pmUser);
+      p->drawText(start, fontpos, width, p->fontMetrics().lineSpacing(), AlignLeft, ku->getName());
     }
       break;
     case 1:	// size
-      p->drawText( 2, fontpos, width-4, p->fontMetrics().lineSpacing(), AlignLeft, ku->getp_fname());
+      p->drawText(2, fontpos, width-4, p->fontMetrics().lineSpacing(), AlignLeft, ku->getFullName());
       break;
   }
 }
@@ -37,8 +35,7 @@ KUser *KUserRow::getData() {
   return (ku);
 }
 
-KUserTable::KUserTable(QWidget *parent, const char *name) : KRowTable(SelectRow, parent, name)
-{
+KUserTable::KUserTable(QWidget *parent, const char *name) : KRowTable(SelectRow, parent, name) {
   QString pixdir = kapp->kde_datadir() + QString("/kuser/pics/");
   pmUser = new QPixmap(pixdir + "user.xpm");
 
@@ -65,21 +62,17 @@ void KUserTable::sortBy(int num) {
     sort = num;
 }
 
-void KUserTable::clear()
-{
-  setTopCell( 0 );
+void KUserTable::clear() {
+  setTopCell(0);
   current = -1;
-  setNumRows( 0 );
+  setNumRows(0);
   updateScrollBars();
 }
 
-void KUserTable::insertItem(KUser *aku)
-{
+void KUserTable::insertItem(KUser *aku) {
   KUserRow *tmpUser = new KUserRow(aku, pmUser);
 
-  if (sort == -1)
-    appendRow(tmpUser);
-  else {
+  if (sort != -1) {
     bool isinserted = FALSE;
 
     for (int i=0;i<numRows();i++) {
@@ -95,13 +88,13 @@ void KUserTable::insertItem(KUser *aku)
 
        switch (sort) {
          case 0:
-           if (krow->getData()->getp_name() > (const char *)aku->getp_name()) {
+           if (krow->getData()->getName() > (const char *)aku->getName()) {
              insertRow(tmpUser, i);
              isinserted = TRUE;
            }
            break;
          case 1:
-           if (krow->getData()->getp_fname() > (const char *)aku->getp_fname()) {
+           if (krow->getData()->getFullName() > (const char *)aku->getFullName()) {
              insertRow(tmpUser, i);
              isinserted = TRUE;
            }
@@ -112,19 +105,18 @@ void KUserTable::insertItem(KUser *aku)
     if (!isinserted) {
       appendRow(tmpUser);
     }
-  }
+  } else
+    appendRow(tmpUser);
 
   if (autoUpdate())
     repaint();
 }
 
-int KUserTable::currentItem()
-{
+int KUserTable::currentItem() {
   return current;
 }
 
-void KUserTable::setCurrentItem(int item)
-{
+void KUserTable::setCurrentItem(int item) {
   int old = current;
   current = item;
   updateCell(old, 0);

@@ -12,7 +12,7 @@
 grpnamedlg::grpnamedlg(KGroup *agroup, QWidget* parent, const char* name)
            :QDialog(parent, name, TRUE) {
   group = agroup;
-  group->setgid(groups->first_free());
+  group->setGID(groups->first_free());
 
   setCaption(i18n("Add group"));
 
@@ -50,7 +50,7 @@ grpnamedlg::grpnamedlg(KGroup *agroup, QWidget* parent, const char* name)
   legid->setMinimumSize( legid->sizeHint() );
   
   QString s;
-  s.setNum(group->getgid());
+  s.setNum(group->getGID());
   
   // clear text
   legid->setText(s);
@@ -96,22 +96,23 @@ void grpnamedlg::ok()
 
   if (groups->lookup(legrpname->text()) != NULL) {
     ksprintf(&tmp, i18n("Group with name %s already exists."), legrpname->text());
-    KMsgBox::message(0, i18n("Error"), tmp, KMsgBox::STOP);
+    err->addMsg(tmp, STOP);
+    err->display();
     return;
   }
   
   if (groups->lookup(s.toInt()) != NULL) {
     ksprintf(&tmp, i18n("Group with gid %d already exists."), s.toInt());
-    KMsgBox::message(0, i18n("Error"), tmp, KMsgBox::STOP);
+    err->addMsg(tmp, STOP);
+    err->display();
     return;
   }
   
-  group->setname(legrpname->text());
-  group->setgid(s.toInt());
+  group->setName(legrpname->text());
+  group->setGID(s.toInt());
   accept();
 }
 
-void grpnamedlg::cancel()
-{
+void grpnamedlg::cancel() {
   reject();
 }

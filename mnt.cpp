@@ -110,7 +110,7 @@ Mounts::Mounts() {
       continue;
     quotafilename = QString::fromLatin1("%1%2%3")
                           .arg(QString::fromLatin1(mt->fs_file))
-                          .arg((mt->fs_file[strlen(mt->fs_file) -1] == '/') ? 
+                          .arg((mt->fs_file[strlen(mt->fs_file) -1] == '/') ?
 			  	QString::null : QString::fromLatin1("/"))
 			  .arg(QString::fromLatin1(_KU_QUOTAFILENAME));
 #elif defined(_AIX)
@@ -142,8 +142,8 @@ Mounts::Mounts() {
 
 #endif
 
-    QFile *f = new QFile(quotafilename);
-    if (f->exists() == FALSE) {
+    QFile f(quotafilename);
+    if (f.exists() == FALSE) {
       printf("Quota file name %s does not exist\n", quotafilename.local8Bit().data());
       continue;
     }

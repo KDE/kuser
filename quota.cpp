@@ -218,7 +218,7 @@ Quota::Quota(unsigned int auid, bool doget) {
   int qcmd = QCMD(Q_GETQUOTA, USRQUOTA);
 
   for (uint i=0; i<mounts->getMountsNumber(); i++) {
-    if (quotactl((const char *)mounts->getMount(i)->getfsname(), qcmd, uid, (caddr_t) &dq) !=0) {
+    if (quotactl((const char *)mounts->getMount(i)->getdir(), qcmd, uid, (caddr_t) &dq) !=0) {
       //  printf("%d\n",errno);
       warned++;
       if (errno != EINVAL) /* For _SOME_ reason quotactl returns EINVAL vs EPERM or ENODEV when quotas are disabled*/

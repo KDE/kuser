@@ -792,18 +792,21 @@ void KUser::createHome() {
   }
 
   if (mkdir(QFile::encodeName(p_dir), 0700) != 0) {
-    err->addMsg(i18n("Cannot create home directory\nError: %1").arg(strerror(errno)));
+    err->addMsg(i18n("Cannot create home directory\nError: %1").arg(QString::fromLocal8Bit(strerror(errno))));
     err->display();
+    return;
   }
 
   if (chown(QFile::encodeName(p_dir), p_uid, p_gid) != 0) {
-    err->addMsg(i18n("Cannot change owner of home directory\nError: %1").arg(strerror(errno)));
+    err->addMsg(i18n("Cannot change owner of home directory\nError: %1").arg(QString::fromLocal8Bit(strerror(errno))));
     err->display();
+    return;
   }
 
   if (chmod(QFile::encodeName(p_dir), KU_HOMEDIR_PERM) != 0) {
-    err->addMsg(i18n("Cannot change permissions on home directory\nError: %1").arg(strerror(errno)));
+    err->addMsg(i18n("Cannot change permissions on home directory\nError: %1").arg(QString::fromLocal8Bit(strerror(errno))));
     err->display();
+    return;
   }
 }
 
@@ -815,7 +818,7 @@ int KUser::createMailBox() {
                 S_IRUSR|S_IWUSR)) < 0) {
     err->addMsg(i18n("Cannot create %1: %2")
                 .arg(mailboxpath)
-                .arg(strerror(errno)));
+                .arg(QString::fromLocal8Bit(strerror(errno))));
     err->display();
     return -1;
   }
@@ -824,15 +827,16 @@ int KUser::createMailBox() {
 
   if (chown(QFile::encodeName(mailboxpath), p_uid, KU_MAILBOX_GID) != 0) {
     err->addMsg(i18n("Cannot change owner on mailbox: %1\nError: %2")
-                .arg(mailboxpath).arg(strerror(errno)));
+                .arg(mailboxpath).arg(QString::fromLocal8Bit(strerror(errno))));
     err->display();
     return -1;
   }
 
   if (chmod(QFile::encodeName(mailboxpath), KU_MAILBOX_PERM) != 0) {
     err->addMsg(i18n("Cannot change permissions on mailbox: %1\nError: %2")
-                .arg(mailboxpath).arg(strerror(errno)));
+                .arg(mailboxpath).arg(QString::fromLocal8Bit(strerror(errno))));
     err->display();
+    return -1;
   }
 
   return 0;
@@ -867,13 +871,13 @@ void KUser::copyDir(const QString &srcPath, const QString &dstPath) {
     d.mkdir(name, FALSE);
     if (chown(QFile::encodeName(d.filePath(name)), p_uid, p_gid) != 0) {
       err->addMsg(i18n("Cannot change owner of directory %1\nError: %2")
-                  .arg(d.filePath(s[i])).arg(strerror(errno)));
+                  .arg(d.filePath(s[i])).arg(QString::fromLocal8Bit(strerror(errno))));
       err->display();
     }
 
     if (chmod(QFile::encodeName(d.filePath(name)), st.st_mode & 07777) != 0) {
       err->addMsg(i18n("Cannot change permissions on directory %1\nError: %2")
-                  .arg(d.filePath(s[i])).arg(strerror(errno)));
+                  .arg(d.filePath(s[i])).arg(QString::fromLocal8Bit(strerror(errno))));
       err->display();
     }
 
@@ -899,13 +903,13 @@ void KUser::copyDir(const QString &srcPath, const QString &dstPath) {
 
     if (chown(QFile::encodeName(d.filePath(name)), p_uid, p_gid) != 0) {
       err->addMsg(i18n("Cannot change owner of file %1\nError: %2")
-                  .arg(d.filePath(s[i])).arg(strerror(errno)));
+                  .arg(d.filePath(s[i])).arg(QString::fromLocal8Bit(strerror(errno))));
       err->display();
     }
 
     if (chmod(QFile::encodeName(d.filePath(name)), st.st_mode & 07777) != 0) {
       err->addMsg(i18n("Cannot change permissions on file %1\nError: %2")
-                  .arg(d.filePath(s[i])).arg(strerror(errno)));
+                  .arg(d.filePath(s[i])).arg(QString::fromLocal8Bit(strerror(errno))));
       err->display();
     }
   }
@@ -951,7 +955,7 @@ int KUser::removeHome() {
 #endif
     if (system(QFile::encodeName(command)) != 0) {
       err->addMsg(i18n("Cannot remove home directory %1\nError: %2")
-                  .arg(command).arg(strerror(errno)));
+                  .arg(command).arg(QString::fromLocal8Bit(strerror(errno))));
       err->display();
      }
    }
@@ -970,7 +974,7 @@ int KUser::removeCrontabs() {
     command = QString("crontab -u %1 -r").arg(p_name);
     if (system(QFile::encodeName(command)) != 0) {
       err->addMsg(i18n("Cannot remove crontab %1\nError: %2")
-                  .arg(command).arg(strerror(errno)));
+                  .arg(command).arg(QString::fromLocal8Bit(strerror(errno))));
       err->display();
      }
   }
@@ -984,7 +988,7 @@ int KUser::removeMailBox() {
   file = QString("%1/%2").arg(MAIL_SPOOL_DIR).arg(p_name);
   if (remove(QFile::encodeName(file)) != 0) {
     err->addMsg(i18n("Cannot remove mailbox %1\nError: %2")
-                .arg(file).arg(strerror(errno)));
+                .arg(file).arg(QString::fromLocal8Bit(strerror(errno))));
     err->display();
   }
 

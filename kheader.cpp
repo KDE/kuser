@@ -149,7 +149,7 @@ void KHeader::fontChange( const QFont & )
 		resize( width(), fontMetrics().height() + 4 );
 }
 
-bool KHeader::eventFilter( QObject *obj, QEvent *ev )
+bool KHeader::eventFilter( QObject *, QEvent *ev )
 {
 	if( ev->type()==QEvent::MouseButtonPress && divider!=-1 ) {
 		m_resizing=TRUE;
@@ -309,7 +309,7 @@ void KHeader::mousePressEvent( QMouseEvent *mev )
 	repaint();
 }
 
-void KHeader::mouseReleaseEvent( QMouseEvent *mev )
+void KHeader::mouseReleaseEvent( QMouseEvent * )
 {
 	if( m_selected == -1 )
 	{

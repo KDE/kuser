@@ -123,7 +123,7 @@ bool addUser::checkHome() {
     else
       err->addMsg(i18n("%1 is not a directory").arg(user.getHomeDir()));
   else
-    err->addMsg(QString("checkHome: stat: %1 ").arg(strerror(errno)));
+    err->addMsg(QString("checkHome: stat: %1 ").arg(QString::fromLocal8Bit(strerror(errno))));
   
   err->display();
 
@@ -136,7 +136,7 @@ bool addUser::checkMailBox() {
   struct stat s;
   int r;
 
-  mailboxpath = QString("%s/%s").arg(MAIL_SPOOL_DIR).arg(user.getFullName());
+  mailboxpath = QString("%1/%1").arg(MAIL_SPOOL_DIR).arg(user.getFullName());
   r = stat(QFile::encodeName(mailboxpath), &s);
   
   if ((r == -1) && (errno == ENOENT))
@@ -151,7 +151,7 @@ bool addUser::checkMailBox() {
       err->addMsg(i18n("%1 exists but is not a regular file")
                  .arg(mailboxpath));
   else
-    err->addMsg(QString("checkMail: stat: %s ").arg(strerror(errno)));
+    err->addMsg(QString("checkMail: stat: %1 ").arg(QString::fromLocal8Bit(strerror(errno))));
   
   err->display();
 

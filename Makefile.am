@@ -14,7 +14,7 @@ kuser_SOURCES	=	\
 	kuser.cpp kgroup.cpp main.cpp mainView.cpp mnt.cpp \
 	propdlg.cpp quota.cpp misc.cpp usernamedlg.cpp pwddlg.cpp \
 	grpnamedlg.cpp kerror.cpp addUser.cpp editDefaults.cpp \
-	nisDefaultsPage.cpp userDefaultsPage.cpp kglobal.cpp
+	nisDefaultsPage.cpp userDefaultsPage.cpp kglobal.cpp kcontainer.cpp
 
 kuser_METASOURCES =	USE_AUTOMOC
 

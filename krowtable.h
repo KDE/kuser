@@ -1,10 +1,10 @@
 #ifndef _KROWTABLE_H
 #define _KROWTABLE_H
 
-#include "qtableview.h"
-#include "qpainter.h"
-#include "qlist.h"
-#include "qarray.h"
+#include <qtableview.h>
+#include <qpainter.h>
+#include <qlist.h>
+#include <qarray.h>
 
 class KRow
 {

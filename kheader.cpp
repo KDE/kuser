@@ -1,5 +1,5 @@
-#include "qpainter.h"
-#include "qdrawutil.h"
+#include <qpainter.h>
+#include <qdrawutil.h>
 
 #include "kheader.h"
 

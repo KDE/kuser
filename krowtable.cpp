@@ -1,4 +1,4 @@
-#include "qkeycode.h"
+#include <qkeycode.h>
 
 #include "krowtable.h"
 

@@ -124,6 +124,7 @@ editDefaults.cpp: editDefaults.moc
 editDefaults.moc: editDefaults.h
 	$(MOC) editDefaults.h -o editDefaults.moc
 
+userDefaultsPage.cpp: userDefaultsPageData.moc
 userDefaultsPage.cpp: userDefaultsPage.moc
 userDefaultsPage.moc: userDefaultsPage.h
 	$(MOC) userDefaultsPage.h -o userDefaultsPage.moc

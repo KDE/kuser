@@ -21,7 +21,7 @@ EDITABLE	=	$(DISTFILES) $(noinst_HEADERS) $(kuser_SOURCES) Makefile.am
 bin_PROGRAMS = kuser
 
 # the subdirs we have. Better would be to include pic here too
-SUBDIRS = doc pic toolbar
+SUBDIRS = doc pic toolbar icon mini-icon
 
 # override the permissions
 INSTALL_PROGRAMM = ${INSTALL} -m 0750 

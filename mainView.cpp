@@ -21,6 +21,7 @@
 #include "grpnamedlg.h"
 #include "propdlg.h"
 #include "addUser.h"
+#include "delUser.h"
 #include "pwddlg.h"
 #include "editGroup.h"
 #include "editDefaults.h"
@@ -102,10 +103,10 @@ void mainView::useredit() {
 void mainView::userdel() {
   KUser *user = lbusers->getCurrentUser();
 
-  if (KMessageBox::warningContinueCancel(0, i18n("Do you really want to delete user '%1'?")
-		       .arg(user->getName()), QString::null,
-                     i18n("&Delete")) != KMessageBox::Continue)
-    return;
+  delUser dlg(user, this);
+  
+  if (!dlg.exec())
+     return;
 
 #ifdef _KU_QUOTA
   uint uid = user->getUID();
@@ -114,7 +115,7 @@ void mainView::userdel() {
     kug->getQuotas().delQuota(uid);
 #endif
 
-  kug->getUsers().del(user);
+  kug->getUsers().del(user, dlg.getDeleteHomeDir(), dlg.getDeleteMailBox());
   lbusers->removeItem(user);
 
   changed = true;
@@ -281,29 +282,33 @@ void mainView::save() {
   if (!changed)
     return;
     
-  if (KMessageBox::questionYesNo(0, i18n("Would you like to save changes?"),
-                               i18n("Data Was Modified"),
-                               i18n("&Save"), i18n("&Discard Changes")) == KMessageBox::No)
-    return;
-    
-  if (!kug->getUsers().save())
-    err->display();
-
-  if (!kug->getGroups().save())
-    err->display();
+  kug->getUsers().save();
+  kug->getGroups().save();
 #ifdef _KU_QUOTA
   if (is_quota != 0)
-    if (!kug->getQuotas().save())
-      err->display();
+    kug->getQuotas().save();
 #endif
+  err->display();
+
   changed = FALSE;
 }
 
-void mainView::quit() {
-  save();
+bool mainView::queryClose()
+{
+  if (!changed)
+    return true;
+    
+  int result = KMessageBox::warningYesNoCancel(0, i18n("Would you like to save your changes?"),
+                               i18n("Data Was Modified"),
+                               i18n("&Save"), i18n("&Discard Changes"));
 
-  qApp->quit();
-  delete this;
+  if (result == KMessageBox::Cancel)
+    return false;
+    
+  if (result == KMessageBox::Yes)
+    save();
+    
+  return true;
 }
 
 void mainView::setpwd() {

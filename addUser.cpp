@@ -71,8 +71,9 @@ void addUser::slotOk() {
   
   if (user->getCreateHome() && !checkHome())
      return;
+
   if (user->getCreateMailBox() && !checkMailBox())
-     return;
+     user->setCreateMailBox(false);
 
   accept();
 }

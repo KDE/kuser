@@ -16,9 +16,10 @@ public:
   mainWidget(const char *name = 0);
   ~mainWidget();
 
+  bool queryClose();
+
 protected:
   virtual void resizeEvent (QResizeEvent *event);
-  virtual void closeEvent (QCloseEvent *event);
   
   void setupActions();
   void readSettings();

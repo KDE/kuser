@@ -76,6 +76,8 @@ KUser::KUser() : p_pwd("*") {
   isCreateHome = false;
   isCreateMailBox = false;
   isCopySkel = false;
+  isDeleteHome = false;
+  isDeleteMailBox = false;
 }
   
 KUser::KUser(const KUser *user) {
@@ -656,10 +658,12 @@ bool KUsers::doDelete() {
 
   user = du.first();
   for (unsigned int i=0; i<ucnt; i++) {
-    user = du.current(); 
-    user->removeHome();
+    user = du.current();
+    if (user->isDeleteHome)
+      user->removeHome();
     user->removeCrontabs();
-    user->removeMailBox();
+    if (user->isDeleteMailBox)
+      user->removeMailBox();
     user->removeProcesses();
     du.remove();
   }
@@ -954,8 +958,10 @@ void KUsers::add(KUser *ku) {
   u.append(ku);
 }
 
-void KUsers::del(KUser *au) {
+void KUsers::del(KUser *au, bool deleteHome, bool deleteMailBox) {
   KUser *nu = new KUser(au);
+  nu->isDeleteHome = deleteHome;
+  nu->isDeleteMailBox = deleteMailBox;
   du.append(nu);
   u.remove(au);
 }
@@ -968,9 +974,12 @@ int KUser::createHome() {
     return(0);
   }
   if (mkdir(QFile::encodeName(p_dir), 0700) != 0) {
-    err->addMsg(i18n("Cannot create home directory %1\nError: %2").arg(p_dir).arg(QString::fromLocal8Bit(strerror(errno))));
-    err->display();
-    return(0);
+    if (errno != EEXIST)
+    {
+      err->addMsg(i18n("Cannot create home directory %1\nError: %2").arg(p_dir).arg(QString::fromLocal8Bit(strerror(errno))));
+      err->display();
+      return(0);
+    }
   }
 
   if (chown(QFile::encodeName(p_dir), p_uid, p_gid) != 0) {
@@ -1136,11 +1145,14 @@ int KUser::createMailBox() {
   mailboxpath = QString("%1/%2").arg(MAIL_SPOOL_DIR).arg(p_name);
   if((fd = open(QFile::encodeName(mailboxpath), O_CREAT|O_EXCL|O_WRONLY,
                 S_IRUSR|S_IWUSR)) < 0) {
-    err->addMsg(i18n("Cannot create %1: %2")
+    if (errno != EEXIST)
+    {
+      err->addMsg(i18n("Cannot create %1: %2")
                 .arg(mailboxpath)
                 .arg(QString::fromLocal8Bit(strerror(errno))));
-    err->display();
-    return -1;
+      err->display();
+      return -1;
+    }
   }
 
   close(fd);

@@ -10,7 +10,7 @@ kuser_LDADD	=	$(LIB_KDEUI) $(LIBCRYPT) $(LIBSHADOW) $(LIBGEN)
 
 kuser_SOURCES	=	\
 	mainWidget.cpp editGroup.cpp kuservw.cpp \
-	kgroupvw.cpp \
+	kgroupvw.cpp delUser.cpp \
 	kuser.cpp kgroup.cpp main.cpp mainView.cpp mnt.cpp \
 	propdlg.cpp quota.cpp misc.cpp pwddlg.cpp \
 	grpnamedlg.cpp kerror.cpp addUser.cpp editDefaults.cpp \
@@ -21,7 +21,7 @@ kuser_METASOURCES = AUTO
 # the following are only useful, if you want to use "make dist"
 noinst_HEADERS	=	\
 	mainWidget.h editGroup.h kuservw.h \
-	kuser.h mainView.h kgroup.h \
+	kuser.h mainView.h kgroup.h delUser.h \
 	kgroupvw.h propdlg.h mnt.h quota.h globals.h misc.h \
 	pwddlg.h grpnamedlg.h kerror.h addUser.h \
 	nisDefaultsPage.h userDefaultsPage.h editDefaults.h \

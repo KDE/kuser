@@ -6,7 +6,6 @@ KError::KError() {
 }
 
 KError::~KError() {
-  display();
 }
 
 void KError::addMsg(QString amsg) {

@@ -34,9 +34,14 @@ mainWidget::~mainWidget()
   delete sbar;
 }
 
+bool mainWidget::queryClose()
+{
+  return md->queryClose();
+}
+
 void mainWidget::setupActions() {
   KStdAction::save(md, SLOT(save()), actionCollection());
-  KStdAction::quit(md, SLOT(quit()), actionCollection());
+  KStdAction::quit(this, SLOT(close()), actionCollection());
 
   KStdAction::preferences(md, SLOT(properties()), actionCollection());
   mActionToolbar = KStdAction::showToolbar(this, SLOT(toggleToolBar()), actionCollection());
@@ -98,10 +103,6 @@ void mainWidget::writeSettings() {
 
 void mainWidget::resizeEvent(QResizeEvent *) {
   writeSettings();
-}
-
-void mainWidget::closeEvent(QCloseEvent *) {
-  md->quit();
 }
 
 void mainWidget::toggleToolBar() {

@@ -156,7 +156,9 @@ protected:
   bool
     isCreateHome,              // create homedir
     isCreateMailBox,           // create mailbox
-    isCopySkel;                // copy skeleton
+    isCopySkel,                // copy skeleton
+    isDeleteHome,              // delete home dir
+    isDeleteMailBox;           // delete mailbox
 };
 
 class KUsers {
@@ -177,7 +179,7 @@ public:
   KUser *operator[](uint num);
 
   void add(KUser *ku);
-  void del(KUser *au);
+  void del(KUser *au, bool deleteHome, bool deleteMailBox);
 
 protected:
   bool pw_backuped;

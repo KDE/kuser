@@ -20,6 +20,8 @@ public:
 
   void init();
 
+  bool queryClose();
+
   QPixmap pic_user;
 
 public slots:
@@ -27,7 +29,6 @@ public slots:
  
   void save();
   void properties();
-  void quit();
   void userSelected();
   void groupSelected();
   

@@ -21,51 +21,35 @@
 #ifndef _KU_MAINWIDGET_H
 #define _KU_MAINWIDGET_H
 
-#include <qevent.h>
-#include <qpixmap.h>
-
 #include <kmainwindow.h>
 
-#include "selectconn.h"
-#include "mainView.h"
-
+class SelectConn;
+class mainView;
 class KToggleAction;
-class KStatusBar;
 
 class mainWidget : public KMainWindow {
 Q_OBJECT
 public:
   mainWidget(const char *name = 0);
   ~mainWidget();
-
   bool queryClose();
 
 protected:
   void init();
   void setupActions();
-  void readSettings();
-  void writeSettings();
 
 protected slots:
-  void toggleToolBar();
-  void toggleStatusBar();
   void showSys();
   void properties();
   void slotApplySettings();
   void slotApplyConnection();
   void selectconn();
-  void slotConfigureToolbars();
-  void saveToolbarConfig();
 
 private:
-//  KMenuBar   *menubar;
-//  KToolBar   *toolbar;
-  KStatusBar *sbar;
-  KToggleAction *mActionToolbar;
-  KToggleAction *mActionStatusbar;
   KToggleAction *mShowSys;
   mainView *md;
   SelectConn *sc;
+
 };
 
 #endif // _KU_MAINWIDGET_H

@@ -35,6 +35,8 @@
 #include "kglobal_.h"
 #include "editDefaults.h"
 #include "mainWidget.h"
+#include "selectconn.h"
+#include "mainView.h"
 
 mainWidget::mainWidget(const char *name) : KMainWindow(0,name)
 {
@@ -45,21 +47,18 @@ mainWidget::mainWidget(const char *name) : KMainWindow(0,name)
   init();
   md->slotTabChanged();
 
-  sbar = new KStatusBar(this);
-  sbar->insertItem(i18n("Reading configuration"), 0);
+  statusBar()->insertItem(i18n("Reading configuration"), 0);
 
   setCentralWidget(md);
 
-  resize(500, 400);
-  readSettings();
-  sbar->changeItem(i18n("Ready"), 0);
+  setupGUI();
+	
+  statusBar()->changeItem(i18n("Ready"), 0);
 }
 
 mainWidget::~mainWidget()
 {
-  writeSettings();
   delete md;
-  delete sbar;
 }
 
 bool mainWidget::queryClose()
@@ -71,13 +70,8 @@ void mainWidget::setupActions()
 {
   KStdAction::quit(this, SLOT(close()), actionCollection());
   KStdAction::keyBindings(guiFactory(), SLOT(configureShortcuts()), actionCollection());
-  KStdAction::configureToolbars(this, SLOT(slotConfigureToolbars()), actionCollection());
 
   KStdAction::preferences(this, SLOT(properties()), actionCollection());
-  mActionToolbar = KStdAction::showToolbar(this, SLOT(toggleToolBar()), actionCollection());
-  mActionStatusbar = KStdAction::showStatusbar(this, SLOT(toggleStatusBar()), actionCollection());
-
-//  KStdAction::saveOptions(md, SLOT(writeSettings()), actionCollection());
 
 #define BarIconC(x)	BarIcon(QString::fromLatin1(x))
 
@@ -102,6 +96,8 @@ void mainWidget::setupActions()
   (void) new KAction(i18n("&Delete"), QIconSet(BarIconC("delete_group")), 0, md,
     SLOT(grpdel()), actionCollection(), "delete_group");
 
+#undef BarIconC
+	
   (void) new KAction(i18n("&Select Connection..."),
     0, this,
     SLOT(selectconn()), actionCollection(), "select_conn");
@@ -110,60 +106,6 @@ void mainWidget::setupActions()
     0, 0, this,
     SLOT(showSys()), actionCollection(), "show_sys");
   mShowSys->setCheckedState(i18n("Hide System Users/Groups"));
-
-  createGUI(QString::fromLatin1("kuserui.rc"));
-}
-
-void mainWidget::slotConfigureToolbars()
-{
-    saveMainWindowSettings(KGlobal::config(), "MainWindow");
-    KEditToolbar dlg( actionCollection(),"kuserui.rc" );
-    connect(&dlg, SIGNAL(newToolbarConfig()), SLOT(saveToolbarConfig()));
-    dlg.exec();
-}
-
-/**
- * Save new toolbarconfig.
- */
-void mainWidget::saveToolbarConfig()
-{
-    createGUI("kuserui.rc");
-    applyMainWindowSettings(KGlobal::config(), "MainWindow");
-}
-
-void mainWidget::readSettings()
-{
-  QValueList<int> geom = kug->kcfg()->geometry();
-  if ( geom.size() < 2 ) return;
-  int width = geom[0];
-  int height = geom[1];
-  if ( width && height ) resize(width, height);
-}
-
-void mainWidget::writeSettings()
-{
-  kdDebug() << "mainWidget::writeSettings() width=" << width() << " height: " << height() << endl;
-  QValueList<int> geom;
-  geom.append( width() );
-  geom.append( height() );
-
-  kug->kcfg()->setGeometry( geom );
-}
-
-void mainWidget::toggleToolBar()
-{
-  if (mActionToolbar->isChecked())
-    toolBar("mainToolBar")->show();
-  else
-    toolBar("mainToolBar")->hide();
-}
-
-void mainWidget::toggleStatusBar()
-{
-  if (mActionStatusbar->isChecked())
-    statusBar()->show();
-  else
-    statusBar()->hide();
 }
 
 void mainWidget::showSys()

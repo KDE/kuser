@@ -30,7 +30,7 @@ extern int is_shadow;
   #define SKELDIR "/etc/skel"
   #define SKEL_FILE_PREFIX ""
 #else
-  #ifdef __FreeBSD__
+  #if	defined(__FreeBSD__) || defined(__bsdi__)
     #undef _KU_SHADOW
     #include <pwd.h>
     #include <paths.h>

@@ -142,10 +142,12 @@ int getValue(unsigned int &data, const QString & text, const QString & msg) {
   return (0);
 }
 
+#define BUFFER_SIZE 4096
+
 int copyFile(const QString & from, const QString & to) {
   QFile fi;
   QFile fo;
-  char buf[4096];
+  char buf[BUFFER_SIZE];
 
 #ifdef _KU_DEBUG
   printf("%s -> %s\n", from.local8Bit().data(), to.local8Bit().data());
@@ -170,7 +172,9 @@ int copyFile(const QString & from, const QString & to) {
   }
   
   while (!fi.atEnd()) {
-    int len = fi.readBlock(buf, 65536);
+    int len = fi.readBlock(buf, BUFFER_SIZE);
+    if (len <= 0)
+      break;
     fo.writeBlock(buf, len);
   }
   

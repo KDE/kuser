@@ -67,7 +67,7 @@ protected:
   QWidget *w2;
   QWidget *w3;
   QWidget *w4;
-#ifdef __FreeBSD__
+#if defined(__FreeBSD__) || defined(__bsdi__)
   // extra tab page for login class & expiry dates
   QWidget *w5;
 #endif
@@ -99,7 +99,7 @@ protected:
   QLabel *l16;
   QLabel *l17;
   QLabel *l18;
-#ifdef __FreeBSD__
+#if defined(__FreeBSD__) || defined(__bsdi__)
   // labels for login class
   QLabel *l19;
   QLabel *ld19;
@@ -115,7 +115,7 @@ protected:
   QLineEdit   *lefname;
   QComboBox   *leshell;
   QLineEdit   *lehome;
-#ifdef __FreeBSD__
+#if defined(__FreeBSD__) || defined(__bsdi__)
   QLineEdit   *leoffice;
   QLineEdit   *leophone;
   QLineEdit   *lehphone;

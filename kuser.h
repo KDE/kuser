@@ -12,7 +12,7 @@
 #include "quota.h"
 #endif
 
-#ifdef __FreeBSD__
+#if defined(__FreeBSD__) || defined(__bsdi__)
 #undef _KU_SHADOW
 #endif
 
@@ -35,7 +35,7 @@ public:
   uid_t getUID() const;
   uid_t getGID() const;
 
-#ifdef __FreeBSD__
+#if defined(__FreeBSD__) || defined(__bsdi__)
   const QString &getOffice() const;
   const QString &getWorkPhone() const;
   const QString &getHomePhone() const;
@@ -69,7 +69,7 @@ public:
   void setUID(uid_t data);
   void setGID(uid_t data);
 
-#ifdef __FreeBSD__
+#if defined(__FreeBSD__) || defined(__bsdi__)
   void setOffice(const QString &data);
   void setWorkPhone(const QString &data);
   void setHomePhone(const QString &data);
@@ -121,7 +121,7 @@ protected:
     p_dir,
     p_shell,
     p_fname,                        // parsed comment information
-#ifdef __FreeBSD__
+#if defined(__FreeBSD__) || defined(__bsdi__)
     p_office,
     p_ophone,
     p_hphone,

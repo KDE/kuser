@@ -332,7 +332,7 @@ void mainView::setpwd() {
 }
 
 void mainView::help() {
-  kapp->invokeHTMLHelp(0,0);
+  kapp->invokeHelp();
 }
 
 void mainView::properties() {

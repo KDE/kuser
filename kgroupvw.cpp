@@ -46,8 +46,8 @@ void KGroupView::init()
   m_Groups = new KGroupTable(this, "_gtable" );
   m_Groups->setGeometry(0, m_Header->height(), width(), height()-m_Header->height() );
 
-  m_Header->setHeaderLabel(0, _("GID"));
-  m_Header->setHeaderLabel(1, _("Group name"));
+  m_Header->setHeaderLabel(0, i18n("GID"));
+  m_Header->setHeaderLabel(1, i18n("Group name"));
 
   connect(m_Groups, SIGNAL(highlighted(int,int)), SLOT(onHighlight(int,int)));
   connect(m_Groups, SIGNAL(selected(int,int)), SLOT(onSelect(int,int)));

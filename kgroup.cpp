@@ -151,7 +151,7 @@ bool KGroups::save() {
   }
 
   if ((grp = fopen(GROUP_FILE,"w")) == NULL) {
-    sprintf(other, _("Error opening %s for writing"), GROUP_FILE);
+    sprintf(other, i18n("Error opening %s for writing"), GROUP_FILE);
     err->addMsg(other, STOP);
     return (FALSE);
   }
@@ -200,7 +200,7 @@ int KGroups::first_free() {
       return (t);
   }
 
-  err->addMsg(_("You have more than 65534 groups!?!? You have ran out of gid space!"), STOP);
+  err->addMsg(i18n("You have more than 65534 groups!?!? You have ran out of gid space!"), STOP);
   return (-1);
 }
 

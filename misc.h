@@ -8,8 +8,6 @@
 #include <qlabel.h>
 #include <qlined.h>
 
-#define _(Text) klocale->translate (Text)
-
 class KUser;
 
 QString readentry(const QString &name);

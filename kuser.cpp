@@ -387,9 +387,9 @@ bool KUsers::loadsdw() {
 
   while ((spw = getspent())) {     // read a shadow password structure
     if ((up = user_lookup(spw->sp_namp)) == NULL) {
-      tmp.sprintf(_("No /etc/passwd entry for %s.\nEntry will be removed at the next `Save'-operation."),
+      tmp.sprintf(i18n("No /etc/passwd entry for %s.\nEntry will be removed at the next `Save'-operation."),
                   spw->sp_namp);
-      KMsgBox::message(0, _("Error"), tmp, KMsgBox::STOP);
+      KMsgBox::message(0, i18n("Error"), tmp, KMsgBox::STOP);
       continue;
     }
 
@@ -434,7 +434,7 @@ bool KUsers::savepwd() {
   }
 
   if ((passwd = fopen(PASSWORD_FILE,"w")) == NULL) {
-    sprintf(other, _("Error opening %s for writing"), PASSWORD_FILE);
+    sprintf(other, i18n("Error opening %s for writing"), PASSWORD_FILE);
     err->addMsg(other, STOP);
     return (FALSE);
   }
@@ -480,7 +480,7 @@ bool KUsers::savepwd() {
   // need to run a utility program to build /etc/passwd, /etc/pwd.db
   // and /etc/spwd.db from /etc/master.passwd
   if (0 != system(PWMKDB)) {
-     sprintf(other, _("Unable to build password database"));
+     sprintf(other, i18n("Unable to build password database"));
      err->addMsg(other, STOP);
      return (FALSE);
   }
@@ -507,7 +507,7 @@ bool KUsers::savesdw() {
   }
 
   if ((f = fopen(SHADOW_FILE, "w")) == NULL) {
-    tmp.sprintf(_("Error opening %s for writing"), SHADOW_FILE);
+    tmp.sprintf(i18n("Error opening %s for writing"), SHADOW_FILE);
     err->addMsg((const char *)tmp, STOP);
     return (FALSE);
   }
@@ -518,7 +518,7 @@ bool KUsers::savesdw() {
   for (uint index = 0; index < u.count(); index++) {
     up = u.at(index);
     if (!(const char *)up->gets_pwd()) {
-      tmp.sprintf(_("No shadow entry for %s."), (const char *)up->getp_name());
+      tmp.sprintf(i18n("No shadow entry for %s."), (const char *)up->getp_name());
       err->addMsg(tmp, STOP);
       continue;
     }
@@ -572,7 +572,7 @@ int KUsers::first_free() {
     i = 0;
   }
 
-  err->addMsg(_("You have more than 65534 users!?!? You have ran out of uid space!"), STOP);
+  err->addMsg(i18n("You have more than 65534 users!?!? You have ran out of uid space!"), STOP);
   return (-1);
 }
 

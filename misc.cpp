@@ -47,8 +47,8 @@ void backup(char const *name)
 
   if (rename(name, tmp) == -1)
   {
-    sprintf(tmp, _("Can't create backup file for %s"), name);
-    KMsgBox::message(0, _("Error"), tmp, KMsgBox::STOP);
+    sprintf(tmp, i18n("Can't create backup file for %s"), name);
+    KMsgBox::message(0, i18n("Error"), tmp, KMsgBox::STOP);
     exit (1);
   }
 }
@@ -113,7 +113,7 @@ int getValue(long int &data, const char *text, const char *msg) {
   char *check;
   long int value = strtol(text, &check, 0);
   if (check[0]) {
-    KMsgBox::message(0, _("Error"), msg, KMsgBox::STOP);
+    KMsgBox::message(0, i18n("Error"), msg, KMsgBox::STOP);
     return (-1);
   }
   data = value;
@@ -125,7 +125,7 @@ int getValue(int &data, const char *text, const char *msg) {
   char *check;
   long int value = strtol(text, &check, 0);
   if (check[0]) {
-    KMsgBox::message(0, _("Error"), msg, KMsgBox::STOP);
+    KMsgBox::message(0, i18n("Error"), msg, KMsgBox::STOP);
     return (-1);
   }
   data = (int)value;
@@ -137,7 +137,7 @@ int getValue(unsigned int &data, const char *text, const char *msg) {
   char *check;
   long int value = strtol(text, &check, 0);
   if (check[0]) {
-    KMsgBox::message(0, _("Error"), msg, KMsgBox::STOP);
+    KMsgBox::message(0, i18n("Error"), msg, KMsgBox::STOP);
     return (-1);
   }
   data = (unsigned int)value;
@@ -160,7 +160,7 @@ int copyFile(QString from, QString to) {
   if (!fi.exists()) {
     QString tmp;
     
-    tmp.sprintf(_("File %s does not exist."), (const char *)from);
+    tmp.sprintf(i18n("File %s does not exist."), (const char *)from);
     err->addMsg(tmp, STOP);
     return (-1);
   }
@@ -168,7 +168,7 @@ int copyFile(QString from, QString to) {
   if (!fi.open(IO_ReadOnly)) {
     QString tmp;
     
-    tmp.sprintf(_("Can not open file %s for reading."), (const char *)from);
+    tmp.sprintf(i18n("Can not open file %s for reading."), (const char *)from);
     err->addMsg(tmp, STOP);
     return (-1);
   }
@@ -176,7 +176,7 @@ int copyFile(QString from, QString to) {
   if (!fo.open(IO_Raw | IO_WriteOnly | IO_Truncate)) {
     QString tmp;
     
-    tmp.sprintf(_("Can not open file %s for writing."), (const char *)to);
+    tmp.sprintf(i18n("Can not open file %s for writing."), (const char *)to);
     err->addMsg(tmp, STOP);
     return (-1);
   }

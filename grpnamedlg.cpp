@@ -14,20 +14,20 @@ grpnamedlg::grpnamedlg(KGroup *agroup, QWidget* parent, const char* name)
   group = agroup;
   group->setgid(groups->first_free());
 
-  setCaption(_("Add group"));
+  setCaption(i18n("Add group"));
 
   QVBoxLayout *layout = new QVBoxLayout(this, 10);
   QGridLayout *grid = new QGridLayout(2, 2);
   layout->addLayout(grid);
 
   QLabel* lb1 = new QLabel(this, "lb1");
-  lb1->setText(_("Group name:"));
+  lb1->setText(i18n("Group name:"));
   lb1->setMinimumSize(lb1->sizeHint());
   lb1->setAlignment(AlignRight|AlignVCenter);
   grid->addWidget(lb1, 0, 0, AlignRight);
 
   QLabel* lb2 = new QLabel(this, "lb2");
-  lb2->setText(_("Group number:"));
+  lb2->setText(i18n("Group number:"));
   lb2->setMinimumSize(lb2->sizeHint());
   lb2->setAlignment(AlignRight|AlignVCenter);
   grid->addWidget(lb2, 1, 0, AlignRight);
@@ -65,8 +65,8 @@ grpnamedlg::grpnamedlg(KGroup *agroup, QWidget* parent, const char* name)
   bbox->addStretch(1);
 
   // the default buttons  
-  pbOk = bbox->addButton(_("OK"));
-  pbCancel = bbox->addButton(_("Cancel"));
+  pbOk = bbox->addButton(i18n("OK"));
+  pbCancel = bbox->addButton(i18n("Cancel"));
   pbOk->setDefault(TRUE);
   
   // establish callbacks
@@ -95,14 +95,14 @@ void grpnamedlg::ok()
   s.setStr(legid->text());
 
   if (groups->group_lookup(legrpname->text()) != NULL) {
-    tmp.sprintf(_("Group with name %s already exists."), legrpname->text());
-    KMsgBox::message(0, _("Error"), tmp, KMsgBox::STOP);
+    tmp.sprintf(i18n("Group with name %s already exists."), legrpname->text());
+    KMsgBox::message(0, i18n("Error"), tmp, KMsgBox::STOP);
     return;
   }
   
   if (groups->group_lookup(s.toInt()) != NULL) {
-    tmp.sprintf(_("Group with gid %d already exists."), s.toInt());
-    KMsgBox::message(0, _("Error"), tmp, KMsgBox::STOP);
+    tmp.sprintf(i18n("Group with gid %d already exists."), s.toInt());
+    KMsgBox::message(0, i18n("Error"), tmp, KMsgBox::STOP);
     return;
   }
   

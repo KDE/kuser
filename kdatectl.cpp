@@ -23,18 +23,18 @@ KDateCtl::KDateCtl(QWidget *parent, const char *name,
   sprintf(tmp, "%s_month", name);
   month = new KCombo(FALSE, parent, tmp);
   month->clear();
-  month->insertItem(_("January"));
-  month->insertItem(_("February"));
-  month->insertItem(_("March"));
-  month->insertItem(_("April"));
-  month->insertItem(_("May"));
-  month->insertItem(_("June"));
-  month->insertItem(_("July"));
-  month->insertItem(_("August"));
-  month->insertItem(_("September"));
-  month->insertItem(_("October"));
-  month->insertItem(_("November"));
-  month->insertItem(_("December"));
+  month->insertItem(i18n("January"));
+  month->insertItem(i18n("February"));
+  month->insertItem(i18n("March"));
+  month->insertItem(i18n("April"));
+  month->insertItem(i18n("May"));
+  month->insertItem(i18n("June"));
+  month->insertItem(i18n("July"));
+  month->insertItem(i18n("August"));
+  month->insertItem(i18n("September"));
+  month->insertItem(i18n("October"));
+  month->insertItem(i18n("November"));
+  month->insertItem(i18n("December"));
 
   month->setGeometry(x+40, y+25, 100, 27);
 

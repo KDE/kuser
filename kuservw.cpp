@@ -46,8 +46,8 @@ void KUserView::init()
   m_Users = new KUserTable(this, "_table" );
   m_Users->setGeometry(0, m_Header->height(), width(), height()-m_Header->height() );
 
-  m_Header->setHeaderLabel(0, _("User login"));
-  m_Header->setHeaderLabel(1, _("Full Name"));
+  m_Header->setHeaderLabel(0, i18n("User login"));
+  m_Header->setHeaderLabel(1, i18n("Full Name"));
 
   connect(m_Users, SIGNAL(highlighted(int,int)), SLOT(onHighlight(int,int)));
   connect(m_Users, SIGNAL(selected(int,int)), SLOT(onSelect(int,int)));

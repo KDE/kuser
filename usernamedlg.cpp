@@ -12,14 +12,14 @@ usernamedlg::usernamedlg(KUser *auser, QWidget* parent, const char* name)
 {
   user = auser;
 
-  setCaption(_("Enter username"));
+  setCaption(i18n("Enter username"));
 
   QVBoxLayout *layout = new QVBoxLayout(this, 10);
   QGridLayout *grid = new QGridLayout(1, 2);
   layout->addLayout(grid);
 
   QLabel* lb1 = new QLabel(this, "lb1");
-  lb1->setText(_("Username:"));
+  lb1->setText(i18n("Username:"));
   lb1->setMinimumSize(lb1->sizeHint());
   lb1->setAlignment(AlignRight|AlignVCenter);
   grid->addWidget(lb1, 0, 0, AlignRight);
@@ -42,8 +42,8 @@ usernamedlg::usernamedlg(KUser *auser, QWidget* parent, const char* name)
   bbox->addStretch(1);
 
   // the default buttons  
-  pbOk = bbox->addButton(_("OK"));
-  pbCancel = bbox->addButton(_("Cancel"));
+  pbOk = bbox->addButton(i18n("OK"));
+  pbCancel = bbox->addButton(i18n("Cancel"));
   pbOk->setDefault(TRUE);
   
   // establish callbacks
@@ -70,8 +70,8 @@ void usernamedlg::ok()
   QString tmp;
 
   if (users->user_lookup(leusername->text()) != NULL) {
-    tmp.sprintf(_("User with name %s already exists."), leusername->text());
-    KMsgBox::message(0, _("Error"), tmp, KMsgBox::STOP);
+    tmp.sprintf(i18n("User with name %s already exists."), leusername->text());
+    KMsgBox::message(0, i18n("Error"), tmp, KMsgBox::STOP);
     return;
   }
 

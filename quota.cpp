@@ -145,7 +145,7 @@ Quota::Quota(unsigned int auid, bool doget) {
         if ((errno == EOPNOTSUPP || errno == ENOSYS) && !warned) {
 */
 	warned++;
-	KMsgBox::message(0, _("Error"), _("Quotas are not compiled into this kernel."), KMsgBox::STOP);
+	KMsgBox::message(0, i18n("Error"), i18n("Quotas are not compiled into this kernel."), KMsgBox::STOP);
 	printf("errno: %i, ioctl: %i\n", errno, dd);
 	sleep(3);
 	is_quota = 0;
@@ -173,7 +173,7 @@ Quota::Quota(unsigned int auid, bool doget) {
         if ((errno == EOPNOTSUPP || errno == ENOSYS) && !warned) {
 */
 	warned++;
-	KMsgBox::message(0, _("Error"), _("Quotas are not compiled into this kernel."), KMsgBox::STOP);
+	KMsgBox::message(0, i18n("Error"), i18n("Quotas are not compiled into this kernel."), KMsgBox::STOP);
 	sleep(3);
 	is_quota = 0;
 	break;
@@ -223,7 +223,7 @@ Quota::Quota(unsigned int auid, bool doget) {
       warned++;
       if (errno != EINVAL) /* For _SOME_ reason quotactl returns EINVAL vs EPERM or ENODEV when quotas are disabled*/
             fprintf(stderr,"error: \"%s\" while calling quotactl\n", strerror(errno));
-      KMsgBox::message(0, _("Error"), _("Quotas are not compiled into this kernel."), KMsgBox::STOP);
+      KMsgBox::message(0, i18n("Error"), i18n("Quotas are not compiled into this kernel."), KMsgBox::STOP);
      /* Why punish people who don't want restrictions? sleep(3); */
       is_quota = 0;
       break;
@@ -256,7 +256,7 @@ Quota::Quota(unsigned int auid, bool doget) {
         if ((errno == EOPNOTSUPP || errno == ENOSYS) && !warned) {
 */
 	warned++;
-	KMsgBox::message(0, _("Error"), _("Quotas are not compiled into this kernel."), KMsgBox::STOP);
+	KMsgBox::message(0, i18n("Error"), i18n("Quotas are not compiled into this kernel."), KMsgBox::STOP);
 	printf("errno: %i, ioctl: %i\n", errno, dd);
 	sleep(3);
 	is_quota = 0;

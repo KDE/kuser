@@ -27,11 +27,11 @@ addUser::addUser(KUser *auser, Quota *aquota, QWidget *parent = 0, const char *n
   propdlg(auser, aquota, parent, name, isprep) {
 
   createhome = new QCheckBox(w1, "createHome");
-  createhome->setText(_("Create home directory"));
+  createhome->setText(i18n("Create home directory"));
   createhome->setGeometry(200, 70, 200, 30);
 
   copyskel = new QCheckBox(w1, "copySkel");
-  copyskel->setText(_("Copy skeleton"));
+  copyskel->setText(i18n("Copy skeleton"));
   copyskel->setGeometry(200, 110, 200, 30);
 }
 #else
@@ -39,11 +39,11 @@ addUser::addUser(KUser *auser, QWidget *parent = 0, const char *name = 0, int is
   propdlg(auser, parent, name, isprep) {
 
   createhome = new QCheckBox(w1, "createHome");
-  createhome->setText(_("Create home directory"));
+  createhome->setText(i18n("Create home directory"));
   createhome->setGeometry(200, 70, 200, 30);
 
   copyskel = new QCheckBox(w1, "copySkel");
-  copyskel->setText(_("Copy skeleton"));
+  copyskel->setText(i18n("Copy skeleton"));
   copyskel->setGeometry(200, 110, 200, 30);
 }
 #endif
@@ -55,8 +55,8 @@ void addUser::ok() {
   newuid = tmp.toInt();
   
   if (users->user_lookup(newuid) != NULL) {
-    tmp.sprintf(_("User with UID %u already exists"), newuid);
-    KMsgBox::message(0, _("Message"), tmp, KMsgBox::STOP, _("OK"));
+    tmp.sprintf(i18n("User with UID %u already exists"), newuid);
+    KMsgBox::message(0, i18n("Message"), tmp, KMsgBox::STOP, i18n("OK"));
     return;
   }
 
@@ -77,28 +77,28 @@ void addUser::createHome() {
 
   if (d.cd(user->getp_dir())) {
     QString tmp;
-    tmp.sprintf(_("Directory %s already exists"), (const char *)user->getp_dir());
+    tmp.sprintf(i18n("Directory %s already exists"), (const char *)user->getp_dir());
     err->addMsg(tmp, STOP);
     err->display();
   }
   
   if (mkdir((const char *)user->getp_dir(), 0700) != 0) {
     QString tmp;
-    tmp.sprintf(_("Cannot create home directory\nError: %s"), strerror(errno));
+    tmp.sprintf(i18n("Cannot create home directory\nError: %s"), strerror(errno));
     err->addMsg(tmp, STOP);
     err->display();
   }
 
   if (chown((const char *)user->getp_dir(), user->getp_uid(), user->getp_gid()) != 0) {
     QString tmp;
-    tmp.sprintf(_("Cannot change owner of home directory\nError: %s"), strerror(errno));
+    tmp.sprintf(i18n("Cannot change owner of home directory\nError: %s"), strerror(errno));
     err->addMsg(tmp, STOP);
     err->display();
   }
 
   if (chmod(user->getp_dir(), 0755) != 0) {
     QString tmp;
-    tmp.sprintf(_("Cannot change permissions on home directory\nError: %s"), strerror(errno));
+    tmp.sprintf(i18n("Cannot change permissions on home directory\nError: %s"), strerror(errno));
     err->addMsg(tmp, STOP);
     err->display();
   }
@@ -115,7 +115,7 @@ int addUser::copySkel() {
 
   if (!s.exists()) {
     QString tmp;
-    tmp.sprintf(_("Directory %s does not exist"), (const char *)s.dirName());
+    tmp.sprintf(i18n("Directory %s does not exist"), (const char *)s.dirName());
     err->addMsg(tmp, STOP);
     err->display();
     return (-1);
@@ -123,7 +123,7 @@ int addUser::copySkel() {
 
   if (!d.exists()) {
     QString tmp;
-    tmp.sprintf(_("Directory %s does not exist"), (const char *)d.dirName());
+    tmp.sprintf(i18n("Directory %s does not exist"), (const char *)d.dirName());
     err->addMsg(tmp, STOP);
     err->display();
     return (-1);
@@ -141,14 +141,14 @@ int addUser::copySkel() {
 
     if (chown(d.filePath(filename), user->getp_uid(), user->getp_gid()) != 0) {
       QString tmp;
-      tmp.sprintf(_("Cannot change owner of file %s\nError: %s"), (const char *)d.filePath(s[i]), strerror(errno));
+      tmp.sprintf(i18n("Cannot change owner of file %s\nError: %s"), (const char *)d.filePath(s[i]), strerror(errno));
       err->addMsg(tmp, STOP);
       err->display();
     }
 
     if (chmod(d.filePath(filename), 0644) != 0) {
       QString tmp;
-      tmp.sprintf(_("Cannot change permissions on file %s\nError: %s"), (const char *)d.filePath(s[i]), strerror(errno));
+      tmp.sprintf(i18n("Cannot change permissions on file %s\nError: %s"), (const char *)d.filePath(s[i]), strerror(errno));
       err->addMsg(tmp, STOP);
       err->display();
     }

@@ -34,7 +34,7 @@ editGroupData::editGroupData
 	QLabel* tmpQLabel;
 	tmpQLabel = new QLabel( this, "Label_1" );
 	tmpQLabel->setGeometry( 20, 10, 100, 20 );
-	tmpQLabel->setText(_("Users"));
+	tmpQLabel->setText(i18n("Users"));
 	tmpQLabel->setAlignment( 289 );
 	tmpQLabel->setMargin( -1 );
 
@@ -60,20 +60,20 @@ editGroupData::editGroupData
 	pbok = new QPushButton( this, "PushButton_3" );
 	pbok->setGeometry( 70, 190, 100, 30 );
 	connect( pbok, SIGNAL(clicked()), SLOT(ok()) );
-	pbok->setText(_("OK"));
+	pbok->setText(i18n("OK"));
 	pbok->setAutoRepeat( FALSE );
 	pbok->setAutoResize( FALSE );
 
 	pbcancel = new QPushButton( this, "pbcancel" );
 	pbcancel->setGeometry( 200, 190, 100, 30 );
 	connect( pbcancel, SIGNAL(clicked()), SLOT(cancel()) );
-	pbcancel->setText(_("Cancel"));
+	pbcancel->setText(i18n("Cancel"));
 	pbcancel->setAutoRepeat( FALSE );
 	pbcancel->setAutoResize( FALSE );
 
 	tmpQLabel = new QLabel( this, "Label_2" );
 	tmpQLabel->setGeometry( 300, 10, 100, 20 );
-	tmpQLabel->setText(_("Groups"));
+	tmpQLabel->setText(i18n("Groups"));
 	tmpQLabel->setAlignment( 289 );
 	tmpQLabel->setMargin( -1 );
 

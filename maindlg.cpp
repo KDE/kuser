@@ -146,10 +146,10 @@ void mainDlg::userdel() {
   uint i = 0;
   bool islast = FALSE;
 
-  if (KMsgBox::yesNo(0, _("WARNING"),
-                     _("Do you really want to delete user ?"),
+  if (KMsgBox::yesNo(0, i18n("WARNING"),
+                     i18n("Do you really want to delete user ?"),
                      KMsgBox::STOP,
-                     _("Cancel"), _("Delete")) == 2) {
+                     i18n("Cancel"), i18n("Delete")) == 2) {
 
     i = lbusers->currentItem();
     if (i == u->getUsersNumber()-1)
@@ -161,7 +161,7 @@ void mainDlg::userdel() {
     if (u->user_lookup(uid) == NULL)
       q->delQuota(uid);
 #endif
-    if (KMsgBox::yesNo(0, _("WARNING"),
+    if (KMsgBox::yesNo(0, i18n("WARNING"),
         i18n("The user has as homedir.\nDo you want to delete it?"),
         KMsgBox::STOP,
         i18n("Cancel"), i18n("Delete")) == 2) {
@@ -311,10 +311,10 @@ void mainDlg::useradd() {
 
 void mainDlg::save() {
   if (changed == TRUE)
-    if (KMsgBox::yesNo(0, _("Data was modified"),
-                       _("Would you like to save changes ?"),
+    if (KMsgBox::yesNo(0, i18n("Data was modified"),
+                       i18n("Would you like to save changes ?"),
     		       KMsgBox::INFORMATION,
-		       _("Save"), _("Discard changes")) == 1) {
+		       i18n("Save"), i18n("Discard changes")) == 1) {
       if (!u->save())
         err->display();
 
@@ -454,7 +454,7 @@ void mainDlg::groupSelected(int i) {
   tmpKG = g->getGroup(i);
 
   if (tmpKG == NULL) {
-    printf(_("Null pointer tmpKG in mainDlg::groupSelected(%d)\n"), i);
+    printf(i18n("Null pointer tmpKG in mainDlg::groupSelected(%d)\n"), i);
     return;
   }
 
@@ -474,7 +474,7 @@ void mainDlg::userSelected(int i) {
 
   tmpKU =  lbusers->getCurrentUser();
   if (tmpKU == NULL) {
-    printf(_("Null pointer tmpKU in mainDlg::userSelected(%d)\n"), i);
+    printf(i18n("Null pointer tmpKU in mainDlg::userSelected(%d)\n"), i);
     return;
   }
 
@@ -484,7 +484,7 @@ void mainDlg::userSelected(int i) {
   if (is_quota != 0) {
     tmpQ = q->getQuota(tmpKU->getp_uid());
     if (tmpQ == NULL) {
-      printf(_("Null pointer tmpQ in mainDlg::selected(%d)\n"), i);
+      printf(i18n("Null pointer tmpQ in mainDlg::selected(%d)\n"), i);
       return;
     }
   }
@@ -563,10 +563,10 @@ void mainDlg::grpdel() {
   uint i = 0;
   bool islast = FALSE;
 
-  if (KMsgBox::yesNo(0, _("WARNING"),
-                     _("Do you really want to delete group ?"),
+  if (KMsgBox::yesNo(0, i18n("WARNING"),
+                     i18n("Do you really want to delete group ?"),
                      KMsgBox::STOP,
-                     _("Cancel"), _("Delete")) == 2) {
+                     i18n("Cancel"), i18n("Delete")) == 2) {
 
     i = lbgroups->currentItem();
     if (i == g->getGroupsNumber()-1)

@@ -21,14 +21,14 @@ pwddlg::pwddlg(KUser *auser, QWidget* parent, const char* name)
 {
   user = auser;
 
-  setCaption(_("Enter password"));
+  setCaption(i18n("Enter password"));
 
   layout = new QVBoxLayout(this, 10);
   QGridLayout *grid = new QGridLayout(2, 2);
   layout->addLayout(grid);
 
   QLabel* lb1 = new QLabel(this, "lb1");
-  lb1->setText(_("Password"));
+  lb1->setText(i18n("Password"));
   lb1->setMinimumSize(lb1->sizeHint());
   lb1->setAlignment(AlignRight|AlignVCenter);
   grid->addWidget(lb1, 0, 0, AlignRight);
@@ -46,7 +46,7 @@ pwddlg::pwddlg(KUser *auser, QWidget* parent, const char* name)
   grid->addWidget(leusername1, 0, 1);
 
   QLabel* lb2 = new QLabel(this, "lb2");
-  lb2->setText(_("Retype password"));
+  lb2->setText(i18n("Retype password"));
   lb2->setMinimumSize(lb2->sizeHint());
   lb2->setAlignment(AlignRight|AlignVCenter);
   grid->addWidget(lb2, 1, 0, AlignRight);
@@ -69,8 +69,8 @@ pwddlg::pwddlg(KUser *auser, QWidget* parent, const char* name)
   bbox->addStretch(1);
 
   // the default buttons  
-  pbOk = bbox->addButton(_("OK"));
-  pbCancel = bbox->addButton(_("Cancel"));
+  pbOk = bbox->addButton(i18n("OK"));
+  pbCancel = bbox->addButton(i18n("Cancel"));
   pbOk->setDefault(TRUE);
   
   // establish callbacks
@@ -102,7 +102,7 @@ void pwddlg::ok()
   const char * set = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./";
 
   if (strcmp(leusername1->text(), leusername2->text())) {
-    KMsgBox::message(0, _("Error"), _("Passwords are not identical.\nTry again"), KMsgBox::STOP);
+    KMsgBox::message(0, i18n("Error"), i18n("Passwords are not identical.\nTry again"), KMsgBox::STOP);
     leusername1->setText("");
     leusername2->setText("");
     leusername1->setFocus();

@@ -46,10 +46,10 @@ edit::
 	xemacs -fn "-edict-fixed-medium-r-*-*-*-120-*-*-*-*-koi8-r" -geometry 142x41+0+0 $(EDITABLE)&
 
 messages:
-	$(XGETTEXT) -C -k_ -ki18n -x $(includedir)/kde.pot $(kuser_SOURCES) && mv messages.po ../po/kwm.pot
+	$(XGETTEXT) -C -ki18n -x $(includedir)/kde.pot $(kuser_SOURCES) && mv messages.po ../po/kwm.pot
 
 pot::
-	/usr/local/bin/xgettext -k_ -o kuser.pot -p ../po -d kuser -C -n *.cpp
+	/usr/local/bin/xgettext -ki18n -o kuser.pot -p ../po -d kuser -C -n *.cpp
 	/usr/local/bin/msgmerge --strict -v -o ../po/ru/kuser.po.new ../po/ru/kuser.po ../po/kuser.pot
 	mv ../po/ru/kuser.po.new ../po/ru/kuser.po
 

@@ -32,7 +32,7 @@ void KError::addMsg(const char *amsg, KErrorType aerr) {
 
 void KError::display() {
   for (uint i=0;i<msgs.count();i++)
-    KMsgBox::message(0, _("Message"), msgs.at(i)->getMsg(), msgs.at(i)->getErr());
+    KMsgBox::message(0, i18n("Message"), msgs.at(i)->getMsg(), msgs.at(i)->getErr());
     
   msgs.clear();
 }

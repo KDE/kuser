@@ -230,7 +230,7 @@ propdlg::propdlg(KUser *AUser, QWidget *parent, const char *name, int)
 #ifdef HAVE_SHADOW
   // Tab 2 : Password Management
   if (is_shadow != 0) {
-    QFrame *frame = addPage(i18n("Password Managment"));
+    QFrame *frame = addPage(i18n("Password Management"));
     QGridLayout *layout = new QGridLayout(frame, 20, 4, marginHint(), spacingHint());
     int row = 0;
 

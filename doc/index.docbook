@@ -45,8 +45,8 @@
 <legalnotice>&FDLNotice;</legalnotice>
 
 
-<date>2002-02-24</date>
-<releaseinfo>1.03.00</releaseinfo>
+<date>2002-10-08</date>
+<releaseinfo>1.0</releaseinfo>
 
 <abstract><para>This documentation describes &kuser; version 1.0. This
 program allows you to manage users and groups on your system.</para>
@@ -115,7 +115,7 @@ have shadow passwords, or any other similar things such as
 <sect2 id="user-info">
 <title><guilabel>User Info</guilabel> Tab</title>
 
-<para>In the "<guilabel>User Info</guilabel>" tab you can modify:
+<para>In the <guilabel>User Info</guilabel> tab you can modify:
 </para>
 
 <itemizedlist>
@@ -180,8 +180,8 @@ Period)</guilabel></para></listitem>
 </itemizedlist>
 
 <para> All these parameters can be changed for each filesystem that has user
-quota enabled. Filesystems can be changed using the "<guilabel>Quota
-Filesystem</guilabel>" box.</para>
+quota enabled. Filesystems can be changed using the <guilabel>Quota
+Filesystem</guilabel> box.</para>
 
 </sect2>
 

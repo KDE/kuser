@@ -13,7 +13,6 @@
 #include <kaboutdata.h>
 
 #include "kglobal_.h"
-#include "kerror.h"
 #include "misc.h"
 #include "mainWidget.h"
 

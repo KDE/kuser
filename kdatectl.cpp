@@ -81,9 +81,6 @@ void KDateCtl::setDate(long int adate) {
   iyear = qd->year();
 
   updateControls();
-#ifdef _KU_DEBUG
-  printf("%li|%d %d %d|%d\n", adate, iday, imonth, iyear, qd->isValid());
-#endif
   delete qd;
 }
 
@@ -97,10 +94,6 @@ long int KDateCtl::getDate() {
   qd = new QDate(iyear, imonth, iday);
 
   r = base->daysTo(*qd);
-
-#ifdef _KU_DEBUG
-  printf("KDateCtl::getDate() -> %li\n", r);
-#endif
 
   delete base;
   delete qd;

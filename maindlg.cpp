@@ -1,6 +1,7 @@
 #include <kmsgbox.h>
 #include <ktoolbar.h>
 #include <kiconloader.h>
+#include <ktablistbox.h>
 #include "maindlg.h"
 #include "propdlg.h"
 #include "pwddlg.h"
@@ -15,24 +16,27 @@ maindlg::maindlg(const char *name) :
 KTopLevelWidget(name)
 {
   changed = FALSE;
+  prev = 0;
 
   QString pixdir = kapp->kdedir() + QString("/share/apps/kuser/pics/");
-  pic_user.load(pixdir + "user.xpm");
+
+  list = new KTabListBox(this, "list", 2);
+  list->setGeometry(10,60,380,208);
+  list->setColumn(0, "Login", 80, KTabListBox::MixedColumn);
+  list->setColumn(1, "Full Name", 160);
+  list->setTableFlags (Tbl_smoothVScrolling | Tbl_autoVScrollBar);
+  list->clearTableFlags(Tbl_hScrollBar);
+  list->setSeparator('\n');
+  list->dict().insert("U", new QPixmap(pixdir + "user.xpm"));
+
+  QObject::connect(list, SIGNAL(headerClicked(int)), this, SLOT(setSort(int)));
+  QObject::connect(list, SIGNAL(selected(int,int)), this, SLOT(selected(int,int)));
 
   setCaption(name);
   QLabel *lb1 = addLabel(this, "lb1", 55, 40, 50, 20,_("User name"));
   lb1->setFont(rufont);
   QLabel *lb2 = addLabel(this, "lb2", 165, 40, 250, 20, _("Full name"));
   lb2->setFont(rufont);
-  list = new QListBox( this, "ListBox_1" );
-  list->setFont(rufont);
-  QToolTip::add(list, _("Double click to select user"));
-  list->setGeometry( 10, 60, 380, 208 );
-  list->setAutoScrollBar(TRUE);
-  list->setAutoUpdate(TRUE);
-  list->setSmoothScrolling(FALSE);
-  QObject::connect(list, SIGNAL(highlighted(int)), this, SLOT(highlighted(int)));
-  QObject::connect(list, SIGNAL(selected(int)), this, SLOT(selected(int)));
 
   reload(0);
 
@@ -113,64 +117,32 @@ KTopLevelWidget(name)
   setFixedSize(400, 400);
 }
 
+void maindlg::setSort(int col) {
+  printf("Sort by %d\n", col);
+}
+
 void maindlg::reload(int id) {
-  QPainter *p = new QPainter;
-  QPixmap pix(353, 20);
-  list->clear();
+  QString item;
+
   for (KUser *curuser=users.first(); curuser!=NULL; curuser=users.next()) {
-    pix.fill(white);
-    p->begin(&pix);
-    p->setFont(rufont);
-    p->drawPixmap(3, 2, pic_user);
-    p->drawText(40, 14, curuser->p_name);
-    p->drawText(150, 14, curuser->p_fname);
-    p->end();
-    list->insertItem(pix);
+    item = "{U}"+curuser->p_name+"\n"+curuser->p_fname;
+    list->insertItem(item);
   }
 
   list->setCurrentItem(id);
 }
 
-static int prev = 0;
-
-void maindlg::highlighted(int i) {
-  QPainter *p = new QPainter;
-  QPixmap pix(353, 20);
-
-  if (prev != -1) {
-    pix.fill(white);
-    p->begin(&pix);
-    p->setFont(rufont);
-    p->drawPixmap(3, 2, pic_user);
-    p->drawText(40, 14, users.at(prev)->p_name);
-    p->drawText(150, 14, users.at(prev)->p_fname);
-    p->end();
-    list->changeItem(pix, prev);
-  }
-
-  pix.fill(black);
-  p->begin(&pix);
-  p->setFont(rufont);
-  p->drawPixmap(3, 2, pic_user);
-  p->setPen(white);
-  p->drawText(40, 14, users.at(i)->p_name);
-  p->drawText(150, 14, users.at(i)->p_fname);
-  p->drawRect(1, 1, 352, 18);
-  p->end();
-  list->changeItem(pix, i);
-  prev = i;
-}
-
 void maindlg::edit() {
-  selected(list->currentItem());
+  selected(list->currentItem(),0);
 }
 
 void maindlg::del() {
   uint i = 0;
   bool islast = FALSE;
   
-  if (QMessageBox::query(_("WARNING"),
+  if (KMsgBox::yesNo(0, _("WARNING"),
                          _("Do you really want to delete user ?"),
+                         KMsgBox::STOP,
                          _("Delete"), _("Cancel"))) {
 
     i = list->currentItem();
@@ -183,14 +155,10 @@ void maindlg::del() {
 
     prev = -1;
 
-    if (!islast) {
+    if (!islast)
       list->setCurrentItem(i);
-      highlighted(i);
-    }
-    else {
+    else
       list->setCurrentItem(i-1);
-      highlighted(i-1);
-    }
   }
 }
 
@@ -245,9 +213,10 @@ void maindlg::add() {
 
 void maindlg::quit() {
   if (changed == TRUE)
-    if (QMessageBox::query(_("Data was modified"),
-                           _("Would you like to save changes ?"),
-                           _("Save"), _("Discard changes"))) {
+    if (KMsgBox::yesNo(0, _("Data was modified"),
+                          _("Would you like to save changes ?"),
+  		          KMsgBox::INFORMATION,
+                          _("Save"), _("Discard changes"))) {
 
       pwd_write();                                                                 
                                                                                 
@@ -257,10 +226,6 @@ void maindlg::quit() {
 #endif                                                                         
                                                                                
 #ifdef _KU_QUOTA
-#ifdef _KU_DEBUG
-printf("%d\n", is_quota);
-#endif
-
       if (is_quota)
         quota_write();
 #endif
@@ -363,15 +328,12 @@ void maindlg::properties() {
   delete editUser;
 }
 
-void maindlg::selected(int i) {
+void maindlg::selected(int i, int) {
   propdlg *editUser;
   editUser = new propdlg(users.at(i), this, "userin");
   if (editUser->exec() != 0) {
-    highlighted(list->currentItem());
+    reload(list->currentItem());
     changed = TRUE;
-#ifdef _KU_DEBUG
-printf("Accepted\n");
-#endif
   }
 
   delete editUser;

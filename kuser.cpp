@@ -505,8 +505,7 @@ bool KUsers::loadsdw() {
 
   while ((spw = getspent())) {     // read a shadow password structure
     if ((up = lookup(spw->sp_namp)) == NULL) {
-      err->addMsg(QString(
-                  i18n("No /etc/passwd entry for %s.\nEntry will be removed at the next `Save'-operation."))
+      err->addMsg(i18n("No /etc/passwd entry for %1.\nEntry will be removed at the next `Save'-operation.")
 		  .arg(spw->sp_namp), STOP);
       err->display();
       continue;
@@ -600,7 +599,7 @@ bool KUsers::savepwd() {
   umask(0077);
 
   if ((passwd = fopen(PASSWORD_FILE,"w")) == NULL) {
-    err->addMsg(QString(i18n("Error opening %s for writing"))
+    err->addMsg(i18n("Error opening %1 for writing")
                 .arg(PASSWORD_FILE), STOP);
     return FALSE;
   }

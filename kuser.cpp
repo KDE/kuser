@@ -172,7 +172,7 @@ const QString &KUser::getOffice() const {
   return (p_office);
 }
 
-const QString &KUser::getWorkPphone() const {
+const QString &KUser::getWorkPhone() const {
   return (p_ophone);
 }
 

@@ -1,3 +1,11 @@
+// $Id$
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#include <sys/types.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -53,11 +61,7 @@ void backup(char const *name) {
 }
 
 char *convertdate(char *buf, const long int base, const long int days) {
-#if defined(__hpux)
-  int tmpd;
-#else
-  long int tmpd;
-#endif // __hpux
+  time_t tmpd;
 
   tm *t;
 

@@ -109,8 +109,8 @@ void pwddlg::ok()
   }
   else {
     srand(time(NULL));
-    salt[0] = set[getpid() % sizeof(set)];
-    salt[1] = set[rand() % sizeof(set)];
+    salt[0] = set[getpid() % strlen(set)];
+    salt[1] = set[rand() % strlen(set)];
     salt[2] = 0;
 
     strcpy(tmp, crypt(leusername1->text(), salt));

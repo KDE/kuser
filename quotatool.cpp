@@ -236,6 +236,7 @@ Quota::Quota(int afcur, int afsoft, int afhard, int aicur, int aisoft, int aihar
 Quota& Quota::operator= (const Quota& q) {
   fcur = q.fcur; fsoft = q.fsoft; fhard = q.fhard;
   icur = q.icur; isoft = q.isoft; ihard = q.ihard;
+  return (*this);
 }
 
 Quota::Quota(const Quota *q) {

@@ -200,9 +200,9 @@ void propdlg::initDlg()
 //    whatstr = i18n("WHAT IS THIS: Address");
       addRow(frame, layout, row++, leaddress, i18n("&Address:"), whatstr);
     }
-    ledisabled = new QCheckBox(frame);
-    connect(ledisabled, SIGNAL(stateChanged(int)), this, SLOT(changed()));
-    addRow(frame, layout, row++, ledisabled, i18n("Account &disabled"), whatstr);
+    cbdisabled = new QCheckBox(frame);
+    connect(cbdisabled, SIGNAL(stateChanged(int)), this, SLOT(changed()));
+    addRow(frame, layout, row++, cbdisabled, i18n("Account &disabled"), whatstr);
     
     frontrow = row;
   }
@@ -239,14 +239,12 @@ void propdlg::initDlg()
     label->setBuddy( lesexpire );
     layout->addMultiCellWidget( lesexpire, row, row, 1, 2);
 
-    never_expire = new QCheckBox( i18n("Never"), frame );
-    layout->addWidget( never_expire, row++, 3 );
+    cbexpire = new QCheckBox( i18n("Never"), frame );
+    layout->addWidget( cbexpire, row++, 3 );
 
     connect( lesexpire, SIGNAL(valueChanged(const QDateTime&)), this, SLOT(changed()) );
-    connect( never_expire, SIGNAL(toggled(bool)), this, SLOT(changed()) );
-    connect( never_expire, SIGNAL(toggled(bool)), lesexpire, SLOT(setDisabled(bool)) );
-    
-//    lesexpire = addDateGroup( frame, layout, row++, i18n("&Account will expire on:") );
+    connect( cbexpire, SIGNAL(toggled(bool)), this, SLOT(changed()) );
+    connect( cbexpire, SIGNAL(toggled(bool)), lesexpire, SLOT(setDisabled(bool)) );
   }
   
   // Tab 3: Samba
@@ -447,7 +445,7 @@ void propdlg::selectuser()
       }
     }
     
-    setCB( ledisabled, user->getDisabled(), first );
+    setCB( cbdisabled, user->getDisabled(), first );
     
     if ( kug->getUsers().getCaps() & KUsers::Cap_Samba ) {
       setLE( leliscript, user->getLoginScript(), first );
@@ -475,7 +473,7 @@ void propdlg::selectuser()
       
       QDateTime expire;
       expire.setTime_t( user->getExpire() );
-      setCB( never_expire, expire.toTime_t() == -1, first );
+      setCB( cbexpire, expire.toTime_t() == -1, first );
       if ( first ) {
         lesexpire->setDateTime( expire );
       } else {
@@ -678,7 +676,7 @@ void propdlg::mergeUser( KUser *user, KUser *newuser )
     newuser->setShell( leshell->currentText() );
   }
   
-  newuser->setDisabled( (ledisabled->state() == QButton::NoChange) ? user->getDisabled() : ledisabled->isChecked() );
+  newuser->setDisabled( (cbdisabled->state() == QButton::NoChange) ? user->getDisabled() : cbdisabled->isChecked() );
   
   if ( kug->getUsers().getCaps() & KUsers::Cap_InetOrg ) {
     newuser->setSurname( mergeLE( lesurname, user->getSurname(), one ) );
@@ -703,10 +701,7 @@ void propdlg::mergeUser( KUser *user, KUser *newuser )
     }
 
   }
-  if ( primaryGroup.isEmpty() ) {
-    newuser->setGID( user->getGID() );
-    newuser->setPGSID( user->getPGSID() );
-  } else {
+  if ( !primaryGroup.isEmpty() ) {
     KGroup *group = kug->getGroups().lookup( primaryGroup );
     if ( group ) {
       newuser->setGID( group->getGID() );
@@ -736,7 +731,7 @@ bool propdlg::saveg()
       KUser *user = mUsers.first();
       
       while ( user ) {
-        if ( on && user->getGID() != group->getGID() ) {
+        if ( on && primaryGroup != group->getName() ) {
           if ( newgroup.addUser( user->getName() ) ) mod = true;
         } else {
           if ( newgroup.removeUser( user->getName() ) ) mod = true;
@@ -814,7 +809,6 @@ void propdlg::slotOk()
   bool one = ( mUsers.getFirst() == mUsers.getLast() );
   
   uid_t newuid = leid->text().toInt();
-  uint newrid = lerid->text().toInt();
   
   if ( one && olduid != newuid )
   {
@@ -825,12 +819,14 @@ void propdlg::slotOk()
     }
   }
   
-  if ( one && oldrid != newrid )
-  {
-    if (kug->getUsers().lookup_sam(newrid)) {
-      KMessageBox::sorry( 0, 
-        i18n("User with RID %1 already exists").arg(newrid) );
-      return;
+  if ( kug->getUsers().getCaps() & KUsers::Cap_Samba ) {
+    uint newrid = lerid->text().toInt();
+    if ( one && oldrid != newrid ) {
+      if (kug->getUsers().lookup_sam(newrid)) {
+        KMessageBox::sorry( 0, 
+          i18n("User with RID %1 already exists").arg(newrid) );
+        return;
+      }
     }
   }
 

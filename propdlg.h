@@ -122,7 +122,7 @@ protected:
   KLineEdit   *leoffice2;
   KLineEdit   *leaddress;
   
-  QCheckBox   *ledisabled;
+  QCheckBox   *cbdisabled;
   QLabel      *leprigr;
   QPushButton *pbprigr;
   
@@ -132,7 +132,7 @@ protected:
   KIntSpinBox *leswarn;
   KIntSpinBox *lesinact;
   KDateTimeWidget  *lesexpire;
-  QCheckBox *never_expire;
+  QCheckBox *cbexpire;
 
 //samba specific:  
   KLineEdit   *lerid;

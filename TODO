@@ -11,7 +11,6 @@
   each other (e.g the group of primary group ID != group of primary group SID).
 - Other consistency checks (unique user/group IDs, unique SIDs, etc...).
 - Copy data between backends.
-- Seperate LDAP filters for users/groups.
 - Update docs
 
 And some TODOs from the past which are still unsolved:

@@ -90,7 +90,7 @@ KTopLevelWidget(name)
     sscanf( geom, "%dx%d", &width, &height );
     resize( width, height );
   }
-  sbar->changeItem("Ready", 0);
+  sbar->changeItem(_("Ready"), 0);
 }
 
 mainWidget::~mainWidget() {

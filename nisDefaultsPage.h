@@ -4,14 +4,14 @@
 #include <kcontainer.h>
 #include <qlineedit.h>
 #include <qcheckbox.h>
-#include <sys/types.h> 
+#include <sys/types.h>
 
-#define NONNISPWD "Local passwd source"
-#define NONNISGRP "Local group source"
-#define NISPWD    "NIS passwd source"
-#define NISGRP    "NIS group source"
-#define NISMINUID "NIS minimum UID"
-#define NISMINGID "NIS minimum GID"
+#define NONNISPWD "Local passwd source:"
+#define NONNISGRP "Local group source:"
+#define NISPWD    "NIS passwd source:"
+#define NISGRP    "NIS group source:"
+#define NISMINUID "NIS minimum UID:"
+#define NISMINGID "NIS minimum GID:"
 
 class nisDefaultsPage : public QWidget {
     Q_OBJECT

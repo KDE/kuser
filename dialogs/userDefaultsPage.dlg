@@ -17,7 +17,7 @@ MaxSize {32767 32767}
 Grid {10}
 
 Label {
-		Text {Shell}
+		Text {Shell:}
 		AutoResize {TRUE}
 		Margin {-1}
 		Rect {10 10 29 13}
@@ -57,7 +57,7 @@ ComboBox {
 		PalettePropagation {NoChildren}
 }
 Label {
-		Text {Base of home directories}
+		Text {Base of home directories:}
 		AutoResize {TRUE}
 		Margin {-1}
 		Rect {10 80 139 13}

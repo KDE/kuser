@@ -271,7 +271,7 @@ void mainView::save() {
     return;
     
   if (KMessageBox::questionYesNo(0, i18n("Would you like to save changes?"),
-                               i18n("Data was Modified"),
+                               i18n("Data Was Modified"),
                                i18n("&Save"), i18n("&Discard Changes")) == KMessageBox::No)
     return;
     

@@ -245,7 +245,7 @@ propdlg::propdlg(KUser *AUser, QWidget *parent, const char *name, int)
     lesmin = addDaysGroup(frame, layout, row++, i18n("Password may not be changed before"), i18n("after last password change."), user->getMin(), false);
     lesmax = addDaysGroup(frame, layout, row++, i18n("Password expires"), i18n("after last password change."), user->getMax());
     leswarn = addDaysGroup(frame, layout, row++, i18n("Issue expire warning"), i18n("before password expires."), user->getWarn());
-    lesinact = addDaysGroup(frame, layout, row++, i18n("Account will be disabled"), i18n("after expiration of password"), user->getInactive());
+    lesinact = addDaysGroup(frame, layout, row++, i18n("Account will be disabled"), i18n("after expiration of password."), user->getInactive());
 
     layout->addMultiCellWidget(new KSeparator(KSeparator::HLine, frame), row, row, 0, 3);
     row++;
@@ -355,7 +355,7 @@ propdlg::propdlg(KUser *AUser, QWidget *parent, const char *name, int)
 
     lstgrp = new KListView(frame);
     lstgrp->setFullWidth(); // Single column, full widget width.
-    lstgrp->addColumn(i18n("Groups user '%1' belongs to:").arg(user->getName()));
+    lstgrp->addColumn(i18n("Groups User '%1' Belongs To").arg(user->getName()));
 //    QString whatstr = i18n("Select the groups that this user belongs to.");
     QWhatsThis::add(lstgrp, whatstr);
     layout->addMultiCellWidget(lstgrp, row, row, 0, 1);

@@ -61,7 +61,7 @@ void KGroupView::init()
   setAllColumnsShowFocus(true);
   addColumn(i18n("GID"));
   setColumnAlignment(0, AlignRight);
-  addColumn(i18n("Group name"));
+  addColumn(i18n("Group Name"));
 }
 
 KGroup *KGroupView::getCurrentGroup() {

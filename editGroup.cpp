@@ -27,7 +27,7 @@ editGroup::editGroup(KGroup *akg, QWidget* parent, const char* name)
  
   m_list = new KListView(page);
   m_list->setFullWidth(); // Single column, full widget width.
-  m_list->addColumn(i18n("Users in Group '%1':").arg(kg->getName()));
+  m_list->addColumn(i18n("Users in Group '%1'").arg(kg->getName()));
   QString whatstr = i18n("Select the users that should be in this group.");
   QWhatsThis::add(m_list, whatstr);
   connect(this,SIGNAL(okClicked(void)),

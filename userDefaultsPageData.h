@@ -43,7 +43,7 @@ protected:
     QLineEdit* home;
     QCheckBox* createHomeDir;
     QCheckBox* copySkel;
-    QCheckBox* usePrivateGroup;
+    QCheckBox* userPrivateGroup;
 
 };
 

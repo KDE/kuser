@@ -39,14 +39,14 @@ void donemain() {
 
 mainDlg *md = NULL;
 
-int main( int argc, char **argv )
-{
+int main(int argc, char **argv) {
   mainWidget *mw = NULL;
 
   KApplication a(argc, argv, "kuser");
 
   if (getuid()) {
-    KMsgBox::message(0, i18n("Error"), i18n("Only root is allowed to manage users."), KMsgBox::STOP);
+    err->addMsg(i18n("Only root is allowed to manage users."), STOP);
+    err->display();
     exit(1);
   }
 
@@ -61,6 +61,4 @@ int main( int argc, char **argv )
   a.exec();
 
   donemain();
-
-  delete mw;
 }

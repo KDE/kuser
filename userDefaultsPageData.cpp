@@ -104,23 +104,22 @@ userDefaultsPageData::userDefaultsPageData
 	copySkel->setAutoResize( TRUE );
 	copySkel->setChecked( TRUE );
 
-	usePrivateGroup = new QCheckBox( this, "CheckBox_3" );
-	usePrivateGroup->setGeometry( 10, 220, 126, 17 );
-	usePrivateGroup->setMinimumSize( 0, 0 );
-	usePrivateGroup->setMaximumSize( 32767, 32767 );
-	usePrivateGroup->setFocusPolicy( QWidget::TabFocus );
-	usePrivateGroup->setBackgroundMode( QWidget::PaletteBackground );
-	usePrivateGroup->setFontPropagation( QWidget::NoChildren );
-	usePrivateGroup->setPalettePropagation( QWidget::NoChildren );
-	usePrivateGroup->setText(i18n("Use Private Group"));
-	usePrivateGroup->setAutoRepeat( FALSE );
-	usePrivateGroup->setAutoResize( TRUE );
+	userPrivateGroup = new QCheckBox( this, "CheckBox_3" );
+	userPrivateGroup->setGeometry( 10, 220, 126, 17 );
+	userPrivateGroup->setMinimumSize( 0, 0 );
+	userPrivateGroup->setMaximumSize( 32767, 32767 );
+	userPrivateGroup->setFocusPolicy( QWidget::TabFocus );
+	userPrivateGroup->setBackgroundMode( QWidget::PaletteBackground );
+	userPrivateGroup->setFontPropagation( QWidget::NoChildren );
+	userPrivateGroup->setPalettePropagation( QWidget::NoChildren );
+	userPrivateGroup->setText(i18n("User Private Group"));
+	userPrivateGroup->setAutoRepeat( FALSE );
+	userPrivateGroup->setAutoResize( TRUE );
 
 	resize( 400,300 );
 	setMinimumSize( 0, 0 );
 	setMaximumSize( 32767, 32767 );
 }
-
 
 userDefaultsPageData::~userDefaultsPageData()
 {

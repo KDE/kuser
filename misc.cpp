@@ -38,18 +38,17 @@ int readnumentry(const QString &name) {
     return (0);
 }
 
-void backup(char const *name)
-{
+void backup(char const *name) {
   char tmp[1024];
 
   sprintf(tmp, "%s%s", name, KU_BACKUP_EXT);
   unlink(tmp);
 
-  if (rename(name, tmp) == -1)
-  {
+  if (rename(name, tmp) == -1) {
     sprintf(tmp, i18n("Can't create backup file for %s"), name);
-    KMsgBox::message(0, i18n("Error"), tmp, KMsgBox::STOP);
-    exit (1);
+    err->addMsg(tmp, STOP);
+    err->display();
+    return;
   }
 }
 
@@ -113,36 +112,39 @@ int getValue(long int &data, const char *text, const char *msg) {
   char *check;
   long int value = strtol(text, &check, 0);
   if (check[0]) {
-    KMsgBox::message(0, i18n("Error"), msg, KMsgBox::STOP);
+    err->addMsg(msg, STOP);
+    err->display();
     return (-1);
   }
   data = value;
 
-  return (0);
+  return 0;
 }
 
 int getValue(int &data, const char *text, const char *msg) {
   char *check;
   long int value = strtol(text, &check, 0);
   if (check[0]) {
-    KMsgBox::message(0, i18n("Error"), msg, KMsgBox::STOP);
+    err->addMsg(msg, STOP);
+    err->display();
     return (-1);
   }
   data = (int)value;
 
-  return (0);
+  return 0;
 }
 
 int getValue(unsigned int &data, const char *text, const char *msg) {
   char *check;
   long int value = strtol(text, &check, 0);
   if (check[0]) {
-    KMsgBox::message(0, i18n("Error"), msg, KMsgBox::STOP);
+    err->addMsg(msg, STOP);
+    err->display();
     return (-1);
   }
   data = (unsigned int)value;
 
-  return (0);
+  return 0;
 }
 
 int copyFile(QString from, QString to) {
@@ -189,5 +191,5 @@ int copyFile(QString from, QString to) {
   fi.close();
   fo.close();
     
-  return (0);
+  return 0;
 }

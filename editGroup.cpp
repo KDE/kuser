@@ -7,42 +7,41 @@
 
  *********************************************************************/
 
+#include <kapp.h>
+
 #include "maindlg.h"
 #include "editGroup.moc"
 #include "editGroupData.moc"
 
 #define Inherited editGroupData
 
-editGroup::editGroup(KGroup *akg,
-		       QWidget* parent,
-		       const char* name)
-  :Inherited( parent, name )
-{
+editGroup::editGroup(KGroup *akg, QWidget* parent, const char* name) 
+: Inherited(parent, name) {
   uint i;
 
   kg = akg;
 
-  for (i = 0; i<kg->getUsersNumber(); i++)
-    m_Group->insertItem(kg->getUserName(i));
+  for (i = 0; i<kg->count(); i++)
+    m_Group->insertItem(kg->user(i));
 
-  for (i = 0; i<users->getNumber(); i++)
-    if (kg->lookup_user(users->get(i)->getp_name()) == 0)
-      m_Users->insertItem(users->get(i)->getp_name());
-
+  for (i = 0; i<users->count(); i++)
+    if (!kg->lookup_user(users->user(i)->getName()))
+      m_Users->insertItem(users->user(i)->getName());
+  
   if (m_Users->count() != 0)
     m_Users->setCurrentItem(0);
+
   if (m_Group->count() != 0)
     m_Group->setCurrentItem(0);
+
+  setCaption(i18n("Group properties"));
 }
 
-
-
-editGroup::~editGroup()
-{
+editGroup::~editGroup() {
 }
 
 void editGroup::ok() {
-  kg->clearUsers();
+  kg->clear();
 
   for (uint i=0; i<m_Group->count(); i++)
     kg->addUser(m_Group->text(i));

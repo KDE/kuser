@@ -1,7 +1,7 @@
-#include <sys/file.h>
 #include <errno.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <sys/file.h>
 #include <sys/stat.h>
 #include <pwd.h>
 #include <grp.h>
@@ -29,6 +29,14 @@
 #include "quota.h"
 #endif
 
+// This is to simplify compilation for Red Hat Linux systems, where
+// gid's for regular users' private groups start at 500 <duncan@kde.org>
+#ifdef KU_FIRST_USER
+#define _KU_FIRST_GID KU_FIRST_USER
+#else 
+#define _KU_FIRST_GID 1001 
+#endif
+
 KGroup::KGroup() {
   u.setAutoDelete(TRUE);
   name.setStr("");
@@ -48,66 +56,70 @@ KGroup::~KGroup() {
   u.clear();
 }
 
-QString KGroup::getname() {
+const QString &KGroup::getName() const {
   return (name);
 }
 
-QString KGroup::getpwd() {
+const QString &KGroup::getPwd() const {
   return (pwd);
 }
 
-unsigned int KGroup::getgid() {
+unsigned int KGroup::getGID() const {
   return (gid);
 }
 
-void KGroup::setname(const char *data) {
+void KGroup::setName(const QString &data) {
   name.setStr(data);
 }
 
-void KGroup::setpwd(const char *data) {
+void KGroup::setPwd(const QString &data) {
   pwd.setStr(data);
 }
 
-void KGroup::setgid(unsigned int data) {
+void KGroup::setGID(unsigned int data) {
   gid = data;
 }
 
-QString *KGroup::lookup_user(const char *aname) {
+bool KGroup::lookup_user(const QString &name) {
   for (uint i = 0; i<u.count(); i++)
-    if (aname == (*u.at(i)))
-      return (u.at(i));
-  return (NULL);
+    if (name == (*u.at(i)))
+      return true;
+  return false;
 }
 
-void KGroup::addUser(const char *aname) {
-  u.append(new QString(aname));
+void KGroup::addUser(const QString &name) {
+  u.append(new QString(name));
 }
 
-bool KGroup::removeUser(const char *aname) {
+bool KGroup::removeUser(const QString &name) {
   QString *q;
 
   for (uint i=0;i<u.count();i++)
-    if ((*(q = u.at(i))) == aname) {
+    if ((*(q = u.at(i))) == name) {
       u.remove(q);
-      return (TRUE);
+      return TRUE;
     }
-  return (FALSE);
+  return FALSE;
 }
 
-uint KGroup::getUsersNumber() {
+uint KGroup::count() const {
   return (u.count());
 }
 
-QString KGroup::getUserName(uint i) {
+QString KGroup::user(uint i) {
   return (*u.at(i));
 }
 
-void KGroup::clearUsers() {
+void KGroup::clear() {
   u.clear();
 }
 
 KGroups::KGroups() {
   g_saved = 0;
+
+  mode = 0644;
+  uid = 0;
+  gid = 0;
 
   g.setAutoDelete(TRUE);
 
@@ -116,10 +128,15 @@ KGroups::KGroups() {
 }
 
 bool KGroups::load() {
-  group *p;
+  struct group *p;
   KGroup *tmpKG = 0;
+  struct stat st;
 
-#ifdef _KU_NIS
+  stat(GROUP_FILE, &st);
+  mode = st.st_mode;
+  uid = st.st_uid;
+  gid = st.st_gid;
+
   FILE *fgrp = fopen(GROUP_FILE, "r");
   QString tmp;
   if (fgrp == 0) {
@@ -129,15 +146,10 @@ bool KGroups::load() {
   }
 
   while ((p = fgetgrent(fgrp)) != NULL) {
-#else
-  setgrent();
-  
-  while ((p = getgrent()) != NULL) {
-#endif
     tmpKG = new KGroup();
-    tmpKG->setgid(p->gr_gid);
-    tmpKG->setname(p->gr_name);
-    tmpKG->setpwd(p->gr_passwd);
+    tmpKG->setGID(p->gr_gid);
+    tmpKG->setName(p->gr_name);
+    tmpKG->setPwd(p->gr_passwd);
 
     char *u_name;
     int i = 0;
@@ -149,11 +161,7 @@ bool KGroups::load() {
     g.append(tmpKG);
   }
 
-#ifdef _KU_NIS
   fclose(fgrp);
-#else
-  endgrent();
-#endif
 
   return TRUE;
 }
@@ -169,27 +177,31 @@ bool KGroups::save() {
     g_saved = TRUE;
   }
 
-  if ((grp = fopen(GROUP_FILE,"w")) == NULL) {
+  umask(0077);
+
+  if ((grp = fopen(GROUP_FILE, "w")) == NULL) {
     ksprintf(&tmp, i18n("Error opening %s for writing"), GROUP_FILE);
     err->addMsg(tmp, STOP);
-    return (FALSE);
+    return FALSE;
   }
 
   for (unsigned int i=0; i<g.count(); i++) {
-    tmpN.setNum(g.at(i)->getgid());
-    tmpS = g.at(i)->getname()+':'+g.at(i)->getpwd()+':'+tmpN+':';
-    for (uint j=0; j<g.at(i)->getUsersNumber(); j++) {
+    tmpN.setNum(g.at(i)->getGID());
+    tmpS = g.at(i)->getName()+':'+g.at(i)->getPwd()+':'+tmpN+':';
+    for (uint j=0; j<g.at(i)->count(); j++) {
        if (j != 0)
 	 tmpS += ',';
 
-       tmpS += g.at(i)->getUserName(j);
+       tmpS += g.at(i)->user(j);
     }
     tmpS += '\n';
     fputs(tmpS, grp);
   }
   fclose(grp);
 
-  chmod(GROUP_FILE, GROUP_FILE_MASK);
+  chmod(GROUP_FILE, mode);
+  chown(GROUP_FILE, uid, gid);
+
 #ifdef GRMKDB
   if (system(GRMKDB) != 0) {
     err->addMsg("Unable to build group database", STOP);
@@ -199,29 +211,29 @@ bool KGroups::save() {
   return (TRUE);
 }
 
-KGroup *KGroups::lookup(const char *name) {
+KGroup *KGroups::lookup(const QString &name) {
   for (uint i = 0; i<g.count(); i++)
-    if (g.at(i)->getname() == name)
+    if (g.at(i)->getName() == name)
       return (g.at(i));
   return NULL;
 }
 
 KGroup *KGroups::lookup(unsigned int gid) {
   for (uint i = 0; i<g.count(); i++)
-    if (g.at(i)->getgid() == gid)
+    if (g.at(i)->getGID() == gid)
       return (g.at(i));
   return NULL;
 }
 
 int KGroups::first_free() {
   uint i = 0;
-  uint t = 1001;
+  uint t = _KU_FIRST_GID ;
 
-  for (t=1001; t<65534; t++) {
-    while ((i<g.count()) && (g.at(i)->getgid() != t))
+  for (t= _KU_FIRST_GID ; t<65534; t++) {
+    while ((i<count()) && (group(i)->getGID() != t))
       i++;
 
-    if (i == g.count())
+    if (i == count())
       return (t);
   }
 
@@ -233,11 +245,7 @@ KGroups::~KGroups() {
   g.clear();
 }
 
-uint KGroups::getNumber() {
-  return (g.count());
-}
-
-KGroup *KGroups::get(uint num) {
+KGroup *KGroups::group(uint num) {
   return (g.at(num));
 }
 
@@ -257,6 +265,6 @@ void KGroups::del(KGroup *au) {
   g.remove(au);
 }
 
-uint KGroups::count() {
+uint KGroups::count() const {
 	return g.count();
 }

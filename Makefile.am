@@ -1,7 +1,7 @@
 INCLUDES	=	$(all_includes)
 
 # May be -D_XU_QUOTA -D_XU_SHADOW
-DEFS		+= 	$(KU_NIS) $(KU_SHADOW) $(KU_QUOTA) $(QUOTACTL) -D_KU_DEBUG
+AM_CXXFLAGS = 	$(KU_NIS) $(KU_SHADOW) $(KU_QUOTA) $(QUOTACTL) -D_KU_DEBUG
 
 kuser_LDFLAGS	=	$(all_libraries) $(KDE_RPATH)
 kuser_LDADD	=	$(LIB_KDEUI) $(LIBCRYPT) $(PAMLIBS) $(LIBPWDB) $(LIBGEN)

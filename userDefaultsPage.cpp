@@ -67,8 +67,8 @@ bool userDefaultsPage::getCopySkel() const {
   return copySkel->isChecked();
 }
 
-bool userDefaultsPage::getUsePrivateGroup() const {
-  return usePrivateGroup->isChecked();
+bool userDefaultsPage::getUserPrivateGroup() const {
+  return userPrivateGroup->isChecked();
 }
 
 void userDefaultsPage::setShell(const char *data) {
@@ -94,7 +94,7 @@ void userDefaultsPage::setCopySkel(bool data) {
   copySkel->setChecked(data);
 }
 
-void userDefaultsPage::setUsePrivateGroup(bool data) {
-  usePrivateGroup->setChecked(data);
+void userDefaultsPage::setUserPrivateGroup(bool data) {
+  userPrivateGroup->setChecked(data);
 }
 

@@ -9,35 +9,33 @@
 #define max(a,b) ((a>b) ? (a) : (b) )
 #endif
 
-KGroupRow::KGroupRow(KGroup *aku, QPixmap *pGroup)
-{
-  ku = aku;
+KGroupRow::KGroupRow(KGroup *kg, QPixmap *pGroup) {
+  this->kg = kg;
   pmGroup = pGroup;
 }
 
-void KGroupRow::paint( QPainter *p, int col, int width )
-{
+void KGroupRow::paint(QPainter *p, int col, int width) {
   int fontpos = (max( p->fontMetrics().lineSpacing(), pmGroup->height()) - p->fontMetrics().lineSpacing())/2;
   switch(col) {
     case 0: {	// pixmap & Filename
       QString tmpS;
 
-      int start = 1 + pmGroup->width() + 2;
+      int start = 1+pmGroup->width()+2;
       width -= pmGroup->width()+4;
 
-      p->drawPixmap( 1, 0, *pmGroup );
-      tmpS.setNum(ku->getgid());
+      p->drawPixmap(1, 0, *pmGroup);
+      tmpS.setNum(kg->getGID());
       p->drawText( start, fontpos, width, p->fontMetrics().lineSpacing(), AlignRight, tmpS);
     }
       break;
     case 1:	// size
-      p->drawText( 2, fontpos, width-4, p->fontMetrics().lineSpacing(), AlignLeft, ku->getname());
+      p->drawText( 2, fontpos, width-4, p->fontMetrics().lineSpacing(), AlignLeft, kg->getName());
       break;
   }
 }
 
 KGroup *KGroupRow::getData() {
-  return (ku);
+  return (kg);
 }
 
 KGroupTable::KGroupTable(QWidget *parent, const char *name) : KRowTable(SelectRow, parent, name)
@@ -45,9 +43,9 @@ KGroupTable::KGroupTable(QWidget *parent, const char *name) : KRowTable(SelectRo
   QString pixdir = kapp->kde_datadir() + QString("/kuser/pics/");
   pmGroup = new QPixmap(pixdir + "group.xpm");
 
-  setCellHeight( max( fontMetrics().lineSpacing(), pmGroup->height()) );
+  setCellHeight(max( fontMetrics().lineSpacing(), pmGroup->height()));
 
-  setNumCols( 2 );
+  setNumCols(2);
 
   setAutoUpdate(TRUE);
   current = -1;
@@ -64,25 +62,21 @@ void KGroupTable::setAutoUpdate(bool state) {
 }
 
 void KGroupTable::sortBy(int num) {
-  if ((sort > -2)&&(sort < 3))
+  if ((sort>-2) && (sort<3))
     sort = num;
 }
 
-void KGroupTable::clear()
-{
+void KGroupTable::clear() {
   setTopCell( 0 );
   current = -1;
   setNumRows( 0 );
   updateScrollBars();
 }
 
-void KGroupTable::insertItem(KGroup *aku)
-{
-  KGroupRow *tmpUser = new KGroupRow(aku, pmGroup);
+void KGroupTable::insertItem(KGroup *kg) {
+  KGroupRow *tmpGroup = new KGroupRow(kg, pmGroup);
 
-  if (sort == -1)
-    appendRow(tmpUser);
-  else {
+  if (sort != -1) {
     bool isinserted = FALSE;
 
     for (int i=0;i<numRows();i++) {
@@ -98,36 +92,35 @@ void KGroupTable::insertItem(KGroup *aku)
 
        switch (sort) {
          case 0:
-           if (krow->getData()->getgid() > aku->getgid()) {
-             insertRow(tmpUser, i);
+           if (krow->getData()->getGID() > kg->getGID()) {
+             insertRow(tmpGroup, i);
              isinserted = TRUE;
            }
            break;
          case 1:
-           if (krow->getData()->getname() > (const char *)aku->getname()) {
-             insertRow(tmpUser, i);
+           if (krow->getData()->getName() > (const char *)kg->getName()) {
+             insertRow(tmpGroup, i);
              isinserted = TRUE;
            }
            break;
       }
     }
 
-    if (!isinserted) {
-      appendRow(tmpUser);
-    }
-  }
+    if (!isinserted)
+      appendRow(tmpGroup);
+  } else
+    appendRow(tmpGroup);
+
 
   if (autoUpdate())
     repaint();
 }
 
-int KGroupTable::currentItem()
-{
+int KGroupTable::currentItem() {
   return current;
 }
 
-void KGroupTable::setCurrentItem(int item)
-{
+void KGroupTable::setCurrentItem(int item) {
   int old = current;
   current = item;
   updateCell(old, 0);

@@ -143,7 +143,7 @@ void KHeader::resize( int w, int h )
 }
 
 
-void KHeader::fontChange( const QFont &oldfont )
+void KHeader::fontChange( const QFont & )
 {
 	if( !(m_flags & Vertical) )
 		resize( width(), fontMetrics().height() + 4 );
@@ -270,7 +270,7 @@ void KHeader::setHeaderLabel( int header, const char *text, int align )
 }
 
 
-void KHeader::paintEvent( QPaintEvent *pev )
+void KHeader::paintEvent( QPaintEvent * )
 {
 	QColorGroup g = colorGroup();
 
@@ -322,14 +322,14 @@ void KHeader::mouseReleaseEvent( QMouseEvent *mev )
 	repaint();
 }
 
-void KHeader::enterEvent( QEvent *ev )
+void KHeader::enterEvent( QEvent * )
 {
 	m_selected = m_temp_sel;
 	if( m_selected != -1 )
 		repaint();
 }
 
-void KHeader::leaveEvent( QEvent *ev )
+void KHeader::leaveEvent( QEvent * )
 {
 	m_temp_sel = m_selected;
 	m_selected = -1;

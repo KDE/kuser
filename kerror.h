@@ -24,15 +24,26 @@
 #include <qptrlist.h>
 #include <qstring.h>
 
+/** Class to mantain a Queue of errors that are displayed with KMessageBox::information in FIFO way. */
 class KError: public QObject {
 public:
+  /** Constructor, do nothing. */
   KError();
+  
+  /** Destructor, do nothing. */
   ~KError();
 
+  /**
+   * Add a message to the queue of messages
+   * \param amesg is (a QString containing) the message to be added.
+   */
   void addMsg(QString amsg);
+  
+  /** Display the messages enqueued. This is done in FIFO mode. */
   void display();
 
 private:
+  /** List of strings that are the messages to be displayed */
   QStringList msgs;
 };
 

@@ -33,6 +33,7 @@ void KUserGlobals::init() {
 }
 
 KUserGlobals::~KUserGlobals() {
+  // FIXME: If the KUserGlobals object is deleted without having called init() before the following code is very likely to segfault.
 #ifdef _KU_QUOTA
   delete mounts;
   delete quotas;

@@ -27,12 +27,19 @@
 #include "quota.h"
 #include "mnt.h"
 
+/** Initializate and store pointers to the objects that manages users, groups, quotas, mounts, etc. */
 class KUserGlobals {
 public:
+  /** Constructor, do nothing. */
   KUserGlobals();
+  
+  /** Initializate users (KUsers) and groups (KGroups) and if quota is enabled, mounts and quotas. */
   void init();
+  
+  /** Destructor delete the objectes created on init(). */
   ~KUserGlobals();
   
+  /** Get the pointer to the users */  
   KUsers &getUsers();
   KGroups &getGroups();
   

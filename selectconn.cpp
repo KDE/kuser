@@ -119,6 +119,9 @@ void SelectConn::slotUser2()
 void SelectConn::slotUser1()
 {
   QString conn = connSelected();
+  if ( KMessageBox::questionYesNo( 0, i18n("Do you really want to delete the connection '%1' ?").
+    arg( conn ) ) == KMessageBox::No ) return;
+
   kapp->sharedConfig()->deleteGroup( "connection-" + conn, true );
   kapp->sharedConfig()->sync();
   mCombo->removeItem( mCombo->currentItem() );

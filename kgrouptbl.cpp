@@ -42,7 +42,7 @@ KGroup *KGroupRow::getData() {
 
 KGroupTable::KGroupTable(QWidget *parent, const char *name) : KRowTable(SelectRow, parent, name)
 {
-  pmGroup = new QPixmap(BarIcon("group.xpm"));
+  pmGroup = new QPixmap(BarIcon("group"));
 
   setCellHeight(max( fontMetrics().lineSpacing(), pmGroup->height()));
 

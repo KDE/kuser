@@ -149,7 +149,7 @@ bool addUser::checkMailBox() {
 
   if (r == 0)
     if (S_ISREG(s.st_mode))
-      err->addMsg(i18n("Mailbox %1 already exist (uid=%2)")
+      err->addMsg(i18n("Mailbox %1 already exists (uid=%2)")
                  .arg(mailboxpath)
                  .arg(s.st_uid));
     else

@@ -234,7 +234,7 @@ gid_t KGroups::first_free() {
     if (lookup(t) == NULL)
       return t;
 
-  err->addMsg(i18n("You have more than 65534 groups!?!? You have ran out of gid space!"));
+  err->addMsg(i18n("You have more than 65534 groups!?!? You have run out of gid space!"));
   return (-1);
 }
 

@@ -753,7 +753,7 @@ uid_t KUsers::first_free() {
     if (lookup(t) == NULL)
       return t;
 
-  err->addMsg(i18n("You have more than 65534 users!?!? You have ran out of uid space!"));
+  err->addMsg(i18n("You have more than 65534 users!?!? You have run out of uid space!"));
   return (-1);
 }
 
@@ -869,7 +869,7 @@ KMessageBox::Continue) {
 			}
 		}
 		else {																			/* exists but not as dir */
-   		err->addMsg(i18n("%1 exists and is not a directory, user %2 will not be able to log in!").arg(dir).arg(p_name));
+   		err->addMsg(i18n("%1 exists and is not a directory. User %2 will not be able to log in!").arg(dir).arg(p_name));
    		err->display();
 			return(-1);
 		}

@@ -170,7 +170,13 @@ void mainView::useradd() {
 
   usernamedlg ud(tk, this);
   if (ud.exec() == 0)
+  {
+    delete tk;
+#ifdef _KU_QUOTA
+    delete tq;
+#endif
     return;
+  }
 
   config->setGroup("template");
   tk->setShell(readentry("shell"));
@@ -248,6 +254,7 @@ void mainView::useradd() {
       kug->getQuotas().addQuota(tq);
 #endif
     changed = true;
+    lbusers->insertItem(tk);
   }
   else {
     delete tk;
@@ -255,8 +262,6 @@ void mainView::useradd() {
     delete tq;
 #endif
   }
-
-  lbusers->insertItem(tk);
 }
 
 

@@ -403,7 +403,7 @@ propdlg::propdlg(KUser *AUser, QWidget *parent, const char *name, int)
     leclass = new QLineEdit(frame);
     QObject::connect(leclass, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
 //    whatstr = i18n("WHAT IS THIS: Login class");
-    addRow(group, groupLayout, row++, leclass, i18n("Login class:"), whatstr, true);
+    addRow(frame, layout, row++, leclass, i18n("Login class:"), whatstr, true);
 
 #if 0
     lechange = addDaysGroup(frame, layout, row++, i18n("Password must be changed before:"), user->getMax());
@@ -522,7 +522,7 @@ void propdlg::save() {
 #endif
 
   temp_time->setTime_t(0);
-  *temp_time = temp_time->addDays(leexpire->date());
+  *temp_time = temp_time->addDays(leexpire);
   user->setExpire(epoch->secsTo(*temp_time));
 
   delete epoch;
@@ -563,7 +563,8 @@ void propdlg::save() {
        user->setMin(-1);
 
     if (lesexpire->isEnabled())
-       user->setExpire(lesexpire->date().daysTo(epoch));
+       user->setExpire(epoch.daysTo(lesexpire->date()));
+//       user->setExpire(lesexpire->date().daysTo(epoch));
     else
        user->setExpire(-1);
 

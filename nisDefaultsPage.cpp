@@ -25,7 +25,7 @@ nisDefaultsPage::nisDefaultsPage(QWidget* parent, const char* name)
   addOne(layout,row++,TRUE,FALSE,TRUE);
   addOne(layout,row++,TRUE,FALSE,TRUE);
   addOne(layout,row++,TRUE,FALSE,TRUE);
-  addOne(layout,row++,FALSE,FALSE,FALSE);
+//  addOne(layout,row++,FALSE,FALSE,FALSE);
 
   layout->sizeToFit();
 }

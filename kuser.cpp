@@ -438,11 +438,27 @@ bool KUsers::loadpwd() {
   #define PASSWD    0x01			
   #define NISPASSWD 0x02			
 
-  // Prepare to read KUser configuration	
+  // Read KUser configuration	
 
+//  editDefaults eddlg;
   config->setGroup("template");		
   passwd_filename = config->readEntry("passwdsrc");	
   nispasswd_filename = config->readEntry("nispasswdsrc");	
+
+  // Handle unconfigured environments
+
+  if(passwd_filename.isEmpty() && nispasswd_filename.isEmpty()) {
+//    eddlg.setPasswdSrc(config->readEntry("passwdsrc", PASSWORD_FILE));
+//    eddlg.setGroupSrc(config->readEntry("groupsrc", GROUP_FILE));
+//    if (eddlg.exec() != 0) {
+      config->writeEntry("passwdsrc", PASSWORD_FILE);
+      config->writeEntry("groupsrc", GROUP_FILE);
+//    }
+    passwd_filename = config->readEntry("passwdsrc");	
+    err->addMsg(i18n("KUser Sources were not configured.\nLocal passwd source set to %1\nLocal group source set to %2\n").arg(config->readEntry("passwdsrc")).arg(config->readEntry("groupsrc")));
+    err->display();
+  }
+
   if(!passwd_filename.isEmpty()) {			
     processing_file = processing_file | PASSWD;		
     filename.append(passwd_filename);			
@@ -802,7 +818,6 @@ bool KUsers::savepwd() {
       err->display();				
     }						
 
-#ifdef PWMKDB
   // need to run a utility program to build /etc/passwd, /etc/pwd.db
   // and /etc/spwd.db from /etc/master.passwd
 #if defined(__FreeBSD__) || defined(__bsdi__)
@@ -818,7 +833,6 @@ bool KUsers::savepwd() {
     }
   }					
 #endif
-#endif   // PWMKDB
 
   return TRUE;
 }

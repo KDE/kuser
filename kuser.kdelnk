@@ -1,6 +1,7 @@
 # KDE Config File 
 [KDE Desktop Entry]
 Name=User Manager
+Name[ca]=Gestor d'usuaris
 Name[cs]=Nastavení u¾ivatelù
 Name[da]=Brugermanager
 Name[de]=Benutzermanager
@@ -25,6 +26,7 @@ Icon=kuser.xpm
 Type=Application
 DocPath=kuser/index.html
 Comment=Full Featured User Manager
+Comment[ca]=Gestor d'usuaris amb tots els ets i uts
 Comment[cs]=Správce u¾ivatelù a skupin
 Comment[da]= En fuldstændig brugermanager
 Comment[de]=Ein vollständiger Benutzermanager

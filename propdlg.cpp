@@ -21,7 +21,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <qdatetm.h>
+#include <qdatetime.h>
 #include <qwhatsthis.h>
 #include <qlayout.h>
 #include <qgroupbox.h>

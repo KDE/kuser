@@ -48,6 +48,7 @@ KDateCtl::KDateCtl(QWidget *parent, const char *name,
   ksprintf(&tmp, "%s_isempty", name);
   isempty = new QCheckBox(checktitle, parent, tmp);
   isempty->setGeometry(x, y, 200, 20); 
+  isempty->setAutoResize(true);
 
   ksprintf(&tmp, "%s_title", name);
   label = addLabel(parent, tmp, x+210, y+25, 50, 27, title);

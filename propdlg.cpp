@@ -257,7 +257,7 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
     leqfh = addLineEdit(w3, "leqfh", 10, 120, 70, 22, "");
     leqfh->setValidator(new QIntValidator(w3, "vaqfh"));
     QObject::connect(leqfh, SIGNAL(textChanged(const char *)), this, SLOT(qcharchanged(const char *)));
-    QToolTip::add(leqfh, i18n("Disk space  hard quota"));
+    QToolTip::add(leqfh, i18n("Disk space hard quota"));
     l11 = addLabel(w3, "ml11", 95, 125, 50, 20, i18n("Disk space hard quota"));
 
     leqfcur = addLabel(w3, "leqfcur", 13, 160, 70, 20, "");
@@ -292,7 +292,7 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
     leqit = addLineEdit(w3, "leqit", 10, 345, 70, 22, "");
     leqit->setValidator(new QIntValidator(w3, "vaqit"));
     QObject::connect(leqit, SIGNAL(textChanged(const char *)), this, SLOT(qcharchanged(const char *)));
-    QToolTip::add(leqit, i18n("Time limit allowd for File number over soft quota"));
+    QToolTip::add(leqit, i18n("Time limit allowed for File number over soft quota"));
     l17 = addLabel(w3, "ml17", 95, 350, 50, 20, i18n("Time limit allowed for File number over soft quota"));
 #endif
 
@@ -303,39 +303,41 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
   w4 = new QWidget(this, "wd_Groups");
 
   m_Other = new QListBox( w4, "m_Other" );
-  m_Other->setGeometry( 15, 80, 160, 130 );
+  m_Other->setGeometry( 15, 85, 160, 130 );
   m_Other->setFrameStyle( 51 );
   m_Other->setLineWidth( 2 );
 
   QLabel* tmpQLabel;
   tmpQLabel = new QLabel(w4, "Label_1");
-  tmpQLabel->setGeometry(20, 60, 150, 20);
+  tmpQLabel->setGeometry(20, 65, 150, 20);
   tmpQLabel->setText(i18n("Groups not belonged to"));
+  tmpQLabel->setAutoResize(true);
   tmpQLabel->setAlignment(289);
   tmpQLabel->setMargin(-1);
 
   m_Group = new QListBox(w4, "m_Group");
-  m_Group->setGeometry(250, 80, 160, 130);
+  m_Group->setGeometry(250, 85, 160, 130);
   m_Group->setFrameStyle(51);
   m_Group->setLineWidth(2);
 
   pbadd = new QPushButton(w4, "pbadd");
-  pbadd->setGeometry(195, 100, 40, 30);
+  pbadd->setGeometry(195, 105, 40, 30);
   connect( pbadd, SIGNAL(clicked()), SLOT(add()) );
   pbadd->setText("->");
   pbadd->setAutoRepeat( FALSE );
   pbadd->setAutoResize( FALSE );
 
   pbdel = new QPushButton( w4, "pbdel" );
-  pbdel->setGeometry( 195, 150, 40, 30 );
+  pbdel->setGeometry( 195, 155, 40, 30 );
   connect( pbdel, SIGNAL(clicked()), SLOT(del()) );
   pbdel->setText("<-");
   pbdel->setAutoRepeat( FALSE );
   pbdel->setAutoResize( FALSE );
 
   tmpQLabel = new QLabel(w4, "Label_2");
-  tmpQLabel->setGeometry(255, 60, 150, 20);
+  tmpQLabel->setGeometry(255, 65, 150, 20);
   tmpQLabel->setText(i18n("Groups belonged to"));
+  tmpQLabel->setAutoResize(true);
   tmpQLabel->setAlignment(289);
   tmpQLabel->setMargin(-1);
 

@@ -20,7 +20,7 @@ Grid {10}
 
 Label {
 		Text {Users not in Group}
-		AutoResize {FALSE}
+		AutoResize {TRUE}
 		Margin {-1}
 		Rect {5 5 200 30}
 		Name {Label_4}
@@ -39,7 +39,7 @@ Label {
 }
 Label {
 		Text {Users in Group}
-		AutoResize {FALSE}
+		AutoResize {TRUE}
 		Margin {-1}
 		Rect {275 5 200 30}
 		Name {Label_5}

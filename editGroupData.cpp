@@ -41,6 +41,7 @@ editGroupData::editGroupData
 	qtarch_Label_4->setText( i18n("Users not in Group") );
 	qtarch_Label_4->setAlignment( 289 );
 	qtarch_Label_4->setMargin( -1 );
+	qtarch_Label_4->setAutoResize(true);
 
 	QLabel* qtarch_Label_5;
 	qtarch_Label_5 = new QLabel( this, "Label_5" );
@@ -54,6 +55,7 @@ editGroupData::editGroupData
 	qtarch_Label_5->setText( i18n("Users in Group") );
 	qtarch_Label_5->setAlignment( 289 );
 	qtarch_Label_5->setMargin( -1 );
+	qtarch_Label_5->setAutoResize(true);
 
 	m_Users = new QListBox( this, "m_Users" );
 	m_Users->setGeometry( 5, 40, 210, 150 );

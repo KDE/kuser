@@ -19,6 +19,7 @@
 #include "globals.h"
 #include "kgroup.h"
 #include "misc.h"
+#include "kerror.h"
 
 #ifdef _KU_SHADOW
 #include <shadow.h>
@@ -142,7 +143,7 @@ bool KGroups::load() {
   QString tmp;
   if (fgrp == 0) {
     ksprintf(&tmp, i18n("Error opening %s for reading"), GROUP_FILE);
-    err->addMsg(tmp, STOP);
+    err->addMsg(tmp, KErrorMsg::STOP);
     return FALSE;
   }
 
@@ -187,7 +188,7 @@ bool KGroups::save() {
 
   if ((grp = fopen(GROUP_FILE, "w")) == NULL) {
     ksprintf(&tmp, i18n("Error opening %s for writing"), GROUP_FILE);
-    err->addMsg(tmp, STOP);
+    err->addMsg(tmp, KErrorMsg::STOP);
     return FALSE;
   }
 
@@ -210,7 +211,7 @@ bool KGroups::save() {
 
 #ifdef GRMKDB
   if (system(GRMKDB) != 0) {
-    err->addMsg("Unable to build group database", STOP);
+    err->addMsg("Unable to build group database", KErrorMsg::STOP);
     return FALSE;
   }
 #endif
@@ -243,7 +244,7 @@ int KGroups::first_free() {
       return (t);
   }
 
-  err->addMsg(i18n("You have more than 65534 groups!?!? You have ran out of gid space!"), STOP);
+  err->addMsg(i18n("You have more than 65534 groups!?!? You have ran out of gid space!"), KErrorMsg::STOP);
   return (-1);
 }
 

@@ -54,7 +54,7 @@ void backup(char const *name) {
 
   if (rename(name, tmp) == -1) {
     sprintf(tmp, i18n("Can't create backup file for %s"), name);
-    err->addMsg(tmp, STOP);
+    err->addMsg(tmp, KErrorMsg::STOP);
     err->display();
     return;
   }
@@ -116,7 +116,7 @@ int getValue(long int &data, const char *text, const char *msg) {
   char *check;
   long int value = strtol(text, &check, 0);
   if (check[0]) {
-    err->addMsg(msg, STOP);
+    err->addMsg(msg, KErrorMsg::STOP);
     err->display();
     return (-1);
   }
@@ -129,7 +129,7 @@ int getValue(int &data, const char *text, const char *msg) {
   char *check;
   long int value = strtol(text, &check, 0);
   if (check[0]) {
-    err->addMsg(msg, STOP);
+    err->addMsg(msg, KErrorMsg::STOP);
     err->display();
     return (-1);
   }
@@ -142,7 +142,7 @@ int getValue(unsigned int &data, const char *text, const char *msg) {
   char *check;
   long int value = strtol(text, &check, 0);
   if (check[0]) {
-    err->addMsg(msg, STOP);
+    err->addMsg(msg, KErrorMsg::STOP);
     err->display();
     return (-1);
   }
@@ -167,7 +167,7 @@ int copyFile(QString from, QString to) {
     QString tmp;
     
     tmp.sprintf(i18n("File %s does not exist."), (const char *)from);
-    err->addMsg(tmp, STOP);
+    err->addMsg(tmp, KErrorMsg::STOP);
     return (-1);
   }
 
@@ -175,7 +175,7 @@ int copyFile(QString from, QString to) {
     QString tmp;
     
     tmp.sprintf(i18n("Can not open file %s for reading."), (const char *)from);
-    err->addMsg(tmp, STOP);
+    err->addMsg(tmp, KErrorMsg::STOP);
     return (-1);
   }
     
@@ -183,7 +183,7 @@ int copyFile(QString from, QString to) {
     QString tmp;
     
     tmp.sprintf(i18n("Can not open file %s for writing."), (const char *)to);
-    err->addMsg(tmp, STOP);
+    err->addMsg(tmp, KErrorMsg::STOP);
     return (-1);
   }
   

@@ -5,10 +5,15 @@
 #include <qlist.h>
 #include <qstring.h>
 
-typedef enum KErrorType {INFORMATION = 1, EXCLAMATION = 2, STOP = 4, QUESTION = 8};
-
 class KErrorMsg {
 public:
+  enum KErrorType {
+    INFORMATION = 1,
+    EXCLAMATION = 2,
+    STOP = 4,
+    QUESTION = 8
+  };
+
   KErrorMsg(const char *amsg, KErrorType aerr);
   ~KErrorMsg();
   
@@ -26,11 +31,12 @@ public:
   KError();
   ~KError();
   
-  void addMsg(const char *amsg, KErrorType aerr);
+  void addMsg(const char *amsg, KErrorMsg::KErrorType aerr);
   void display();
  
 private:
   QList<KErrorMsg> msgs;
 };
 
-#endif // _KERROR_H
+#endif
+// _KERROR_H

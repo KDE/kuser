@@ -8,6 +8,7 @@
 #include "grpnamedlg.moc"
 #include "misc.h"
 #include "maindlg.h"
+#include "kerror.h"
 
 grpnamedlg::grpnamedlg(KGroup *agroup, QWidget* parent, const char* name)
            :QDialog(parent, name, TRUE) {
@@ -96,14 +97,14 @@ void grpnamedlg::ok()
 
   if (groups->lookup(legrpname->text()) != NULL) {
     ksprintf(&tmp, i18n("Group with name %s already exists."), legrpname->text());
-    err->addMsg(tmp, STOP);
+    err->addMsg(tmp, KErrorMsg::STOP);
     err->display();
     return;
   }
   
   if (groups->lookup(s.toInt()) != NULL) {
     ksprintf(&tmp, i18n("Group with gid %d already exists."), s.toInt());
-    err->addMsg(tmp, STOP);
+    err->addMsg(tmp, KErrorMsg::STOP);
     err->display();
     return;
   }

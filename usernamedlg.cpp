@@ -70,13 +70,13 @@ void usernamedlg::ok() {
 
   if (users->lookup(leusername->text()) != NULL) {
     tmp.sprintf(i18n("User with name %s already exists."), leusername->text());
-    err->addMsg(tmp, STOP);
+    err->addMsg(tmp, KErrorMsg::STOP);
     err->display();
     return;
   }
 
   if (strlen(leusername->text()) == 0) {
-    err->addMsg(i18n("You have to enter a user name."), STOP);
+    err->addMsg(i18n("You have to enter a user name."), KErrorMsg::STOP);
     err->display();
     return;
   }

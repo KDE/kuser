@@ -17,8 +17,8 @@
 
 #include <kmsgbox.h>
 #include <kstring.h>
-#include <kerror.h>
 
+#include "kerror.h"
 #include "globals.h"
 #include "maindlg.h"
 #include "misc.h"
@@ -91,7 +91,7 @@ void addUser::ok() {
   
   if (users->lookup(newuid) != NULL) {
     ksprintf(&tmp, i18n("User with UID %u already exists"), newuid);
-    err->addMsg(tmp, STOP);
+    err->addMsg(tmp, KErrorMsg::STOP);
     err->display();
     return;
   }
@@ -139,7 +139,7 @@ bool addUser::checkHome() {
   else
     ksprintf(&tmp, "checkHome: stat: %s ", strerror(errno));
   
-  err->addMsg(tmp, STOP);
+  err->addMsg(tmp, KErrorMsg::STOP);
   err->display();
 
   return false;
@@ -169,7 +169,7 @@ bool addUser::checkMailBox() {
   else
     ksprintf(&tmp, "checkMail: stat: %s ", strerror(errno));
   
-  err->addMsg(tmp, STOP);
+  err->addMsg(tmp, KErrorMsg::STOP);
   err->display();
 
   return false;

@@ -14,7 +14,7 @@ const char *KErrorMsg::getMsg() {
   return (msg);
 }
 
-KErrorType KErrorMsg::getErr() {
+KErrorMsg::KErrorType KErrorMsg::getErr() {
   return (err);
 }
 
@@ -26,7 +26,7 @@ KError::~KError() {
   display();
 }
 
-void KError::addMsg(const char *amsg, KErrorType aerr) {
+void KError::addMsg(const char *amsg, KErrorMsg::KErrorType aerr) {
   msgs.append(new KErrorMsg(amsg, aerr));
 }
 

@@ -47,7 +47,7 @@ int main(int argc, char **argv) {
   initmain();
 
   if (getuid()) {
-    err->addMsg(i18n("Only root is allowed to manage users."), STOP);
+    err->addMsg(i18n("Only root is allowed to manage users."), KErrorMsg::STOP);
     err->display();
     exit(1);
   }

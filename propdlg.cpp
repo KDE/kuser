@@ -1,5 +1,6 @@
 #include <qvalidator.h>
 #include <kmsgbox.h>
+#include <kstring.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -57,11 +58,6 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
   QObject::connect(leid, SIGNAL(textChanged(const char *)), this, SLOT(charchanged(const char *)));
   QToolTip::add(leid, i18n("User identificator"));
   l2 = addLabel(w1, "ml2", 200, 10, 50, 20, i18n("User id"));
-
-//  legid = addLineEdit(w1, "legid", 200, 85, 70, 22, "");
-//  QObject::connect(legid, SIGNAL(textChanged(const char *)), this, SLOT(charchanged(const char *)));
-//  QToolTip::add(legid, i18n("Group identificator"));
-//  ld3 = addLabel(w1, "mld3", 200, 60, 50, 20, i18n("Primary group id"));
 
   pbsetpwd = new QPushButton(w1, "pbsetpwd");
   pbsetpwd->setGeometry(260, 180, 120, 30);
@@ -194,43 +190,42 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
   if (is_shadow != 0) {
     w2 = new QWidget(this, "wd_Shadow");
 
-    leslstchg = addLabel(w2, "leslstchg", 10, 30, 70, 20, "");
-//    QToolTip::add(leslstchg, i18n("Last password change"));
-    l16 = addLabel(w2, "ml16", 95, 30, 50, 20, i18n("Last password change"));
-    lesmin = new KDateCtl(w2, "lesmin", i18n("Change never allowed"),
-               i18n("Date until change allowed"),
-                  user->getLastChange()+user->getMin(), 
+    char buf[1024];
+
+    convertdate(buf, 0, user->getLastChange());
+    leslstchg = addLabel(w2, "leslstchg", 140, 30, 70, 20, buf);
+    l16 = addLabel(w2, "ml16", 10, 30, 50, 20, i18n("Last password change"));
+
+    lesmin = new KDateCtl(w2, "lesmin", i18n("Password change not allowed"),
+               i18n("Date after which password change\nis allowed"),
+                  user->getLastChange()+user->getMin(),
                   user->getLastChange(), 10, 70);
     QObject::connect(lesmin, SIGNAL(textChanged()), this, SLOT(changed()));
-//    QToolTip::add(lesmin, i18n("Date until change allowed"));
 
-    lesmax = new KDateCtl(w2, "lesmax", i18n("Change does not required"),
-                          i18n("Date before change required"),
+    lesmax = new KDateCtl(w2, "lesmax", i18n("Password change not required"),
+                          i18n("Date after which password change\nis required"),
                           user->getLastChange()+user->getMax(),
                           user->getLastChange(), 10, 130);
     QObject::connect(lesmax, SIGNAL(textChanged()), this, SLOT(changed()));
-//    QToolTip::add(lesmax, i18n("Date before change required"));
 
-    leswarn = new KDateCtl(w2, "leswarn", i18n("User will never be warned"),
-                           i18n("Date user will be warned about\nexpiration"),
+
+    leswarn = new KDateCtl(w2, "leswarn", i18n("User will not be warned"),
+                           i18n("Date after which user will be warned\nabout pending password expiration"),
                            user->getLastChange()+user->getWarn(),
                            user->getLastChange(), 10, 190);
     QObject::connect(leswarn, SIGNAL(textChanged()), this, SLOT(changed()));
-//    QToolTip::add(leswarn, i18n("Date user will be warned about expiration"));
 
-    lesinact = new KDateCtl(w2, "lesinact", i18n("Account is active from the day of creation"),
-                            i18n("Date before account inactive"),
+    lesinact = new KDateCtl(w2, "lesinact", i18n("Account is active when created"),
+                            i18n("Date when account becomes active"),
                             user->getLastChange()+user->getInactive(),
                             user->getLastChange(), 10, 250);
     QObject::connect(lesinact, SIGNAL(textChanged()), this, SLOT(changed()));
-//    QToolTip::add(lesinact, i18n("Date before account inactive"));
 
     lesexpire = new KDateCtl(w2, "lesexpire", i18n("Account never expires"),
                              i18n("Date when account expires"),
                              user->getLastChange()+user->getExpire(),
                              user->getLastChange(), 10, 310);
     QObject::connect(lesexpire, SIGNAL(textChanged()), this, SLOT(changed()));
-//    QToolTip::add(lesexpire, i18n("Date when account expires"));
 
     tw->addTab(w2, i18n("Extended"));
   }
@@ -589,11 +584,11 @@ bool propdlg::check() {
 }
 
 void propdlg::selectuser() {
-  char uname[100];
+  QString uname;
 
   leuser->setText(user->getName());
 
-  sprintf(uname,"%i",user->getUID());
+  ksprintf(&uname, "%i",user->getUID());
   leid->setText(uname);
 
 //  sprintf(uname,"%i",user->getp_gid());
@@ -635,29 +630,29 @@ void propdlg::selectuser() {
     if (chquota != -1)
       q = chquota;
 
-    sprintf(uname,"%li",quota->getQuotaMnt(q)->getfsoft());
+    ksprintf(&uname,"%li",quota->getQuotaMnt(q)->getfsoft());
     leqfs->setText(uname);
 
-    sprintf(uname,"%li",quota->getQuotaMnt(q)->getfhard());
+    ksprintf(&uname,"%li",quota->getQuotaMnt(q)->getfhard());
     leqfh->setText(uname);
 
-    sprintf(uname,"%li",quota->getQuotaMnt(q)->getisoft());
+    ksprintf(&uname,"%li",quota->getQuotaMnt(q)->getisoft());
     leqis->setText(uname);
 
-    sprintf(uname,"%li",quota->getQuotaMnt(q)->getihard());
+    ksprintf(&uname,"%li",quota->getQuotaMnt(q)->getihard());
     leqih->setText(uname);
 
-    sprintf(uname,"%li",quota->getQuotaMnt(q)->getfcur());
+    ksprintf(&uname,"%li",quota->getQuotaMnt(q)->getfcur());
     leqfcur->setText(uname);
 
-    sprintf(uname,"%li",quota->getQuotaMnt(q)->geticur());
+    ksprintf(&uname,"%li",quota->getQuotaMnt(q)->geticur());
     leqicur->setText(uname);
 
 #ifndef BSD
-    sprintf(uname,"%li",quota->getQuotaMnt(q)->getftime());
+    ksprintf(&uname,"%li",quota->getQuotaMnt(q)->getftime());
     leqft->setText(uname);
 
-    sprintf(uname,"%li",quota->getQuotaMnt(q)->getitime());
+    ksprintf(&uname,"%li",quota->getQuotaMnt(q)->getitime());
     leqit->setText(uname);
 #endif
   }

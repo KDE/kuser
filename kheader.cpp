@@ -79,9 +79,9 @@ void KHeaderItem::paint(QPainter *paint, QColorGroup *g, int style, int pos, int
 		if( pos>height || pos+m_size<0 )
 			return;
 		if(style==MotifStyle)
-			qDrawShadePanel(paint,0,pos,width,m_size,*g,state,1,NULL);
+			qDrawShadePanel(paint,0,pos,width,m_size,*g,state,1,0);
 		else
-			qDrawWinPanel(paint,0,pos,width,m_size,*g,state,NULL);
+			qDrawWinPanel(paint,0,pos,width,m_size,*g,state,0);
 		if( !m_label.isEmpty() )
 			paint->drawText(2,pos+2,width-4,m_size-4,m_labelAlignment,m_label);
 	}
@@ -90,9 +90,9 @@ void KHeaderItem::paint(QPainter *paint, QColorGroup *g, int style, int pos, int
 		if( pos>width || pos+m_size<0 )
 			return;
 		if(style==MotifStyle)
-			qDrawShadePanel(paint,pos,0,m_size,height,*g,state,1,NULL);
+			qDrawShadePanel(paint,pos,0,m_size,height,*g,state,1,0);
 		else
-			qDrawWinPanel(paint,pos,0,m_size,height,*g,state,NULL);
+			qDrawWinPanel(paint,pos,0,m_size,height,*g,state,0);
 		if( !m_label.isEmpty() )
 			paint->drawText(pos+2,2,m_size-4,height-4,m_labelAlignment,m_label);
 	}
@@ -123,8 +123,7 @@ KHeader::KHeader( QWidget *parent, const char *name, int numHeaders, int flags )
 
 KHeader::~KHeader()
 {
-	int i;
-	for( i=0 ; i<labels.size() ; i++ )
+	for( uint i=0 ; i<labels.size() ; i++ )
 		delete labels[ i ];
 }
 
@@ -178,7 +177,7 @@ bool KHeader::eventFilter( QObject *obj, QEvent *ev )
 			int pos = m_offset;
 			int curs = m_flags&Vertical ? mev->y()+3 : mev->x()+3;
 			divider = -1;
-			for( int i=0 ; i<labels.size() ; i++ ) {
+			for( uint i=0 ; i<labels.size() ; i++ ) {
 				pos += labels[i]->size();
 				if( curs>=pos && curs<pos+6 ) {
 					setCursor(m_flags&Vertical ? sizeVerCursor : sizeHorCursor);
@@ -208,15 +207,15 @@ int KHeader::numHeaders()
 void KHeader::setNumHeaders( int numHeaders )
 {
 	ASSERT( numHeaders >= 0 );
-	if( numHeaders < labels.size() )
+	if( numHeaders < (int)labels.size() )
 	{
-		for( int i=numHeaders ; i<labels.size() ; i++ )
+		for( uint i=numHeaders ; i<labels.size() ; i++ )
 		{
 			delete labels[i];
 		}
 		labels.resize( numHeaders );
 	}
-	else if( numHeaders > labels.size() )
+	else if( numHeaders > (int)labels.size() )
 	{
 		int oldCount = labels.size();
 		labels.resize( numHeaders );
@@ -232,7 +231,7 @@ void KHeader::setNumHeaders( int numHeaders )
 void KHeader::setHeaderFlags( int header, int flags )
 {
 	ASSERT( header >= 0 );
-	ASSERT( header < labels.size() );
+	ASSERT( header < (int)labels.size() );
 
 	labels[header]->setFlags( flags );
 }
@@ -241,7 +240,7 @@ void KHeader::setHeaderFlags( int header, int flags )
 void KHeader::setHeaderSize( int header, int size )
 {
 	ASSERT( header >= 0 );
-	ASSERT( header < labels.size() );
+	ASSERT( header < (int)labels.size() );
 
 	labels[header]->setSize( size );
 	repaint();
@@ -282,7 +281,7 @@ void KHeader::paintEvent( QPaintEvent *pev )
 	paint.begin( this );
 
 	int pos = m_offset;
-	for( int i=0 ; i<labels.size(); i++ )
+	for( int i=0 ; i<(int)labels.size(); i++ )
 	{
 		labels[i]->paint( &paint, &g, style(), pos, width(), height(), i==m_selected);
 		pos += labels[i]->size();
@@ -299,7 +298,7 @@ void KHeader::mousePressEvent( QMouseEvent *mev )
 	else
 		curs = mev->x();
 	int pos = m_offset;
-	for( int i=0 ; i<labels.size() ; i++ )
+	for( uint i=0 ; i<labels.size() ; i++ )
 	{
 		pos += labels[i]->size();
 		if( pos >= curs )

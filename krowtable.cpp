@@ -17,7 +17,7 @@ KRowTable::KRowTable( int rows, int cols, Flags flags, QWidget *parent, const ch
 
 KRowTable::~KRowTable()
 {
-	// PAK need to delete cells if autodelete is on!
+	clear();
 }
 
 void KRowTable::init(Flags flags)
@@ -66,7 +66,11 @@ void KRowTable::setCellHeight( int height )
 
 void KRowTable::clear()
 {
-//PAK clear all the cells
+	if( autoDelete() )
+		for(int i=0 ; i<numRows() ; i++) {
+			delete m_rows[i];
+			m_rows[i] = 0;
+		}
 	if( autoUpdate() )
 		repaint();
 }
@@ -94,8 +98,11 @@ void KRowTable::setNumRows( int rows )
 {
 	int oldsize = m_rowHeights.size();
 	m_rowHeights.resize( rows );
-	for( int i=oldsize ; i<rows ; i++)
+	m_rows.resize( rows );
+	for( int i=oldsize ; i<rows ; i++) {
 		m_rowHeights[i] = 0;
+		m_rows[i] = 0;
+	}
 	QTableView::setNumRows( rows );
 }
 
@@ -195,9 +202,9 @@ void KRowTable::paintCell( QPainter *p, int row, int col )
 	}
 
 	KRow *cell = getRow( row );
-
-	if( cell != NULL )
+	if( cell != 0 )
 		cell->paint( p, col, cellWidth(col) );
+
 	if( current_row == row &&
 	    ( current_col == col || current_col == -1 ) &&
 		hasFocus() )
@@ -219,48 +226,59 @@ void KRowTable::paintCell( QPainter *p, int row, int col )
 KRow *KRowTable::selectedRow()
 {
 	if( current_row == -1 )
-		return NULL;
+		return 0;
 	return getRow( current_row );
 }
 
-bool KRowTable::insertRow( KRow *cell, int row )
+void KRowTable::appendRow( KRow *cell )
 {
-	if( row < 0 || row >= m_rowHeights.size() )
-		return FALSE;
-	if( m_rows.size() <= row )
-		m_rows.resize( row+1 );
-	if( autoDelete() && m_rows[row] != NULL )
-		delete m_rows[row];
-	m_rows[row] = cell;
+	setNumRows( numRows() + 1 );
+	m_rows[numRows()-1] = cell;
 	if( autoUpdate() )
 		repaint();
-	return TRUE;
 }
 
-bool KRowTable::insertBeforeRow( KRow *cell, int row )
+void KRowTable::insertRow( KRow *cell, int row )
 {
-  int size = 0;
+	if( row < 0 )
+		row=0;
 
-  size = m_rows.size()-1;
+	if( row >= numRows() )
+		setNumRows( row+1 );
+        else {
+	        setNumRows( numRows() + 1 );
 
-  if ((row > size) || (row < 0))
-    return FALSE;
+		for( int i=numRows()-1 ; i>row ; i-- ) {
+		        m_rowHeights[i] = m_rowHeights[i-1];
+		        m_rows[i] = m_rows[i-1];
+		}
+	}
+	m_rowHeights[row] = 0;
+	m_rows[row] = cell;
 
-  m_rows.resize(m_rows.size()+1);
-
-  for (int i=size;i>=row;i--)
-    m_rows[i+1]=m_rows[i];
-
-  m_rows[row] = cell;
 	if( autoUpdate() )
 		repaint();
+}
+
+bool KRowTable::replaceRow( KRow *cell, int row )
+{
+	if( row < 0 || row >= numRows() )
+		return FALSE;
+
+	if( autoDelete() && m_rows[row] != 0 )
+		delete m_rows[row];
+	m_rows[row] = cell;
+
+	if( autoUpdate() )
+		repaint();
+
 	return TRUE;
 }
 
 KRow *KRowTable::getRow( int row )
 {
-	if( m_rows.size() <= row )
-		return NULL;
+	if( row >= numRows() )
+		return 0;
 	return m_rows[row];
 }
 
@@ -319,7 +337,7 @@ void KRowTable::keyPressEvent( QKeyEvent *e )
 		break;
 
 	case Key_Down:
-		if( current_row < m_rowHeights.size()-1 )
+		if( current_row < numRows()-1 )
 		{
 			setCurrentRow( current_row + 1, current_col );
 			if( current_row > lastRowVisible() )
@@ -330,10 +348,10 @@ void KRowTable::keyPressEvent( QKeyEvent *e )
 	case Key_Next:
 		pageSize = lastRowVisible() - topCell();
 		if( rowIsVisible( current_row ) )
-			setTopCell( QMIN( topCell() + pageSize, m_rowHeights.size()-pageSize ) );
+			setTopCell( QMIN( topCell() + pageSize, numRows()-pageSize ) );
 		else
-			setTopCell( QMIN( current_row + pageSize, m_rowHeights.size()-pageSize ) );
-		setCurrentRow( QMIN( current_row + pageSize, m_rowHeights.size()-1 ), current_col );
+			setTopCell( QMIN( current_row + pageSize, numRows()-pageSize ) );
+		setCurrentRow( QMIN( current_row + pageSize, numRows()-1 ), current_col );
 		break;
 
 	case Key_Prior:

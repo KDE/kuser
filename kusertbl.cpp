@@ -17,9 +17,9 @@ KUserRow::KUserRow(KUser *aku, QPixmap *pUser)
 
 void KUserRow::paint( QPainter *p, int col, int width )
 {
-  //printf("KUserRow::paint(%p, %d, %d)\n", p, col, width);
-  //printf("ku = %p\n", ku);
-  //printf("ku->p_name = %s\n", (const char *)ku->p_name);
+  //  printf("KUserRow::paint(%p, %d, %d)\n", p, col, width);
+  //  printf("ku = %p\n", ku);
+  //  printf("ku->p_name = %s\n", (const char *)ku->p_name);
   int fontpos = (max( p->fontMetrics().lineSpacing(), pmUser->height()) - p->fontMetrics().lineSpacing())/2;
   switch(col) {
     case 0: {	// pixmap & Filename
@@ -34,7 +34,7 @@ void KUserRow::paint( QPainter *p, int col, int width )
       p->drawText( 0, fontpos, width-2, p->fontMetrics().lineSpacing(), AlignLeft, ku->p_fname );
       break;
   }
-  //printf("KUserRow::paint end\n");
+  //  printf("KUserRow::paint end\n");
 }
 
 KUser *KUserRow::getData() {
@@ -56,6 +56,7 @@ KUserTable::KUserTable(QWidget *parent, const char *name) : KRowTable(SelectRow,
 }
 
 KUserTable::~KUserTable() {
+  clear();
   delete pmUser;
 }
 
@@ -79,9 +80,9 @@ void KUserTable::clear()
 void KUserTable::insertItem(KUser *aku)
 {
   KUserRow *tmpUser = new KUserRow(aku, pmUser);
-  setNumRows(numRows() + 1);
+
   if (sort == -1)
-    insertRow(tmpUser, numRows()-1);
+    appendRow(tmpUser);
   else {
     bool isinserted = FALSE;
 
@@ -99,13 +100,13 @@ void KUserTable::insertItem(KUser *aku)
        switch (sort) {
          case 0:
            if (krow->getData()->p_name > (const char *)aku->p_name) {
-             insertBeforeRow(tmpUser, i);
+             insertRow(tmpUser, i);
              isinserted = TRUE;
            }
            break;
          case 1:
            if (krow->getData()->p_fname > (const char *)aku->p_fname) {
-             insertBeforeRow(tmpUser, i);
+             insertRow(tmpUser, i);
              isinserted = TRUE;
            }
            break;
@@ -113,7 +114,7 @@ void KUserTable::insertItem(KUser *aku)
     }
 
     if (!isinserted) {
-      insertRow(tmpUser, numRows()-1);
+      appendRow(tmpUser);
     }
   }
 

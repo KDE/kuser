@@ -25,15 +25,16 @@ class KRowTable : public QTableView
 	enum Flags {SelectRow, SelectCell, SelectFixed};
 
 public:
-	KRowTable( Flags flags=SelectRow, QWidget *parent = NULL, const char *name = NULL );
-	KRowTable( int rows, int cols, Flags flags=SelectRow, QWidget *parent = NULL, const char *name = NULL );
+	KRowTable( Flags flags=SelectRow, QWidget *parent = 0, const char *name = 0 );
+	KRowTable( int rows, int cols, Flags flags=SelectRow, QWidget *parent = 0, const char *name = 0 );
 	~KRowTable();
 
 	KRow *selectedRow();
 	void setNumCols( int cols );
 	void setNumRows( int rows );
-	bool insertRow( KRow *cell, int row );
-        bool insertBeforeRow( KRow *cell, int row );
+	void appendRow( KRow *cell );
+	void insertRow( KRow *cell, int row );
+	bool replaceRow( KRow *cell, int row );
 	void setCurrentRow( int row, int col );
 	void setHighlightColumn( int col );
 	KRow *getRow( int row );

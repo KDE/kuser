@@ -1,7 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=KUser
-Name[af]=kuser
+Name[af]=Kuser
 Name[be]=Карыстальнік
 Name[eo]=Uzantoadministrilo
 Name[lv]=KLietotājs
@@ -10,7 +10,7 @@ Name[sv]=Kuser
 Name[th]=จัดการบัญชีผู้ใช้ - K
 Name[xx]=xx
 GenericName=User Manager
-GenericName[af]=gebruiker bestuurder
+GenericName[af]=Gebruiker Bestuurder
 GenericName[ar]=مدير المستخدم
 GenericName[be]=Мэнэджэр карыстальнікаў
 GenericName[bg]=Управление на потребителите

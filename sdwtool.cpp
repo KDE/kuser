@@ -20,7 +20,7 @@ void sdw_read(void)
       return;
     }
 
-    while (spw = fgetspent(f))      // read a shadow password structure
+    while ((spw = fgetspent(f)))      // read a shadow password structure
     {
       if ((up = user_lookup(spw->sp_namp)) != NULL)
         shadow_cp(up, spw);             // cp the shadow info

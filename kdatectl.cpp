@@ -128,7 +128,7 @@ void KDateCtl::updateControls() {
   }
 }
  
-void KDateCtl::isEmptyToggled(bool state) { 
+void KDateCtl::isEmptyToggled(bool) { 
   updateControls();
 }
 
@@ -143,13 +143,13 @@ void KDateCtl::dayChanged(const char *text) {
   textChanged();
 }
 
-void KDateCtl::monthChanged(int data) {
+void KDateCtl::monthChanged(int) {
   imonth = month->currentItem()+1;
 
   textChanged();
 }
 
-void KDateCtl::yearChanged(const char *text) {
+void KDateCtl::yearChanged(const char *) {
   QString *tmp = new QString();
   year->setText(tmp->setNum(iday));
   delete tmp;

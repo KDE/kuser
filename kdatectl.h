@@ -29,10 +29,10 @@ public:
 private:
 	void updateControls();
 protected slots:
-	void isEmptyToggled(bool state);
+	void isEmptyToggled(bool);
 	void dayChanged(const char *text);
-	void monthChanged(int data);
-	void yearChanged(const char *text);
+	void monthChanged(int);
+	void yearChanged(const char *);
 signals:
 	void textChanged();
 };

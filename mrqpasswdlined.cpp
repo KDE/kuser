@@ -318,7 +318,7 @@ QSize MrQPasswordLineEdit::sizeHint() const
 }
 
 
-void MrQPasswordLineEdit::resizeEvent(QResizeEvent *event)
+void MrQPasswordLineEdit::resizeEvent(QResizeEvent *)
 {
    pixmap_valid = FALSE;
 }
@@ -333,7 +333,7 @@ void MrQPasswordLineEdit::paintEvent(QPaintEvent *event)
 }
 
 
-void MrQPasswordLineEdit::focusInEvent(QFocusEvent *event)
+void MrQPasswordLineEdit::focusInEvent(QFocusEvent *)
 {
    cursor_on();
    timer.start(500);
@@ -342,7 +342,7 @@ void MrQPasswordLineEdit::focusInEvent(QFocusEvent *event)
 }
 
 
-void MrQPasswordLineEdit::focusOutEvent(QFocusEvent *event)
+void MrQPasswordLineEdit::focusOutEvent(QFocusEvent *)
 {
    cursor_off();
    timer.stop();

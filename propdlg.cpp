@@ -9,7 +9,7 @@
 #include <qvalidator.h>
 
 
-propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int isprep)
+propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
        :QTabDialog(parent, name, FALSE,
        WStyle_Customize | WStyle_DialogBorder | WStyle_SysMenu |
        WStyle_MinMax | WType_Modal) {
@@ -253,11 +253,11 @@ void propdlg::changed() {
   ischanged = TRUE;
 }
 
-void propdlg::charchanged(const char *text) {
+void propdlg::charchanged(const char *) {
   ischanged = TRUE;
 }
 
-void propdlg::qcharchanged(const char *text) {
+void propdlg::qcharchanged(const char *) {
   isqchanged = TRUE;
 }
 

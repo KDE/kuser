@@ -34,6 +34,8 @@ protected slots:
 	void dayChanged(const char *text);
 	void monthChanged(int data);
 	void yearChanged(const char *text);
+signals:
+	void textChanged();
 };
 
 #endif // K_DATETOOL_H

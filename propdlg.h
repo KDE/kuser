@@ -15,18 +15,25 @@ public:
 protected slots:
   void ok();
   void cancel();
+  bool check();
   void save();
+  void saveq();
   void setpwd();
   void mntsel(int index);
   void shactivated(const char *text);
+  void changed();
+  void charchanged(const char *);
+  void qcharchanged(const char *);
 
 private:
   int chquota;
-  int change();
   void selectuser();
 
 private:
   KUser       *user;
+
+  bool ischanged;
+  bool isqchanged;
 
   QWidget *w1;
   QWidget *w2;

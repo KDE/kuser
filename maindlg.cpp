@@ -12,6 +12,8 @@ KTopLevelWidget(name)
 //, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | 
 //                       WStyle_SysMenu | WStyle_MinMax)
 {
+  changed = FALSE;
+
   setCaption(name);
   QLabel *lb1 = addLabel(this, "lb1", 55, 40, 50, 20,_("User name"));
   lb1->setFont(rufont);
@@ -222,7 +224,7 @@ void maindlg::add() {
 }
 
 void maindlg::quit() {
-  if (changed)
+  if (changed == TRUE)
     if (QMessageBox::query(_("Data was modified"),
                            _("Would you like to save changes ?"),
                            _("Save"), _("Discard changes"))) {
@@ -235,6 +237,10 @@ void maindlg::quit() {
 #endif                                                                         
                                                                                
 #ifdef _XU_QUOTA                                                                
+#ifdef _KU_DEBUG
+printf("%d\n", is_quota);
+#endif
+
       if (is_quota)
         quota_write();
 #endif
@@ -335,8 +341,11 @@ void maindlg::selected(int i) {
   editUser = new propdlg(users.at(i), this, "userin");
   if (editUser->exec() != 0) {
     highlighted(list->currentItem());
+    changed = TRUE;
+#ifdef _KU_DEBUG
+printf("Accepted\n");
+#endif
   }
 
   delete editUser;
 }
-

@@ -154,10 +154,14 @@ void KDateCtl::dayChanged(const char *text) {
     day->setText(tmp->setNum(iday));
     delete tmp;
   }
+
+  textChanged();
 }
 
 void KDateCtl::monthChanged(int data) {
   imonth = month->currentItem()+1;
+
+  textChanged();
 }
 
 void KDateCtl::yearChanged(const char *text) {
@@ -176,6 +180,8 @@ void KDateCtl::yearChanged(const char *text) {
     year->setText(tmp->setNum(iday));
     delete tmp;
   }
+
+  textChanged();
 }
 
 void KDateCtl::setFont(const QFont &f) {

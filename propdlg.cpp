@@ -6,6 +6,8 @@
 #include "sdwtool.h"
 #include "kdatectl.h"
 #include "quotatool.h"
+#include <qvalidator.h>
+
 
 propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int isprep)
        :QTabDialog(parent, name, FALSE,
@@ -17,7 +19,7 @@ printf("propdlg::propdlg begin\n");
 #endif
 
   user = auser;
-  chquota = -1;
+  chquota = 0;
 
   QObject::connect(this, SIGNAL(applyButtonPressed()), this, SLOT(ok()));
   setCancelButton();
@@ -34,11 +36,13 @@ printf("propdlg::propdlg begin\n");
   l1->setFont(rufont);
   leid = addLineEdit(w1, "leid", 200, 30, 70, 20, "");
   leid->setFont(rufont);
+  QObject::connect(leid, SIGNAL(textChanged(const char *)), this, SLOT(charchanged(const char *)));
   QToolTip::add(leid, _("User identificator"));
   l2 = addLabel(w1, "ml2", 200, 10, 50, 20, _("User id"));
   l2->setFont(rufont);
   legid = addLineEdit(w1, "legid", 200, 85, 70, 20, "");
   legid->setFont(rufont);
+  QObject::connect(legid, SIGNAL(textChanged(const char *)), this, SLOT(charchanged(const char *)));
   QToolTip::add(legid, _("Group identificator"));
   ld3 = addLabel(w1, "mld3", 200, 60, 50, 20, _("Primary group id"));
   ld3->setFont(rufont);
@@ -51,6 +55,7 @@ printf("propdlg::propdlg begin\n");
 
   lefname = addLineEdit(w1, "lefname", 10, 80, 160, 20, "");
   lefname->setFont(rufont);
+  QObject::connect(lefname, SIGNAL(textChanged(const char *)), this, SLOT(charchanged(const char *)));
   QToolTip::add(lefname, _("Full name"));
   l4 = addLabel(w1, "ml4", 10, 60, 50, 20, _("Full name"));
   l4->setFont(rufont);
@@ -81,12 +86,15 @@ printf("propdlg::propdlg begin\n");
 
   lehome = addLineEdit(w1, "lehome", 10, 175, 160, 20, "");
   lehome->setFont(rufont);
+  QObject::connect(lehome, SIGNAL(textChanged(const char *)), this, SLOT(charchanged(const char *)));
+
   QToolTip::add(lehome, _("Home directory"));
   l6 = addLabel(w1, "ml6", 10, 155, 50, 20, _("Home directory"));
   l6->setFont(rufont);
 
   leoffice1 = addLineEdit(w1, "leoffice1", 10, 220, 160, 20, "");
   leoffice1->setFont(rufont);
+  QObject::connect(leoffice1, SIGNAL(textChanged(const char *)), this, SLOT(charchanged(const char *)));
   QToolTip::add(leoffice1, _("The first office"));
   l7 = addLabel(w1, "ml7", 10, 200, 50, 20, _("Office1"));
   l7->setFont(rufont);
@@ -96,6 +104,7 @@ printf("propdlg::propdlg begin\n");
 
   leoffice2 = addLineEdit(w1, "leoffice2", 10, 265, 160, 20, "");
   leoffice2->setFont(rufont);
+  QObject::connect(leoffice2, SIGNAL(textChanged(const char *)), this, SLOT(charchanged(const char *)));
   QToolTip::add(leoffice2, _("The second office"));
   l8 = addLabel(w1, "ml8", 10, 245, 50, 20, _("Office2"));
   l8->setFont(rufont);
@@ -104,6 +113,7 @@ printf("propdlg::propdlg begin\n");
   ld8->setFont(rufont);
   leaddress = addLineEdit(w1, "leaddress", 10, 310, 160, 20, "");
   leaddress->setFont(rufont);
+  QObject::connect(leaddress, SIGNAL(textChanged(const char *)), this, SLOT(charchanged(const char *)));
   QToolTip::add(leaddress, _("Postal address"));
   l9 = addLabel(w1, "ml9", 10, 290, 50, 20, _("Address"));
   l9->setFont(rufont);
@@ -125,30 +135,35 @@ printf("propdlg::propdlg begin\n");
                _("Date until change allowed"),
                   user->s_lstchg+user->s_min, 10, 70);
     lesmin->setFont(rufont);
+    QObject::connect(lesmin, SIGNAL(textChanged()), this, SLOT(changed()));
 //    QToolTip::add(lesmin, _("Date until change allowed"));
 
     lesmax = new KDateCtl(w2, "lesmax", _("Change required after first login"),
                           _("Date before change required"),
                           user->s_lstchg+user->s_max, 10, 130);
     lesmax->setFont(rufont);
+    QObject::connect(lesmax, SIGNAL(textChanged()), this, SLOT(changed()));
 //    QToolTip::add(lesmax, _("Date before change required"));
 
     leswarn = new KDateCtl(w2, "leswarn", _("User will never be warned"),
                            _("Date user will be warned about\nexpiration"),
                            user->s_lstchg+user->s_warn, 10, 190);
     leswarn->setFont(rufont);
+    QObject::connect(leswarn, SIGNAL(textChanged()), this, SLOT(changed()));
 //    QToolTip::add(leswarn, _("Date user will be warned about expiration"));
 
     lesinact = new KDateCtl(w2, "lesinact", _("Account is active from the day of creation"),
                             _("Date before account inactive"),
                             user->s_lstchg+user->s_inact, 10, 250);
     lesinact->setFont(rufont);
+    QObject::connect(lesinact, SIGNAL(textChanged()), this, SLOT(changed()));
 //    QToolTip::add(lesinact, _("Date before account inactive"));
 
     lesexpire = new KDateCtl(w2, "lesexpire", _("Account never expires"),
                              _("Date when account expires"),
                              user->s_lstchg+user->s_expire, 10, 310);
     lesexpire->setFont(rufont);
+    QObject::connect(lesexpire, SIGNAL(textChanged()), this, SLOT(changed()));
 //    QToolTip::add(lesexpire, _("Date when account expires"));
 
     addTab(w2, _("Extended"));
@@ -177,11 +192,16 @@ printf("propdlg::propdlg begin\n");
 
     leqfs = addLineEdit(w3, "leqfs", 10, 80, 70, 20, "");
     leqfs->setFont(rufont);
+    leqfs->setValidator(new QIntValidator(w3, "vaqfs"));
+    QObject::connect(leqfs, SIGNAL(textChanged(const char *)), this, SLOT(qcharchanged(const char *)));
     QToolTip::add(leqfs, _("File soft quota"));
     l10 = addLabel(w3, "ml10", 95, 80, 50, 20, _("File soft quota"));
     l10->setFont(rufont);
+
     leqfh = addLineEdit(w3, "leqfh", 10, 125, 70, 20, "");
     leqfh->setFont(rufont);
+    leqfh->setValidator(new QIntValidator(w3, "vaqfh"));
+    QObject::connect(leqfh, SIGNAL(textChanged(const char *)), this, SLOT(qcharchanged(const char *)));
     QToolTip::add(leqfh, _("File hard quota"));
     l11 = addLabel(w3, "ml11", 95, 125, 50, 20, _("File hard quota"));
     l11->setFont(rufont);
@@ -190,13 +210,19 @@ printf("propdlg::propdlg begin\n");
     QToolTip::add(leqfcur, _("File usage"));
     l14 = addLabel(w3, "ml14", 95, 185, 50, 20, _("File usage"));
     l14->setFont(rufont);
+
     leqis = addLineEdit(w3, "leqis", 10, 225, 70, 20, "");
     leqis->setFont(rufont);
+    leqis->setValidator(new QIntValidator(w3, "vaqis"));
+    QObject::connect(leqis, SIGNAL(textChanged(const char *)), this, SLOT(qcharchanged(const char *)));
     QToolTip::add(leqis, _("iNode soft quota"));
     l12 = addLabel(w3, "ml12", 95, 225, 50, 20, _("iNode soft quota"));
     l12->setFont(rufont);
+
     leqih = addLineEdit(w3, "leqih", 10, 270, 70, 20, "");
     leqih->setFont(rufont);
+    leqih->setValidator(new QIntValidator(w3, "vaqih"));
+    QObject::connect(leqih, SIGNAL(textChanged(const char *)), this, SLOT(qcharchanged(const char *)));
     QToolTip::add(leqih, _("iNode hard quota"));
     l13 = addLabel(w3, "ml13", 95, 270, 50, 20, _("iNode hard quota"));
     l13->setFont(rufont);
@@ -210,6 +236,10 @@ printf("propdlg::propdlg begin\n");
 
   selectuser();
   resize(450, 470);
+
+  ischanged = FALSE;
+  isqchanged = FALSE;
+
 #ifdef _KU_DEBUG
 printf("propdlg::propdlg end\n");
 #endif
@@ -222,7 +252,22 @@ printf("propdlg::~propdlg begin\n");
 #endif
 }
 
-int propdlg::change() {
+void propdlg::changed() {
+printf("propdlg::changed\n");
+  ischanged = TRUE;
+}
+
+void propdlg::charchanged(const char *text) {
+printf("propdlg::charchanged\n");
+  ischanged = TRUE;
+}
+
+void propdlg::qcharchanged(const char *text) {
+printf("propdlg::qcharchanged\n");
+  isqchanged = TRUE;
+}
+
+void propdlg::save() {
   FILE *passwd;
   char uname[200];
   char *check;
@@ -246,28 +291,49 @@ int propdlg::change() {
     user->s_expire = lesexpire->getDate()-user->s_lstchg;
   }
 #endif
-
-/*
-Here we should get a quota info
-*/
-  return (0);
 }
 
 void propdlg::mntsel(int index) {
+  Quota *tmpq = user->quota.at(chquota);
+
+  tmpq->fhard = atoi(leqfh->text());
+  tmpq->fsoft = atoi(leqfs->text());
+  tmpq->ihard = atoi(leqih->text());
+  tmpq->isoft = atoi(leqis->text());
+
   chquota = index;
   selectuser();
+}
+
+void propdlg::saveq() {
+  Quota *tmpq = user->quota.at(chquota);
+
+  tmpq->fhard = atoi(leqfh->text());
+  tmpq->fsoft = atoi(leqfs->text());
+  tmpq->ihard = atoi(leqih->text());
+  tmpq->isoft = atoi(leqis->text());
 }
 
 void propdlg::shactivated(const char *text) { 
   int id = leshell->currentItem();
   leshell->changeItem(text, id);
+  changed();
 }
 
-void propdlg::save() {
-  if (change())
-    return;
+bool propdlg::check() {
+  bool ret = FALSE;
 
-  changed = TRUE;
+  if (ischanged == TRUE) {
+    save();
+    ret = TRUE;
+  }
+
+  if (isqchanged == TRUE) {
+    saveq();
+    ret = TRUE;
+  }
+
+  return (ret);
 }
 
 void propdlg::selectuser() {
@@ -305,12 +371,9 @@ void propdlg::selectuser() {
 #ifdef _XU_QUOTA
   if (is_quota != 0) {
     int q = 0;
-    if (chquota != -1) {
+    if (chquota != -1)
       q = chquota;
-      chquota = -1;
-    }
-    else  
-      q = leqmnt->currentItem();
+
     sprintf(uname,"%li",user->quota.at(q)->fsoft);
     leqfs->setText(uname);
 
@@ -330,28 +393,6 @@ void propdlg::selectuser() {
     leqicur->setText(uname);
   }
 #endif
-
-#ifdef _XU_SHADOW
-  if (is_shadow) {
-    convertdate(uname, 0, user->s_lstchg);
-    leslstchg->setText(uname);
-
-    convertdate(uname, user->s_lstchg, user->s_min);
-//    lesmin->setText(uname);
-
-    convertdate(uname, user->s_lstchg, user->s_warn);
-//    leswarn->setText(uname);
-
-    convertdate(uname, user->s_lstchg, user->s_max);
-//    lesmax->setText(uname);
-
-    convertdate(uname, user->s_lstchg, user->s_inact);
-//    lesinact->setText(uname);
-
-    convertdate(uname, user->s_lstchg, user->s_expire);
-//    lesexpire->setText(uname);
-  }
-#endif
 }
 
 void propdlg::setpwd() {
@@ -362,8 +403,10 @@ void propdlg::setpwd() {
 }
 
 void propdlg::ok() {
-  save();
-  accept();
+  if (check() == TRUE)
+    accept();
+  else
+    reject();
 }
 
 void propdlg::cancel() {

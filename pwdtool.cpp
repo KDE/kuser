@@ -17,6 +17,8 @@ void pwd_read() {
   while ((p = getpwent())!=NULL) {
     tmpKU = new KUser();
 
+    tmpKU->p_uid = p->pw_uid;
+    tmpKU->p_gid = p->pw_gid;
     tmpKU->p_name.setStr(p->pw_name);
     tmpKU->p_pwd.setStr(p->pw_passwd);
     tmpKU->p_dir.setStr(p->pw_dir);

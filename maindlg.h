@@ -24,6 +24,8 @@ public slots:
   void setpwd();
 protected:
   void reload(int id);
+private:
+  bool changed;
 };
 
 #endif // _XU_MAINDLG_H

@@ -112,8 +112,9 @@ void setquota(const char *uname, QList<Quota> *q)
   long id;
 
   if (is_quota != 0)
-    if (id = getentry(uname, USRQUOTA) != -1)
+    if (id = getentry(uname, USRQUOTA) != -1) {
       setmntprivs(id, q);
+  }
 }
 
 /*
@@ -148,7 +149,7 @@ void getmntprivs(long id, QList<Quota> *q)
 
   if (is_quota == 0)
     return;
-printf("User: %d\n", id);
+printf("User: %li\n", id);
   qcmd = QCMD(Q_GETQUOTA, USRQUOTA);
 
   for (uint i=0; i<mounts.count(); i++) {
@@ -182,11 +183,19 @@ void setmntprivs(long id, QList<Quota> *q) {
   struct dqblk dq;
   char *qfpathname;
 
+#ifdef _KU_DEBUG
+printf("setmntprivs\n");
+#endif
+
   qcmd = QCMD(Q_SETQUOTA, USRQUOTA);
   if (is_quota != 0) {
     for (uint i=0; i<mounts.count(); i++) {
       if (!hasquota(mounts.at(i), USRQUOTA, &qfpathname))
         continue;
+
+#ifdef _KU_DEBUG
+printf("%s has quota for %li\n", (const char *)mounts.at(i)->fsname, id);
+#endif
 
       dq.dqb_curblocks  = btodb(q->at(i)->fcur);
       dq.dqb_bsoftlimit = btodb(q->at(i)->fsoft);
@@ -194,6 +203,9 @@ void setmntprivs(long id, QList<Quota> *q) {
       dq.dqb_curinodes  = q->at(i)->icur;
       dq.dqb_isoftlimit = q->at(i)->isoft;
       dq.dqb_ihardlimit = q->at(i)->ihard;
+
+printf("%d %d %d %d %d %d\n", dq.dqb_curblocks,dq.dqb_bsoftlimit,dq.dqb_bhardlimit,
+                              dq.dqb_curinodes,dq.dqb_isoftlimit,dq.dqb_ihardlimit);
 
       if (quotactl(qcmd, (const char *)mounts.at(i)->fsname, id, (caddr_t) &dq) != 0) {
         continue;
@@ -245,8 +257,16 @@ void quota_write() {
   if (is_quota == 0)
     return;
 
-  for (uint i=0; i<users.count(); i++)
-    setquota(users.at(i)->p_name, &users.at(i)->quota);
+#ifdef _KU_DEBUG
+printf("quota_write\n");
+#endif
+
+  for (uint i=0; i<users.count(); i++) {
+#ifdef _KU_DEBUG
+printf("setquota %s -- %li\n", (const char *)users.at(i)->p_name, users.at(i)->p_uid);
+#endif
+    setmntprivs(users.at(i)->p_uid, &users.at(i)->quota);
+  }
 }
 
 Quota::Quota() {

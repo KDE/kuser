@@ -1,5 +1,6 @@
 <?xml version="1.0" ?>
-<!DOCTYPE book PUBLIC "-//KDE//DTD DocBook XML V4.1-Based Variant V1.0//EN" "dtd/kdex.dtd" [
+<!DOCTYPE book PUBLIC "-//KDE//DTD DocBook XML V4.1.2-Based Variant V1.1//EN" 
+"dtd/kdex.dtd" [
   <!ENTITY kappname "&kuser;">
   <!ENTITY % addindex "IGNORE">
   <!ENTITY % English "INCLUDE" > <!-- change language only here -->
@@ -142,14 +143,20 @@ Unices.</para>
 parameters related to extended account control: </para>
 
 <itemizedlist>
-<listitem><para>Minimum number of days between password changes</para></listitem>
-<listitem><para>Number of days after which a password expires if it hasn't been changed</para></listitem>
-<listitem><para>Number of days before expiration the user will be warned</para></listitem>
-<listitem><para>Whether and when an account will be disabled if the password expires</para></listitem>
+<listitem><para>Minimum number of days between password 
+changes</para></listitem>
+<listitem><para>Number of days after which a password expires if it hasn't been 
+changed</para></listitem>
+<listitem><para>Number of days before expiration the user will be 
+warned</para></listitem>
+<listitem><para>Whether and when an account will be disabled if the password 
+expires</para></listitem>
 <listitem><para>A set date when the account expires</para></listitem>
-<listitem><para><guilabel>Class</guilabel> (on <acronym>BSD</acronym> systems)</para></listitem>
+<listitem><para><guilabel>Class</guilabel> (on <acronym>BSD</acronym> 
+systems)</para></listitem>
 </itemizedlist>
-<para>The date of the last password change is displayed near the top of the dialog.</para>
+<para>The date of the last password change is displayed near the top of the 
+dialog.</para>
 
 
 </sect2>
@@ -164,10 +171,12 @@ present. There you may modify all quota related parameters: </para>
 <itemizedlist>
 <listitem><para><guilabel>File Soft Quota</guilabel></para></listitem>
 <listitem><para><guilabel>File Hard Quota</guilabel></para></listitem>
-<listitem><para><guilabel>File Time Limit (Grace Period)</guilabel></para></listitem>
+<listitem><para><guilabel>File Time Limit (Grace 
+Period)</guilabel></para></listitem>
 <listitem><para><guilabel>iNode Soft Quota</guilabel></para></listitem>
 <listitem><para><guilabel>iNode Hard Quota</guilabel></para></listitem>
-<listitem><para><guilabel>iNode Time Limit (Grace Period)</guilabel></para></listitem>
+<listitem><para><guilabel>iNode Time Limit (Grace 
+Period)</guilabel></para></listitem>
 </itemizedlist>
 
 <para> All these parameters can be changed for each filesystem that has user
@@ -180,7 +189,8 @@ Filesystem</guilabel>" box.</para>
 <title><guilabel>Groups</guilabel> Tab</title>
 
 <para>The <guilabel>Groups</guilabel> tab contains all the information about the
-selected user's participation in groups. The primary group to which the user belongs
+selected user's participation in groups. The primary group to which the user 
+belongs
 is set in the <guilabel>Primary Group</guilabel> box. The user can be assigned
 to additional groups by checking them in the large box.</para>
 
@@ -190,7 +200,8 @@ to additional groups by checking them in the large box.</para>
 <sect1 id="group-properties">
 <title><guilabel>Group Properties</guilabel></title>
 
-<para>The <guilabel>Group Properties</guilabel> dialog contains a list of all users. Check
+<para>The <guilabel>Group Properties</guilabel> dialog contains a list of all 
+users. Check
 the boxes for each user to be assigned to the selected group.</para>
 
 </sect1>
@@ -200,8 +211,10 @@ the boxes for each user to be assigned to the selected group.</para>
 
 <para>To add a user or group to the system, either choose
 <guimenuitem>Add</guimenuitem> from the <guimenu>User</guimenu> or
-<guimenu>Group</guimenu> menu, or click the relevant <guiicon>Add</guiicon> button on
-the toolbar. The selected user or group can also be edited or deleted in the same way.</para>
+<guimenu>Group</guimenu> menu, or click the relevant <guiicon>Add</guiicon> 
+button on
+the toolbar. The selected user or group can also be edited or deleted in the 
+same way.</para>
 </sect1>
 </chapter>
 
@@ -218,7 +231,8 @@ defaults</guilabel> dialog, which is accessible via the menu
 change the defaults that are used when creating a new user: Shell and
 Home Directory (or home directories volume). You can choose whether to
 make a home directory on <quote>create</quote> or not,and to copy a
-skeleton (standard configuration files) to the home directory or not. You can also enable
+skeleton (standard configuration files) to the home directory or not. You can 
+also enable
 <guilabel>User Private Group</guilabel> mechanism, which creates a new
 personal group with the creation of a new user, and removes the personal
 group when the user is removed.</para>

@@ -292,6 +292,7 @@ void mainView::quit() {
   save();
 
   qApp->quit();
+  delete this;
 }
 
 void mainView::setpwd() {

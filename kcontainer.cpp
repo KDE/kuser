@@ -41,6 +41,11 @@ KContainerLayout::KContainerLayout(QWidget * parent, const char * name,
 
 KContainerLayout::~KContainerLayout()
 {
+  _startWidgets.setAutoDelete(true);
+  _startWidgets.clear();
+  _endWidgets.setAutoDelete(true);
+  _endWidgets.clear();
+
 }
 
 int KContainerLayout::packStart(QWidget *w, bool e, bool f,int p)

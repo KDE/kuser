@@ -81,7 +81,7 @@ install: all
 	$(INSTALL) -m 644 $(MOFILES) $(MODIR)
 
 depend:
-	@echo "Checking dependences"
+	@echo "Checking dependencies"
 	@makedepend -I$(INCDIR) $(SOURCES) 2> /dev/null
 
 showfiles:

@@ -75,7 +75,7 @@ int isquotainkernel() {
   struct dqblk dq;
 
   if (is_quota == 0)
-    return;
+    return 0;
 
   qcmd = QCMD(Q_GETQUOTA, USRQUOTA);
 

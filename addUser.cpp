@@ -42,6 +42,8 @@ void addUser::ok() {
     KMsgBox::message(0, _("Message"), tmp, KMsgBox::STOP, _("Ok"));
     return;
   }
+
+  check();
   
   if (createhome->isChecked())
     createHome();
@@ -54,6 +56,29 @@ void addUser::ok() {
 
 void addUser::createHome() {
   printf("createHome\n");
+  if (mkdir(user->getp_dir(), 0700) != 0) {
+printf("Cannot create home directory\nError: %s", strerror(errno));
+    QString tmp;
+    tmp.sprintf(_("Cannot create home directory\nError: %s"), strerror(errno));
+    err->addMsg(tmp, STOP);
+    err->display();
+  }
+
+  if (chown(user->getp_dir(), user->getp_uid(), user->getp_gid()) != 0) {
+    QString tmp;
+    tmp.sprintf(_("Cannot change owner of home directory\nError: %s"), strerror(errno));
+    err->addMsg(tmp, STOP);
+    err->display();
+  }
+
+  if (chmod(user->getp_dir(), 0755) != 0) {
+printf("Cannot change permissions on home directory\nError: %s", strerror(errno));
+    QString tmp;
+    tmp.sprintf(_("Cannot change permissions on home directory\nError: %s"), strerror(errno));
+    err->addMsg(tmp, STOP);
+    err->display();
+  }
+
 }
 
 void addUser::copySkel() {

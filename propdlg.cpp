@@ -228,7 +228,7 @@ void propdlg::initDlg()
     if ( kug->getUsers().getCaps() & KUsers::Cap_Shadow ) {
       lesmin = addDaysGroup(frame, layout, row++, i18n("Time before password may &not be changed after last password change:"), false);
       lesmax = addDaysGroup(frame, layout, row++, i18n("Time when password &expires after last password change:") );
-      leswarn = addDaysGroup(frame, layout, row++, i18n("Time when &issue expire warning before password expires:"));
+      leswarn = addDaysGroup(frame, layout, row++, i18n("Time before password expires to &issue an expire warning:"));
       lesinact = addDaysGroup(frame, layout, row++, i18n("Time when account will be &disabled after expiration of password:"));
     }
     layout->addMultiCellWidget(new KSeparator(KSeparator::HLine, frame), row, row, 0, 3);

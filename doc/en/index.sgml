@@ -8,7 +8,7 @@
 
 <title>The Kuser Handbook
 <author>Denis Pershin
-<date>April 12, 1999
+<date>April 25, 1999
 <abstract>This documentation was last updated for Kuser version 1.0
 Please make any comments and additions to the authors.
 </abstract>
@@ -32,19 +32,20 @@ primitive user manager.
 <sect>Getting Started<label id="sec-Start">
 
 <p>
-This is a short introduction to KUser. For more detailed info see
-<ref id="sec-Using" name="Using KUser">.
+This is a short introduction to Kuser. For more detailed info see
+<ref id="sec-Using" name="Using Kuser">.
 
 <p>
-Actually you are should not do anything to start using KUser. You may do this
-immediately after starting it. All that you want to do is configuration.
+Actually you are should not do anything to start using Kuser. You may do this
+immediately after starting it. All that you want to do is 
+<ref id="sec-Cust" name="configuration">.
 
-<sect>Usage Kuser<label id="sec-Using">
+<sect>Usage<label id="sec-Using">
 
 <sect1>Main Window<label id="sec1-MainWindow">
 
 <p>
-KUser is a very simple application. On the main window you can see two lists:
+Kuser is a very simple application. On the main window you can see two lists:
 the list of the users and the list of the groups. To edit user or group you
 should simple double click on the it. The user/group properties dialog will
 appear.

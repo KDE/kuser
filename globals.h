@@ -3,7 +3,7 @@
 
 #define _KU_VERSION "1.0"
 
-#include "../config.h"
+#include <config.h>
 #include <paths.h>
 #include <kconfig.h>
 #include "kerror.h"

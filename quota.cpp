@@ -150,7 +150,7 @@ void QuotaMnt::setitime(long data) {
 #define _KU_SETQUOTA QCMD(Q_SETQUOTA, USRQUOTA)
 #endif
 
-static int doQuotaCtl(int ACmd, uint AUID, const MntEnt *m, struct dqblk *dq) {
+static int doQuotaCtl(int ACmd, uint AUID, const MntEnt *m, STRUCT_DQBLK *dq) {
 #ifdef _KU_UFS_QUOTA
   int fd;
   struct quotctl qctl;
@@ -182,15 +182,21 @@ static int doQuotaCtl(int ACmd, uint AUID, const MntEnt *m, struct dqblk *dq) {
 }
 
 static QuotaMnt *getQuotaMnt(uint AUID, const MntEnt *m) {
-  struct dqblk dq;
+  STRUCT_DQBLK dq;
 
   int res = doQuotaCtl(_KU_GETQUOTA, AUID, m, &dq);
 
   if (res == 0)
     return new QuotaMnt(
+#ifdef HAVE_IF_DQBLK
+      dq.dqb_curspace,
+      dq.dqb_bsoftlimit,
+      dq.dqb_bhardlimit,
+#else
       dbtob(dq.dqb_curblocks)/1024,
       dbtob(dq.dqb_bsoftlimit)/1024,
       dbtob(dq.dqb_bhardlimit)/1024,
+#endif
       _KU_CURINODES,
       _KU_ISOFTLIMIT,
       _KU_IHARDLIMIT,
@@ -204,11 +210,17 @@ static QuotaMnt *getQuotaMnt(uint AUID, const MntEnt *m) {
 }
 
 static void setQuotaMnt(uint AUID, const MntEnt *m, QuotaMnt *qm) {
-  struct dqblk dq;
+  STRUCT_DQBLK dq;
 
+#ifdef HAVE_IF_DQBLK
+  dq.dqb_curspace  = qm->getfcur();
+  dq.dqb_bsoftlimit = qm->getfsoft();
+  dq.dqb_bhardlimit = qm->getfhard();
+#else
   dq.dqb_curblocks  = btodb(qm->getfcur() * 1024);
   dq.dqb_bsoftlimit = btodb(qm->getfsoft() * 1024);
   dq.dqb_bhardlimit = btodb(qm->getfhard() * 1024);
+#endif
   _KU_CURINODES     = qm->geticur();
   _KU_ISOFTLIMIT    = qm->getisoft();
   _KU_IHARDLIMIT    = qm->getihard();

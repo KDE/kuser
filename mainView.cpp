@@ -131,7 +131,7 @@ void mainView::userdel() {
   if (QMessageBox::warning(0, i18n("WARNING"),
                      i18n("Do you really want to delete user '%1'?")
 		       .arg(user->getName()),
-                     i18n("Cancel"), i18n("Delete")) != 1)
+                     i18n("&Cancel"), i18n("&Delete")) != 1)
     return;
 
   i = lbusers->currentItem();
@@ -175,7 +175,7 @@ void mainView::userdel() {
         i18n("You are using private groups.\n"
              "Do you want delete user's private group '%1'?")
 	       .arg(group->getName()),
-	     i18n("Cancel"), i18n("Delete")) != 1)
+	     i18n("&Cancel"), i18n("&Delete")) != 1)
     return;
     
   uint oldc = lbgroups->currentItem();
@@ -441,7 +441,7 @@ void mainView::grpedit() {
 void mainView::grpdel() {
   if (QMessageBox::information(0, i18n("WARNING"),
                      i18n("Do you really want to delete group?"),
-                     i18n("Cancel"), i18n("Delete")) != 1)
+                     i18n("&Cancel"), i18n("&Delete")) != 1)
     return;
 
   uint i = 0;

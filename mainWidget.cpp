@@ -44,7 +44,7 @@ void mainWidget::setupActions() {
   KStdAction::preferences(md, SLOT(properties()), actionCollection());
   KStdAction::showToolbar(this, SLOT(toggleToolBar()), actionCollection());
   KStdAction::showStatusbar(this, SLOT(toggleStatusBar()), actionCollection());
-  KStdAction::saveOptions(md, SLOT(save_options()), actionCollection());
+//  KStdAction::saveOptions(md, SLOT(writeSettings()), actionCollection());
 
   (void)new KAction(i18n("&Add..."), QIconSet(BarIcon("add_user")), 0, md,
     SLOT(useradd()), actionCollection(), "add_user");
@@ -55,7 +55,7 @@ void mainWidget::setupActions() {
   (void)new KAction(i18n("&Set password..."), QIconSet(BarIcon("set_password_user")),
     0, md, SLOT(setpwd()), actionCollection(), "set_password_user");
 
-  (void)new KAction(i18n("&Add..."), QIconSet(BarIcon("add_user")), 0, md,
+  (void)new KAction(i18n("&Add..."), QIconSet(BarIcon("add_group")), 0, md,
     SLOT(grpadd()), actionCollection(), "add_group");
   (void)new KAction(i18n("&Edit..."), QIconSet(BarIcon("edit_group")), 0, md,
     SLOT(grpedit()), actionCollection(), "edit_group");

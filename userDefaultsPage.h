@@ -25,8 +25,8 @@ public:
 
   ~userDefaultsPage();
 
-  const char *getShell() const;
-  const char *getHomeBase() const;
+  QString getShell() const;
+  QString getHomeBase() const;
   bool getCreateHomeDir() const;
   bool getCopySkel() const;
   bool getUserPrivateGroup() const;

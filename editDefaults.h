@@ -11,8 +11,8 @@ public:
   editDefaults(QWidget* parent = NULL, const QString &name = NULL);
   virtual ~editDefaults();
 
-  const QString &getShell() const;
-  const QString &getHomeBase() const;
+  QString getShell() const;
+  QString getHomeBase() const;
   bool getCreateHomeDir() const;
   bool getCopySkel() const;
   bool getUserPrivateGroup() const;

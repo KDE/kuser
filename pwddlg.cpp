@@ -64,8 +64,8 @@ pwddlg::pwddlg(KUser &AUser, QWidget* parent, const char* name)
   bbox->addStretch(1);
 
   // the default buttons  
-  pbOk = bbox->addButton(i18n("OK"));
-  pbCancel = bbox->addButton(i18n("Cancel"));
+  pbOk = bbox->addButton(i18n("&OK"));
+  pbCancel = bbox->addButton(i18n("&Cancel"));
   pbOk->setDefault(TRUE);
   
   // establish callbacks

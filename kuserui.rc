@@ -15,12 +15,12 @@
 	</MenuBar>
 	<ToolBar fullWidth="true" name="mainToolBar">
 		<Action name="add_user"/>
-		<Action name="delete_user"/>
 		<Action name="edit_user"/>
+		<Action name="delete_user"/>
 		<Separator/>
 		<Action name="add_group"/>
-		<Action name="delete_group"/>
 		<Action name="edit_group"/>
+		<Action name="delete_group"/>
 	</ToolBar>
 </kpartgui>
 

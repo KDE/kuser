@@ -16,18 +16,19 @@ editDefaults::editDefaults(QWidget* parent, const QString &name)
   page1 = new userDefaultsPage(this, "user_page");
   addTab(page1, i18n("User"));
   resize(330, 300);
-  setCancelButton(i18n("Cancel"));
+  setOKButton(i18n("&OK"));
+  setCancelButton(i18n("&Cancel"));
 }
 
 
 editDefaults::~editDefaults() {
 }
 
-const QString &editDefaults::getShell() const {
+QString editDefaults::getShell() const {
   return page1->getShell();
 }
 
-const QString &editDefaults::getHomeBase() const {
+QString editDefaults::getHomeBase() const {
   return page1->getHomeBase();
 }
 

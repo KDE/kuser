@@ -51,7 +51,7 @@ void backup(char const *name)
   {
     QString str;
     str = i18n("Can't create backup file for %1").arg(name);
-    QMessageBox::critical(0, i18n("Error"), tmp, i18n("OK"));
+    QMessageBox::critical(0, i18n("Error"), tmp, i18n("&OK"));
     exit (1);
   }
 }
@@ -111,7 +111,7 @@ int getValue(long int &data, const char *text, const char *msg) {
   char *check;
   long int value = strtol(text, &check, 0);
   if (check[0]) {
-    QMessageBox::warning(0, i18n("Error"), msg, i18n("OK"));
+    QMessageBox::warning(0, i18n("Error"), msg, i18n("&OK"));
     return (-1);
   }
   data = value;
@@ -123,7 +123,7 @@ int getValue(int &data, const char *text, const char *msg) {
   char *check;
   long int value = strtol(text, &check, 0);
   if (check[0]) {
-    QMessageBox::warning(0, i18n("Error"), msg, i18n("OK"));
+    QMessageBox::warning(0, i18n("Error"), msg, i18n("&OK"));
     return (-1);
   }
   data = (int)value;
@@ -135,7 +135,7 @@ int getValue(unsigned int &data, const char *text, const char *msg) {
   char *check;
   long int value = strtol(text, &check, 0);
   if (check[0]) {
-    QMessageBox::warning(0, i18n("Error"), msg, i18n("OK"));
+    QMessageBox::warning(0, i18n("Error"), msg, i18n("&OK"));
     return (-1);
   }
   data = (unsigned int)value;

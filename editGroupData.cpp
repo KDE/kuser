@@ -90,9 +90,10 @@ editGroupData::editGroupData
 	pbok->setBackgroundMode( QWidget::PaletteBackground );
 	pbok->setFontPropagation( QWidget::NoChildren );
 	pbok->setPalettePropagation( QWidget::NoChildren );
-	pbok->setText( i18n("OK") );
+	pbok->setText( i18n("&OK") );
 	pbok->setAutoRepeat( FALSE );
 	pbok->setAutoResize( FALSE );
+	pbok->setDefault(TRUE);
 
 	pbcancel = new QPushButton( this, "pbcancel" );
 	pbcancel->setGeometry( 250, 195, 100, 30 );
@@ -103,7 +104,7 @@ editGroupData::editGroupData
 	pbcancel->setBackgroundMode( QWidget::PaletteBackground );
 	pbcancel->setFontPropagation( QWidget::NoChildren );
 	pbcancel->setPalettePropagation( QWidget::NoChildren );
-	pbcancel->setText( i18n("Cancel") );
+	pbcancel->setText( i18n("&Cancel") );
 	pbcancel->setAutoRepeat( FALSE );
 	pbcancel->setAutoResize( FALSE );
 

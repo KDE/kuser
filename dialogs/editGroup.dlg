@@ -112,9 +112,9 @@ ListBox {
 }
 PushButton {
 		ToggleButton {FALSE}
-		Default {FALSE}
+		Default {TRUE}
 		AutoDefault {FALSE}
-		Text {OK}
+		Text {&OK}
 		AutoRepeat {FALSE}
 		AutoResize {FALSE}
 		Rect {140 195 100 30}
@@ -138,7 +138,7 @@ PushButton {
 		ToggleButton {FALSE}
 		Default {FALSE}
 		AutoDefault {FALSE}
-		Text {Cancel}
+		Text {&Cancel}
 		AutoRepeat {FALSE}
 		AutoResize {FALSE}
 		Rect {250 195 100 30}

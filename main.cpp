@@ -53,8 +53,9 @@ int main(int argc, char **argv) {
   
   KAboutData aboutData("kuser", I18N_NOOP("KUser"),
     _KU_VERSION, description, KAboutData::License_GPL, 
-    i18n("(c) 1997-2000, Denis Perchine"));
-  aboutData.addAuthor(i18n("Denis Perchine"), 0, "dyp@perchine.com");
+    "(c) 1997-2000, Denis Perchine");
+  aboutData.addAuthor("Denis Perchine", I18N_NOOP("kuser author"),
+    "dyp@perchine.com", "http://www.perchine.com/dyp/");
   KCmdLineArgs::init(argc, argv, &aboutData);
   mainWidget *mw = NULL;
 

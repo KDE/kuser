@@ -80,11 +80,11 @@ userDefaultsPage::userDefaultsPage(
 userDefaultsPage::~userDefaultsPage() {
 }
 
-const char *userDefaultsPage::getShell() const {
+QString userDefaultsPage::getShell() const {
   return shell->currentText();
 }
 
-const char *userDefaultsPage::getHomeBase() const {
+QString userDefaultsPage::getHomeBase() const {
   return home->text();
 }
 

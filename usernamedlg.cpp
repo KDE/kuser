@@ -43,8 +43,8 @@ usernamedlg::usernamedlg(KUser *auser, QWidget* parent, const char* name)
   bbox->addStretch(1);
 
   // the default buttons  
-  pbOk = bbox->addButton(i18n("OK"));
-  pbCancel = bbox->addButton(i18n("Cancel"));
+  pbOk = bbox->addButton(i18n("&OK"));
+  pbCancel = bbox->addButton(i18n("&Cancel"));
   pbOk->setDefault(TRUE);
   
   // establish callbacks
@@ -71,14 +71,14 @@ void usernamedlg::ok() {
     QMessageBox::information(0, 
       i18n("Error"), 
       i18n("User with name %1 already exists.")
-        .arg(leusername->text()), i18n("OK"));
+        .arg(leusername->text()), i18n("&OK"));
     return;
   }
 
   if (strlen(leusername->text()) == 0) {
     QMessageBox::warning(0, i18n("Error"), 
 			 i18n("You have to enter a user name."), 
-			 i18n("OK"));
+			 i18n("&OK"));
     return;
   }
   

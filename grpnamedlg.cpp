@@ -61,9 +61,9 @@ grpnamedlg::grpnamedlg(KGroup &AGroup, QWidget* parent, const char* name)
   // make buttons right aligned
   bbox->addStretch(1);
 
-  // the default buttons  
-  pbOk = bbox->addButton(i18n("OK"));
-  pbCancel = bbox->addButton(i18n("Cancel"));
+  // the default buttons
+  pbOk = bbox->addButton(i18n("&OK"));
+  pbCancel = bbox->addButton(i18n("&Cancel"));
   pbOk->setDefault(TRUE);
   
   // establish callbacks
@@ -93,13 +93,13 @@ void grpnamedlg::ok()
 
   if (kug->getGroups().lookup(legrpname->text()) != NULL) {
     tmp = i18n("Group with name %1 already exists.").arg(legrpname->text());
-    QMessageBox::warning(0, i18n("Error"), tmp, i18n("OK"));
+    QMessageBox::warning(0, i18n("Error"), tmp, i18n("&OK"));
     return;
   }
   
   if (kug->getGroups().lookup(s.toInt()) != NULL) {
     tmp = i18n("Group with gid %1 already exists.").arg(s.toInt());
-    QMessageBox::warning(0, i18n("Error"), tmp, i18n("OK"));
+    QMessageBox::warning(0, i18n("Error"), tmp, i18n("&OK"));
     return;
   }
   

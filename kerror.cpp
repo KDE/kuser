@@ -16,7 +16,7 @@ void KError::addMsg(QString amsg) {
 void KError::display() {
   for (uint i=0;i<msgs.count();i++)
      QMessageBox::information(0, i18n("Message"),
-       msgs[i], i18n("OK"));
+       msgs[i], i18n("&OK"));
   msgs.clear();
 }
 

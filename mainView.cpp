@@ -192,7 +192,7 @@ void mainView::useradd() {
   }
 
   config->setGroup("template");
-  tk->setShell(config->readEntry("shell", QString::fromLatin1("/bin/bash")));
+  tk->setShell(config->readEntry("shell", QString::fromLatin1("/bin/sh")));
   tk->setHomeDir(config->readEntry("homeBase", QFile::decodeName(KU_HOMEPREFIX))+
   	QString::fromLatin1("/")+tk->getName());
   tk->setGID(config->readNumEntry("gid"));
@@ -325,7 +325,7 @@ void mainView::properties() {
   eddlg.setCaption(i18n("Edit Defaults"));
 
   config->setGroup("template");
-  eddlg.setShell(config->readEntry("shell", QString::fromLatin1("/bin/bash")));
+  eddlg.setShell(config->readEntry("shell", QString::fromLatin1("/bin/sh")));
   eddlg.setHomeBase(config->readEntry("homeBase", QString::fromLatin1("/home")));	
   eddlg.setCreateHomeDir(config->readBoolEntry("createHomeDir", true));
   eddlg.setCopySkel(config->readBoolEntry("copySkel", true));

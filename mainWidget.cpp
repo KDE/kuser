@@ -42,7 +42,7 @@ mainWidget::mainWidget(const char *name) : KTMainWindow(name) {
 		"Denis Pershin\n"
 		"dyp@inetlab.com\n"
 		"Copyright 1997, 1998, 1999 (c)").arg(_KU_VERSION);
-  QPopupMenu *help = kapp->helpMenu(true, tmp);
+  QPopupMenu *help = helpMenu(tmp);
 
   menubar = new KMenuBar( this );
   CHECK_PTR( menubar );

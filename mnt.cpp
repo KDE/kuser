@@ -142,8 +142,8 @@ Mounts::Mounts() {
 
 #endif
 
-    QFile *f = new QFile(quotafilename);
-    if (f->exists() == FALSE) {
+    QFile f(quotafilename);
+    if (f.exists() == FALSE) {
       printf("Quota file name %s does not exist\n", quotafilename.local8Bit().data());
       continue;
     }

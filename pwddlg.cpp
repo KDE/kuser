@@ -1,4 +1,3 @@
-#include "globals.h"
 
 #include <stdlib.h>
 #include <time.h>
@@ -13,7 +12,6 @@
 
 #include "pwddlg.h"
 #include "misc.h"
-#include "globals.h"
 
 pwddlg::pwddlg(KUser *AUser, QWidget* parent, const char* name)
   : KDialogBase(parent, name, true, i18n("Enter Password"), Ok | Cancel, Ok, true), 

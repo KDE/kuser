@@ -36,7 +36,7 @@
 #include "kglobal_.h"
 #include "kuser.h"
 #include "misc.h"
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <kmessagebox.h>
 #include "editDefaults.h"	
 

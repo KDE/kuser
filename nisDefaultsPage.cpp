@@ -1,4 +1,4 @@
-#include <kapp.h>
+#include <kapplication.h>
 #include <qlayout.h>
 #include <qlabel.h>
 #include "globals.h"

@@ -5,7 +5,7 @@
 #include <qfont.h>
 
 #include <kiconloader.h>
-#include <kapp.h>
+#include <kapplication.h>
 #include "kerror.h"
 #include <kconfig.h>
 #include <klocale.h>

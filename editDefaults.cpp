@@ -5,7 +5,7 @@
 #include <qpushbutton.h>
 #include <qtabbar.h>
 
-#include <kapp.h>
+#include <kapplication.h>
 #include <ktabctl.h>
 
 #include "editDefaults.h"

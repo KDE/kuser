@@ -411,8 +411,8 @@ KUsers::KUsers() {
   sdw_uid = 0;
   sdw_gid = 0;
 
-  u.setAutoDelete(TRUE);
-  du.setAutoDelete(TRUE);
+  allUsers.setAutoDelete(TRUE);
+  usersToDelete.setAutoDelete(TRUE);
 
   if (!load())
     err->display();
@@ -563,7 +563,7 @@ bool KUsers::loadpwd() {
 
       if ((p->pw_gecos != 0) && (p->pw_gecos[0] != 0)) 
         fillGecos(tmpKU, p->pw_gecos);
-      u.append(tmpKU);
+      allUsers.append(tmpKU);
     }
 
     // End reading passwd_filename				
@@ -664,8 +664,8 @@ bool KUsers::doCreate() {
 
   QString h_dir;
 
-  for (unsigned int i=0; i<u.count(); i++) {
-    KUser *user = u.at(i);
+  for (unsigned int i=0; i<allUsers.count(); i++) {
+    KUser *user = allUsers.at(i);
 
     if(user->getCreateMailBox()) {
       user->createMailBox();
@@ -696,19 +696,19 @@ bool KUsers::doCreate() {
 }
 
 bool KUsers::doDelete() {
-	uint ucnt = du.count();
+	uint ucnt = usersToDelete.count();
   KUser *user;
 
-  user = du.first();
+  user = usersToDelete.first();
   for (unsigned int i=0; i<ucnt; i++) {
-    user = du.current();
+    user = usersToDelete.current();
     if (user->isDeleteHome)
       user->removeHome();
     user->removeCrontabs();
     if (user->isDeleteMailBox)
       user->removeMailBox();
     user->removeProcesses();
-    du.remove();
+    usersToDelete.remove();
   }
 
   return TRUE;
@@ -778,8 +778,8 @@ bool KUsers::savepwd() {
 
     umask(0077);
 
-    for (unsigned int i=0; i<u.count(); i++) {
-      KUser *user = u.at(i);
+    for (unsigned int i=0; i<allUsers.count(); i++) {
+      KUser *user = allUsers.at(i);
       tmp_uid = user->getUID();	 	
 
 #if defined(__FreeBSD__) || defined(__bsdi__)
@@ -922,8 +922,8 @@ bool KUsers::savesdw() {
   s.sp_namp = (char *)malloc(200);
   s.sp_pwdp = (char *)malloc(200);
     
-  for (uint index = 0; index < u.count(); index++) {
-    up = u.at(index);
+  for (uint index = 0; index < allUsers.count(); index++) {
+    up = allUsers.at(index);
     if (up->getSPwd().isNull()) {
       err->addMsg(i18n("No shadow entry for %1.").arg(up->getName()));
       continue;
@@ -955,16 +955,16 @@ bool KUsers::savesdw() {
 }
 
 KUser *KUsers::lookup(const QString & name) {
-  for (uint i = 0; i<u.count(); i++)
-    if (u.at(i)->getName() == name)
-      return (u.at(i));
+  for (uint i = 0; i<allUsers.count(); i++)
+    if (allUsers.at(i)->getName() == name)
+      return (allUsers.at(i));
   return NULL;
 }
 
 KUser *KUsers::lookup(uid_t uid) {
-  for (uint i = 0; i<u.count(); i++)
-    if (u.at(i)->getUID() == uid)
-      return (u.at(i));
+  for (uint i = 0; i<allUsers.count(); i++)
+    if (allUsers.at(i)->getUID() == uid)
+      return (allUsers.at(i));
   return NULL;
 }
 
@@ -980,36 +980,36 @@ int KUsers::first_free() {
 }
 
 KUsers::~KUsers() {
-  u.clear();
-  du.clear();
+  allUsers.clear();
+  usersToDelete.clear();
 }
 
 uint KUsers::count() const {
-  return u.count();
+  return allUsers.count();
 }
 
 KUser *KUsers::operator[](uint num) {
-  return u.at(num);
+  return allUsers.at(num);
 }
 
 KUser *KUsers::first() {
-  return u.first();
+  return allUsers.first();
 }
 
 KUser *KUsers::next() {
-  return u.next();
+  return allUsers.next();
 }
 
 void KUsers::add(KUser *ku) {
-  u.append(ku);
+  allUsers.append(ku);
 }
 
 void KUsers::del(KUser *au, bool deleteHome, bool deleteMailBox) {
   KUser *nu = new KUser(au);
   nu->isDeleteHome = deleteHome;
   nu->isDeleteMailBox = deleteMailBox;
-  du.append(nu);
-  u.remove(au);
+  usersToDelete.append(nu);
+  allUsers.remove(au);
 }
 
 int KUser::createHome() {

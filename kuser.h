@@ -230,8 +230,8 @@ protected:
   uid_t sdw_uid;
   gid_t sdw_gid;
 
-  QPtrList<KUser> u;
-  QPtrList<KUser> du;
+  QPtrList<KUser> allUsers;
+  QPtrList<KUser> usersToDelete;
 
   bool doCreate();
   bool doDelete();

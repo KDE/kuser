@@ -30,7 +30,7 @@ nisDefaultsPage::nisDefaultsPage(QWidget* parent, const char* name)
   layout->sizeToFit();
 }
 
-void nisDefaultsPage::addOne(KContainerLayout *outer, 
+void nisDefaultsPage::addOne(KContainerLayout *outer,
        int row,
        bool homogeneous,
        bool expand,
@@ -46,19 +46,16 @@ void nisDefaultsPage::addOne(KContainerLayout *outer,
     TRUE);
 
   QLabel *label;
-  char *data1, *data2;
 
   if( row == 1 ) {
-    data1 = NONNISPWD;
-    data2 = NONNISGRP;
-    label = new QLabel(i18n(data1), inner);
+    label = new QLabel(i18n("Local passwd source:"), inner);
     label->setFixedSize(label->sizeHint());
     inner->packStart(label,expand,fill);
-    label = new QLabel(i18n(data2), inner);
+    label = new QLabel(i18n("Local group source:"), inner);
     label->setFixedSize(label->sizeHint());
     inner->packStart(label,expand,fill);
-  } 
- 
+  }
+
   if( row == 2 ) {
     passwdsrc = new QLineEdit(inner);
     passwdsrc->setFixedSize(passwdsrc->sizeHint());
@@ -66,19 +63,17 @@ void nisDefaultsPage::addOne(KContainerLayout *outer,
     groupsrc = new QLineEdit(inner);
     groupsrc->setFixedSize(groupsrc->sizeHint());
     inner->packStart(groupsrc,expand,fill);
-  } 
- 
+  }
+
   if( row == 3 ) {
-    data1 = NISPWD;
-    data2 = NISGRP;
-    label = new QLabel(i18n(data1), inner);
+    label = new QLabel(i18n("NIS passwd source:"), inner);
     label->setFixedSize(label->sizeHint());
     inner->packStart(label,expand,fill);
-    label = new QLabel(i18n(data2), inner);
+    label = new QLabel(i18n("NIS group source:"), inner);
     label->setFixedSize(label->sizeHint());
     inner->packStart(label,expand,fill);
-  } 
- 
+  }
+
   if( row == 4 ) {
     nispasswdsrc = new QLineEdit(inner);
     nispasswdsrc->setFixedSize(nispasswdsrc->sizeHint());
@@ -86,19 +81,17 @@ void nisDefaultsPage::addOne(KContainerLayout *outer,
     nisgroupsrc = new QLineEdit(inner);
     nisgroupsrc->setFixedSize(nisgroupsrc->sizeHint());
     inner->packStart(nisgroupsrc,expand,fill);
-  } 
- 
+  }
+
   if( row == 5 ) {
-    data1 = NISMINUID;
-    data2 = NISMINGID;
-    label = new QLabel(i18n(data1), inner);
+    label = new QLabel(i18n("NIS minimum UID:"), inner);
     label->setFixedSize(label->sizeHint());
     inner->packStart(label,expand,fill);
-    label = new QLabel(i18n(data2), inner);
+    label = new QLabel(i18n("NIS minimum GID:"), inner);
     label->setFixedSize(label->sizeHint());
     inner->packStart(label,expand,fill);
-  } 
- 
+  }
+
   if( row == 6 ) {
     nisminuid = new QLineEdit(inner);
     nisminuid->setFixedSize(nisminuid->sizeHint());
@@ -106,13 +99,13 @@ void nisDefaultsPage::addOne(KContainerLayout *outer,
     nismingid = new QLineEdit(inner);
     nismingid->setFixedSize(nismingid->sizeHint());
     inner->packStart(nismingid,expand,fill);
-  } 
- 
+  }
+
   if( row == 7 ) {
     enableNIS = new QCheckBox(i18n("Enable NIS support"), inner);
     enableNIS->setFixedSize(enableNIS->sizeHint());
     inner->packStart(enableNIS);
-  } 
+  }
 
   inner->sizeToFit();
   outer->packStart(inner,TRUE);

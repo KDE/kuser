@@ -454,6 +454,7 @@ unsigned int KUsers::first_free() {
 
     if (i == u.count())
       return (t);
+    i = 0;
   }
 
   KMsgBox::message(0, _("Error"), _("You have more than 65534 users!?!? You have ran out of uid space!"), KMsgBox::STOP);

@@ -99,9 +99,9 @@ Mounts::Mounts() {
       continue;
 
     quotafilename = QString("%1%2%3")
-                          .arg(mt->mnt_mountp)
-                          .arg((mt->mnt_mountp[strlen(mt->mnt_mountp) - 1] == '/') ? "" : "/")
-                          .arg(_KU_QUOTAFILENAME);
+                          .arg(QString::fromLatin1(mt->mnt_mountp))
+                          .arg(QString::fromLatin1((mt->mnt_mountp[strlen(mt->mnt_mountp) - 1] == '/') ? "" : "/"))
+                          .arg(QString::fromLatin1(_KU_QUOTAFILENAME));
 #elif defined(BSD)
   while ((mt=getfsent()) != NULL) {
     if (strstr(mt->fs_mntops,"quota")==NULL)

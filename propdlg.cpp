@@ -59,6 +59,7 @@ KDateWidget *propdlg::addDateGroup(QWidget *parent, QGridLayout *layout, int row
        days = 0;
     }
     date = new KDateWidget(QDate(1970,1,1).addDays(days), parent);
+    label->setBuddy(date);
     layout->addMultiCellWidget(date, row, row, 1, 2);
     
     QCheckBox *date_disabled = new QCheckBox(parent);
@@ -82,6 +83,7 @@ KIntSpinBox *propdlg::addDaysGroup(QWidget *parent, QGridLayout *layout, int row
     layout->addWidget(label, row, 0, AlignRight);
 
     days = new KIntSpinBox(parent);
+    label->setBuddy(days);
     days->setSuffix(i18n(" days"));
     days->setMaxValue(32767);
     if (never)
@@ -150,15 +152,16 @@ propdlg::propdlg(KUser *AUser, QWidget *parent, const char *name, int)
 
     leid = new QLineEdit(frame);
 //    whatstr = i18n("WHAT IS THIS: User Id");
-    addRow(frame, layout, row++, leid, i18n("User ID:"), whatstr);
+    addRow(frame, layout, row++, leid, i18n("&User ID:"), whatstr);
+    connect(leid, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
 
-    pbsetpwd = new QPushButton(i18n("Set Password..."), frame);
+    pbsetpwd = new QPushButton(i18n("Set &Password..."), frame);
     layout->addWidget(pbsetpwd, 0, 2);
     QObject::connect(pbsetpwd, SIGNAL(clicked()), this, SLOT(setpwd()));
 
     lefname = new QLineEdit(frame);
 //    whatstr = i18n("WHAT IS THIS: Full Name");
-    addRow(frame, layout, row++, lefname, i18n("Full name:"), whatstr);
+    addRow(frame, layout, row++, lefname, i18n("Full &name:"), whatstr);
     QObject::connect(lefname, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
 
     leshell = new QComboBox(true, frame);
@@ -171,12 +174,12 @@ propdlg::propdlg(KUser *AUser, QWidget *parent, const char *name, int)
     QObject::connect(leshell, SIGNAL(activated(const QString &)), this, SLOT(changed()));
     QObject::connect(leshell, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
 //    whatstr = i18n("WHAT IS THIS: Login Shell");
-    addRow(frame, layout, row++, leshell, i18n("Login shell:"), whatstr);
+    addRow(frame, layout, row++, leshell, i18n("&Login shell:"), whatstr);
 
     lehome = new QLineEdit(frame);
     QObject::connect(lehome, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
 //    whatstr = i18n("WHAT IS THIS: Home Directory");
-    addRow(frame, layout, row++, lehome, i18n("Home directory:"), whatstr);
+    addRow(frame, layout, row++, lehome, i18n("&Home directory:"), whatstr);
 
 #ifdef EXTENDED_GECOS_BSD
     // FreeBSD appears to use the comma separated fields in the GECOS entry
@@ -184,32 +187,32 @@ propdlg::propdlg(KUser *AUser, QWidget *parent, const char *name, int)
     leoffice = new QLineEdit(frame);  
     QObject::connect(leoffice, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
 //    whatstr = i18n("WHAT IS THIS: Office");
-    addRow(frame, layout, row++, leoffice, i18n("Office:"), whatstr);
+    addRow(frame, layout, row++, leoffice, i18n("&Office:"), whatstr);
 
     leophone = new QLineEdit(frame);
     QObject::connect(leophone, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
 //    whatstr = i18n("WHAT IS THIS: Office Phone");
-    addRow(frame, layout, row++, leophone, i18n("Office Phone:"), whatstr);
+    addRow(frame, layout, row++, leophone, i18n("Offi&ce Phone:"), whatstr);
 
     lehphone = new QLineEdit(frame);
     QObject::connect(lehphone, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
 //    whatstr = i18n("WHAT IS THIS: Home Phone");
-    addRow(frame, layout, row++, lehphone, i18n("Home Phone:"), whatstr);
+    addRow(frame, layout, row++, lehphone, i18n("Ho&me Phone:"), whatstr);
 #else
     leoffice1 = new QLineEdit(frame);
     QObject::connect(leoffice1, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
 //    whatstr = i18n("WHAT IS THIS: Office1");
-    addRow(frame, layout, row++, leoffice1, i18n("Office #1:"), whatstr);
+    addRow(frame, layout, row++, leoffice1, i18n("&Office #1:"), whatstr);
 
     leoffice2 = new QLineEdit(frame);
     QObject::connect(leoffice2, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
 //    whatstr = i18n("WHAT IS THIS: Office2");
-    addRow(frame, layout, row++, leoffice2, i18n("Office #2:"), whatstr);
+    addRow(frame, layout, row++, leoffice2, i18n("O&ffice #2:"), whatstr);
 
     leaddress = new QLineEdit(frame);
     QObject::connect(leaddress, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
 //    whatstr = i18n("WHAT IS THIS: Address");
-    addRow(frame, layout, row++, leaddress, i18n("Address:"), whatstr);
+    addRow(frame, layout, row++, leaddress, i18n("&Address:"), whatstr);
 #endif
     frontrow = row;
   }
@@ -229,15 +232,15 @@ propdlg::propdlg(KUser *AUser, QWidget *parent, const char *name, int)
     layout->addMultiCellWidget(new KSeparator(KSeparator::HLine, frame), row, row, 0, 3);
     row++;
 
-    lesmin = addDaysGroup(frame, layout, row++, i18n("Password may not be changed before"), i18n("after last password change."), user->getMin(), false);
-    lesmax = addDaysGroup(frame, layout, row++, i18n("Password expires"), i18n("after last password change."), user->getMax());
-    leswarn = addDaysGroup(frame, layout, row++, i18n("Issue expire warning"), i18n("before password expires."), user->getWarn());
-    lesinact = addDaysGroup(frame, layout, row++, i18n("Account will be disabled"), i18n("after expiration of password."), user->getInactive());
+    lesmin = addDaysGroup(frame, layout, row++, i18n("Password may &not be changed before"), i18n("after last password change."), user->getMin(), false);
+    lesmax = addDaysGroup(frame, layout, row++, i18n("Password &expires"), i18n("after last password change."), user->getMax());
+    leswarn = addDaysGroup(frame, layout, row++, i18n("&Issue expire warning"), i18n("before password expires."), user->getWarn());
+    lesinact = addDaysGroup(frame, layout, row++, i18n("Account will be &disabled"), i18n("after expiration of password."), user->getInactive());
 
     layout->addMultiCellWidget(new KSeparator(KSeparator::HLine, frame), row, row, 0, 3);
     row++;
 
-    lesexpire = addDateGroup(frame, layout, row++, i18n("Account will expire on:"), user->getExpire()); 
+    lesexpire = addDateGroup(frame, layout, row++, i18n("&Account will expire on:"), user->getExpire()); 
   }
 #endif
 
@@ -249,7 +252,7 @@ propdlg::propdlg(KUser *AUser, QWidget *parent, const char *name, int)
 
     leqmnt = new QComboBox(false, frame);
 //    whatstr = i18n("WHAT IS THIS: Select filesystem");
-    addRow(frame, layout, 0, leqmnt, i18n("Filesystem with quotas:"), whatstr, false);
+    addRow(frame, layout, 0, leqmnt, i18n("&Filesystem with quotas:"), whatstr, false);
 
     leqmnt->clear();
 
@@ -271,24 +274,24 @@ propdlg::propdlg(KUser *AUser, QWidget *parent, const char *name, int)
       leqfs->setValidator(new QIntValidator(group));
       QObject::connect(leqfs, SIGNAL(textChanged(const QString &)), this, SLOT(qchanged()));
 //      whatstr = i18n("WHAT IS THIS: Disk space soft quota");
-      addRow(group, groupLayout, row++, leqfs, i18n("Disk space soft quota:"), whatstr, false);
+      addRow(group, groupLayout, row++, leqfs, i18n("Disk space &soft quota:"), whatstr, false);
 
       leqfh = new QLineEdit(group);
       leqfh->setValidator(new QIntValidator(group));
       QObject::connect(leqfh, SIGNAL(textChanged(const QString &)), this, SLOT(qchanged()));
 //      whatstr = i18n("WHAT IS THIS: Disk space hard quota");
-      addRow(group, groupLayout, row++, leqfh, i18n("Disk space hard quota:"), whatstr, false);
+      addRow(group, groupLayout, row++, leqfh, i18n("Disk space &hard quota:"), whatstr, false);
 
       leqfcur = new QLabel(group);
 //      whatstr = i18n("WHAT IS THIS: Disk usage");
-      addRow(group, groupLayout, row++, leqfcur, i18n("Disk space in use:"), whatstr, false);
+      addRow(group, groupLayout, row++, leqfcur, i18n("Disk space in &use:"), whatstr, false);
 
 #ifndef BSD
       leqft = new QLineEdit(group);
       leqft->setValidator(new QIntValidator(group));
       QObject::connect(leqft, SIGNAL(textChanged(const QString &)), this, SLOT(qchanged()));
 //      whatstr = i18n("WHAT IS THIS: Time limit allowed for soft quota");
-      addRow(group, groupLayout, row++, leqft, i18n("Grace period:"), whatstr, false);
+      addRow(group, groupLayout, row++, leqft, i18n("&Grace period:"), whatstr, false);
 #endif
     }
 
@@ -306,24 +309,24 @@ propdlg::propdlg(KUser *AUser, QWidget *parent, const char *name, int)
       leqis->setValidator(new QIntValidator(group));
       QObject::connect(leqis, SIGNAL(textChanged(const QString &)), this, SLOT(qchanged()));
 //      whatstr = i18n("WHAT IS THIS: File number soft quota");
-      addRow(group, groupLayout, row++, leqis, i18n("File number soft quota:"), whatstr, false);
+      addRow(group, groupLayout, row++, leqis, i18n("File &number soft quota:"), whatstr, false);
 
       leqih = new QLineEdit(group);
       leqih->setValidator(new QIntValidator(group));
       QObject::connect(leqih, SIGNAL(textChanged(const QString &)), this, SLOT(qchanged()));
 //      whatstr = i18n("WHAT IS THIS: File number hard quota");
-      addRow(group, groupLayout, row++, leqih, i18n("File number hard quota:"), whatstr, false);
+      addRow(group, groupLayout, row++, leqih, i18n("File num&ber hard quota:"), whatstr, false);
 
       leqicur = new QLabel(group);
 //      whatstr = i18n("WHAT IS THIS: File number usage");
-      addRow(group, groupLayout, row++, leqicur, i18n("Number of files in use:"), whatstr, false);
+      addRow(group, groupLayout, row++, leqicur, i18n("Numbe&r of files in use:"), whatstr, false);
 
 #ifndef BSD
       leqit = new QLineEdit(group);
       leqit->setValidator(new QIntValidator(group));
       QObject::connect(leqit, SIGNAL(textChanged(const QString &)), this, SLOT(qchanged()));
 //      whatstr = i18n("WHAT IS THIS: Time limit allowed for file number soft quota");
-      addRow(group, groupLayout, row++, leqit, i18n("Grace period:"), whatstr, false);
+      addRow(group, groupLayout, row++, leqit, i18n("Grac&e period:"), whatstr, false);
 #endif
     }
   }
@@ -337,7 +340,7 @@ propdlg::propdlg(KUser *AUser, QWidget *parent, const char *name, int)
 
 //    whatstr = i18n("WHATSTHIS: Primary Group");
     cbpgrp = new QComboBox(false, frame, "cbpgrp");
-    addRow(frame, layout, row++, cbpgrp, i18n("Primary group:"), whatstr, false);
+    addRow(frame, layout, row++, cbpgrp, i18n("&Primary group:"), whatstr, false);
     QObject::connect(cbpgrp, SIGNAL(activated(const QString &)), this, SLOT(setpgroup(const QString &)));
 
     lstgrp = new KListView(frame);

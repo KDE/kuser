@@ -2,6 +2,8 @@
 #include <kapp.h>
 #include "kerror.h"
 #include <kconfig.h>
+#include <klocale.h>
+#include <kcmdlineargs.h>
 #include <ktmainwindow.h>
 #include <qfont.h>
 #include <unistd.h>
@@ -9,6 +11,9 @@
 #include "misc.h"
 #include "maindlg.h"
 #include "mainWidget.h"
+
+static const char *description = 
+	I18N_NOOP("KDE User editor");
 
 char tmp[1024];
 KConfig *config;
@@ -39,9 +44,10 @@ void donemain() {
 mainDlg *md = NULL;
 
 int main(int argc, char **argv) {
+  KCmdLineArgs::init(argc, argv, "kuser", description, _KU_VERSION);
   mainWidget *mw = NULL;
 
-  KApplication a(argc, argv, "kuser");
+  KApplication a;
 
   initmain();
 
@@ -50,7 +56,6 @@ int main(int argc, char **argv) {
     err->display();
     exit(1);
   }
-
 
   mw = new mainWidget("kuser");
   

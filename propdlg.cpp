@@ -155,7 +155,7 @@ propdlg::propdlg(KUser *AUser, QWidget *parent, const char *name, int)
 #endif
 
 #ifdef _KU_QUOTA
-  if (!AQuota)
+  if (&AQuota == NULL)
     is_quota = 0;
   else
     quota = AQuota;
@@ -280,7 +280,7 @@ propdlg::propdlg(KUser *AUser, QWidget *parent, const char *name, int)
     layout->addMultiCellWidget(new KSeparator(KSeparator::HLine, frame), row, row, 0, 3);
     row++;
 
-    lesexpire = addDateGroup(frame, layout, row++, i18n("Account will expire on:"), user->getExpire());
+    lesexpire = addDateGroup(frame, layout, row++, i18n("Account will expire on:"), user->getExpire()); 
   }
 #endif
 
@@ -408,7 +408,7 @@ propdlg::propdlg(KUser *AUser, QWidget *parent, const char *name, int)
 #if 0
     lechange = addDaysGroup(frame, layout, row++, i18n("Password must be changed before:"), user->getMax());
 #endif
-    leexpire = addDateGroup(frame, layout, row++, i18n("Account will expire after:"), user->getExpire());
+    leexpire = addDateGroup(frame, layout, row++, i18n("Account will expire after:"), user->getExpire()); 
   }
 #endif
 
@@ -508,21 +508,21 @@ void propdlg::save() {
   user->setHomePhone(lehphone->text());
   user->setClass(leclass->text());
 
-  // getDate() returns days since the epoch if a date is specified
+  // date() returns days since the epoch if a date is specified	
   // which we convert to seconds since the epoch.
-  // getDate() returns 0 if the `never expires' box is checked which
+  // date() returns 0 if the `never expires' box is checked which
   // ends up being converted to 0 seconds which is what we need.
   epoch->setTime_t(0);
 
 #if 0
   // HUH? What is this?
   temp_time->setTime_t(0);
-  *temp_time = temp_time->addDays(lechange->getDate());
+  *temp_time = temp_time->addDays(lechange->date());
   user->setLastChange(epoch->secsTo(*temp_time));
 #endif
 
   temp_time->setTime_t(0);
-  *temp_time = temp_time->addDays(leexpire->getDate());
+  *temp_time = temp_time->addDays(leexpire->date());
   user->setExpire(epoch->secsTo(*temp_time));
 
   delete epoch;

@@ -40,9 +40,15 @@ public slots:
   void quit();
   void userSelected(int i);
   void groupSelected(int i);
-  void edit();
-  void del();
-  void add();
+  
+  void useradd();
+  void useredit();
+  void userdel();
+  
+  void grpadd();
+  void grpedit();
+  void grpdel();
+  
   void about();
   void help();
   void setpwd();

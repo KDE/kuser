@@ -23,10 +23,16 @@ KTopLevelWidget(name)
 
   QPopupMenu *user = new QPopupMenu;
   CHECK_PTR(user);
-  user->insertItem(_("Edit..."), md, SLOT(edit()) );
-  user->insertItem(_("Delete..."), md, SLOT(del()) );
-  user->insertItem(_("Add..."), md, SLOT(add()) );
+  user->insertItem(_("Edit..."), md, SLOT(useredit()) );
+  user->insertItem(_("Delete..."), md, SLOT(userdel()) );
+  user->insertItem(_("Add..."), md, SLOT(useradd()) );
   user->insertItem(_("Set password..."), md, SLOT(setpwd()) );
+
+  QPopupMenu *group = new QPopupMenu;
+  CHECK_PTR(group);
+  group->insertItem(_("Edit..."), md, SLOT(grpedit()) );
+  group->insertItem(_("Delete..."), md, SLOT(grpdel()) );
+  group->insertItem(_("Add..."), md, SLOT(grpadd()) );
 
   QPopupMenu *help = new QPopupMenu;
   CHECK_PTR( help );
@@ -38,6 +44,7 @@ KTopLevelWidget(name)
   CHECK_PTR( menubar );
   menubar->insertItem(_("File"), file );
   menubar->insertItem(_("User"), user );
+  menubar->insertItem(_("Group"), group );
   menubar->insertSeparator();
   menubar->insertItem(_("Help"), help );
 
@@ -47,11 +54,20 @@ KTopLevelWidget(name)
   QPixmap pix;
 
   pix = kapp->getIconLoader()->loadIcon("useradd.xpm");
-  toolbar->insertButton(pix, 0, SIGNAL(clicked()), md, SLOT(add()), TRUE, _("Add user"));
+  toolbar->insertButton(pix, 0, SIGNAL(clicked()), md, SLOT(useradd()), TRUE, _("Add user"));
   pix = kapp->getIconLoader()->loadIcon("userdel.xpm");
-  toolbar->insertButton(pix, 0, SIGNAL(clicked()), md, SLOT(del()), TRUE, _("Delete user"));
+  toolbar->insertButton(pix, 0, SIGNAL(clicked()), md, SLOT(userdel()), TRUE, _("Delete user"));
   pix = kapp->getIconLoader()->loadIcon("useredit.xpm");
-  toolbar->insertButton(pix, 0, SIGNAL(clicked()), md, SLOT(edit()), TRUE, _("Edit user"));
+  toolbar->insertButton(pix, 0, SIGNAL(clicked()), md, SLOT(useredit()), TRUE, _("Edit user"));
+  
+  toolbar->insertSeparator();
+  
+  pix = kapp->getIconLoader()->loadIcon("grpadd.xpm");
+  toolbar->insertButton(pix, 0, SIGNAL(clicked()), md, SLOT(grpadd()), TRUE, _("Add group"));
+  pix = kapp->getIconLoader()->loadIcon("grpdel.xpm");
+  toolbar->insertButton(pix, 0, SIGNAL(clicked()), md, SLOT(grpdel()), TRUE, _("Delete group"));
+  pix = kapp->getIconLoader()->loadIcon("grpedit.xpm");
+  toolbar->insertButton(pix, 0, SIGNAL(clicked()), md, SLOT(grpedit()), TRUE, _("Edit group"));
   toolbar->setBarPos(KToolBar::Top);
 
   addToolBar(toolbar);

@@ -111,8 +111,8 @@ void mainDlg::reloadUsers(int id) {
   }
 
   lbusers->setAutoUpdate(TRUE);
-  lbusers->repaint();
   lbusers->setCurrentItem(id);
+  lbusers->repaint();
 }
 
 void mainDlg::reloadGroups(int gid) {
@@ -127,15 +127,15 @@ void mainDlg::reloadGroups(int gid) {
   }
 
   lbgroups->setAutoUpdate(TRUE);
-  lbgroups->repaint();
   lbgroups->setCurrentItem(gid);
+  lbgroups->repaint();
 }
 
-void mainDlg::edit() {
+void mainDlg::useredit() {
   userSelected(lbusers->currentItem());
 }
 
-void mainDlg::del() {
+void mainDlg::userdel() {
   uint i = 0;
   bool islast = FALSE;
 
@@ -167,7 +167,7 @@ void mainDlg::del() {
   }
 }
 
-void mainDlg::add() {
+void mainDlg::useradd() {
   usernamedlg *ud;
   propdlg *editUser;
 
@@ -432,5 +432,14 @@ void mainDlg::resizeEvent (QResizeEvent *rse) {
   kp->setGeometry(10, 10, sz.width()-20, sz.height()-20);
 //  lbusers->setGeometry(10, 10, sz.width()-20, sz.height()/2-70);
 //  lbgroups->setGeometry(10, sz.height()/2+60, sz.width()-20, sz.height()/2-70);
+}
+
+void mainDlg::grpadd() {
+}
+
+void mainDlg::grpedit() {
+}
+
+void mainDlg::grpdel() {
 }
 

@@ -1,3 +1,5 @@
+// $Id$
+
 #include "globals.h"
 
 #include <stdio.h>
@@ -145,7 +147,7 @@ propdlg::propdlg(KUser &AUser, QWidget *parent, const char *name, int)
   // Set the `base' to 1 so getDate returns 0 (base - 1) if the `never expires'
   // box is checked.
   epoch->setTime_t(0);
-  temp_time->setTime_t(user->getLastChange());
+  temp_time->setTime_t(user.getLastChange());
   lechange = new KDateCtl(w5, "lechange", i18n("Password never expires"),
                          i18n("Date when password expires"),
                          epoch->daysTo(*temp_time), 1,
@@ -153,7 +155,7 @@ propdlg::propdlg(KUser &AUser, QWidget *parent, const char *name, int)
 
   QObject::connect(lechange, SIGNAL(textChanged()), this, SLOT(changed()));
 
-  temp_time->setTime_t(user->getExpire());
+  temp_time->setTime_t(user.getExpire());
 
   leexpire = new KDateCtl(w5, "leexpire", i18n("Account never expires"),
                          i18n("Date when account expires"),

@@ -39,8 +39,7 @@ void init();
 #else
 #ifdef sgi
 #include <sys/quota.h>
-#define CORRECT_FSTYPE(type) (!strcmp(type,MNTTYPE_EFS) || !strcmp(type,MNTTYPE
-_XFS))
+#define CORRECT_FSTYPE(type) (!strcmp(type,MNTTYPE_EFS) || !strcmp(type,MNTTYPE_XFS))
 #define _KU_QUOTAFILENAME "quotas"
 #else
 #error "Your platform is not supported"

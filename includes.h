@@ -42,8 +42,6 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
-#include <locale.h>
-#include <libintl.h>
 #include "mrqpasswdlined.h"
 
 extern char tmp[1024];

@@ -227,7 +227,7 @@ void setquota(long int id, QList<Quota> *q)
     dq.dqb_bsoftlimit = btodb(q->at(i)->fsoft*1024);
     dq.dqb_bhardlimit = btodb(q->at(i)->fhard*1024);
     dq.dqb_curfiles  = q->at(i)->icur;
-   dq.dqb_fsoftlimit = q->at(i)->isoft;
+    dq.dqb_fsoftlimit = q->at(i)->isoft;
     dq.dqb_fhardlimit = q->at(i)->ihard;
     dq.dqb_btimelimit = DQ_BTIMELIMIT;
     dq.dqb_ftimelimit = DQ_FTIMELIMIT;
@@ -236,6 +236,7 @@ void setquota(long int id, QList<Quota> *q)
       printf("Quotactl returned: %d\n", dd);
       continue;
     }
+  }
 #endif
 }
 

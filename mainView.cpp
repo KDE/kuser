@@ -288,16 +288,30 @@ void mainView::slotApplySettings()
 
 void mainView::setpwd() 
 {
-  KUser *user = lbusers->getCurrentUser();
-  if ( !user ) return;
-  KUser newuser( user );
-  pwddlg d( this );
-  if ( d.exec() == QDialog::Accepted ) {
-    kug->getUsers().createPassword( &newuser, d.getPassword() );
-    newuser.setLastChange( now() );
-    kug->getUsers().mod( user, newuser );
-    updateUsers();
+  int count = lbusers->selectedItems().count();
+  if ( count == 0 ) return;
+  if ( count > 1 ) {
+    if ( KMessageBox::questionYesNo( 0, 
+      i18n("You have selected %1 users. Do you really want to change the password for all the selected users?").arg( count ) ) == KMessageBox::No ) return;
   }
+  pwddlg d( this );
+  if ( d.exec() != QDialog::Accepted ) return;
+  
+  KUser newuser, *user;
+  QListViewItem *item;
+  
+  item = lbusers->firstChild();
+  while ( item ) {
+    if ( item->isSelected() ) {
+      user = ((KUserViewItem*) item)->user();
+      newuser.copy( user );
+      kug->getUsers().createPassword( &newuser, d.getPassword() );
+      newuser.setLastChange( now() );
+      kug->getUsers().mod( user, newuser );
+    }
+    item = item->nextSibling();
+  }
+  updateUsers();
 }
 
 void mainView::properties() 

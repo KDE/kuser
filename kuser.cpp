@@ -952,7 +952,7 @@ void KUsers::del(KUser *au) {
 void KUser::createHome() {
 
   if (mkdir(QFile::encodeName(p_dir), 0700) != 0) {
-    err->addMsg(i18n("Cannot create home directory %1\nError: %1").arg(p_dir).arg(QString::fromLocal8Bit(strerror(errno))));
+    err->addMsg(i18n("Cannot create home directory %1\nError: %2").arg(p_dir).arg(QString::fromLocal8Bit(strerror(errno))));
     err->display();
     return;
   }

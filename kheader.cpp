@@ -264,7 +264,7 @@ void KHeader::setOrigin( int pos )
 }
 
 
-void KHeader::setHeaderLabel( int header, const char *text, int align )
+void KHeader::setHeaderLabel( int header, const QString & text, int align )
 {
 	labels[header]->setText( text, align );
 }
@@ -280,7 +280,7 @@ void KHeader::paintEvent( QPaintEvent * )
 	int pos = m_offset;
 	for( int i=0 ; i<(int)labels.size(); i++ )
 	{
-		labels[i]->paint( &paint, &g, style(), pos, width(), height(), i==m_selected);
+		labels[i]->paint( &paint, &g, style().guiStyle(), pos, width(), height(), i==m_selected);
 		pos += labels[i]->size();
 	}
 

@@ -31,8 +31,8 @@ public:
   bool getCopySkel() const;
   bool getUserPrivateGroup() const;
 
-  void setShell(const char *data);
-  void setHomeBase(const char *data);
+  void setShell(const QString & data);
+  void setHomeBase(const QString & data);
   void setCreateHomeDir(bool data);
   void setCopySkel(bool data);
   void setUserPrivateGroup(bool data);

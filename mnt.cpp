@@ -123,10 +123,10 @@ Mounts::Mounts() {
 
     QFile *f = new QFile(quotafilename);
     if (f->exists() == FALSE) {
-      printf("Quota file name %s does not exist\n", (const char *)quotafilename);
+      printf("Quota file name %s does not exist\n", quotafilename.local8Bit().data());
       continue;
     }
-    printf("Quota file name %s found\n", (const char *)quotafilename);
+    printf("Quota file name %s found\n", quotafilename.local8Bit().data());
 #ifdef OLD_GETMNTENT
     mnt = new MntEnt(mt->mnt_special, mt->mnt_mountp, mt->mnt_fstype,
                      mt->mnt_mntopts, quotafilename);

@@ -13,8 +13,8 @@ class KDateCtl: public QObject
 {
   Q_OBJECT
 public:
-  KDateCtl(QWidget *parent, const char *name, const char *checkTitle,
-	   const char *title, long adate, long abase, int ax, int ay);
+  KDateCtl(QWidget *parent, const char *name, const QString & checkTitle,
+	   const QString & title, long adate, long abase, int ax, int ay);
   ~KDateCtl();
   void setDate(long adate, long abase);
   long getDate();	

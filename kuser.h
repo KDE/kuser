@@ -160,7 +160,7 @@ class KUsers {
 public:
   KUsers();
   ~KUsers();
-  KUser *lookup(const char *name);
+  KUser *lookup(const QString & name);
   KUser *lookup(uid_t uid);
   uid_t first_free();
 

@@ -86,13 +86,13 @@ void KUserTable::insertItem(KUser *aku) {
 
        switch (sort) {
          case 0:
-           if (krow->getData()->getName() > (const char *)aku->getName()) {
+           if (krow->getData()->getName().compare(aku->getName()) > 0) {
              insertRow(tmpUser, i);
              isinserted = TRUE;
            }
            break;
          case 1:
-           if (krow->getData()->getFullName() > (const char *)aku->getFullName()) {
+           if (krow->getData()->getFullName().compare(aku->getFullName()) > 0) {
              insertRow(tmpUser, i);
              isinserted = TRUE;
            }

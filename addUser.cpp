@@ -110,7 +110,7 @@ bool addUser::checkHome() {
   struct stat s;
   int r;
 
-  r = stat(user.getHomeDir(), &s);
+  r = stat(QFile::encodeName(user.getHomeDir()), &s);
 
   if ((r == -1) && (errno = ENOENT))
     return true;
@@ -138,7 +138,7 @@ bool addUser::checkMailBox() {
   int r;
 
   mailboxpath = QString("%s/%s").arg(MAIL_SPOOL_DIR).arg(user.getFullName());
-  r = stat(mailboxpath, &s);
+  r = stat(QFile::encodeName(mailboxpath), &s);
   
   if ((r == -1) && (errno == ENOENT))
     return true;

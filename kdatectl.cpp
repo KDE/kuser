@@ -8,14 +8,14 @@
 #include "misc.h"
 
 KDateCtl::KDateCtl(QWidget *parent, const char *name,
-                   const char *checktitle, const char *title,
+                   const QString & checktitle, const QString & title,
                    long adate, long abase, int ax, int ay) {
   x = ax; y = ay;
 
-  day = addLineEdit(parent, QString("%1_day").arg(name), x, y+25, 30, 27, "");
-  day->setValidator(new QIntValidator(1, 31, parent, QString("va_%1_day").arg(name)));
+  day = addLineEdit(parent, QCString().sprintf("%d_day", name), x, y+25, 30, 27, "");
+  day->setValidator(new QIntValidator(1, 31, parent, QCString().sprintf("va_%s_day", name)));
 
-  month = new QComboBox(FALSE, parent, QString("%1_month").arg(name));
+  month = new QComboBox(FALSE, parent, QCString().sprintf("%s_month", name));
   month->clear();
   month->insertItem(i18n("January"));
   month->insertItem(i18n("February"));
@@ -32,14 +32,14 @@ KDateCtl::KDateCtl(QWidget *parent, const char *name,
 
   month->setGeometry(x+40, y+25, 100, 27);
 
-  year = addLineEdit(parent, QString("%1_year").arg(name), x+150, y+25, 50, 27, "");
-  year->setValidator(new QIntValidator(1970, 2023, parent, QString("va_%1_year").arg(name)));
+  year = addLineEdit(parent, QCString().sprintf("%s_year", name), x+150, y+25, 50, 27, "");
+  year->setValidator(new QIntValidator(1970, 2023, parent, QCString().sprintf("va_%s_year", name)));
 
-  isempty = new QCheckBox(checktitle, parent, QString("%1_isempty").arg(name));
+  isempty = new QCheckBox(checktitle, parent, QCString().sprintf("%s_isempty", name));
   isempty->setGeometry(x, y, 200, 20); 
   isempty->setAutoResize(true);
 
-  label = addLabel(parent, QString("%1_title").arg(name), x+210, y+25, 50, 27, title);
+  label = addLabel(parent, QCString().sprintf("%s_title", name), x+210, y+25, 50, 27, title);
 
   QObject::connect(isempty, SIGNAL(toggled(bool)), this,
                             SLOT(isEmptyToggled(bool)));

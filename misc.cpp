@@ -21,7 +21,8 @@
 #endif
 
 #include <qfile.h>
-#include <qmessagebox.h>
+
+#include <kmessagebox.h>
 
 #include "misc.h"
 #include "kglobal_.h"
@@ -40,18 +41,16 @@ int readnumentry(const QString &name) {
     return (0);
 }
 
-void backup(char const *name)
+void backup(const QString & name)
 {
-  char tmp[1024];
+  QString tmp = name + QString::fromLatin1(KU_BACKUP_EXT);
+  unlink(QFile::encodeName(tmp));
 
-  sprintf(tmp, "%s%s", name, KU_BACKUP_EXT);
-  unlink(tmp);
-
-  if (rename(name, tmp) == -1)
+  if (rename(QFile::encodeName(name), QFile::encodeName(tmp)) == -1)
   {
     QString str;
     str = i18n("Can't create backup file for %1").arg(name);
-    QMessageBox::critical(0, i18n("Error"), tmp, i18n("&OK"));
+    KMessageBox::error(0, tmp);
     exit (1);
   }
 }
@@ -81,7 +80,7 @@ long today() {
   return (time(NULL)/(24*60*60));
 }
 
-QLabel *addLabel(QWidget *parent, const char *name, int x, int y, int w, int h, const char *text) {
+QLabel *addLabel(QWidget *parent, const char *name, int x, int y, int w, int h, const QString & text) {
 
   QLabel *tmpLabel = new QLabel(parent, name);
   tmpLabel->setGeometry(x, y, w, h);
@@ -91,7 +90,7 @@ QLabel *addLabel(QWidget *parent, const char *name, int x, int y, int w, int h, 
   return (tmpLabel);
 }
 
-QLineEdit *addLineEdit(QWidget *parent, const char *name, int x, int y, int w, int h, const char *text) {
+QLineEdit *addLineEdit(QWidget *parent, const char *name, int x, int y, int w, int h, const QString & text) {
 
   QLineEdit *tmpLE = new QLineEdit(parent, name);
   tmpLE->setGeometry(x, y, w, h);
@@ -107,11 +106,11 @@ char *updateString(char *d, const char *t) {
   return d;
 }
 
-int getValue(long int &data, const char *text, const char *msg) {
-  char *check;
-  long int value = strtol(text, &check, 0);
-  if (check[0]) {
-    QMessageBox::warning(0, i18n("Error"), msg, i18n("&OK"));
+int getValue(long int &data, const QString & text, const QString & msg) {
+  bool ok;
+  long int value = text.toLong(&ok);
+  if (!ok) {
+    KMessageBox::error(0, msg);
     return (-1);
   }
   data = value;
@@ -119,37 +118,37 @@ int getValue(long int &data, const char *text, const char *msg) {
   return (0);
 }
 
-int getValue(int &data, const char *text, const char *msg) {
-  char *check;
-  long int value = strtol(text, &check, 0);
-  if (check[0]) {
-    QMessageBox::warning(0, i18n("Error"), msg, i18n("&OK"));
+int getValue(int &data, const QString & text, const QString & msg) {
+  bool ok;
+  long int value = text.toLong(&ok);
+  if (!ok) {
+    KMessageBox::error(0, msg);
     return (-1);
   }
-  data = (int)value;
+  data = value;
 
   return (0);
 }
 
-int getValue(unsigned int &data, const char *text, const char *msg) {
-  char *check;
-  long int value = strtol(text, &check, 0);
-  if (check[0]) {
-    QMessageBox::warning(0, i18n("Error"), msg, i18n("&OK"));
+int getValue(unsigned int &data, const QString & text, const QString & msg) {
+  bool ok;
+  long int value = text.toLong(&ok);
+  if (!ok) {
+    KMessageBox::error(0, msg);
     return (-1);
   }
-  data = (unsigned int)value;
+  data = value;
 
   return (0);
 }
 
-int copyFile(QString from, QString to) {
+int copyFile(const QString & from, const QString & to) {
   QFile fi;
   QFile fo;
   char buf[4096];
 
 #ifdef _KU_DEBUG
-  printf("%s -> %s\n", (const char *)from, (const char *)to);
+  printf("%s -> %s\n", from.local8Bit().data(), to.local8Bit().data());
 #endif
   
   fi.setName(from);

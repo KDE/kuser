@@ -192,7 +192,7 @@ void KRowTable::paintCell( QPainter *p, int row, int col )
 		( current_col == col || current_col == -1 ) )
 	{
 		QColor fc;
-		if( style() == WindowsStyle )
+		if( style().guiStyle() == WindowsStyle )
 			fc = darkBlue;
 		else
 			fc = g.text();
@@ -209,7 +209,7 @@ void KRowTable::paintCell( QPainter *p, int row, int col )
 	    ( current_col == col || current_col == -1 ) &&
 		hasFocus() )
 	{
-		if( style() == WindowsStyle )
+		if( style().guiStyle() == WindowsStyle )
 			p->drawWinFocusRect( 1, 1, cellWidth( col )-2, cellHeight( row )-2 );
 		else
 		{

@@ -10,17 +10,17 @@
 
 class KUser;
 
-QString readentry(const QString &name, const QString def = "");
+QString readentry(const QString &name, const QString def = QString::null);
 int readnumentry(const QString &name);
-void backup(const char *name);
+void backup(const QString & name);
 char *convertdate(char *buf, const long int base, const long int days);
-QLabel *addLabel(QWidget *parent, const char *name, int x, int y, int w, int h, const char *text);
-QLineEdit *addLineEdit(QWidget *parent, const char *name, int x, int y, int w, int h, const char *text);
+QLabel *addLabel(QWidget *parent, const char *name, int x, int y, int w, int h, const QString & text);
+QLineEdit *addLineEdit(QWidget *parent, const char *name, int x, int y, int w, int h, const QString & text);
 char *updateString(char *d, const char *t);
-int getValue(long int &data, const char *text, const char *msg);
-int getValue(int &data, const char *text, const char *msg);
-int getValue(unsigned int &data, const char *text, const char *msg);
+int getValue(long int &data, const QString & text, const QString & msg);
+int getValue(int &data, const QString & text, const QString & msg);
+int getValue(unsigned int &data, const QString & text, const QString & msg);
 long today();
-int copyFile(QString from, QString to);
+int copyFile(const QString & from, const QString & to);
 
 #endif // _KU_MISC_H

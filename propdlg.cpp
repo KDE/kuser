@@ -542,15 +542,15 @@ void propdlg::qcharchanged(const QString &) {
 void propdlg::saveq() {
   QuotaMnt *tmpq = quota[chquota];
 
-  tmpq->setfhard(atol(leqfh->text()));
-  tmpq->setfsoft(atol(leqfs->text()));
+  tmpq->setfhard(leqfh->text().toLong());
+  tmpq->setfsoft(leqfs->text().toLong());
 #ifndef BSD
-  tmpq->setftime(atol(leqft->text()));
+  tmpq->setftime(leqft->text().toLong());
 #endif
-  tmpq->setihard(atol(leqih->text()));
-  tmpq->setisoft(atol(leqis->text()));
+  tmpq->setihard(leqih->text().toLong());
+  tmpq->setisoft(leqis->text().toLong());
 #ifndef BSD
-  tmpq->setitime(atol(leqit->text()));
+  tmpq->setitime(leqit->text().toLong());
 #endif
 }
 #else

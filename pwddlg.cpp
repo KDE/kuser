@@ -8,6 +8,8 @@
 #include <crypt.h>
 #endif
 
+#include <qfile.h>
+
 #include <kbuttonbox.h>
 
 #include "pwddlg.h"
@@ -108,7 +110,7 @@ void pwddlg::ok() {
     salt[1] = set[rand() % strlen(set)];
     salt[2] = 0;
 
-    strcpy(tmp, crypt(leusername1->text(), salt));
+    strcpy(tmp, crypt(QFile::encodeName(leusername1->text()), salt));
 
 #ifdef _KU_SHADOW
     if (is_shadow != 0) {

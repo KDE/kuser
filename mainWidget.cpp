@@ -72,7 +72,8 @@ void mainWidget::readSettings() {
   QString geom = config->readEntry("Geometry");
   if (!geom.isEmpty()) {
     int width, height;
-    sscanf(geom, "%dx%d", &width, &height);
+    // #### use readSizeEntry instead
+    sscanf(geom.ascii(), "%dx%d", &width, &height);
     resize(width, height);
   }
 }
@@ -82,6 +83,7 @@ void mainWidget::writeSettings() {
   KConfig *config = kapp->config();
   config->setGroup("Appearance");
   QString geom;
+  // #### use readSizeEntry instead
   geom = QString("%1x%2").arg(geometry().width()).arg(geometry().height());
   config->writeEntry("Geometry", geom);
 }

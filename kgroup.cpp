@@ -185,7 +185,7 @@ bool KGroups::save() {
 
   for (unsigned int i=0; i<g.count(); i++) {
     KGroup *gr = g.at(i);
-    tmpS = QString("%1:%2:%3:")
+    tmpS = QString::fromLatin1("%1:%2:%3:")
       .arg(gr->getName())
       .arg(gr->getPwd())
       .arg(gr->getGID());
@@ -196,7 +196,7 @@ bool KGroups::save() {
        tmpS += gr->user(j);
     }
     tmpS += '\n';
-    fputs(tmpS, grp);
+    fputs(tmpS.local8Bit(), grp);
   }
   fclose(grp);
 

@@ -98,7 +98,7 @@ void KGroupTable::insertItem(KGroup *kg) {
            }
            break;
          case 1:
-           if (krow->getData()->getName() > (const char *)kg->getName()) {
+           if (krow->getData()->getName().compare(kg->getName()) > 0) {
              insertRow(tmpGroup, i);
              isinserted = TRUE;
            }

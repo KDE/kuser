@@ -100,9 +100,9 @@ bool userDefaultsPage::getUserPrivateGroup() const {
   return userPrivateGroup->isChecked();
 }
 
-void userDefaultsPage::setShell(const char *data) {
+void userDefaultsPage::setShell(const QString & data) {
   for (int i=0; i<shell->count(); i++)
-    if (strcmp(shell->text(i), data) == 0) {
+    if (shell->text(i) == data) {
       shell->setCurrentItem(i);
       return;
     }
@@ -111,7 +111,7 @@ void userDefaultsPage::setShell(const char *data) {
   shell->setCurrentItem(1);
 }
 
-void userDefaultsPage::setHomeBase(const char *data) {
+void userDefaultsPage::setHomeBase(const QString & data) {
   home->setText(data);
 }
 

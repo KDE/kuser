@@ -11,7 +11,7 @@
 #include "editDefaults.h"
 #include <klocale.h>
 
-editDefaults::editDefaults(QWidget* parent, const QString &name)
+editDefaults::editDefaults(QWidget* parent, const char * name)
   : QTabDialog(parent, name, TRUE, 184320) {
   page1 = new userDefaultsPage(this, "user_page");
   addTab(page1, i18n("User"));

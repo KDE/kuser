@@ -61,7 +61,7 @@ public:
 	* Set the text to display in the header, and the text alignment.
 	* The default alignment is AlignCenter.
 	*/
-	void setHeaderLabel( int header, const char *text, int align = AlignCenter );
+	void setHeaderLabel( int header, const QString & text, int align = AlignCenter );
 
 	/**
 	* Set the flags for an individual header.  This can be used to override

@@ -8,7 +8,7 @@
 class editDefaults : public QTabDialog {
   Q_OBJECT
 public:
-  editDefaults(QWidget* parent = NULL, const QString &name = NULL);
+  editDefaults(QWidget* parent = 0, const char * name = 0);
   virtual ~editDefaults();
 
   QString getShell() const;

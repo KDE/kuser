@@ -13,6 +13,8 @@ int quotactl(int cmd, const char * special, int id, caddr_t addr) {
 #  endif
 #endif
 
+#include <qfile.h>
+
 #include "misc.h"
 #include "kglobal_.h"
 #include "mnt.h"
@@ -151,17 +153,17 @@ static int doQuotaCtl(int ACmd, uint AUID, const MntEnt *m, struct dqblk *dq) {
   return res;
 #else
 #  if defined(_KU_EXT2_QUOTA) || defined(HAVE_IRIX)
-         return quotactl(ACmd, m->getfsname(), AUID, (caddr_t) dq);
+         return quotactl(ACmd, QFile::encodeName(m->getfsname()), AUID, (caddr_t) dq);
 #  else
 #    ifdef __osf__
-         return quotactl((char*)m->getdir().latin1(), ACmd, AUID, (caddr_t) dq);
+         return quotactl((char*)QFile::encodeName(m->getdir()).data(), ACmd, AUID, (caddr_t) dq);
 #    else
 #        ifdef BSD
-             return quotactl(m->getdir().latin1(), ACmd, AUID, (caddr_t) dq);
+             return quotactl(QFile::encodeName(m->getdir()), ACmd, AUID, (caddr_t) dq);
 #        endif
 #    endif
 #    ifdef _KU_HPUX_QUOTA
-         return quotactl(ACmd, m->getquotafilename(), AUID, dq);
+         return quotactl(ACmd, QFile::encodeName(m->getquotafilename()), AUID, dq);
 #    endif
 #  endif
 #endif

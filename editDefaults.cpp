@@ -18,14 +18,7 @@
  *  Boston, MA 02111-1307, USA.
  **/
 
-#include <qpixmap.h>
-#include <qlayout.h>
-#include <qlabel.h>
-#include <qgrid.h>
-
-#include <kapplication.h>
 #include <ktabwidget.h>
-#include <klocale.h>
 #include <kcombobox.h>
 #include <kabc/ldapconfigwidget.h>
 

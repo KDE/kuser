@@ -1,6 +1,7 @@
 # KDE Config File 
 [KDE Desktop Entry]
 Name=User Manager
+Name[de]=Benutzermanager
 Name[fr]=Gestionnaire d'utilisateurs
 Name[ru]=Управление пользователями
 Name[fi]=KДyttДjДhallinta
@@ -14,6 +15,7 @@ Icon=kuser.xpm
 Type=Application
 DocPath=kuser/index.html
 Comment=Full Featured User Manager
+Comment[de]=Ein vollstДndiger Benutzermanager
 Comment[fr]=Gestionnaire d'utilisateurs complet
 Comment[ru]=Расширенное управление пользователями
 Comment[fi]=Kaikki ominaisuudet sisДltДvД kДyttДjДhallinta

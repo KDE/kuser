@@ -8,7 +8,7 @@ extern "C" int unlink __P ((__const char *__name));
 
 KUser *user_lookup(const char *name) {                                               
   for (uint i = 0; i<users.count(); i++)                                       
-    if (!strcmp(name, users.at(i)->p_name))                                     
+    if (name == users.at(i)->p_name)                                     
       return (users.at(i));                                                    
   return (NULL);                                                               
 }                                                                               
@@ -167,7 +167,7 @@ void init() {
   pwd_read();
 
 #ifdef _XU_SHADOW
-  if (is_shadow)
+  if (is_shadow != 0)
     sdw_read();
 #endif
 

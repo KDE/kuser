@@ -27,12 +27,8 @@ KTopLevelWidget(name)
   QObject::connect(list, SIGNAL(highlighted(int)), this, SLOT(highlighted(int)));
   QObject::connect(list, SIGNAL(selected(int)), this, SLOT(selected(int)));
 
-printf("List created\n");
-  
   reload(0);
 
-printf("Data loaded\n");
-  
   QPushButton* pbquit;
   pbquit = new QPushButton( this, "pbquit" );
   pbquit->setFont(rufont);
@@ -103,7 +99,7 @@ void maindlg::reload(int id) {
   QPainter *p = new QPainter;
   QPixmap pix(353, 20);
   list->clear();
-  for (KUser *curuser=users.first(); curuser!=0; curuser=users.next()) {
+  for (KUser *curuser=users.first(); curuser!=NULL; curuser=users.next()) {
     pix.fill(white);
     p->begin(&pix);
     p->setFont(rufont);
@@ -115,10 +111,6 @@ void maindlg::reload(int id) {
   }
 
   list->setCurrentItem(id);
-}
-
-void maindlg::Ok() {
-  hide();
 }
 
 static int prev = 0;
@@ -339,14 +331,12 @@ void maindlg::properties() {
 
 void maindlg::selected(int i) {
   propdlg *editUser;
-  KUser *user = NULL;
 
-  editUser = new propdlg(user = new KUser(users.at(i)), this, "userin");
+  editUser = new propdlg(users.at(i), this, "userin");
   if (editUser->exec != 0) {
     highlighted(list->currentItem());
   }
 
-  delete user;
   delete editUser;
 }
 

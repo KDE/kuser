@@ -26,6 +26,7 @@ SRCMETA =       kdatectl.moc maindlg.moc propdlg.moc usernamedlg.moc pwddlg.moc 
 HEADERS =       kdatectl.h kuser.h maindlg.h   propdlg.h  nmt.h quotatool.h sdwtool.h pwdtool.h includes.h misc.h usernamedlg.h pwddlg.h mrqpasswdlined.h
 OBJECTS =	kdatectl.o kuser.o main.o maindlg.o mnt.o propdlg.o   quotatool.o pwdtool.o sdwtool.o misc.o usernamedlg.o pwddlg.o mrqpasswdlined.o
 TARGET	=	kuser
+EDITABLE =	$(POFILES) $(DOCFILES) $(SOURCES) $(HEADERS)
 
 # Where to install binaries
 PREFIX	=	@prefix@
@@ -99,6 +100,9 @@ dopo: $(MOFILES)
 clean:
 	rm -f *.o *.bak *.b *~ *% #*
 	rm -f $(TARGET) $(SRCMETA)
+
+edit::
+	xemacs -fn "-edict-fixed-medium-r-*-*-*-120-*-*-*-*-koi8-r" -geometry 142x41+0+0 $(EDITABLE)&
 
 %.moc: %.h
 	$(MOC) $< -o $@

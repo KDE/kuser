@@ -20,7 +20,6 @@ public:
 
 extern void quota_read();
 extern void quota_write();
-extern int isquotainkernel();
 
 #endif // _XU_QUOTA
 

@@ -9,7 +9,7 @@ void sdw_read(void)
 {
   FILE *f;
   struct spwd *spw;
-  KUser *up;
+  KUser *up = NULL;
 
   if (is_shadow) {
     if ((f = fopen(SHADOW_FILE, "r")) == NULL) {
@@ -19,11 +19,9 @@ void sdw_read(void)
       return;
     }
 
-    up = new KUser;
-  
     while (spw = fgetspent(f))      // read a shadow password structure
     {
-      if (up = user_lookup(spw->sp_namp))
+      if ((up = user_lookup(spw->sp_namp)) != NULL)
         shadow_cp(up, spw);             // cp the shadow info
       else {
         sprintf(tmp, _("No /etc/passwd entry for %s.\n\
@@ -33,8 +31,6 @@ Entry will be removed at the next `Save'-operation."), spw->sp_namp);
     }
 
     fclose(f);
-
-    delete up;
   }
 }
 
@@ -42,7 +38,7 @@ void sdw_write()
 {
   FILE *f;
   spwd *spwp;
-  static spwd s;
+  spwd s;
   KUser *up;
 
 
@@ -93,9 +89,9 @@ void sdw_write()
   free(s.sp_pwdp);
 }
 
-void shadow_cp(KUser *up, spwd const *src)
+void shadow_cp(KUser *up, const spwd *src)
 {
-  up->s_pwd    = strdup(src->sp_pwdp);        // cp the encrypted pwd
+  up->s_pwd.setStr(src->sp_pwdp);        // cp the encrypted pwd
 
   up->s_lstchg   = src->sp_lstchg;
   up->s_min      = src->sp_min;

@@ -25,7 +25,7 @@ KUser::KUser() {
 #endif
 
 #ifdef _XU_QUOTA
-  if (is_quota = 1) {
+  if (is_quota == 1) {
   }
 #endif
 }
@@ -43,6 +43,7 @@ KUser::KUser(KUser *copy) {
     p_gid     = copy->p_gid;
 
 #ifdef _XU_SHADOW   
+  if (is_shadow == 1) {
     s_pwd     = copy->s_pwd;
     s_lstchg  = copy->s_lstchg;
     s_min     = copy->s_min;
@@ -51,10 +52,13 @@ KUser::KUser(KUser *copy) {
     s_inact   = copy->s_inact;
     s_expire  = copy->s_expire;
     s_flag    = copy->s_flag;
+  }
 #endif
 
 #ifdef _XU_QUOTA
-  quota = copy->quota;
+  if (is_quota == 1) {
+    quota = copy->quota;
+  }
 #endif 
 }
 

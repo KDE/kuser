@@ -10,6 +10,7 @@ class propdlg : public QTabDialog
 
 public:
   propdlg(KUser *auser, QWidget *parent = 0, const char *name = 0, int isprep = false);
+  ~propdlg();
 
 protected slots:
   void ok();
@@ -27,8 +28,32 @@ private:
 private:
   KUser       *user;
 
-  QPushButton *pbok;
-  QPushButton *pbcancel;
+  QWidget *w1;
+  QWidget *w2;
+  QWidget *w3;
+
+  QLabel *l1;
+  QLabel *l2;
+  QLabel *ld3;
+  QLabel *l4;
+  QLabel *l5;
+  QLabel *l6;
+  QLabel *l7;
+  QLabel *ld7;
+  QLabel *l8;
+  QLabel *ld8;
+  QLabel *l9;
+  QLabel *ld9;
+  QLabel *l10;
+  QLabel *l11;
+  QLabel *l12;
+  QLabel *l13;
+  QLabel *l14;
+  QLabel *l15;
+  QLabel *l16;
+
+  QPushButton *pbsetpwd;
+
   QLabel      *leuser;
   QLineEdit   *leid;
   QLineEdit   *legid;
@@ -51,8 +76,6 @@ private:
   KDateCtl    *lesexpire;
   QLabel      *leqfcur;
   QLabel      *leqicur;
-  QLabel      *lbuser;
-  char        *uname;
 };
 
 #endif // _XU_PROPDLG_H_

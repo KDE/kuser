@@ -67,30 +67,6 @@ void setmntprivs(long id, QList<Quota> *q);
 int getentry(const char *name, int quotatype);
 int alldigits(const char *s);
 
-int isquotainkernel() {
-  int qcmd, fd;
-  char *qfpathname = NULL;
-  static int warned = 0;
-  extern int errno;
-  struct dqblk dq;
-
-  if (is_quota == 0)
-    return;
-
-  qcmd = QCMD(Q_GETQUOTA, USRQUOTA);
-
-  if (quotactl(qcmd, (const char *)mounts.at(0)->fsname, 0, (caddr_t) &dq) != 0) {
-    if ((errno == EOPNOTSUPP || errno == ENOSYS) && !warned) {
-      warned++;
-      QMessageBox::message(_("Error"), _("Quotas are not compiled into this kernel."), "Ok");
-      sleep(3);
-      is_quota = 0;
-    }
-  }
-
-  return (is_quota);
-}
-
 int hasquota(struct MntEnt *mnt, int type, char **qfnamep)
 {
   char *buf, *option, *pathname;

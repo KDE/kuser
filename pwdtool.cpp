@@ -16,10 +16,15 @@ void pwd_read() {
 
   while ((p = getpwent())!=NULL) {
     tmpKU = new KUser();
+
     tmpKU->p_name.setStr(p->pw_name);
     tmpKU->p_pwd.setStr(p->pw_passwd);
     tmpKU->p_dir.setStr(p->pw_dir);
     tmpKU->p_shell.setStr(p->pw_shell);
+
+#ifdef _KU_DEBUG
+printf("Reading user: %s\n", (const char *)tmpKU->p_name);
+#endif
 
     if ((!p->pw_gecos) || (!p->pw_gecos[0]))
     {

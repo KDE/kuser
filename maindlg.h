@@ -14,7 +14,6 @@ public:
 public slots:
   void properties();
   void quit();
-  void Ok();
   void highlighted(int i);
   void selected(int i);
   void edit();

@@ -142,7 +142,7 @@ int getValue(unsigned int &data, const QString & text, const QString & msg) {
   return (0);
 }
 
-#define BLOCK_SIZE 4096
+#define BLOCK_SIZE 65536
 
 int copyFile(const QString & from, const QString & to) {
   QFile fi;
@@ -158,16 +158,19 @@ int copyFile(const QString & from, const QString & to) {
   
   if (!fi.exists()) {
     err->addMsg(i18n("File %1 does not exist.").arg(from));
+		err->display(); 
     return (-1);
   }
 
   if (!fi.open(IO_ReadOnly)) {
     err->addMsg(i18n("Can not open file %1 for reading.").arg(from));
+		err->display(); 
     return (-1);
   }
     
   if (!fo.open(IO_Raw | IO_WriteOnly | IO_Truncate)) {
     err->addMsg(i18n("Can not open file %1 for writing.").arg(to));
+		err->display(); 
     return (-1);
   }
   

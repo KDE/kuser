@@ -86,3 +86,4 @@ void usernamedlg::ok() {
 void usernamedlg::cancel() {
   reject();
 }
+#include "usernamedlg.moc"

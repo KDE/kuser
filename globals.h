@@ -67,6 +67,7 @@ extern "C" int unlink(const char *);
 #endif
 
 #define KU_HOMEDIR_PERM 0755
+#define KU_KDEDIRS_PERM 0700													
 #define KU_MAILBOX_PERM 0660
 
 #define KU_MAILBOX_GID 0

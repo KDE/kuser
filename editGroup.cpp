@@ -90,3 +90,4 @@ void editGroup::del() {
   m_Users->centerCurrentItem();
 }
 
+#include "editGroup.moc"

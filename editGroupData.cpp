@@ -250,3 +250,4 @@ void editGroupData::add()
 void editGroupData::del()
 {
 }
+#include "editGroupData.moc"

@@ -36,6 +36,8 @@
 #include "kglobal_.h"
 #include "kuser.h"
 #include "misc.h"
+#include <kstddirs.h>
+#include <kmessagebox.h>
 
 #ifdef _KU_QUOTA
 #include "mnt.h"
@@ -564,6 +566,7 @@ bool KUsers::doCreate() {
     if(user->getCopySkel()) {
        user->copySkel();
        user->setCopySkel(0);
+       user->createKDE();
     }
   }
 
@@ -571,15 +574,17 @@ bool KUsers::doCreate() {
 }
 
 bool KUsers::doDelete() {
-  for (unsigned int i=0; i<du.count(); i++) {
-    KUser *user = du.at(i);
+	uint ucnt = du.count();
+  KUser *user;
 
+  user = du.first();
+  for (unsigned int i=0; i<ucnt; i++) {
+    user = du.current(); 
     user->removeHome();
     user->removeCrontabs();
     user->removeMailBox();
     user->removeProcesses();
-
-    du.remove(i);
+    du.remove();
   }
 
   return TRUE;
@@ -784,15 +789,9 @@ void KUsers::del(KUser *au) {
 }
 
 void KUser::createHome() {
-  QDir d = QDir::root();
-
-  if (d.cd(p_dir)) {
-    err->addMsg(i18n("Directory %1 already exists").arg(p_dir));
-    err->display();
-  }
 
   if (mkdir(QFile::encodeName(p_dir), 0700) != 0) {
-    err->addMsg(i18n("Cannot create home directory\nError: %1").arg(QString::fromLocal8Bit(strerror(errno))));
+    err->addMsg(i18n("Cannot create home directory %1\nError: %1").arg(p_dir).arg(QString::fromLocal8Bit(strerror(errno))));
     err->display();
     return;
   }
@@ -808,6 +807,99 @@ void KUser::createHome() {
     err->display();
     return;
   }
+}
+
+int KUser::createKDE() {
+
+	const QStringList levels = QStringList() << "/.kde/" << "share/" << "doc/";	
+	QStringList types;		
+	QString k_dir = p_dir;
+	KStandardDirs kstddirs;	
+
+	for (uint level=0; level<levels.count(); level++) {	/* build kde base dirs */
+		k_dir.append(levels[level]);	
+		if (tryCreate(k_dir))
+			return(-1);
+ 	}
+
+  types = kstddirs.KStandardDirs::allTypes();		/* retrieve kde deflt types */
+
+	for(uint i=0; i<types.count(); i++) {					/* build kde subdirectories */
+		k_dir = p_dir;															/* start with $HOME dir			*/
+		k_dir.append(levels[0]);										/* add base dir "/.kde/"		*/
+		char *ctype = types[i].latin1();						/* convert to char for call	*/
+  	QString tpath = KStandardDirs::kde_default(ctype);		/* get deflt path */
+		k_dir.append(tpath);												/* complete full path name	*/
+		if (tryCreate(k_dir))												/* able to create it?				*/
+			return(-1);																/* -no, exit stage left			*/
+	}
+
+  return(0);
+
+}
+
+int KUser::tryCreate(const QString &dir) {
+struct stat sb;
+int	rc = 0;
+
+rc = stat(QFile::encodeName(dir), &sb);
+	if (rc == 0) {                                      /* dir exists		 	*/
+   	if (S_ISDIR(sb.st_mode)) {												/* is directory?	*/
+																											/* yes it is...		*/
+			if (KMessageBox::
+				warningContinueCancel(0, i18n("Directory %1 already exists!\nWill make  %2 owner and change permissions.\nDo you want to continue?")
+.arg(dir).arg(p_name), QString::null, i18n("&Continue")) ==
+KMessageBox::Continue) {
+																											/* user continued */
+ 				if (chown(QFile::encodeName(dir), p_uid, p_gid) != 0) {
+   				err->addMsg(i18n("Cannot change owner of %1 directory\nError: %2")
+						.arg(dir).arg(strerror(errno)));
+   				err->display();
+ 				}
+		  	if (chmod(QFile::encodeName(dir), KU_KDEDIRS_PERM) != 0) {
+   				err->addMsg(i18n("Cannot change permissions on %1 directory\nError: %2").arg(dir).arg(strerror(errno)));
+   				err->display();
+ 				}
+				return(0);
+			}
+			else {																					/* user cancelled	*/
+   			err->addMsg(i18n("Directory %1 left 'as is'.\nVerify ownership and permissions for user %2 who may not be able to log in!").arg(dir).arg(p_name));
+   			err->display();
+				return(-1);
+			}
+		}
+		else {																			/* exists but not as dir */
+   		err->addMsg(i18n("%1 exists and is not a directory, user %2 will not be able to log in!").arg(dir).arg(p_name));
+   		err->display();
+			return(-1);
+		}
+	}
+	else {																					/* stat rc = -1					*/
+		if (errno == ENOENT) {										/* good! dir doesn't exist	*/
+ 			if (mkdir(QFile::encodeName(dir), 0700) != 0) {
+   			err->addMsg(i18n("Cannot create %1 directory\nError: %2").arg(dir)
+					.arg(strerror(errno)));
+   			err->display();
+				return(-1);
+ 		 	}
+ 			if (chown(QFile::encodeName(dir), p_uid, p_gid) != 0) {
+   			err->addMsg(i18n("Cannot change owner of %1 directory\nError: %2")
+					.arg(dir).arg(strerror(errno)));
+   			err->display();
+ 			}
+ 			if (chmod(QFile::encodeName(dir), KU_KDEDIRS_PERM) != 0) {
+   			err->addMsg(i18n("Cannot change permissions on %1 directory\nError: %2")					.arg(dir).arg(strerror(errno)));
+   			err->display();
+ 			}
+			return(0);
+ 		}
+		else {																		/* some other error on stat   */
+   		err->addMsg(i18n("stat call on %1 failed.\nError: %2").arg(dir)
+				.arg(strerror(errno)));
+   		err->display();
+			return(-1);
+		}
+ 	}
 }
 
 int KUser::createMailBox() {
@@ -849,7 +941,7 @@ void KUser::copyDir(const QString &srcPath, const QString &dstPath) {
   QString prefix(SKEL_FILE_PREFIX);
   int len = prefix.length();
 
-  s.setFilter(QDir::Dirs);
+  s.setFilter(QDir::Dirs | QDir::Hidden);
 
   for (uint i=0; i<s.count(); i++) {
     QString name(s[i]);
@@ -869,6 +961,7 @@ void KUser::copyDir(const QString &srcPath, const QString &dstPath) {
       name = name.remove(0, len);
 
     d.mkdir(name, FALSE);
+
     if (chown(QFile::encodeName(d.filePath(name)), p_uid, p_gid) != 0) {
       err->addMsg(i18n("Cannot change owner of directory %1\nError: %2")
                   .arg(d.filePath(s[i])).arg(QString::fromLocal8Bit(strerror(errno))));
@@ -897,7 +990,6 @@ void KUser::copyDir(const QString &srcPath, const QString &dstPath) {
       name = name.remove(0, len);
 
     if (copyFile(filename, d.filePath(name)) == -1) {
-      err->display();
       continue;
     }
 
@@ -953,12 +1045,20 @@ int KUser::removeHome() {
 #else
       command = QString("/bin/rm -rf -- %1").arg(p_dir);
 #endif
-    if (system(QFile::encodeName(command)) != 0) {
-      err->addMsg(i18n("Cannot remove home directory %1\nError: %2")
-                  .arg(command).arg(QString::fromLocal8Bit(strerror(errno))));
+      if (system(QFile::encodeName(command)) != 0) {
+             err->addMsg(i18n("Cannot remove home directory %1\nError: %2")
+                       .arg(command).arg(strerror(errno)));
+             err->display();
+      }
+    } else {
+      err->addMsg(i18n("Removal of home directory %1 failed (uid = %2, gid = %3)").arg(p_dir).arg(sb.st_uid).arg(sb.st_gid));
       err->display();
-     }
-   }
+    }
+  else {
+    err->addMsg(i18n("stat call on file %1 failed\nError: %2")
+                 .arg(p_dir).arg(strerror(errno)));
+    err->display();
+  }
 
   return 0;
 }

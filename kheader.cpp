@@ -336,3 +336,4 @@ void KHeader::leaveEvent( QEvent * )
 	if( m_temp_sel != -1 )
 		repaint();
 }
+#include "kheader.moc"

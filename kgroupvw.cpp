@@ -92,3 +92,4 @@ void KGroupView::resizeEvent(QResizeEvent *rev) {
   m_Groups->setGeometry(0, m_Header->height(), rev->size().width(), rev->size().height()-m_Header->height());
 }
 
+#include "kgroupvw.moc"

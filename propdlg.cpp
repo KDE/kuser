@@ -50,10 +50,10 @@ propdlg::propdlg(KUser &AUser, QWidget *parent, const char *name, int)
   pbok = new QPushButton(i18n("&OK"), this, "pbok");
   pbok->setGeometry(200, 425, 100, 30);
   pbok->setDefault(TRUE);
-  QObject::connect(pbok, SIGNAL(pressed()), this, SLOT(ok()));
+  QObject::connect(pbok, SIGNAL(clicked()), this, SLOT(ok()));
   pbcancel = new QPushButton(i18n("&Cancel"), this, "pbcancel");
   pbcancel->setGeometry(320, 425, 100, 30);
-  QObject::connect(pbcancel, SIGNAL(pressed()), this, SLOT(cancel()));
+  QObject::connect(pbcancel, SIGNAL(clicked()), this, SLOT(cancel()));
 
   w1 = new QWidget(this, "wd_Password");
 
@@ -679,3 +679,4 @@ void propdlg::cancel() {
   reject();
 }
 
+#include "propdlg.moc"

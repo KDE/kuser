@@ -126,3 +126,4 @@ void userDefaultsPage::setCopySkel(bool data) {
 void userDefaultsPage::setUserPrivateGroup(bool data) {
   userPrivateGroup->setChecked(data);
 }
+#include "userDefaultsPage.moc"

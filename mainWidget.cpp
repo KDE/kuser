@@ -108,3 +108,4 @@ void mainWidget::toggleStatusBar() {
     statusBar()->hide();
 }
 
+#include "mainWidget.moc"

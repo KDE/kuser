@@ -65,7 +65,7 @@ Mounts::Mounts() {
 
 #ifdef OLD_GETMNTENT
   struct mnttab *mt = NULL;
-#elif BSD
+#elif defined(BSD)
   struct fstab *mt = NULL;
 #elif defined(_AIX)
   struct fstab *mt = NULL;
@@ -98,7 +98,7 @@ Mounts::Mounts() {
                           .arg(mt->mnt_mountp)
                           .arg((mt->mnt_mountp[strlen(mt->mnt_mountp) - 1] == '/') ? "" : "/")
                           .arg(_KU_QUOTAFILENAME);
-#elif BSD /* Heh, heh, so much for standards, eh Bezerkely? */
+#elif defined(BSD) /* Heh, heh, so much for standards, eh Bezerkely? */
   while ((mt=getfsent()) != NULL) {
     if (strstr(mt->fs_mntops,"quota")==NULL)
       continue;
@@ -150,7 +150,7 @@ Mounts::Mounts() {
     is_quota = 1;
   }
   fclose(fp);
-#elif BSD
+#elif defined(BSD)
     mnt = new MntEnt(mt->fs_spec,mt->fs_file,mt->fs_vfstype,
 		   mt->fs_mntops,quotafilename);
     m.append(mnt);

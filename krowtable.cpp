@@ -387,3 +387,4 @@ int KRowTable::selectColumn()
 {
 	return current_col;
 }
+#include "krowtable.moc"

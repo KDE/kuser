@@ -127,3 +127,4 @@ void pwddlg::ok() {
 void pwddlg::cancel() {
   reject();
 }
+#include "pwddlg.moc"

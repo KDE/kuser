@@ -159,3 +159,4 @@ void KDateCtl::setFont(const QFont &f) {
   label->setFont(f);
   isempty->setFont(f);
 }
+#include "kdatectl.moc"

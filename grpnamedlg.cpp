@@ -111,3 +111,4 @@ void grpnamedlg::ok()
 void grpnamedlg::cancel() {
   reject();
 }
+#include "grpnamedlg.moc"

@@ -97,3 +97,4 @@ void KUserView::resizeEvent(QResizeEvent *rev)
 
   m_Users->setGeometry(0, m_Header->height(), rev->size().width(), rev->size().height()-m_Header->height());
 }
+#include "kuservw.moc"

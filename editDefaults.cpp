@@ -63,3 +63,4 @@ void editDefaults::setCopySkel(bool data) {
 void editDefaults::setUserPrivateGroup(bool data) {
   page1->setUserPrivateGroup(data);
 }
+#include "editDefaults.moc"

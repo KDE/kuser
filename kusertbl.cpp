@@ -121,3 +121,4 @@ void KUserTable::setCurrentItem(int item) {
   updateCell(current, 0, FALSE);
   emit highlighted(current, 0);
 }
+#include "kusertbl.moc"

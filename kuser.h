@@ -105,6 +105,8 @@ protected:
   friend class KUsers;
 
   void createHome();
+  int createKDE();
+  int tryCreate(const QString &dir);
   int createMailBox();
   int copySkel();
 

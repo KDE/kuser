@@ -20,6 +20,7 @@
 #include "misc.h"
 
 #include "addUser.h"
+#include <kmessagebox.h>
 
 #ifdef _KU_QUOTA
 addUser::addUser(KUser &AUser, Quota &AQuota, QWidget *parent, const char *name, int isprep) :
@@ -90,6 +91,8 @@ void addUser::ok() {
       user.setCreateHome(1);
       user.setCreateMailBox(1);
     }
+		else																													
+			return;	
 
   if (copyskel->isChecked())
     user.setCopySkel(1);
@@ -109,20 +112,22 @@ bool addUser::checkHome() {
   struct stat s;
   int r;
 
-  r = stat(QFile::encodeName(user.getHomeDir()), &s);
+  QString h_dir = user.getHomeDir();
+  r = stat(QFile::encodeName(h_dir), &s);
 
   if ((r == -1) && (errno == ENOENT))
     return true;
 
-  if (r == 0)
-    if (S_ISDIR(s.st_mode))
-      err->addMsg(i18n("Directory %1 already exists (uid = %2, gid = %3)")
-                 .arg(user.getHomeDir())
-                 .arg(s.st_uid)
-                 .arg(s.st_gid));
-    else
-      err->addMsg(i18n("%1 is not a directory").arg(user.getHomeDir()));
-  else
+  if (r == 0) {
+    if (S_ISDIR(s.st_mode)) {
+       if (KMessageBox::
+         warningContinueCancel (0, i18n("Directory %1 already exists!\n%2 may become owner and permissions may change.\nDo you really want to use %3?").arg(h_dir).arg(user.getName()).arg(h_dir), QString::null, i18n("&Continue")) == KMessageBox::Cancel)
+                  return false;
+            else
+                  return true;
+       } else
+	  err->addMsg(i18n("%1 is not a directory").arg(h_dir));
+  } else
     err->addMsg(QString("checkHome: stat: %1 ").arg(QString::fromLocal8Bit(strerror(errno))));
   
   err->display();
@@ -157,3 +162,4 @@ bool addUser::checkMailBox() {
 
   return false;
 }
+#include "addUser.moc"

@@ -462,3 +462,4 @@ void mainView::grpdel() {
   changed = TRUE;
 }
 
+#include "mainView.moc"

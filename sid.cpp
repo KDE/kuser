@@ -20,6 +20,7 @@
  
 SID::SID()
 {
+  mRid = 0; mSid = QString::null; mDom = QString::null;
 }
 
 SID::SID( const SID &sid )
@@ -86,7 +87,7 @@ void SID::setDOM( const QString &dom )
   updateSID();
 }
 
-QString SID::getSID() const
+const QString& SID::getSID() const
 {
   return mSid;
 }
@@ -96,7 +97,7 @@ uint SID::getRID() const
   return mRid;
 }
 
-QString SID::getDOM() const
+const QString& SID::getDOM() const
 {
   return mDom;
 }

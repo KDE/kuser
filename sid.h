@@ -36,9 +36,9 @@ public:
   void setRID( const QString &rid );
   void setRID( uint rid );
   void setDOM( const QString &dom );
-  QString getSID() const;
+  const QString &getSID() const;
   uint getRID() const ;
-  QString getDOM() const;
+  const QString &getDOM() const;
 
 private:
   void updateSID();

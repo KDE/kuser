@@ -64,7 +64,7 @@ void getquota(long int id, QList<Quota> *q)
   if (is_quota == 0)
     return;
 
-  int qcmd, fd;
+  int fd;
   static int warned = 0;
   struct dqblk dq;
 #ifdef _KU_UFS_QUOTA
@@ -113,7 +113,7 @@ void getquota(long int id, QList<Quota> *q)
 #endif
 
 #ifdef _KU_EXT2_QUOTA
-  qcmd = QCMD(Q_GETQUOTA, USRQUOTA);
+  int qcmd = QCMD(Q_GETQUOTA, USRQUOTA);
 
   for (uint i=0; i<mounts.count(); i++) {
       if (quotactl(qcmd, (const char *)mounts.at(i)->fsname, id, (caddr_t) &dq) != 0) {
@@ -144,7 +144,7 @@ void setquota(long int id, QList<Quota> *q)
   if (is_quota == 0)
     return;
 
-  int qcmd, fd;
+  int fd;
   struct dqblk dq;
 
 #ifdef _KU_UFS_QUOTA
@@ -184,7 +184,7 @@ void setquota(long int id, QList<Quota> *q)
 
 #ifdef _KU_EXT2_QUOTA
   int dd = 0;
-  qcmd = QCMD(Q_SETQUOTA, USRQUOTA);
+  int qcmd = QCMD(Q_SETQUOTA, USRQUOTA);
   for (uint i=0; i<mounts.count(); i++) {
     dq.dqb_curblocks  = btodb(q->at(i)->fcur*1024);
     dq.dqb_bsoftlimit = btodb(q->at(i)->fsoft*1024);

@@ -7,6 +7,8 @@
 #include "maindlg.moc"
 #include "usernamedlg.h"
 
+#include <kapp.h>
+
 maindlg::maindlg( QWidget *parent, const char *name) :
 KTopLevelWidget(name)
 //, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | 
@@ -261,7 +263,10 @@ void maindlg::setpwd() {
 }
 
 void maindlg::help() {
-  int id = 0;
+    // Torben
+    kapp->invokeHTMLHelp( "", "" );
+    
+    /* int id = 0;
 
   id = fork();
 
@@ -275,7 +280,7 @@ void maindlg::help() {
 
     system(path);
     exit(0);
-  }
+  } */
 }
 
 void maindlg::properties() {

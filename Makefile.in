@@ -6,7 +6,7 @@ SYSFLAGS = 	-DLINUX -D_XU_QUOTA -D_XU_SHADOW -D_KU_DEBUG # -g
 # For Linux
 OFLAGS =	-O2 -W -DLOCDIR=\"$(LOCALEDIR)\" -DSTDC_HEADERS -DHAVE_UNISTD_H
 CFLAGS	=	$(OFLAGS) $(SYSFLAGS) # -g
-LFLAGS	=	-L@qt_libraries@ -L@kde_libraries@ -L@x_libraries@ -lqt -L./ -lX11 -lXext -lintl -lkdecore -lkdeui
+LFLAGS	=	@all_libraries@  -lqt -L./ -lX11 -lXext -lintl -lkdecore -lkdeui
 MOC	=	@MOC@
 MSGFMT	=	msgfmt
 
@@ -21,17 +21,17 @@ POFILES =	po/kuser.po
 MOFILES =	po/kuser.mo
 DOCFILES=	doc/index.html doc/bugnet-member.gif
 PICFILES=	pic/user.bmp
-SOURCES =	datetool.cpp kuser.cpp main.cpp maindlg.cpp mnt.cpp propdlg.cpp quotatool.cpp pwdtool.cpp sdwtool.cpp misc.cpp usernamedlg.cpp pwddlg.cpp mrqpasswdlined.cpp
-SRCMETA =       datetool.moc maindlg.moc propdlg.moc usernamedlg.moc pwddlg.moc mrqpasswdlined.moc
-HEADERS =       datetool.h kuser.h maindlg.h   propdlg.h  nmt.h quotatool.h sdwtool.h pwdtool.h includes.h misc.h usernamedlg.h pwddlg.h mrqpasswdlined.h
-OBJECTS =	datetool.o kuser.o main.o maindlg.o mnt.o propdlg.o   quotatool.o pwdtool.o sdwtool.o misc.o usernamedlg.o pwddlg.o mrqpasswdlined.o
+SOURCES =	kdatectl.cpp kuser.cpp main.cpp maindlg.cpp mnt.cpp propdlg.cpp quotatool.cpp pwdtool.cpp sdwtool.cpp misc.cpp usernamedlg.cpp pwddlg.cpp mrqpasswdlined.cpp
+SRCMETA =       kdatectl.moc maindlg.moc propdlg.moc usernamedlg.moc pwddlg.moc mrqpasswdlined.moc
+HEADERS =       kdatectl.h kuser.h maindlg.h   propdlg.h  nmt.h quotatool.h sdwtool.h pwdtool.h includes.h misc.h usernamedlg.h pwddlg.h mrqpasswdlined.h
+OBJECTS =	kdatectl.o kuser.o main.o maindlg.o mnt.o propdlg.o   quotatool.o pwdtool.o sdwtool.o misc.o usernamedlg.o pwddlg.o mrqpasswdlined.o
 TARGET	=	kuser
 
 # Where to install binaries
 PREFIX	=	@prefix@
 SBINDIR =	$(PREFIX)/bin
 PICDIR  =       $(PREFIX)/lib/pic/kuser
-DOCDIR  =	$(PREFIX)/doc/kuser
+DOCDIR  =	$(PREFIX)/share/doc/HTML/en/kuser
 LOCALEDIR =	$(PREFIX)/lib/locale
 MODIR   =	$(LOCALEDIR)/ru/LC_MESSAGES
 

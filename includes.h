@@ -23,7 +23,7 @@
 #include <qwindefs.h>
 #include <qtooltip.h>
 #include <qtabdlg.h>
-#include <Kconfig.h>
+#include <kconfig.h>
 #include <kapp.h>
 #include <kdatepik.h>
 #include <kmenubar.h>

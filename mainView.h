@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 #include <qevent.h>
-#include <qlist.h>
+#include <qptrlist.h>
 #include <qpushbutton.h>
 #include <qpixmap.h>
 #include <qtabwidget.h>

@@ -226,7 +226,7 @@ uint KGroups::first_free_sam()
 {
   uint t;
 
-  for (t = 1000; t<65534; t++)
+  for (t = 30000; t<65534; t++)
     if (lookup_sam(t) == NULL)
       return t;
 

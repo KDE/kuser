@@ -48,7 +48,7 @@ public:
 
   KGroup *lookup(const QString &name);
   KGroup *lookup(gid_t gid);
-  gid_t first_free();
+  int first_free();
 
   bool save();
   bool load();

@@ -183,7 +183,7 @@ public:
   ~KUsers();
   KUser *lookup(const QString & name);
   KUser *lookup(uid_t uid);
-  uid_t first_free();
+  int first_free();
 
   bool load();
 

@@ -941,7 +941,7 @@ KUser *KUsers::lookup(uid_t uid) {
   return NULL;
 }
 
-uid_t KUsers::first_free() {
+int KUsers::first_free() {
   uid_t t = _KU_FIRST_UID ;
 
   for (t = _KU_FIRST_UID ; t<65534; t++)

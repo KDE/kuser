@@ -4,6 +4,7 @@
 #define _KU_VERSION "1.0"
 
 #include "../config.h"
+#include <paths.h>
 #include <kconfig.h>
 #include "kerror.h"
 
@@ -16,13 +17,17 @@ extern int is_shadow;
 
 #define KU_BACKUP_EXT ".bak"
 
-#define MAIL_SPOOL_DIR "/var/spool/mail"
+#ifdef HAVE_PATHS_H
+  #define SHELL_FILE _PATH_SHELLS
+  #define MAIL_SPOOL_DIR _PATH_MAILDIR
+#else
+  #define SHELL_FILE /etc/shells
+  #define MAIL_SPOOL_DIR /var/spool/mail
+#endif
 
 #if defined(__FreeBSD__) || defined(__bsdi__)
   #undef HAVE_SHADOW
   #include <pwd.h>
-  #include <paths.h>
-  #define SHELL_FILE _PATH_SHELLS
   #define PASSWORD_FILE _PATH_MASTERPASSWD
   #define PASSWORD_FILE_MASK S_IRUSR | S_IWUSR
   #define PWMKDB _PATH_PWD_MKDB" -p "PASSWORD_FILE
@@ -31,7 +36,6 @@ extern int is_shadow;
   #define SKELDIR "/usr/share/skel"
   #define SKEL_FILE_PREFIX "dot"
 #else
-  #define SHELL_FILE "/etc/shells"
   #define PASSWORD_FILE "/etc/passwd"
   #define PASSWORD_FILE_MASK S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH
   #define GROUP_FILE "/etc/group"

@@ -365,7 +365,7 @@ KGroup *KGroups::lookup(gid_t gid) {
   return NULL;
 }
 
-gid_t KGroups::first_free() {
+int KGroups::first_free() {
   gid_t t = _KU_FIRST_GID ;
 
   for (t = _KU_FIRST_GID ; t<65534; t++)

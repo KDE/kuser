@@ -104,8 +104,11 @@ void mainView::useredit() {
 void mainView::userdel() {
   KUser *user = lbusers->getCurrentUser();
 
+  if (!user)
+    return;
+
   delUser dlg(user, this);
-  
+
   if (!dlg.exec())
      return;
 
@@ -121,10 +124,10 @@ void mainView::userdel() {
 
   changed = true;
 
-  config->setGroup("template"); 
+  config->setGroup("template");
   if (!config->readBoolEntry("userPrivateGroup", KU_USERPRIVATEGROUP))
     return;
-    
+
   const QString &userName = user->getName();
   KGroup *group = 0;
 

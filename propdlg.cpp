@@ -145,7 +145,7 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
   // Set the `base' to 1 so getDate returns 0 (base - 1) if the `never expires'
   // box is checked.
   epoch->setTime_t(0);
-  temp_time->setTime_t(user->getp_change());
+  temp_time->setTime_t(user->getLastChange());
   lechange = new KDateCtl(w5, "lechange", i18n("Password never expires"),
                          i18n("Date when password expires"),
                          epoch->daysTo(*temp_time), 1,
@@ -153,7 +153,7 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
 
   QObject::connect(lechange, SIGNAL(textChanged()), this, SLOT(changed()));
 
-  temp_time->setTime_t(user->getp_expire());
+  temp_time->setTime_t(user->getExpire());
 
   leexpire = new KDateCtl(w5, "leexpire", i18n("Account never expires"),
                          i18n("Date when account expires"),
@@ -387,14 +387,14 @@ propdlg::~propdlg() {
 void propdlg::loadgroups() {
   uint i;
 
-  for (i = 0; i<groups->getNumber(); i++) {
-    if (groups->get(i)->lookup_user(user->getName())!=0)
-      m_Group->insertItem(groups->get(i)->getname());
+  for (i = 0; i<groups->count(); i++) {
+    if (groups->group(i)->lookup_user(user->getName())!=0)
+      m_Group->insertItem(groups->group(i)->getName());
     else
-      m_Other->insertItem(groups->get(i)->getname());
+      m_Other->insertItem(groups->group(i)->getName());
 
-    cbpgrp->insertItem(groups->get(i)->getname());
-    if (groups->get(i)->getgid() == user->getGID())
+    cbpgrp->insertItem(groups->group(i)->getName());
+    if (groups->group(i)->getGID() == user->getGID())
       cbpgrp->setCurrentItem(i);
   }
 
@@ -526,7 +526,7 @@ void propdlg::saveg() {
     if (groups->lookup(m_Other->text(i))->lookup_user(user->getName()) != NULL)
       groups->lookup(m_Other->text(i))->removeUser(user->getName());
 
-  user->setGID(groups->lookup(cbpgrp->text(cbpgrp->currentItem()))->getgid());
+  user->setGID(groups->lookup(cbpgrp->text(cbpgrp->currentItem()))->getGID());
 }
 
 #ifdef _KU_QUOTA

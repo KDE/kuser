@@ -117,8 +117,8 @@ void mainDlg::reloadUsers(int id) {
   lbusers->setAutoUpdate(FALSE);
   lbusers->clear();
 
-  for (uint i = 0; i<u->getNumber(); i++) {
-    ku = u->get(i);
+  for (uint i = 0; i<u->count(); i++) {
+    ku = u->user(i);
     lbusers->insertItem(ku);
   }
 
@@ -133,8 +133,8 @@ void mainDlg::reloadGroups(int gid) {
   lbgroups->setAutoUpdate(FALSE);
   lbgroups->clear();
 
-  for (uint i = 0; i<g->getNumber(); i++) {
-    kg = g->get(i);
+  for (uint i = 0; i<g->count(); i++) {
+    kg = g->group(i);
     lbgroups->insertItem(kg);
   }
 
@@ -157,7 +157,7 @@ void mainDlg::userdel() {
                      i18n("Cancel"), i18n("Delete")) == 2) {
 
     i = lbusers->currentItem();
-    if (i == u->getNumber()-1)
+    if (i == u->count()-1)
       islast = TRUE;
 
     uint uid = lbusers->getCurrentUser()->getUID();
@@ -180,8 +180,8 @@ void mainDlg::userdel() {
     if (config->readBoolEntry("userPrivateGroup", KU_USERPRIVATEGROUP)) {
       bool found = false;
 
-      for (uint i=0; i<u->getNumber(); i++)
-        if (u->get(i)->getGID() == gid) {
+      for (uint i=0; i<u->count(); i++)
+        if (u->user(i)->getGID() == gid) {
           found = true;
           break;
         }
@@ -289,13 +289,13 @@ void mainDlg::useradd() {
 
       if ((tg = g->lookup(tk->getName())) == NULL) {
         tg = new KGroup();
-        tg->setgid(g->first_free());
-        tg->setname(tk->getName());
+        tg->setGID(g->first_free());
+        tg->setName(tk->getName());
         g->add(tg);
         reloadGroups(lbgroups->currentItem());
       }
 
-      tk->setGID(tg->getgid());
+      tk->setGID(tg->getGID());
     }
     u->add(tk);
 #ifdef _KU_QUOTA
@@ -310,7 +310,7 @@ void mainDlg::useradd() {
 #endif
   }
 
-  reloadUsers(u->getNumber()-1);
+  reloadUsers(u->count()-1);
 
   delete au;
 }
@@ -384,7 +384,7 @@ void mainDlg::groupSelected(int i) {
   editGroup *egdlg;
   KGroup *tmpKG;
 
-  tmpKG = g->get(i);
+  tmpKG = g->group(i);
 
   if (tmpKG == NULL) {
     printf(i18n("Null pointer tmpKG in mainDlg::groupSelected(%d)\n"), i);
@@ -472,7 +472,7 @@ void mainDlg::grpadd() {
   }
 
   tk = new KGroup();
-  tk->setgid(gid);
+  tk->setGID(gid);
   
   gd = new grpnamedlg(tk, this);
   if (gd->exec() == 0) {
@@ -500,7 +500,7 @@ void mainDlg::grpdel() {
                      i18n("Cancel"), i18n("Delete")) == 2) {
 
     i = lbgroups->currentItem();
-    if (i == g->getNumber()-1)
+    if (i == g->count()-1)
       islast = TRUE;
 
     g->del(lbgroups->getCurrentGroup());

@@ -700,11 +700,11 @@ KUsers::~KUsers() {
   u.clear();
 }
 
-uint KUsers::getNumber() {
+uint KUsers::count() const {
   return (u.count());
 }
 
-KUser *KUsers::get(uint num) {
+KUser *KUsers::user(uint num) {
   return (u.at(num));
 }
 

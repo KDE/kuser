@@ -164,8 +164,8 @@ public:
 
   KUser *first();
   KUser *next();
-  uint getNumber();
-  KUser *get(uint num);
+  uint count() const;
+  KUser *user(uint num);
 
   void add(KUser *ku);
   void del(KUser *au);

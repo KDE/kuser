@@ -22,12 +22,12 @@ editGroup::editGroup(KGroup *akg,
 
   kg = akg;
 
-  for (i = 0; i<kg->getUsersNumber(); i++)
-    m_Group->insertItem(kg->getUserName(i));
+  for (i = 0; i<kg->count(); i++)
+    m_Group->insertItem(kg->user(i));
 
-  for (i = 0; i<users->getNumber(); i++)
-    if (kg->lookup_user(users->get(i)->getName()) == 0)
-      m_Users->insertItem(users->get(i)->getName());
+  for (i = 0; i<users->count(); i++)
+    if (kg->lookup_user(users->user(i)->getName()) == 0)
+      m_Users->insertItem(users->user(i)->getName());
 
   if (m_Users->count() != 0)
     m_Users->setCurrentItem(0);
@@ -42,7 +42,7 @@ editGroup::~editGroup()
 }
 
 void editGroup::ok() {
-  kg->clearUsers();
+  kg->clear();
 
   for (uint i=0; i<m_Group->count(); i++)
     kg->addUser(m_Group->text(i));

@@ -1,7 +1,7 @@
 #ifndef _KU_GLOBALS_H_
 #define _KU_GLOBALS_H_
 
-#define _KU_VERSION "0.3"
+#define _KU_VERSION "0.4"
 
 #ifdef HAVE_SYS_PARAM_H
 #include <sys/param.h>
@@ -21,9 +21,13 @@ extern int is_shadow;
 #define PASSWORD_FILE "/etc/master.passwd"
 #define PASSWORD_FILE_MASK S_IRUSR | S_IWUSR
 #define PWMKDB "/usr/sbin/pwd_mkdb -p /etc/master.passwd"
+#define SKEL_DIR "/usr/share/skel"
+#define SKEL_FILE_PREFIX "dot"
 #else
 #define PASSWORD_FILE "/etc/passwd"
 #define PASSWORD_FILE_MASK S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH
+#define SKEL_DIR "/etc/skel"
+#define SKEL_FILE_PREFIX ""
 #endif
 
 extern char picspath[200];

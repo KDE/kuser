@@ -102,13 +102,14 @@ void addUser::createHome() {
     err->addMsg(tmp, STOP);
     err->display();
   }
-
 }
 
 int addUser::copySkel() {
-  QDir s("/etc/skel");
+  QDir s(SKEL_DIR);
   QDir d(user->getp_dir());
   QString tmp;
+  QString prefix(SKEL_FILE_PREFIX);
+  int len = prefix.length();
 
   s.setFilter(QDir::Files | QDir::Hidden);
 
@@ -129,19 +130,23 @@ int addUser::copySkel() {
   }
 
   for (uint i=0; i<s.count(); i++) {
-    if (copyFile(s.filePath(s[i]), d.filePath(s[i])) == -1) {
+    QString filename(s[i]);
+    if (filename.left(len) == prefix) {
+      filename = filename.remove(0, len);
+    }
+    if (copyFile(s.filePath(s[i]), d.filePath(filename)) == -1) {
       err->display();
       continue;
     }
 
-    if (chown(d.filePath(s[i]), user->getp_uid(), user->getp_gid()) != 0) {
+    if (chown(d.filePath(filename), user->getp_uid(), user->getp_gid()) != 0) {
       QString tmp;
       tmp.sprintf(_("Cannot change owner of file %s\nError: %s"), (const char *)d.filePath(s[i]), strerror(errno));
       err->addMsg(tmp, STOP);
       err->display();
     }
 
-    if (chmod(d.filePath(s[i]), 0644) != 0) {
+    if (chmod(d.filePath(filename), 0644) != 0) {
       QString tmp;
       tmp.sprintf(_("Cannot change permissions on file %s\nError: %s"), (const char *)d.filePath(s[i]), strerror(errno));
       err->addMsg(tmp, STOP);

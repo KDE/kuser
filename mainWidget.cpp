@@ -17,38 +17,41 @@ KTopLevelWidget(name)
 
   QPopupMenu *file = new QPopupMenu;
   CHECK_PTR( file );
-  file->insertItem(_("Save"),  md, SLOT(save()) );
+  file->insertItem(i18n("&Save"),  md, SLOT(save()) );
   file->insertSeparator();
-  file->insertItem(_("Properties..."),  md, SLOT(properties()) );
+  file->insertItem(i18n("&Template for new users..."),  md, SLOT(properties()) );
   file->insertSeparator();
-  file->insertItem(_("Quit"),  md, SLOT(quit()) );
+  file->insertItem(i18n("&Quit"),  md, SLOT(quit()) );
 
   QPopupMenu *user = new QPopupMenu;
   CHECK_PTR(user);
-  user->insertItem(_("Edit..."), md, SLOT(useredit()) );
-  user->insertItem(_("Delete..."), md, SLOT(userdel()) );
-  user->insertItem(_("Add..."), md, SLOT(useradd()) );
-  user->insertItem(_("Set password..."), md, SLOT(setpwd()) );
+  user->insertItem(i18n("&Edit..."), md, SLOT(useredit()) );
+  user->insertItem(i18n("&Delete..."), md, SLOT(userdel()) );
+  user->insertItem(i18n("&Add..."), md, SLOT(useradd()) );
+  user->insertItem(i18n("&Set password..."), md, SLOT(setpwd()) );
 
   QPopupMenu *group = new QPopupMenu;
   CHECK_PTR(group);
-  group->insertItem(_("Edit..."), md, SLOT(grpedit()) );
-  group->insertItem(_("Delete..."), md, SLOT(grpdel()) );
-  group->insertItem(_("Add..."), md, SLOT(grpadd()) );
+  group->insertItem(i18n("&Edit..."), md, SLOT(grpedit()) );
+  group->insertItem(i18n("&Delete..."), md, SLOT(grpdel()) );
+  group->insertItem(i18n("&Add..."), md, SLOT(grpadd()) );
 
-  QPopupMenu *help = new QPopupMenu;
-  CHECK_PTR( help );
-  help->insertItem(_("Help"), md, SLOT(help()));
-  help->insertSeparator();
-  help->insertItem(_("About..."), md, SLOT(about()));
+  QString tmp;
+  tmp.sprintf(i18n("KUser version %s\n"
+		"KDE project\n"
+		"This program was created by\n"
+		"Denis Y. Pershin\n"
+		"dyp@inetlab.com\n"
+		"Copyright 1997(c)"), _KU_VERSION);
+  QPopupMenu *help = kapp->getHelpMenu(true, tmp);
 
   menubar = new KMenuBar( this );
   CHECK_PTR( menubar );
-  menubar->insertItem(_("File"), file );
-  menubar->insertItem(_("User"), user );
-  menubar->insertItem(_("Group"), group );
+  menubar->insertItem(i18n("&File"), file );
+  menubar->insertItem(i18n("&User"), user );
+  menubar->insertItem(i18n("&Group"), group );
   menubar->insertSeparator();
-  menubar->insertItem(_("Help"), help );
+  menubar->insertItem(i18n("&Help"), help );
 
   setMenu(menubar);
 
@@ -56,20 +59,20 @@ KTopLevelWidget(name)
   QPixmap pix;
 
   pix = kapp->getIconLoader()->loadIcon("useradd.xpm");
-  toolbar->insertButton(pix, 0, SIGNAL(clicked()), md, SLOT(useradd()), TRUE, _("Add user"));
+  toolbar->insertButton(pix, 0, SIGNAL(clicked()), md, SLOT(useradd()), TRUE, i18n("Add user"));
   pix = kapp->getIconLoader()->loadIcon("userdel.xpm");
-  toolbar->insertButton(pix, 0, SIGNAL(clicked()), md, SLOT(userdel()), TRUE, _("Delete user"));
+  toolbar->insertButton(pix, 0, SIGNAL(clicked()), md, SLOT(userdel()), TRUE, i18n("Delete user"));
   pix = kapp->getIconLoader()->loadIcon("useredit.xpm");
-  toolbar->insertButton(pix, 0, SIGNAL(clicked()), md, SLOT(useredit()), TRUE, _("Edit user"));
+  toolbar->insertButton(pix, 0, SIGNAL(clicked()), md, SLOT(useredit()), TRUE, i18n("Edit user"));
   
   toolbar->insertSeparator();
   
   pix = kapp->getIconLoader()->loadIcon("grpadd.xpm");
-  toolbar->insertButton(pix, 0, SIGNAL(clicked()), md, SLOT(grpadd()), TRUE, _("Add group"));
+  toolbar->insertButton(pix, 0, SIGNAL(clicked()), md, SLOT(grpadd()), TRUE, i18n("Add group"));
   pix = kapp->getIconLoader()->loadIcon("grpdel.xpm");
-  toolbar->insertButton(pix, 0, SIGNAL(clicked()), md, SLOT(grpdel()), TRUE, _("Delete group"));
+  toolbar->insertButton(pix, 0, SIGNAL(clicked()), md, SLOT(grpdel()), TRUE, i18n("Delete group"));
   pix = kapp->getIconLoader()->loadIcon("grpedit.xpm");
-  toolbar->insertButton(pix, 0, SIGNAL(clicked()), md, SLOT(grpedit()), TRUE, _("Edit group"));
+  toolbar->insertButton(pix, 0, SIGNAL(clicked()), md, SLOT(grpedit()), TRUE, i18n("Edit group"));
   toolbar->setBarPos(KToolBar::Top);
 
   addToolBar(toolbar);
@@ -92,7 +95,7 @@ KTopLevelWidget(name)
     sscanf( geom, "%dx%d", &width, &height );
     resize( width, height );
   }
-  sbar->changeItem(_("Ready"), 0);
+  sbar->changeItem(i18n("Ready"), 0);
 }
 
 mainWidget::~mainWidget() {

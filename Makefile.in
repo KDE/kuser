@@ -1,0 +1,110 @@
+INCLUDE	=	-I@kde_includes@ -I@qt_includes@
+
+# May be -DLINUX -D_XU_QUOTA -DAIX -D_XU_SHADOW
+SYSFLAGS = 	-DLINUX -D_XU_QUOTA -D_XU_SHADOW -D_KU_DEBUG # -g
+
+# For Linux
+OFLAGS =	-O2 -W -DLOCDIR=\"$(LOCALEDIR)\" -DSTDC_HEADERS -DHAVE_UNISTD_H
+CFLAGS	=	$(OFLAGS) $(SYSFLAGS) # -g
+LFLAGS	=	-L@qt_libraries@ -L@kde_libraries@ -L@x_libraries@ -lqt -L./ -lX11 -lXext -lintl -lkdecore -lkdeui
+MOC	=	@MOC@
+MSGFMT	=	msgfmt
+
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
+
+####### Files
+
+POFILES =	po/kuser.po
+MOFILES =	po/kuser.mo
+DOCFILES=	doc/index.html doc/bugnet-member.gif
+PICFILES=	pic/user.bmp
+SOURCES =	datetool.cpp kuser.cpp main.cpp maindlg.cpp mnt.cpp propdlg.cpp quotatool.cpp pwdtool.cpp sdwtool.cpp misc.cpp usernamedlg.cpp pwddlg.cpp mrqpasswdlined.cpp
+SRCMETA =       datetool.moc maindlg.moc propdlg.moc usernamedlg.moc pwddlg.moc mrqpasswdlined.moc
+HEADERS =       datetool.h kuser.h maindlg.h   propdlg.h  nmt.h quotatool.h sdwtool.h pwdtool.h includes.h misc.h usernamedlg.h pwddlg.h mrqpasswdlined.h
+OBJECTS =	datetool.o kuser.o main.o maindlg.o mnt.o propdlg.o   quotatool.o pwdtool.o sdwtool.o misc.o usernamedlg.o pwddlg.o mrqpasswdlined.o
+TARGET	=	kuser
+
+# Where to install binaries
+PREFIX	=	@prefix@
+SBINDIR =	$(PREFIX)/bin
+PICDIR  =       $(PREFIX)/lib/pic/kuser
+DOCDIR  =	$(PREFIX)/doc/kuser
+LOCALEDIR =	$(PREFIX)/lib/locale
+MODIR   =	$(LOCALEDIR)/ru/LC_MESSAGES
+
+# Version
+VERSION =	0.1
+
+####### Implicit rules
+
+.SUFFIXES: .cpp
+
+.cpp.o:
+	$(CXX) -c $(CFLAGS) $(INCLUDE) $<
+####### Build rules
+
+all: depend $(TARGET) $(MOFILES)
+
+$(TARGET): $(SRCMETA) $(OBJECTS)
+	$(CXX) $(OBJECTS) -o $(TARGET) $(LFLAGS)
+#	strip $(TARGET)
+
+srcdist:
+	rm -rf ./kuser-$(VERSION) &>/dev/null
+	mkdir ./kuser-$(VERSION)
+	cp $(SOURCES) $(METASRC) $(HEADERS) config.sub config.guess config.h.in acconfig.h acinclude.m4 Makefile.in configure.in configure install-sh ./kuser-$(VERSION)/
+	cp -R po ./kuser-$(VERSION)/
+	cp -R doc ./kuser-$(VERSION)/
+	cp -R pic ./kuser-$(VERSION)/
+	tar czvf ./kuser-$(VERSION).tgz ./kuser-$(VERSION)/
+	rm -rf ./kuser-$(VERSION)
+
+bindist: all
+	rm -rf ./kuser-$(VERSION) &>/dev/null
+	mkdir ./kuser-$(VERSION)
+	cp $(TARGET) ./kuser-$(VERSION)/
+	strip ./kuser-$(VERSION)/$(TARGET)
+	tar czvf ./kuser-$(VERSION).bin.tgz ./kuser-$(VERSION)/
+	rm -rf ./kuser-$(VERSION)
+
+install: all
+	$(INSTALL) -d $(SBINDIR)
+	$(INSTALL) -s -m 750 ./$(TARGET) $(SBINDIR)
+	$(INSTALL) -d $(DOCDIR)
+	$(INSTALL) -m 755 $(DOCFILES) $(DOCDIR)
+	$(INSTALL) -d $(PICDIR)
+	$(INSTALL) -m 644 $(PICFILES) $(PICDIR)
+	$(INSTALL) -d $(MODIR)
+	$(INSTALL) -m 644 $(MOFILES) $(MODIR)
+
+depend:
+	@echo "Checking dependences"
+	@makedepend -I$(INCDIR) $(SOURCES) 2> /dev/null
+
+showfiles:
+	@echo $(HEADERS) $(SOURCES) Makefile
+
+updatepo:
+	xgettext --default-domain=kuser -a -C -l ./ -n -s --keyword=_ $(SOURCES)
+	mv kuser.po po/kuser.pot
+	tupdate po/kuser.pot po/kuser.po>po/kuser.po.n
+	mv po/kuser.po.n po/kuser.po
+
+dopo: $(MOFILES)
+#	msgfmt -o /usr/local/lib/locale/ru/LC_MESSAGES/kuser.mo po/kuser.po
+
+clean:
+	rm -f *.o *.bak *.b *~ *% #*
+	rm -f $(TARGET) $(SRCMETA)
+
+%.moc: %.h
+	$(MOC) $< -o $@
+
+%.mo: %.po
+	$(MSGFMT) $< -o $@
+
+# DO NOT DELETE THIS LINE -- make depend depends on it.
+

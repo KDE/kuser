@@ -1,0 +1,49 @@
+#include "usernamedlg.h"
+#include "usernamedlg.moc"
+
+usernamedlg::usernamedlg(KUser *auser, QWidget* parent, const char* name)
+           :QDialog(parent, name, TRUE)
+{
+  user = auser;
+
+  setCaption(_("Enter username"));
+  pbOk = new QPushButton( this, "PushButton_1" );            
+  pbOk->setGeometry( 20, 90, 100, 30 );                       
+  pbOk->setText( "Ok" );                                       
+  pbOk->setDefault(TRUE);
+  QObject::connect(pbOk, SIGNAL(clicked()), this, SLOT(ok()));
+                                                                               
+  pbCancel = new QPushButton( this, "PushButton_2" );            
+  pbCancel->setGeometry( 170, 90, 100, 30 );                      
+  pbCancel->setText(_("Cancel"));                                   
+  pbCancel->setDefault(FALSE);
+  QObject::connect(pbCancel, SIGNAL(clicked()), this, SLOT(cancel()));                  
+                                                                               
+  QLabel* lb1 = new QLabel(this, "lb1");
+  lb1->setGeometry(40, 10, 200, 30);
+  lb1->setText(_("Enter username"));
+
+  leusername = new QLineEdit( this, "LineEdit_1" );                  
+  leusername->setGeometry( 40, 40, 200, 30 );                         
+  leusername->setText( "" );                                           
+  leusername->setFocus();
+                        
+  resize( 300, 130 );
+}
+
+void usernamedlg::ok()
+{
+  if (user_lookup(leusername->text()) != NULL) {
+    sprintf(tmp, _("User with name %s is already exist."), leusername->text());
+    QMessageBox::message(_("Error"),tmp,"Ok");
+  }
+  else {
+    user->p_name.setStr(leusername->text());
+    accept();
+  }
+}
+
+void usernamedlg::cancel()
+{
+  reject();
+}

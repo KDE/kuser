@@ -10,7 +10,6 @@
 #include <kconfig.h>
 #include <klocale.h>
 #include <kcmdlineargs.h>
-#include <ktmainwindow.h>
 #include <kaboutdata.h>
 
 #include "kglobal_.h"

@@ -12,7 +12,7 @@
 #include "mainWidget.h"
 #include "misc.h"
 
-mainWidget::mainWidget(const char *name) : KTMainWindow(name) {
+mainWidget::mainWidget(const char *name) : KMainWindow(0,name) {
   md = new mainView(this);
 
   setupActions();
@@ -20,9 +20,7 @@ mainWidget::mainWidget(const char *name) : KTMainWindow(name) {
   sbar = new KStatusBar(this);
   sbar->insertItem("Reading config", 0);
   
-  setStatusBar(sbar);
-
-  setView(md);
+  setCentralWidget(md);
 
   resize(500, 400);
   readSettings();
@@ -42,8 +40,8 @@ void mainWidget::setupActions() {
   KStdAction::quit(md, SLOT(quit()), actionCollection());
 
   KStdAction::preferences(md, SLOT(properties()), actionCollection());
-  KStdAction::showToolbar(this, SLOT(toggleToolBar()), actionCollection());
-  KStdAction::showStatusbar(this, SLOT(toggleStatusBar()), actionCollection());
+  mActionToolbar = KStdAction::showToolbar(this, SLOT(toggleToolBar()), actionCollection());
+  mActionStatusbar = KStdAction::showStatusbar(this, SLOT(toggleStatusBar()), actionCollection());
 //  KStdAction::saveOptions(md, SLOT(writeSettings()), actionCollection());
 
   (void)new KAction(i18n("&Add..."), QIconSet(BarIcon("add_user")), 0, md,
@@ -90,7 +88,6 @@ void mainWidget::writeSettings() {
 
 void mainWidget::resizeEvent(QResizeEvent *) {
   writeSettings();
-  updateRects();
 }
 
 void mainWidget::closeEvent(QCloseEvent *) {
@@ -98,16 +95,16 @@ void mainWidget::closeEvent(QCloseEvent *) {
 }
 
 void mainWidget::toggleToolBar() {
-  if (toolBar()->isVisible())
-    toolBar()->hide();
+  if (mActionToolbar->isChecked())
+    toolBar("mainToolBar")->show();
   else
-    toolBar()->show();
+    toolBar("mainToolBar")->hide();
 }
 
 void mainWidget::toggleStatusBar() {
-  if (statusBar()->isVisible())
-    statusBar()->hide();
-  else
+  if (mActionStatusbar->isChecked())
     statusBar()->show();
+  else
+    statusBar()->hide();
 }
 

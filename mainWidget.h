@@ -4,12 +4,13 @@
 #include <qevent.h>
 #include <qpixmap.h>
 
-#include <ktmainwindow.h>
+#include <kmainwindow.h>
+#include <kaction.h>
 #include <kstatusbar.h>
 
 #include "mainView.h"
 
-class mainWidget : public KTMainWindow {
+class mainWidget : public KMainWindow {
 Q_OBJECT
 public:
   mainWidget(const char *name = 0);
@@ -31,6 +32,8 @@ private:
 //  KMenuBar   *menubar;
 //  KToolBar   *toolbar;
   KStatusBar *sbar;
+  KToggleAction *mActionToolbar;
+  KToggleAction *mActionStatusbar;
   mainView *md;
 };
 

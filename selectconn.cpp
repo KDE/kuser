@@ -39,9 +39,9 @@ SelectConn::SelectConn(const QString &selected, QWidget* parent, const char * na
 {
   QStringList conns;
 
-  setButtonText( User1, i18n("New...") );
-  setButtonText( User2, i18n("Edit") );
-  setButtonText( User3, i18n("Delete") );
+  setButtonText( User1, i18n("&New...") );
+  setButtonText( User2, i18n("&Edit") );
+  setButtonText( User3, i18n("&Delete") );
 
   QFrame *page = plainPage();
   QVBoxLayout *topLayout = new QVBoxLayout( page, 0, KDialog::spacingHint() );

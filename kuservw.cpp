@@ -33,6 +33,10 @@ void KUserView::setCurrentItem(int item) {
   m_Users->setCurrentItem(item);
 }
 
+void KUserView::sortBy(int num) {
+  m_Users->sortBy(num);
+}
+
 void KUserView::init()
 {
   m_Header = new KHeader(this, "_header", 2, KHeader::Resizable|KHeader::Buttons );
@@ -46,6 +50,7 @@ void KUserView::init()
 
   connect(m_Users, SIGNAL(highlighted(int,int)), SLOT(onHighlight(int,int)));
   connect(m_Users, SIGNAL(selected(int,int)), SLOT(onSelect(int,int)));
+  connect(m_Header, SIGNAL(selected(int)), SLOT(onHeaderClicked(int)));
   connect(m_Header, SIGNAL(sizeChanged(int,int)), m_Users, SLOT(setColumnWidth(int,int)));
 
 // This connection makes it jumpy and slow (but it works!)
@@ -55,6 +60,15 @@ void KUserView::init()
 
   m_Header->setHeaderSize(0, 80);
   m_Header->setHeaderSize(1, 280);
+}
+
+void KUserView::repaint() {
+  m_Users->repaint();
+  m_Header->repaint();
+}
+
+KUser *KUserView::getCurrentUser() {
+  return (((KUserRow *)m_Users->getRow(current))->getData());
 }
 
 void KUserView::onSelect(int row, int)
@@ -67,6 +81,10 @@ void KUserView::onHighlight(int row, int)
 {
   current = row;
   emit highlighted(row);
+}
+
+void KUserView::onHeaderClicked(int num) {
+  emit headerClicked(num);
 }
 
 void KUserView::resizeEvent(QResizeEvent *rev)

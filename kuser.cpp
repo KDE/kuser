@@ -79,7 +79,6 @@ KUser::~KUser() {
 }
 
 KUsers::KUsers() {
-printf("KUsers::KUsers\n");
   p_saved = 0;
   s_saved = 0;
 
@@ -322,6 +321,6 @@ void KUsers::addUser(KUser *ku) {
   u.append(ku);
 }
 
-void KUsers::delUser(uint num) {
-  u.remove(num);
+void KUsers::delUser(KUser *au) {
+  u.remove(au);
 }

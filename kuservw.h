@@ -15,8 +15,11 @@ public:
   void clear();
   void insertItem(KUser *aku);
   int currentItem();
+  KUser *getCurrentUser();
   void setCurrentItem( int item );
   void setAutoUpdate(bool state);
+  void sortBy(int num);
+  void repaint();
 
 protected:
   virtual void KUserView::resizeEvent( QResizeEvent *rev );
@@ -24,10 +27,12 @@ protected:
 signals:
   void selected(int item);
   void highlighted(int item);
+  void headerClicked(int num);
 
 private slots:
   void onSelect(int row, int);
   void onHighlight(int row, int);
+  void onHeaderClicked(int num);
 
 private:
   void init();

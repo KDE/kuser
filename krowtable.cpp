@@ -149,12 +149,22 @@ void KRowTable::focusInEvent( QFocusEvent * )
 {
 	if( current_row != -1 && current_col != -1 )
 		updateCell( current_row, current_col, FALSE );
+	else if( current_row != -1 ) {
+		for( int i=0 ; i<numCols() ; i++ ) {
+			updateCell( current_row, i, FALSE );
+		}
+	}
 }
 
 void KRowTable::focusOutEvent( QFocusEvent * )
 {
 	if( current_row != -1 && current_col != -1 )
 		updateCell( current_row, current_col, FALSE );
+	else if( current_row != -1 ) {
+		for( int i=0 ; i<numCols() ; i++ ) {
+			updateCell( current_row, i, FALSE );
+		}
+	}
 }
 
 void KRowTable::paletteChange( const QPalette &oldPalette )
@@ -164,6 +174,7 @@ void KRowTable::paletteChange( const QPalette &oldPalette )
 
 void KRowTable::paintCell( QPainter *p, int row, int col )
 {
+  //printf("KRowTable::paintCell(%p, %d, %d)\n", p, row, col);
 	QPen oldPen = p->pen();
 	QColor oldBackground = p->backgroundColor();
 
@@ -179,18 +190,15 @@ void KRowTable::paintCell( QPainter *p, int row, int col )
 			fc = darkBlue;
 		else
 			fc = g.text();
-		if( hasFocus() )
-			p->fillRect( 0, 0, cellWidth( col ), cellHeight( row ), fc );
-		else
-			p->fillRect( 1, 1, cellWidth( col )-2, cellHeight( row )-2, fc );
+		p->fillRect( 0, 0, cellWidth( col ), cellHeight( row ), fc );
 		p->setPen( g.base() );
 		p->setBackgroundColor( g.text() );
 	}
 
 	KRow *cell = getRow( row );
+
 	if( cell != NULL )
 		cell->paint( p, col, cellWidth(col) );
-
 	if( current_row == row &&
 	    ( current_col == col || current_col == -1 ) &&
 		hasFocus() )
@@ -230,6 +238,20 @@ bool KRowTable::insertRow( KRow *cell, int row )
 	return TRUE;
 }
 
+bool KRowTable::insertBeforeRow( KRow *cell, int row )
+{
+  int size = 0;
+  size = m_rows.size()-1;
+  m_rows.resize(m_rows.size()+1);
+  for (int i=size;i>=row;i--)
+    m_rows[i+1]=m_rows[i];
+
+	m_rows[row] = cell;
+	if( autoUpdate() )
+		repaint();
+	return TRUE;
+}
+
 KRow *KRowTable::getRow( int row )
 {
 	if( m_rows.size() <= row )
@@ -249,14 +271,13 @@ void KRowTable::mousePressEvent( QMouseEvent *e )
 
 void KRowTable::mouseDoubleClickEvent( QMouseEvent *e )
 {
-        if (m_flags == SelectRow)
-          if ( current_row != -1 )
-		emit selected( current_row, current_col );
-
-        if (m_flags != SelectRow)
-  	  if( current_col != -1 && current_row != -1 )
-		emit selected( current_row, current_col );
-
+	if( m_flags == SelectRow ) {
+		if( current_row != -1 )
+			emit selected( current_row, current_col );
+	} else {
+		if( current_col != -1 && current_row != -1 )
+			emit selected( current_row, current_col );
+	}
 	repaint();
 }
 

@@ -58,6 +58,7 @@ typedef unsigned int __u32;
 #else
 #ifdef HAVE_IRIX
 #include <sys/quota.h>
+#include <sys/param.h>
 #define CORRECT_FSTYPE(type) (!strcmp(type,MNTTYPE_EFS) || !strcmp(type,MNTTYPE_XFS))
 #define _KU_QUOTAFILENAME "quotas"
 #else

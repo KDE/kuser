@@ -56,7 +56,7 @@ public:
   KUser *getUser(uint num);
 
   void addUser(KUser *ku);
-  void delUser(uint num);
+  void delUser(KUser *au);
 
 protected:
   int p_saved;

@@ -18,10 +18,6 @@ MntEnt::~MntEnt() {
 }
 
 Mounts::Mounts() {
-#ifdef _KU_DEBUG
-printf("Mounts::Mounts\n");
-#endif
-
   Mounts::m.setAutoDelete(TRUE);
 
 #ifdef OLD_GETMNTENT

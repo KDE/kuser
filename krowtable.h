@@ -33,6 +33,7 @@ public:
 	void setNumCols( int cols );
 	void setNumRows( int rows );
 	bool insertRow( KRow *cell, int row );
+        bool insertBeforeRow( KRow *cell, int row );
 	void setCurrentRow( int row, int col );
 	void setHighlightColumn( int col );
 	KRow *getRow( int row );

@@ -55,6 +55,7 @@ protected:
   void reload(int id);
 
 private:
+  int sort;
   bool changed;
 };
 

@@ -45,13 +45,8 @@ printf("mainDlg::init()\n");
   list = new KUserView(this, "list");
   list->setGeometry(10,80,380,208);
 
-//  QObject::connect(list, SIGNAL(headerClicked(int)), this, SLOT(setSort(int)));
+  QObject::connect(list, SIGNAL(headerClicked(int)), this, SLOT(setSort(int)));
   QObject::connect(list, SIGNAL(selected(int)), this, SLOT(selected(int)));
-
-  QLabel *lb1 = addLabel(this, "lb1", 55, 40, 50, 20,_("User name"));
-  lb1->setFont(rufont);
-  QLabel *lb2 = addLabel(this, "lb2", 165, 40, 250, 20, _("Full name"));
-  lb2->setFont(rufont);
 
   reload(0);
 
@@ -143,7 +138,14 @@ mainDlg::~mainDlg() {
 }
 
 void mainDlg::setSort(int col) {
-  printf("Sort by %d\n", col);
+  if (sort == col)
+    sort = -1;
+  else
+    sort = col;
+
+  list->sortBy(sort);
+
+  reload(list->currentItem());
 }
 
 void mainDlg::reload(int id) {
@@ -158,11 +160,11 @@ void mainDlg::reload(int id) {
   }
 
   list->setAutoUpdate(TRUE);
+  list->repaint();
   list->setCurrentItem(id);
 }
 
 void mainDlg::edit() {
-printf("mainDlg::edit()\n currentItem = %d\n", list->currentItem());
   selected(list->currentItem());
 }
 
@@ -179,9 +181,9 @@ void mainDlg::del() {
     if (i == u->getUsersNumber()-1)
       islast = TRUE;
 
-    unsigned int uid = u->getUser(i)->p_uid;
+    unsigned int uid = list->getCurrentUser()->p_uid;
 
-    u->delUser(i);
+    u->delUser(list->getCurrentUser());
 
 #ifdef _KU_QUOTA
     if (u->user_lookup(uid) == NULL)
@@ -283,27 +285,13 @@ void mainDlg::about() {
 void mainDlg::setpwd() {
   pwddlg *d;
   
-  d = new pwddlg(u->getUser(list->currentItem()), this, "pwddlg");
+  d = new pwddlg(list->getCurrentUser(), this, "pwddlg");
   d->exec();
   delete d;
 }
 
 void mainDlg::help() {
-  int id = 0;
-
-  id = fork();
-
-  if (id == 0) {
-    char path[1024];
-
-    strncpy(path, getenv("KDEDIR"), 1024);
-    strncat(path, "/bin/kdehelp file:/", 1024);
-    strncat(path, getenv("KDEDIR"), 1024);
-    strncat(path, "/doc/kuser/index.html", 1024);
-
-    system(path);
-    exit(0);
-  }
+	kapp->invokeHTMLHelp(0,0);
 }
 
 void mainDlg::properties() {
@@ -392,7 +380,7 @@ void mainDlg::selected(int i) {
   propdlg *editUser;
   KUser *tmpKU;
 
-  tmpKU =  u->getUser(i);
+  tmpKU =  list->getCurrentUser();
   if (tmpKU == NULL) {
     printf("Null pointer tmpKU in mainDlg::selected(%d)\n", i);
     return;

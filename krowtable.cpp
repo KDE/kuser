@@ -174,7 +174,6 @@ void KRowTable::paletteChange( const QPalette &oldPalette )
 
 void KRowTable::paintCell( QPainter *p, int row, int col )
 {
-  //printf("KRowTable::paintCell(%p, %d, %d)\n", p, row, col);
 	QPen oldPen = p->pen();
 	QColor oldBackground = p->backgroundColor();
 
@@ -241,12 +240,18 @@ bool KRowTable::insertRow( KRow *cell, int row )
 bool KRowTable::insertBeforeRow( KRow *cell, int row )
 {
   int size = 0;
+
   size = m_rows.size()-1;
+
+  if ((row > size) || (row < 0))
+    return FALSE;
+
   m_rows.resize(m_rows.size()+1);
+
   for (int i=size;i>=row;i--)
     m_rows[i+1]=m_rows[i];
 
-	m_rows[row] = cell;
+  m_rows[row] = cell;
 	if( autoUpdate() )
 		repaint();
 	return TRUE;

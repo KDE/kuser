@@ -1,4 +1,4 @@
-INCLUDES	=	$(all_includes) -I.. -I$(top_srcdir)/kuser
+INCLUDES	= -I.. -I$(top_srcdir)/kuser $(all_includes)
 
 # May be -D_XU_QUOTA -D_XU_SHADOW
 AM_CXXFLAGS = 	$(KU_NIS) $(KU_SHADOW) $(KU_QUOTA) $(QUOTACTL) -D_KU_DEBUG -D_SVID_SOURCE -D_GNU_SOURCE

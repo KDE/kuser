@@ -36,6 +36,7 @@ public:
 #endif
   
 public slots:
+  void save();
   void properties();
   void quit();
   void userSelected(int i);

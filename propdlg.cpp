@@ -186,9 +186,9 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
   QToolTip::add(leaddress, _("Postal address"));
   l9 = addLabel(w1, "ml9", 10, 290, 50, 20, _("Address"));
   ld9 = addLabel(w1, "mld9", 190, 315, 50, 20, _("Full postal address"));
-#endif
 
   tw->addTab(w1, _("User info"));
+#endif
 
 #ifdef _KU_SHADOW
   if (is_shadow != 0) {

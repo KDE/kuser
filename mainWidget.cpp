@@ -17,6 +17,8 @@ KTopLevelWidget(name)
 
   QPopupMenu *file = new QPopupMenu;
   CHECK_PTR( file );
+  file->insertItem(_("Save"),  md, SLOT(save()) );
+  file->insertSeparator();
   file->insertItem(_("Properties..."),  md, SLOT(properties()) );
   file->insertSeparator();
   file->insertItem(_("Quit"),  md, SLOT(quit()) );

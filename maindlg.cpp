@@ -269,12 +269,13 @@ void mainDlg::useradd() {
   delete au;
 }
 
-void mainDlg::quit() {
- if (changed == TRUE)
-   if (KMsgBox::yesNo(0, _("Data was modified"),
-                      _("Would you like to save changes ?"),
-  		      KMsgBox::INFORMATION,
-		      _("Save"), _("Discard changes")) == 1) {
+
+void mainDlg::save() {
+  if (changed == TRUE)
+    if (KMsgBox::yesNo(0, _("Data was modified"),
+                       _("Would you like to save changes ?"),
+    		       KMsgBox::INFORMATION,
+		       _("Save"), _("Discard changes")) == 1) {
       if (!u->save())
         err->display();
 
@@ -286,6 +287,10 @@ void mainDlg::quit() {
           err->display();
 #endif
     }
+}
+
+void mainDlg::quit() {
+  save();
 
   qApp->quit();
 }

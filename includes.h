@@ -60,7 +60,7 @@ extern int is_quota;
 
 #define KU_BACKUP_EXT ".bak"
 
-#define PASSWORD_FILE "./passwd"
+#define PASSWORD_FILE "/etc/passwd"
 #define PASSWORD_FILE_MASK S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH
 
 extern char picspath[200];
@@ -69,7 +69,7 @@ extern KConfig *config;
 extern bool changed;
 
 #ifdef _KU_SHADOW
-#define SHADOW_FILE "./shadow"
+#define SHADOW_FILE "/etc/shadow"
 #define SHADOW_FILE_MASK S_IRUSR | S_IWUSR
 #endif
 

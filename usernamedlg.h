@@ -4,17 +4,18 @@
 #include <qdialog.h>
 #include <qpushbt.h>
 #include <qlined.h>
-
+#include <qlayout.h>
 #include "kuser.h"
 
-class usernamedlg : public QDialog
-{
-Q_OBJECT
+class usernamedlg : public QDialog {
+  Q_OBJECT
 public slots:
   void ok();
   void cancel();
+
 public:
   usernamedlg(KUser*auser, QWidget* parent = NULL, const char* name = NULL);
+
 private:
   KUser *user;
 
@@ -22,5 +23,6 @@ private:
   QPushButton *pbCancel;
   QLineEdit   *leusername;
 };
+
 #endif // _KU_USERNAMEDLG_H
 

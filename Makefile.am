@@ -8,11 +8,11 @@ kuser_LDADD	=	-lkdeui -lkdecore -lqt -lX11 -lXext $(LIBSOCKET) $(LIBCRYPT)
 
 ####### Files
 
-kuser_SOURCES	=	kuservw.cpp kheader.cpp krowtable.cpp kusertbl.cpp kdatectl.cpp kuser.cpp main.cpp maindlg.cpp mnt.cpp propdlg.cpp quota.cpp misc.cpp usernamedlg.cpp pwddlg.cpp mrqpasswdlined.cpp
-BUILTSOURCE	=       kuservw.moc kheader.moc krowtable.moc kusertbl.moc kdatectl.moc maindlg.moc propdlg.moc usernamedlg.moc pwddlg.moc mrqpasswdlined.moc
+kuser_SOURCES	=	kuservw.cpp kheader.cpp krowtable.cpp kusertbl.cpp kdatectl.cpp kuser.cpp main.cpp maindlg.cpp mnt.cpp propdlg.cpp quota.cpp misc.cpp usernamedlg.cpp pwddlg.cpp
+BUILTSOURCE	=       kuservw.moc kheader.moc krowtable.moc kusertbl.moc kdatectl.moc maindlg.moc propdlg.moc usernamedlg.moc pwddlg.moc
 
 # the following are only useful, if you want to use "make dist"
-noinst_HEADERS	=       kuservw.h kheader.h krowtable.h kusertbl.h kdatectl.h kuser.h maindlg.h   propdlg.h  mnt.h quota.h globals.h misc.h usernamedlg.h pwddlg.h mrqpasswdlined.h
+noinst_HEADERS	=       kuservw.h kheader.h krowtable.h kusertbl.h kdatectl.h kuser.h maindlg.h   propdlg.h  mnt.h quota.h globals.h misc.h usernamedlg.h pwddlg.h
 DISTFILES 	=	README AUTHORS THANKS
 DISTCLEANFILES	= 	$(BUILTSOURCE) 
 EDITABLE	=	$(DISTFILES) $(noinst_HEADERS) $(kuser_SOURCES) Makefile.am
@@ -50,10 +50,6 @@ kdatectl.moc: kdatectl.h
 maindlg.cpp:maindlg.moc
 maindlg.moc: maindlg.h
 	$(MOC) maindlg.h -o maindlg.moc
-
-mrqpasswdlined.cpp:mrqpasswdlined.moc
-mrqpasswdlined.moc: mrqpasswdlined.h
-	$(MOC) mrqpasswdlined.h -o mrqpasswdlined.moc
 
 propdlg.cpp:propdlg.moc
 propdlg.moc: propdlg.h

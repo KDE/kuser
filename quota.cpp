@@ -126,7 +126,7 @@ void QuotaMnt::setitime(long data) {
 #define _KU_TIMELIMITDIV 3600
 #endif
 
-#if defined(_KU_UFS_QUOTA) || defined(_KU_HPUX_QUOTA)
+#if defined(_KU_UFS_QUOTA) || defined(_KU_HPUX_QUOTA) || defined(HAVE_IRIX)
 #define _KU_CURINODES  dq.dqb_curfiles
 #define _KU_ISOFTLIMIT dq.dqb_fsoftlimit
 #define _KU_IHARDLIMIT dq.dqb_fhardlimit
@@ -165,7 +165,7 @@ static int doQuotaCtl(int ACmd, uint AUID, const MntEnt *m, struct dqblk *dq) {
   return res;
 #else
 #  if defined(_KU_EXT2_QUOTA) || defined(HAVE_IRIX)
-         return quotactl(ACmd, QFile::encodeName(m->getfsname()), AUID, (caddr_t) dq);
+         return quotactl(ACmd, (char*)QFile::encodeName(m->getfsname()).data(), AUID, (caddr_t) dq);
 #  else
 #    ifdef __osf__
          return quotactl((char*)QFile::encodeName(m->getdir()).data(), ACmd, AUID, (caddr_t) dq);

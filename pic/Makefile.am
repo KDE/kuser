@@ -1,9 +1,9 @@
 
 # add here all files
-data_DATA = group.png user.png 
+pics_DATA = group.png user.png 
 
 # this is the directory, where all datas are installed
 # you have given the datas in data_DATA
-datadir = $(kde_datadir)/kuser/pics/
+picsdir = $(kde_datadir)/kuser/pics/
 
-EXTRA_DIST = $(data_DATA)
+EXTRA_DIST = $(pics_DATA)

@@ -630,21 +630,22 @@ void propdlg::selectuser() {
 #ifdef _KU_QUOTA
   if (is_quota != 0) {
     int q = 0;
-    if (chquota != -1)
+    if (chquota != -1) {
       q = chquota;
 
-    QuotaMnt *qm = quota[q];
-    leqfs->setText(QString("%1").arg(qm->getfsoft()));
-    leqfh->setText(QString("%1").arg(qm->getfhard()));
-    leqis->setText(QString("%1").arg(qm->getisoft()));
-    leqih->setText(QString("%1").arg(qm->getihard()));
-    leqfcur->setText(QString("%1").arg(qm->getfcur()));
-    leqicur->setText(QString("%1").arg(qm->geticur()));
+      QuotaMnt *qm = quota[q];
+      leqfs->setText(QString("%1").arg(qm->getfsoft()));
+      leqfh->setText(QString("%1").arg(qm->getfhard()));
+      leqis->setText(QString("%1").arg(qm->getisoft()));
+      leqih->setText(QString("%1").arg(qm->getihard()));
+      leqfcur->setText(QString("%1").arg(qm->getfcur()));
+      leqicur->setText(QString("%1").arg(qm->geticur()));
 
 #ifndef BSD
-    leqft->setText(QString("%1").arg(qm->getftime()));
-    leqit->setText(QString("%1").arg(qm->getitime()));
+      leqft->setText(QString("%1").arg(qm->getftime()));
+      leqit->setText(QString("%1").arg(qm->getitime()));
 #endif
+    }
   }
 #endif
 }

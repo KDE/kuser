@@ -659,7 +659,7 @@ bool KUsers::savepwd() {
   // need to run a utility program to build /etc/passwd, /etc/pwd.db
   // and /etc/spwd.db from /etc/master.passwd
   if (system(PWMKDB) != 0) {
-     err->addMsg(i18n("Unable to build password database"), STOP);
+     err->addMsg(i18n("Unable to build password database"));
      return FALSE;
   }
 #endif

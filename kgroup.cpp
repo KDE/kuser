@@ -205,7 +205,7 @@ bool KGroups::save() {
 
 #ifdef GRMKDB
   if (system(GRMKDB) != 0) {
-    err->addMsg(i18n("Unable to build group database"), STOP);
+    err->addMsg(i18n("Unable to build group database");
     return FALSE;
   }
 #endif

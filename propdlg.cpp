@@ -442,7 +442,7 @@ void propdlg::selectuser()
     } else {
       if ( leshell->currentText() != shell ) {
         if ( !ismoreshells ) {
-          leshell->insertItem( i18n("Do not change"), 0 );
+          leshell->insertItem( i18n("Do Not Change"), 0 );
           ismoreshells = true;
         }
         leshell->setCurrentItem( 0 );

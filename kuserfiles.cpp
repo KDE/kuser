@@ -115,7 +115,7 @@ bool KUserFiles::loadpwd()
     mCfg->setPasswdsrc( PASSWORD_FILE );
     mCfg->setGroupsrc( GROUP_FILE );
     passwd_filename = mCfg->passwdsrc();
-    KMessageBox::error( 0, i18n("KUser Sources were not configured.\nLocal passwd source set to %1\nLocal group source set to %2.").arg(mCfg->passwdsrc().arg(mCfg->groupsrc())) );
+    KMessageBox::error( 0, i18n("KUser sources were not configured.\nLocal passwd source set to %1\nLocal group source set to %2.").arg(mCfg->passwdsrc().arg(mCfg->groupsrc())) );
   }
 
   if(!passwd_filename.isEmpty()) {

@@ -93,7 +93,7 @@ bool KGroupFiles::reload()
   for(int k = 0; k < MAXFILES; k++) {
     rc = stat(QFile::encodeName(filename), &st);
     if(rc != 0) {
-      KMessageBox::error( 0, i18n("stat call on file %1 failed: %2\nCheck KUser Settings").
+      KMessageBox::error( 0, i18n("stat call on file %1 failed: %2\nCheck KUser settings.").
         arg(filename).arg(QString::fromLatin1(strerror(errno))) );
       if( (processing_file & GROUP) != 0 ) {
         group_errno = errno;
@@ -350,11 +350,11 @@ bool KGroupFiles::save()
   }
 
   if( (errors_found & NOMINGID) != 0 ) {
-    KMessageBox::error( 0, i18n("Unable to process NIS group file without a minimum GID specified.\nPlease update KUser Settings (Sources).") );
+    KMessageBox::error( 0, i18n("Unable to process NIS group file without a minimum GID specified.\nPlease update KUser settings (sources).") );
   }
 
   if( (errors_found & NONISGROUP) != 0 ) {
-    KMessageBox::error( 0, i18n("Specifying NIS minimum GID requires NIS file(s).\nPlease update KUser Settings (Sources).") );
+    KMessageBox::error( 0, i18n("Specifying NIS minimum GID requires NIS file(s).\nPlease update KUser settings (sources).") );
   }
 
 #ifdef GRMKDB

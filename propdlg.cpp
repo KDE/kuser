@@ -301,10 +301,10 @@ void propdlg::save() {
 void propdlg::mntsel(int index) {
   Quota *tmpq = user->quota.at(chquota);
 
-  tmpq->fhard = atoi(leqfh->text());
-  tmpq->fsoft = atoi(leqfs->text());
-  tmpq->ihard = atoi(leqih->text());
-  tmpq->isoft = atoi(leqis->text());
+  tmpq->fhard = atol(leqfh->text());
+  tmpq->fsoft = atol(leqfs->text());
+  tmpq->ihard = atol(leqih->text());
+  tmpq->isoft = atol(leqis->text());
 
   chquota = index;
   selectuser();
@@ -313,10 +313,10 @@ void propdlg::mntsel(int index) {
 void propdlg::saveq() {
   Quota *tmpq = user->quota.at(chquota);
 
-  tmpq->fhard = atoi(leqfh->text());
-  tmpq->fsoft = atoi(leqfs->text());
-  tmpq->ihard = atoi(leqih->text());
-  tmpq->isoft = atoi(leqis->text());
+  tmpq->fhard = atol(leqfh->text());
+  tmpq->fsoft = atol(leqfs->text());
+  tmpq->ihard = atol(leqih->text());
+  tmpq->isoft = atol(leqis->text());
 }
 
 void propdlg::shactivated(const char *text) { 

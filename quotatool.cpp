@@ -130,9 +130,9 @@ printf("getquota\n");
           close(fd);
 	  break;
       }
-    q->append(new Quota(dq.dqb_curblocks,
-                        dq.dqb_bsoftlimit,
-                        dq.dqb_bhardlimit,
+    q->append(new Quota(dbtob(dq.dqb_curblocks),
+                        dbtob(dq.dqb_bsoftlimit),
+                        dbtob(dq.dqb_bhardlimit),
                         dq.dqb_curfiles,
                         dq.dqb_fsoftlimit,
                         dq.dqb_fhardlimit));
@@ -165,15 +165,15 @@ printf("getquota\n");
 #endif
 }
 
-void setquota(const char *uname, QList<Quota> *q) 
+void setquota(long int id, QList<Quota> *q) 
 {
-  long id;
-
   if (is_quota == 0)
     return;
 
+/*
   if (id = getentry(uname) == -1)
     return;
+*/
 
   int qcmd, fd;
   struct dqblk dq;
@@ -184,7 +184,7 @@ void setquota(const char *uname, QList<Quota> *q)
 #endif
 
 #ifdef _KU_DEBUG
-printf("setquota\n");
+//printf("setquota\n");
 #endif
 
 #ifdef HAVE_SYS_FS_UFS_QUOTA_H
@@ -193,26 +193,37 @@ printf("setquota\n");
     qctl.addr = (caddr_t) &dq;
 
   for (uint i=0; i<mounts.count(); i++) {
-    dq.dqb_curblocks  = q->at(i)->fcur;
-    dq.dqb_bsoftlimit = q->at(i)->fsoft;
-    dq.dqb_bhardlimit = q->at(i)->fhard;
+    dq.dqb_curblocks  = btodb(q->at(i)->fcur);
+    dq.dqb_bsoftlimit = btodb(q->at(i)->fsoft);
+    dq.dqb_bhardlimit = btodb(q->at(i)->fhard);
     dq.dqb_curfiles  = q->at(i)->icur;
     dq.dqb_fsoftlimit = q->at(i)->isoft;
     dq.dqb_fhardlimit = q->at(i)->ihard;
+    dq.dqb_btimelimit = DQ_BTIMELIMIT;
+    dq.dqb_ftimelimit = DQ_FTIMELIMIT;
+    
+    if (id == 404) {
+      printf("id = %d\n%d %d %d\n%d %d %d\n", id, q->at(i)->fcur, q->at(i)->fsoft, q->at(i)->fhard,
+      q->at(i)->icur, q->at(i)->isoft, q->at(i)->ihard);
+    }
 
     fd = open((const char *)mounts.at(i)->quotafilename, O_WRONLY);
 
     if ((dd = ioctl(fd, Q_QUOTACTL, &qctl)) != 0)
       if (errno == ESRCH) {
+//      printf("Warning ESRCH %il \n", id);
       }
       else
       {
-        printf("errno: %i, ioctl: %i\n", errno, dd);
+//        printf("errno: %i, ioctl: %i\n", errno, dd);
         sleep(3);
         is_quota = 0;
         close(fd);
         break;
       }
+    qctl.op = Q_SYNC;
+//    printf("ioctl %d\n", ioctl(fd, Q_QUOTACTL, &qctl));
+
     close(fd);
   }
 #else
@@ -303,9 +314,9 @@ printf("quota_write\n");
 
   for (uint i=0; i<users.count(); i++) {
 #ifdef _KU_DEBUG
-printf("setquota %s -- %li\n", (const char *)users.at(i)->p_name, users.at(i)->p_uid);
+//printf("setquota %s -- %li\n", (const char *)users.at(i)->p_name, users.at(i)->p_uid);
 #endif
-    setquota(users.at(i)->p_name, &users.at(i)->quota);
+    setquota(users.at(i)->p_uid, &users.at(i)->quota);
   }
 }
 

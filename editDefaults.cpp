@@ -33,16 +33,23 @@
 #include "generalsettings.h"
 #include "filessettings.h"
 #include "ldapsettings.h"
+#include "passwordpolicy.h"
 #include "misc.h"
 
 editDefaults::editDefaults( KConfigSkeleton *config, QWidget *parent, const char *name ) :
   KConfigDialog( parent, name, config, IconList,
   Default|Ok|Apply|Cancel|Help, Ok, true )
 {
-  GeneralSettings *page1 = new GeneralSettings( this );
+  KTabWidget *page1 = new KTabWidget( this );
+  page1->setMargin( KDialog::marginHint() );
+  
+  GeneralSettings *page1a = new GeneralSettings( this );
+  page1a->kcfg_shell->insertItem( i18n("<Empty>" ) );
+  page1a->kcfg_shell->insertStringList( readShells() );
+  page1->addTab( page1a, i18n("Connection") );
+  PasswordPolicy *page1b = new PasswordPolicy( this );
+  page1->addTab( page1b, i18n("Password Policy") );
   addPage( page1, i18n("General"), "", i18n("General Settings") );
-  page1->kcfg_shell->insertItem( i18n("<Empty>" ) );
-  page1->kcfg_shell->insertStringList( readShells() );
   
   FilesSettings *page2 = new FilesSettings( this );
   addPage( page2, i18n("Files"), "", i18n("File Source Settings") );

@@ -475,6 +475,7 @@ void propdlg::selectuser()
 
       QDateTime expire;
       expire.setTime_t( user->getExpire() );
+      kdDebug() << "expiration: " << user->getExpire() << endl;
       setCB( cbexpire, (int) expire.toTime_t() == -1, first );
       if ( (int) expire.toTime_t() == -1 ) expire.setTime_t( 0 );
       if ( first ) {

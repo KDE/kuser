@@ -217,25 +217,13 @@ void mainView::useradd()
   if ( kug->getUsers().getCaps() & KUsers::Cap_Shadow || samba ) {
     tk->setLastChange( now() );
   }
-/*  
-  if (config->hasKey("s_min"))
-    tk->setMin(config->readNumEntry("s_min"));
 
-  if (config->hasKey("s_max"))
-    tk->setMax(config->readNumEntry("s_max"));
-
-  if (config->hasKey("s_warn"))
-    tk->setWarn(config->readNumEntry("s_warn"));
-
-  if (config->hasKey("s_inact"))
-    tk->setInactive(config->readNumEntry("s_inact"));
-
-  if (config->hasKey("s_expire"))
-    tk->setExpire(config->readNumEntry("s_expire"));
-
-  if (config->hasKey("s_flag"))
-    tk->setFlag(config->readNumEntry("s_flag"));
-*/
+  tk->setMin( kug->kcfg()->smin() );
+  tk->setMax( kug->kcfg()->smax() );
+  tk->setWarn( kug->kcfg()->swarn() );
+  tk->setInactive( kug->kcfg()->sinact() );
+  tk->setExpire( kug->kcfg()->sneverexpire() ? -1 : 
+    (kug->kcfg()->sexpire()).toTime_t() );
   
   bool privgroup = kug->kcfg()->userPrivateGroup();
 

@@ -1,7 +1,7 @@
 #ifndef _KU_ADDUSER_H_
 #define _KU_ADDUSER_H_
 
-#include <qchkbox.h>
+#include <qcheckbox.h>
 #include "propdlg.h"
 
 class addUser: public propdlg {

@@ -56,15 +56,15 @@ mainWidget::mainWidget(const char *name) : KTMainWindow(name) {
 
   toolbar = new KToolBar(this, "toolbar");
 
-  toolbar->insertButton(Icon("useradd.xpm"), 0, SIGNAL(clicked()), md, SLOT(useradd()), TRUE, i18n("Add user"));
-  toolbar->insertButton(Icon("userdel.xpm"), 0, SIGNAL(clicked()), md, SLOT(userdel()), TRUE, i18n("Delete user"));
-  toolbar->insertButton(Icon("useredit.xpm"), 0, SIGNAL(clicked()), md, SLOT(useredit()), TRUE, i18n("Edit user"));
+  toolbar->insertButton(BarIcon("useradd.xpm"), 0, SIGNAL(clicked()), md, SLOT(useradd()), TRUE, i18n("Add user"));
+  toolbar->insertButton(BarIcon("userdel.xpm"), 0, SIGNAL(clicked()), md, SLOT(userdel()), TRUE, i18n("Delete user"));
+  toolbar->insertButton(BarIcon("useredit.xpm"), 0, SIGNAL(clicked()), md, SLOT(useredit()), TRUE, i18n("Edit user"));
   
   toolbar->insertSeparator();
   
-  toolbar->insertButton(Icon("grpadd.xpm"), 0, SIGNAL(clicked()), md, SLOT(grpadd()), TRUE, i18n("Add group"));
-  toolbar->insertButton(Icon("grpdel.xpm"), 0, SIGNAL(clicked()), md, SLOT(grpdel()), TRUE, i18n("Delete group"));
-  toolbar->insertButton(Icon("grpedit.xpm"), 0, SIGNAL(clicked()), md, SLOT(grpedit()), TRUE, i18n("Edit group"));
+  toolbar->insertButton(BarIcon("grpadd.xpm"), 0, SIGNAL(clicked()), md, SLOT(grpadd()), TRUE, i18n("Add group"));
+  toolbar->insertButton(BarIcon("grpdel.xpm"), 0, SIGNAL(clicked()), md, SLOT(grpdel()), TRUE, i18n("Delete group"));
+  toolbar->insertButton(BarIcon("grpedit.xpm"), 0, SIGNAL(clicked()), md, SLOT(grpedit()), TRUE, i18n("Edit group"));
   toolbar->setBarPos(KToolBar::Top);
 
   addToolBar(toolbar);

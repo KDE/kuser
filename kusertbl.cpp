@@ -36,7 +36,7 @@ KUser *KUserRow::getData() {
 }
 
 KUserTable::KUserTable(QWidget *parent, const char *name) : KRowTable(SelectRow, parent, name) {
-  pmUser = new QPixmap(Icon("user.xpm"));
+  pmUser = new QPixmap(BarIcon("user.xpm"));
 
   setCellHeight( max( fontMetrics().lineSpacing(), pmUser->height()) );
 

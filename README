@@ -1,5 +1,8 @@
 KUser is rewriten XUser which was writen in XForms.
-It supports Solaris & Linux.
+It supports:
+Solaris
+Linux
+Irix
 
 It's prerelease only it's rather untested.
 

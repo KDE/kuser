@@ -1,0 +1,12 @@
+# KDE Config File 
+[KDE Desktop Entry]
+Name=User Manager
+Name[ru]=Управление пользователями
+Exec=kuser
+Icon=kuser.xpm
+Type=Application
+DocPath=kuser/index.html
+Command=Full Featured User Manager
+Command[ru]=Расширенное управление пользователями
+Terminal=0
+MiniIcon=kuser.xpm

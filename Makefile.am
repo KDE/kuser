@@ -27,6 +27,8 @@ INSTALL_PROGRAMM = ${INSTALL} -m 0750
 
 # only install in your own directories
 install-data-local:
+	$(mkinstalldirs) $(kde_appsdir)/System
+	$(INSTALL) -m 644 kuser.kdelnk $(kde_appsdir)/System/
 	$(mkinstalldirs) $(kde_datadir)/kuser/pics
 	$(INSTALL) -m 644 pic/user.xpm $(kde_datadir)/kuser/pics/
 	$(mkinstalldirs) $(kde_datadir)/kuser/toolbar

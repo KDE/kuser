@@ -60,7 +60,7 @@ editGroupData::editGroupData
 	pbok = new QPushButton( this, "PushButton_3" );
 	pbok->setGeometry( 70, 190, 100, 30 );
 	connect( pbok, SIGNAL(clicked()), SLOT(ok()) );
-	pbok->setText(_("Ok"));
+	pbok->setText(_("OK"));
 	pbok->setAutoRepeat( FALSE );
 	pbok->setAutoResize( FALSE );
 

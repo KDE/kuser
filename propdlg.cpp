@@ -40,7 +40,7 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
   tw = new KTabCtl(this, "tw");
   tw->setGeometry(0, 0, 450, 410);
 
-  pbok = new QPushButton(_("Ok"), this, "pbok");
+  pbok = new QPushButton(_("OK"), this, "pbok");
   pbok->setGeometry(200, 425, 100, 30);
   pbok->setDefault(TRUE);
   QObject::connect(pbok, SIGNAL(pressed()), this, SLOT(ok()));
@@ -674,7 +674,7 @@ printf("propdlg::ok\n");
   if (olduid != newuid)
     if (users->user_lookup(newuid) != NULL) {
       tmp.sprintf(_("User with UID %u already exists"), newuid);
-      KMsgBox::message(0, _("Message"), tmp, KMsgBox::STOP, _("Ok"));
+      KMsgBox::message(0, _("Message"), tmp, KMsgBox::STOP, _("OK"));
       return;
     }
     

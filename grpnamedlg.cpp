@@ -65,7 +65,7 @@ grpnamedlg::grpnamedlg(KGroup *agroup, QWidget* parent, const char* name)
   bbox->addStretch(1);
 
   // the default buttons  
-  pbOk = bbox->addButton(_("Ok"));
+  pbOk = bbox->addButton(_("OK"));
   pbCancel = bbox->addButton(_("Cancel"));
   pbOk->setDefault(TRUE);
   

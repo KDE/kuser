@@ -56,7 +56,7 @@ void addUser::ok() {
   
   if (users->user_lookup(newuid) != NULL) {
     tmp.sprintf(_("User with UID %u already exists"), newuid);
-    KMsgBox::message(0, _("Message"), tmp, KMsgBox::STOP, _("Ok"));
+    KMsgBox::message(0, _("Message"), tmp, KMsgBox::STOP, _("OK"));
     return;
   }
 

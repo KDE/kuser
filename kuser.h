@@ -170,7 +170,7 @@ public:
   KUser *first();
   KUser *next();
   uint count() const;
-  KUser *user(uint num);
+  KUser *operator[](uint num);
 
   void add(KUser *ku);
   void del(KUser *au);

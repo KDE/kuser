@@ -1,17 +1,18 @@
 #include "globals.h"
+
 #include <qstring.h>
 #include <kbuttonbox.h>
 #include <qlayout.h>
 #include <qvalidator.h>
-#include "grpnamedlg.h"
-#include "misc.h"
-#include "maindlg.h"
 #include <qmessagebox.h>
 
-grpnamedlg::grpnamedlg(KGroup *agroup, QWidget* parent, const char* name)
-           :QDialog(parent, name, TRUE) {
-  group = agroup;
-  group->setGID(groups->first_free());
+#include "grpnamedlg.h"
+#include "misc.h"
+#include "kglobal.h"
+
+grpnamedlg::grpnamedlg(KGroup &AGroup, QWidget* parent, const char* name)
+  : QDialog(parent, name, TRUE), group(AGroup) {
+  group.setGID(kug->getGroups().first_free());
 
   setCaption(i18n("Add group"));
 
@@ -34,7 +35,7 @@ grpnamedlg::grpnamedlg(KGroup *agroup, QWidget* parent, const char* name)
   legrpname = new QLineEdit( this, "LineEdit_1" );
 
   // ensure it fits at least 20 characters
-  legrpname->setText( "XXXXXXXXXXXXXXXXXXX" );
+  legrpname->setText("XXXXXXXXXXXXXXXXXXX");
   legrpname->setMinimumSize( legrpname->sizeHint() );
 
   // clear text
@@ -42,14 +43,14 @@ grpnamedlg::grpnamedlg(KGroup *agroup, QWidget* parent, const char* name)
   legrpname->setFocus();
   grid->addWidget(legrpname, 0, 1);
 
-  legid = new QLineEdit( this, "LineEdit_2" );
+  legid = new QLineEdit(this, "LineEdit_2");
 
   // ensure it fits at least 20 characters
-  legid->setText( "XXXXXXXXXXXXXXXXXXX" );
-  legid->setMinimumSize( legid->sizeHint() );
+  legid->setText("XXXXXXXXXXXXXXXXXXX");
+  legid->setMinimumSize(legid->sizeHint());
   
   // clear text
-  legid->setText(QString("%1").arg(group->getGID()));
+  legid->setText(QString("%1").arg(group.getGID()));
   legid->setValidator(new QIntValidator(this, "val1"));
 
   grid->addWidget(legid, 1, 1);
@@ -90,24 +91,23 @@ void grpnamedlg::ok()
   QString s;
   s = legid->text();
 
-  if (groups->lookup(legrpname->text()) != NULL) {
+  if (kug->getGroups().lookup(legrpname->text()) != NULL) {
     tmp = i18n("Group with name %1 already exists.").arg(legrpname->text());
     QMessageBox::warning(0, i18n("Error"), tmp, i18n("OK"));
     return;
   }
   
-  if (groups->lookup(s.toInt()) != NULL) {
+  if (kug->getGroups().lookup(s.toInt()) != NULL) {
     tmp = i18n("Group with gid %1 already exists.").arg(s.toInt());
     QMessageBox::warning(0, i18n("Error"), tmp, i18n("OK"));
     return;
   }
   
-  group->setName(legrpname->text());
-  group->setGID(s.toInt());
+  group.setName(legrpname->text());
+  group.setGID(s.toInt());
   accept();
 }
 
-void grpnamedlg::cancel()
-{
+void grpnamedlg::cancel() {
   reject();
 }

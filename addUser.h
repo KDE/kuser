@@ -8,9 +8,9 @@ class addUser: public propdlg {
   Q_OBJECT
 public:
 #ifdef _KU_QUOTA
-  addUser(KUser *auser, Quota *aquota, QWidget *parent = 0, const char *name = 0, int isprep = false);
+  addUser(KUser &AUser, Quota &AQuota, QWidget *parent = 0, const char *name = 0, int isprep = false);
 #else
-  addUser(KUser *auser, QWidget *parent = 0, const char *name = 0, int isprep = false);
+  addUser(KUser &AUser, QWidget *parent = 0, const char *name = 0, int isprep = false);
 #endif
   void setUserPrivateGroup(bool data);
   void setCreateHomeDir(bool data);

@@ -1,12 +1,13 @@
 #ifndef _KU_MAINWIDGET_H
 #define _KU_MAINWIDGET_H
 
-#include <ktmainwindow.h>
-//#include <ktoolbar.h>
-#include <kstatusbar.h>
-//#include <kmenubar.h>
 #include <qevent.h>
 #include <qpixmap.h>
+
+#include <ktmainwindow.h>
+#include <kstatusbar.h>
+
+#include "mainView.h"
 
 class mainWidget : public KTMainWindow {
 Q_OBJECT
@@ -30,6 +31,7 @@ private:
 //  KMenuBar   *menubar;
 //  KToolBar   *toolbar;
   KStatusBar *sbar;
+  mainView *md;
 };
 
 #endif // _KU_MAINWIDGET_H

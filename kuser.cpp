@@ -23,16 +23,16 @@
 #include <signal.h>
 #endif
 
-#include <qstring.h>
-#include <qdir.h>
-
-#include "maindlg.h"
-#include "kuser.h"
-#include "misc.h"
-
 #ifdef _KU_SHADOW
 #include <shadow.h>
 #endif
+
+#include <qstring.h>
+#include <qdir.h>
+
+#include "kglobal.h"
+#include "kuser.h"
+#include "misc.h"
 
 #ifdef _KU_QUOTA
 #include "mnt.h"
@@ -444,7 +444,7 @@ bool KUsers::loadpwd() {
   while ((p = getpwent()) != NULL) {
 #endif
 #ifdef _KU_QUOTA
-    quotas->addQuota(p->pw_uid);
+    kug->getQuotas().addQuota(p->pw_uid);
 #endif
     tmpKU = new KUser();
     tmpKU->setUID(p->pw_uid);
@@ -764,7 +764,7 @@ uint KUsers::count() const {
   return (u.count());
 }
 
-KUser *KUsers::user(uint num) {
+KUser *KUsers::operator[](uint num) {
   return (u.at(num));
 }
 

@@ -9,25 +9,25 @@
 
 #include <kapp.h>
 
-#include "maindlg.h"
+#include "kglobal.h"
 #include "editGroup.h"
 
 #include <klocale.h>
 
 #define Inherited editGroupData
 
-editGroup::editGroup(KGroup *akg, QWidget* parent, const char* name)
-: Inherited(parent, name) {
+editGroup::editGroup(KGroup &akg, QWidget* parent, const char* name)
+: Inherited(parent, name), kg(akg) {
   uint i;
 
-  kg = akg;
+  for (i = 0; i<kg.count(); i++)
+    m_Group->insertItem(kg.user(i));
 
-  for (i = 0; i<kg->count(); i++)
-    m_Group->insertItem(kg->user(i));
-
-  for (i = 0; i<users->count(); i++)
-    if (!kg->lookup_user(users->user(i)->getName()))
-      m_Users->insertItem(users->user(i)->getName());
+  for (i = 0; i<kug->getUsers().count(); i++) {
+    const QString &userName = kug->getUsers()[i]->getName();
+    if (!kg.lookup_user(userName))
+      m_Users->insertItem(userName);
+  }
 
   if (m_Users->count() != 0)
     m_Users->setCurrentItem(0);
@@ -42,10 +42,10 @@ editGroup::~editGroup() {
 }
 
 void editGroup::ok() {
-  kg->clear();
+  kg.clear();
 
   for (uint i=0; i<m_Group->count(); i++)
-    kg->addUser(m_Group->text(i));
+    kg.addUser(m_Group->text(i));
 
   accept();
 }

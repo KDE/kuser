@@ -1,3 +1,5 @@
+#include "globals.h"
+
 #include <errno.h>
 #include <unistd.h>
 #include <sys/types.h>
@@ -9,16 +11,15 @@
 #include <string.h>
 #include <limits.h>
 
-#include <qstring.h>
-
-#include "maindlg.h"
-#include "globals.h"
-#include "kgroup.h"
-#include "misc.h"
-
 #ifdef _KU_SHADOW
 #include <shadow.h>
 #endif
+
+#include <qstring.h>
+
+#include "kglobal.h"
+#include "kgroup.h"
+#include "misc.h"
 
 #ifdef _KU_QUOTA
 #include "mnt.h"
@@ -228,7 +229,7 @@ int KGroups::first_free() {
   uint t = _KU_FIRST_GID ;
 
   for (t= _KU_FIRST_GID ; t<65534; t++) {
-    while ((i<count()) && (group(i)->getGID() != t))
+    while ((i<count()) && ((*this)[i]->getGID() != t))
       i++;
 
     if (i == count())
@@ -243,7 +244,7 @@ KGroups::~KGroups() {
   g.clear();
 }
 
-KGroup *KGroups::group(uint num) {
+KGroup *KGroups::operator[](uint num) {
   return (g.at(num));
 }
 

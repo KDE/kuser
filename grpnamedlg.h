@@ -10,7 +10,7 @@
 class grpnamedlg : public QDialog {
   Q_OBJECT
 public:
-  grpnamedlg(KGroup *agroup, QWidget* parent = NULL, const char* name = NULL);
+  grpnamedlg(KGroup &AGroup, QWidget* parent = NULL, const char* name = NULL);
   ~grpnamedlg();
 
 protected slots:
@@ -18,7 +18,7 @@ protected slots:
   void cancel();
 
 protected:
-  KGroup *group;
+  KGroup &group;
 
   QPushButton *pbOk;
   QPushButton *pbCancel;

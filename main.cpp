@@ -1,3 +1,9 @@
+#include "globals.h"
+
+#include <unistd.h>
+
+#include <qfont.h>
+
 #include <kiconloader.h>
 #include <kapp.h>
 #include "kerror.h"
@@ -5,14 +11,12 @@
 #include <klocale.h>
 #include <kcmdlineargs.h>
 #include <ktmainwindow.h>
-#include <qfont.h>
-#include <unistd.h>
-#include "globals.h"
-#include "misc.h"
-#include "maindlg.h"
-#include "mainWidget.h"
-
 #include <kaboutdata.h>
+
+#include "kglobal.h"
+#include "kerror.h"
+#include "misc.h"
+#include "mainWidget.h"
 
 static const char *description = 
 	I18N_NOOP("KDE User editor");
@@ -21,6 +25,8 @@ char tmp[1024];
 KConfig *config;
 KError *err;
 bool changed = false;
+
+KUserGlobals *kug = NULL;
 
 #ifdef _KU_QUOTA
 int is_quota = 1;
@@ -43,14 +49,12 @@ void donemain() {
   delete err;
 }
 
-mainDlg *md = NULL;
-
 int main(int argc, char **argv) {
   
   KAboutData aboutData("kuser", I18N_NOOP("KUser"),
     _KU_VERSION, description, KAboutData::License_GPL, 
-    "(c) 1997-2000, Denis Perchine");
-  aboutData.addAuthor("Denis Perchine", 0, "dyp@perchine.com");
+    i18n("(c) 1997-2000, Denis Perchine"));
+  aboutData.addAuthor(i18n("Denis Perchine"), 0, "dyp@perchine.com");
   KCmdLineArgs::init(argc, argv, &aboutData);
   mainWidget *mw = NULL;
 
@@ -63,6 +67,10 @@ int main(int argc, char **argv) {
     err->display();
     exit(1);
   }
+
+  KUserGlobals l_kug;
+  kug = &l_kug;
+  l_kug.init();
 
   mw = new mainWidget("kuser");
   

@@ -22,9 +22,9 @@ class propdlg : public QDialog
 
 public:
 #ifdef _KU_QUOTA
-  propdlg(KUser *auser, Quota *aquota, QWidget *parent = 0, const char *name = 0, int isprep = false);
+  propdlg(KUser &AUser, Quota &AQuota, QWidget *parent = 0, const char *name = 0, int isprep = false);
 #else
-  propdlg(KUser *auser, QWidget *parent = 0, const char *name = 0, int isprep = false);
+  propdlg(KUser &AUser, QWidget *parent = 0, const char *name = 0, int isprep = false);
 #endif
   ~propdlg();
 
@@ -54,9 +54,9 @@ protected:
   bool isqchanged;
 #endif
 
-  KUser       *user;
+  KUser &user;
 #ifdef _KU_QUOTA
-  Quota *quota;
+  Quota &quota;
 #endif
   bool ischanged;
   uint olduid;

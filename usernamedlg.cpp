@@ -1,10 +1,13 @@
 #include "globals.h"
-#include <kbuttonbox.h>
+
+#include <qmessagebox.h>
 #include <qlayout.h>
+
+#include <kbuttonbox.h>
+
 #include "usernamedlg.h"
 #include "misc.h"
-#include "maindlg.h"
-#include <qmessagebox.h>
+#include "kglobal.h"
 
 usernamedlg::usernamedlg(KUser *auser, QWidget* parent, const char* name)
            :QDialog(parent, name, TRUE) {
@@ -64,11 +67,11 @@ usernamedlg::~usernamedlg() {
 }
 
 void usernamedlg::ok() {
-  if (users->lookup(leusername->text()) != NULL) {
+  if (kug->getUsers().lookup(leusername->text()) != NULL) {
     QMessageBox::information(0, 
-			     i18n("Error"), 
-			     i18n("User with name %1 already exists.")
-			     .arg(leusername->text()), i18n("OK"));
+      i18n("Error"), 
+      i18n("User with name %1 already exists.")
+        .arg(leusername->text()), i18n("OK"));
     return;
   }
 

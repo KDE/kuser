@@ -1,41 +1,22 @@
 #include "globals.h"
 
-#include <stdio.h>
-
 #include <qtooltip.h>
+
 #include <ktoolbar.h>
 #include <kglobal.h>
 #include <kiconloader.h>
 #include <kaction.h>
+#include <stdio.h>
 #include <kstdaction.h>
 
-#include "maindlg.h"
 #include "mainWidget.h"
 #include "misc.h"
 
 mainWidget::mainWidget(const char *name) : KTMainWindow(name) {
-  md = new mainDlg(this);
-  md->init();
+  md = new mainView(this);
 
   setupActions();
 
-/*
-  toolbar = new KToolBar(this, "toolbar");
-
-  toolbar->insertButton(BarIcon("useradd"), 0, SIGNAL(clicked()), md, SLOT(useradd()), TRUE, i18n("Add user"));
-  toolbar->insertButton(BarIcon("userdel"), 0, SIGNAL(clicked()), md, SLOT(userdel()), TRUE, i18n("Delete user"));
-  toolbar->insertButton(BarIcon("useredit"), 0, SIGNAL(clicked()), md, SLOT(useredit()), TRUE, i18n("Edit user"));
-  
-  toolbar->insertSeparator();
-  
-  toolbar->insertButton(BarIcon("grpadd"), 0, SIGNAL(clicked()), md, SLOT(grpadd()), TRUE, i18n("Add group"));
-  toolbar->insertButton(BarIcon("grpdel"), 0, SIGNAL(clicked()), md, SLOT(grpdel()), TRUE, i18n("Delete group"));
-  toolbar->insertButton(BarIcon("grpedit"), 0, SIGNAL(clicked()), md, SLOT(grpedit()), TRUE, i18n("Edit group"));
-  toolbar->setBarPos(KToolBar::Top);
-
-  addToolBar(toolbar);
-*/
-  
   sbar = new KStatusBar(this);
   sbar->insertItem("Reading config", 0);
   
@@ -54,12 +35,6 @@ mainWidget::~mainWidget() {
 
   if (sbar)
     delete sbar;
-
-//  if (toolbar)
-//    delete toolbar;
-
-//  if (menubar)
-//    delete menubar;
 }
 
 void mainWidget::setupActions() {
@@ -86,20 +61,6 @@ void mainWidget::setupActions() {
     SLOT(grpedit()), actionCollection(), "edit_group");
   (void)new KAction(i18n("&Delete..."), QIconSet(BarIcon("delete_group")), 0, md,
     SLOT(grpdel()), actionCollection(), "delete_group");
-
-/*
-  QPopupMenu *help = helpMenu(
-    i18n("KUser version %1\n"
-         "KDE project\n"
-         "This program was created by\n"
-         "%2\n"
-         "%3\n"
-         "Copyright %4 (c)")
-         .arg(_KU_VERSION)
-         .arg("Denis Perchine")
-         .arg("dyp@perchine.com")
-         .arg("1997-2000"));
-*/
 
   createGUI("kuserui.rc");
 }

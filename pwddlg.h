@@ -12,7 +12,7 @@ class pwddlg : public QDialog {
   Q_OBJECT
 
 public:
-  pwddlg(KUser *auser, QWidget* parent = NULL, const char* name = NULL);
+  pwddlg(KUser &AUser, QWidget* parent = NULL, const char* name = NULL);
   ~pwddlg();
 
 protected slots:
@@ -20,7 +20,7 @@ protected slots:
   void cancel();
 
 private:
-  KUser *user;
+  KUser &user;
 
   QVBoxLayout *layout;
   QPushButton *pbOk;

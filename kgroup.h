@@ -53,7 +53,7 @@ public:
 
   KGroup *first();
   KGroup *next();
-  KGroup *group(uint num);
+  KGroup *operator[](uint num);
 
   void add(KGroup *ku);
   void del(KGroup *au);

@@ -39,7 +39,7 @@ public:
   Mounts();
   ~Mounts();
 
-  MntEnt *getMount(uint num);
+  MntEnt *operator[](uint num);
   uint getMountsNumber();
 protected:
   QList<MntEnt> m;

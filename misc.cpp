@@ -1,16 +1,10 @@
 // $Id$
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+#include "globals.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <qfile.h>
-
-#include "globals.h"
-
 #include <unistd.h>
 
 #ifdef HAVE_MNTENT_H
@@ -26,10 +20,11 @@
 #include <sys/mnttab.h>
 #endif
 
-#include "misc.h"
-#include "globals.h"
-#include "maindlg.h"
+#include <qfile.h>
 #include <qmessagebox.h>
+
+#include "misc.h"
+#include "kglobal.h"
 
 QString readentry(const QString &name, const QString def) {
   if (config->hasKey(name))

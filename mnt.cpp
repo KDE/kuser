@@ -153,7 +153,7 @@ Mounts::~Mounts() {
   m.clear();
 }
 
-MntEnt *Mounts::getMount(uint num) {
+MntEnt *Mounts::operator[](uint num) {
   return (m.at(num));
 }
 

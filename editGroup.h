@@ -21,7 +21,7 @@ class editGroup : public editGroupData
   Q_OBJECT
 public:
 
-  editGroup(KGroup *akg,
+  editGroup(KGroup &akg,
 	     QWidget* parent = NULL,
 	     const char* name = NULL);
 
@@ -35,6 +35,6 @@ protected slots:
   virtual void del();
 
 protected:
-  KGroup *kg;
+  KGroup &kg;
 };
 #endif // editGroup_included

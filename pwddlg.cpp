@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <unistd.h>
+#include <config.h>
 
 #ifdef HAVE_CRYPT_H
 #include <crypt.h>

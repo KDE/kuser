@@ -18,7 +18,7 @@ public:
   void clear();
   void insertItem(KGroup *aku);
   int currentItem();
-  KGroup *getCurrentUser();
+  KGroup *getCurrentGroup();
   void setCurrentItem( int item );
   void setAutoUpdate(bool state);
   void sortBy(int num);

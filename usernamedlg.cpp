@@ -72,11 +72,11 @@ void usernamedlg::ok()
   if (users->user_lookup(leusername->text()) != NULL) {
     tmp.sprintf(_("User with name %s already exists."), leusername->text());
     KMsgBox::message(0, _("Error"), tmp, KMsgBox::STOP);
+    return;
   }
-  else {
-    user->setp_name(leusername->text());
-    accept();
-  }
+  
+  user->setp_name(leusername->text());
+  accept();
 }
 
 void usernamedlg::cancel()

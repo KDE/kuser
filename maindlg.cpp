@@ -17,6 +17,7 @@
 #include "kuser.h"
 #include "misc.h"
 #include "usernamedlg.h"
+#include "grpnamedlg.h"
 #include "propdlg.h"
 #include "pwddlg.h"
 #include "editGroup.h"
@@ -64,17 +65,17 @@ void mainDlg::init() {
 }
 
 mainDlg::~mainDlg() {
-  delete lbusers;
-  delete lbgroups;
-  delete kp;
-  
   delete u;
-  delete g;
+ delete g;
 
 #ifdef _KU_QUOTA
   delete q;
   delete m;
 #endif
+
+  delete lbusers;
+  delete lbgroups;
+  delete kp;
 }
 
 void mainDlg::setUsersSort(int col) {
@@ -251,7 +252,6 @@ void mainDlg::quit() {
 #endif
     }
 
-  delete this;
   qApp->quit();
 }
 
@@ -435,11 +435,49 @@ void mainDlg::resizeEvent (QResizeEvent *rse) {
 }
 
 void mainDlg::grpadd() {
+  grpnamedlg *gd;
+  KGroup *tk;
+
+  tk = new KGroup();
+  
+  gd = new grpnamedlg(tk, this);
+  if (gd->exec() == 0) {
+    delete tk;
+    return;
+  }
+
+  delete gd;
+  g->addGroup(tk);
+  reloadGroups(lbgroups->currentItem());
+  changed = TRUE;
 }
 
 void mainDlg::grpedit() {
+  groupSelected(lbgroups->currentItem());
 }
 
 void mainDlg::grpdel() {
+  uint i = 0;
+  bool islast = FALSE;
+
+  if (KMsgBox::yesNo(0, _("WARNING"),
+                     _("Do you really want to delete group ?"),
+                     KMsgBox::STOP,
+                     _("Cancel"), _("Delete")) == 2) {
+
+    i = lbgroups->currentItem();
+    if (i == g->getGroupsNumber()-1)
+      islast = TRUE;
+
+    g->delGroup(lbgroups->getCurrentGroup());
+
+    prev = -1;
+
+    if (!islast)
+      reloadGroups(i);
+    else
+      reloadGroups(i-1);
+    changed = TRUE;
+  }
 }
 

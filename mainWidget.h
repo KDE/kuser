@@ -17,6 +17,7 @@ public:
 
 protected:
   virtual void resizeEvent (QResizeEvent *);
+  virtual void closeEvent (QCloseEvent *);
 
 private:
   KMenuBar   *menubar;

@@ -8,11 +8,11 @@ kuser_LDADD	=	-lkdeui -lkdecore -lqt -lX11 -lXext $(LIBSOCKET) $(LIBCRYPT)
 
 ####### Files
 
-kuser_SOURCES	=	mainWidget.cpp editGroup.cpp editGroupData.cpp kuservw.cpp kheader.cpp krowtable.cpp kusertbl.cpp kgrouptbl.cpp kgroupvw.cpp kdatectl.cpp kuser.cpp kgroup.cpp main.cpp maindlg.cpp mnt.cpp propdlg.cpp quota.cpp misc.cpp usernamedlg.cpp pwddlg.cpp
-BUILTSOURCE	=       mainWidget.moc editGroup.moc editGroupData.moc kuservw.moc kheader.moc krowtable.moc kusertbl.moc kgrouptbl.moc kgroupvw.moc kdatectl.moc maindlg.moc propdlg.moc usernamedlg.moc pwddlg.moc
+kuser_SOURCES	=	mainWidget.cpp editGroup.cpp editGroupData.cpp kuservw.cpp kheader.cpp krowtable.cpp kusertbl.cpp kgrouptbl.cpp kgroupvw.cpp kdatectl.cpp kuser.cpp kgroup.cpp main.cpp maindlg.cpp mnt.cpp propdlg.cpp quota.cpp misc.cpp usernamedlg.cpp pwddlg.cpp grpnamedlg.cpp
+BUILTSOURCE	=       mainWidget.moc editGroup.moc editGroupData.moc kuservw.moc kheader.moc krowtable.moc kusertbl.moc kgrouptbl.moc kgroupvw.moc kdatectl.moc maindlg.moc propdlg.moc usernamedlg.moc pwddlg.moc grpnamedlg.moc
 
 # the following are only useful, if you want to use "make dist"
-noinst_HEADERS	=       mainWidget.h editGroup.h editGroupData.h kuservw.h kheader.h krowtable.h kusertbl.h kdatectl.h kuser.h maindlg.h kgroup.h kgrouptbl.h kgroupvw.h propdlg.h  mnt.h quota.h globals.h misc.h usernamedlg.h pwddlg.h
+noinst_HEADERS	=       mainWidget.h editGroup.h editGroupData.h kuservw.h kheader.h krowtable.h kusertbl.h kdatectl.h kuser.h maindlg.h kgroup.h kgrouptbl.h kgroupvw.h propdlg.h  mnt.h quota.h globals.h misc.h usernamedlg.h pwddlg.h grpnamedlg.h
 DISTFILES 	=	README AUTHORS THANKS
 DISTCLEANFILES	= 	$(BUILTSOURCE) 
 EDITABLE	=	$(DISTFILES) $(noinst_HEADERS) $(kuser_SOURCES) Makefile.am
@@ -55,6 +55,10 @@ propdlg.moc: propdlg.h
 usernamedlg.cpp:usernamedlg.moc
 usernamedlg.moc: usernamedlg.h
 	$(MOC) usernamedlg.h -o usernamedlg.moc
+
+grpnamedlg.cpp:grpnamedlg.moc
+grpnamedlg.moc: grpnamedlg.h
+	$(MOC) grpnamedlg.h -o grpnamedlg.moc
 
 pwddlg.cpp:pwddlg.moc
 pwddlg.moc: pwddlg.h

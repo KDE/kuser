@@ -68,7 +68,7 @@ void KGroupView::repaint() {
   m_Header->repaint();
 }
 
-KGroup *KGroupView::getCurrentUser() {
+KGroup *KGroupView::getCurrentGroup() {
   return (((KGroupRow *)m_Groups->getRow(current))->getData());
 }
 

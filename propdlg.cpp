@@ -276,8 +276,17 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
 
 propdlg::~propdlg() {
   delete w1;
-  delete w2;
-  delete w3;
+  
+#ifdef _KU_SHADOW
+  if (is_shadow != 0)
+    delete w2;
+#endif
+  
+#ifdef _KU_QUOTA
+  if (is_quota != 0)
+    delete w3;
+#endif
+
   delete w4;
 }
 

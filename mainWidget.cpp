@@ -109,3 +109,6 @@ void mainWidget::resizeEvent (QResizeEvent *) {
   updateRects();
 }
 
+void mainWidget::closeEvent (QCloseEvent *) {
+  md->quit();
+}

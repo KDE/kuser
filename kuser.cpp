@@ -30,6 +30,7 @@
 #ifdef HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
+#include <fcntl.h>
 #include <qstring.h>
 #include <qdir.h>
 

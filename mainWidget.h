@@ -2,9 +2,9 @@
 #define _KU_MAINWIDGET_H
 
 #include <ktmainwindow.h>
-#include <ktoolbar.h>
+//#include <ktoolbar.h>
 #include <kstatusbar.h>
-#include <kmenubar.h>
+//#include <kmenubar.h>
 #include <qevent.h>
 #include <qpixmap.h>
 
@@ -17,10 +17,18 @@ public:
 protected:
   virtual void resizeEvent (QResizeEvent *event);
   virtual void closeEvent (QCloseEvent *event);
+  
+  void setupActions();
+  void readSettings();
+  void writeSettings();
+
+protected slots:
+  void toggleToolBar();
+  void toggleStatusBar();
 
 private:
-  KMenuBar   *menubar;
-  KToolBar   *toolbar;
+//  KMenuBar   *menubar;
+//  KToolBar   *toolbar;
   KStatusBar *sbar;
 };
 

@@ -1,5 +1,3 @@
-#include "maindlg.h"
-
 #include "globals.h"
 
 #include <stdio.h>
@@ -8,58 +6,20 @@
 #include <ktoolbar.h>
 #include <kglobal.h>
 #include <kiconloader.h>
+#include <kaction.h>
+#include <kstdaction.h>
 
-#include "misc.h"
-
+#include "maindlg.h"
 #include "mainWidget.h"
+#include "misc.h"
 
 mainWidget::mainWidget(const char *name) : KTMainWindow(name) {
   md = new mainDlg(this);
   md->init();
 
-  QPopupMenu *file = new QPopupMenu;
-  CHECK_PTR( file );
-  file->insertItem(i18n("&Save"),  md, SLOT(save()) );
-  file->insertSeparator();
-  file->insertItem(i18n("&Preferences..."),  md, SLOT(properties()) );
-  file->insertSeparator();
-  file->insertItem(i18n("&Quit"),  md, SLOT(quit()) );
+  setupActions();
 
-  QPopupMenu *user = new QPopupMenu;
-  CHECK_PTR(user);
-  user->insertItem(i18n("&Edit..."), md, SLOT(useredit()) );
-  user->insertItem(i18n("&Delete..."), md, SLOT(userdel()) );
-  user->insertItem(i18n("&Add..."), md, SLOT(useradd()) );
-  user->insertItem(i18n("&Set password..."), md, SLOT(setpwd()) );
-
-  QPopupMenu *group = new QPopupMenu;
-  CHECK_PTR(group);
-  group->insertItem(i18n("&Edit..."), md, SLOT(grpedit()));
-  group->insertItem(i18n("&Delete..."), md, SLOT(grpdel()));
-  group->insertItem(i18n("&Add..."), md, SLOT(grpadd()));
-
-  QPopupMenu *help = helpMenu(
-    i18n("KUser version %1\n"
-         "KDE project\n"
-         "This program was created by\n"
-         "%2\n"
-         "%3\n"
-         "Copyright %4 (c)")
-         .arg(_KU_VERSION)
-         .arg("Denis Perchine")
-         .arg("dyp@perchine.com")
-         .arg("1997-2000"));
-
-  menubar = new KMenuBar(this);
-  CHECK_PTR(menubar);
-  menubar->insertItem(i18n("&File"), file);
-  menubar->insertItem(i18n("&User"), user);
-  menubar->insertItem(i18n("&Group"), group);
-  menubar->insertSeparator();
-  menubar->insertItem(i18n("&Help"), help);
-
-  setMenu(menubar);
-
+/*
   toolbar = new KToolBar(this, "toolbar");
 
   toolbar->insertButton(BarIcon("useradd"), 0, SIGNAL(clicked()), md, SLOT(useradd()), TRUE, i18n("Add user"));
@@ -74,6 +34,7 @@ mainWidget::mainWidget(const char *name) : KTMainWindow(name) {
   toolbar->setBarPos(KToolBar::Top);
 
   addToolBar(toolbar);
+*/
   
   sbar = new KStatusBar(this);
   sbar->insertItem("Reading config", 0);
@@ -83,16 +44,7 @@ mainWidget::mainWidget(const char *name) : KTMainWindow(name) {
   setView(md);
 
   resize(500, 400);
-
-  // restore geometry settings
-  KConfig *config = kapp->config();
-  config->setGroup( "Appearance" );
-  QString geom = config->readEntry("Geometry");
-  if (!geom.isEmpty()) {
-    int width, height;
-    sscanf(geom, "%dx%d", &width, &height);
-    resize(width, height);
-  }
+  readSettings();
   sbar->changeItem(i18n("Ready"), 0);
 }
 
@@ -103,23 +55,96 @@ mainWidget::~mainWidget() {
   if (sbar)
     delete sbar;
 
-  if (toolbar)
-    delete toolbar;
+//  if (toolbar)
+//    delete toolbar;
 
-  if (menubar)
-    delete menubar;
+//  if (menubar)
+//    delete menubar;
 }
 
-void mainWidget::resizeEvent (QResizeEvent *) {
+void mainWidget::setupActions() {
+  KStdAction::save(md, SLOT(save()), actionCollection());
+  KStdAction::quit(md, SLOT(quit()), actionCollection());
+
+  KStdAction::preferences(md, SLOT(properties()), actionCollection());
+  KStdAction::showToolbar(this, SLOT(toggleToolBar()), actionCollection());
+  KStdAction::showStatusbar(this, SLOT(toggleStatusBar()), actionCollection());
+  KStdAction::saveOptions(md, SLOT(save_options()), actionCollection());
+
+  (void)new KAction(i18n("&Add..."), QIconSet(BarIcon("add_user")), 0, md,
+    SLOT(useradd()), actionCollection(), "add_user");
+  (void)new KAction(i18n("&Edit..."), QIconSet(BarIcon("edit_user")), 0, md,
+    SLOT(useredit()), actionCollection(), "edit_user");
+  (void)new KAction(i18n("&Delete..."), QIconSet(BarIcon("delete_user")), 0, md,
+    SLOT(userdel()), actionCollection(), "delete_user");
+  (void)new KAction(i18n("&Set password..."), QIconSet(BarIcon("set_password_user")),
+    0, md, SLOT(setpwd()), actionCollection(), "set_password_user");
+
+  (void)new KAction(i18n("&Add..."), QIconSet(BarIcon("add_user")), 0, md,
+    SLOT(grpadd()), actionCollection(), "add_group");
+  (void)new KAction(i18n("&Edit..."), QIconSet(BarIcon("edit_group")), 0, md,
+    SLOT(grpedit()), actionCollection(), "edit_group");
+  (void)new KAction(i18n("&Delete..."), QIconSet(BarIcon("delete_group")), 0, md,
+    SLOT(grpdel()), actionCollection(), "delete_group");
+
+/*
+  QPopupMenu *help = helpMenu(
+    i18n("KUser version %1\n"
+         "KDE project\n"
+         "This program was created by\n"
+         "%2\n"
+         "%3\n"
+         "Copyright %4 (c)")
+         .arg(_KU_VERSION)
+         .arg("Denis Perchine")
+         .arg("dyp@perchine.com")
+         .arg("1997-2000"));
+*/
+
+  createGUI("kuserui.rc");
+}
+
+void mainWidget::readSettings() {
+  // restore geometry settings
+  KConfig *config = kapp->config();
+  config->setGroup( "Appearance" );
+  QString geom = config->readEntry("Geometry");
+  if (!geom.isEmpty()) {
+    int width, height;
+    sscanf(geom, "%dx%d", &width, &height);
+    resize(width, height);
+  }
+}
+
+void mainWidget::writeSettings() {
   // save size of the application window
   KConfig *config = kapp->config();
   config->setGroup("Appearance");
   QString geom;
   geom = QString("%1x%2").arg(geometry().width()).arg(geometry().height());
   config->writeEntry("Geometry", geom);
+}
+
+void mainWidget::resizeEvent(QResizeEvent *) {
+  writeSettings();
   updateRects();
 }
 
-void mainWidget::closeEvent (QCloseEvent *) {
+void mainWidget::closeEvent(QCloseEvent *) {
   md->quit();
 }
+
+void mainWidget::toggleToolBar() {
+  if (toolBar()->isVisible())
+    toolBar()->hide();
+  else
+    toolBar()->show();
+}
+
+void mainWidget::toggleStatusBar() {
+  if (statusBar()->isVisible())
+    statusBar()->hide();
+  else
+    statusBar()->show();
+}
+

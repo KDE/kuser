@@ -1,0 +1,26 @@
+<!DOCTYPE kpartgui>
+<kpartgui name="kuser">
+	<MenuBar>
+		<Menu name="user"><text>&amp;User</text>
+			<Action name="add_user"/>
+			<Action name="edit_user"/>
+			<Action name="delete_user"/>
+			<Action name="set_password_user"/>
+		</Menu>
+		<Menu name="group"><text>&amp;Group</text>
+			<Action name="add_group"/>
+			<Action name="edit_group"/>
+			<Action name="delete_group"/>
+		</Menu>
+	</MenuBar>
+	<ToolBar fullWidth="true" name="mainToolBar">
+		<Action name="add_user"/>
+		<Action name="delete_user"/>
+		<Action name="edit_user"/>
+		<Separator/>
+		<Action name="add_group"/>
+		<Action name="delete_group"/>
+		<Action name="edit_group"/>
+	</ToolBar>
+</kpartgui>
+

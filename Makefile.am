@@ -30,6 +30,9 @@ EDITABLE	=	$(DISTFILES) $(noinst_HEADERS) $(kuser_SOURCES) Makefile.am
 
 EXTRA_DIST = README AUTHORS THANKS kuser.desktop
 
+rcdir = $(kde_datadir)/kuser
+rc_DATA = kuserui.rc
+
 # the programs get installed in $(prefix)/bin
 bin_PROGRAMS = kuser
 
@@ -42,8 +45,8 @@ apps_DATA = kuser.desktop
 edit::
 	xemacs -fn "-edict-fixed-medium-r-*-*-*-120-*-*-*-*-koi8-r" -geometry 142x41+0+0 $(EDITABLE)&
 
-messages:
-	$(XGETTEXT) $(kuser_SOURCES) -o $(podir)/kuser.pot
+messages: rc.cpp
+	$(XGETTEXT) rc.cpp $(kuser_SOURCES) -o $(podir)/kuser.pot
 
 pot::
 	/usr/local/bin/xgettext -ki18n -o kuser.pot -p ../po -d kuser -C -n *.cpp

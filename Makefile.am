@@ -31,7 +31,6 @@ noinst_HEADERS	=	\
 	usernamedlg.h pwddlg.h grpnamedlg.h kerror.h addUser.h \
 	userDefaultsPageData.h userDefaultsPage.h editDefaults.h
 
-#DISTFILES 	=	README AUTHORS THANKS
 DISTCLEANFILES	= 	$(BUILTSOURCE)
 EDITABLE	=	$(DISTFILES) $(noinst_HEADERS) $(kuser_SOURCES) Makefile.am
 

@@ -40,8 +40,7 @@ bin_PROGRAMS = kuser
 # the subdirs we have. Better would be to include pic here too
 SUBDIRS = pic toolbar icon
 
-appsdir   = $(kde_appsdir)/System
-apps_DATA = kuser.desktop
+xdg_apps_DATA = kuser.desktop
 
 edit::
 	xemacs -fn "-edict-fixed-medium-r-*-*-*-120-*-*-*-*-koi8-r" -geometry 142x41+0+0 $(EDITABLE)&

@@ -6,6 +6,7 @@
 #include <qpushbt.h>
 #include <qpixmap.h>
 #include <knewpanner.h>
+#include <stdlib.h>
 
 #ifdef _KU_QUOTA
 #include "mnt.h"
@@ -50,7 +51,6 @@ public slots:
   void grpedit();
   void grpdel();
   
-  void about();
   void help();
   void setpwd();
   void setUsersSort(int col);

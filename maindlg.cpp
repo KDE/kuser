@@ -8,6 +8,7 @@
 #include <ktoolbar.h>
 #include <kiconloader.h>
 #include <unistd.h>
+#include <signal.h>
 
 #ifdef _KU_QUOTA
 #include "quota.h"
@@ -156,13 +157,47 @@ void mainDlg::userdel() {
 
     unsigned int uid = lbusers->getCurrentUser()->getp_uid();
 
-    u->delUser(lbusers->getCurrentUser());
-
 #ifdef _KU_QUOTA
     if (u->user_lookup(uid) == NULL)
       q->delQuota(uid);
 #endif
+    if (KMsgBox::yesNo(0, _("WARNING"),
+        i18n("The user has as homedir.\nDo you want to delete it?"),
+        KMsgBox::STOP,
+        i18n("Cancel"), i18n("Delete")) == 2) {
+      struct stat sb;
+      QString tmp;
 
+      if(!stat(lbusers->getCurrentUser()->getp_dir(), &sb))
+        if (S_ISDIR(sb.st_mode) && sb.st_uid == uid) {
+#ifdef MINIX
+            tmp.sprintf("/usr/bin/rm -rf -- %s", (const char *)lbusers->getCurrentUser()->getp_dir());
+#else
+            tmp.sprintf("/bin/rm -rf -- %s", (const char *)lbusers->getCurrentUser()->getp_dir());
+#endif
+            system(tmp);
+          }
+      
+
+    }
+
+    u->delUser(lbusers->getCurrentUser());
+
+
+    // kill all processes owned by that user
+    pid_t pid = fork();
+
+    switch (pid)
+      {
+        case 0:
+          setuid(uid);
+          kill(-1, 9);
+          break;
+
+        case -1:
+          perror("fork");
+          break;
+      }
     prev = -1;
 
     if (!islast)
@@ -170,7 +205,7 @@ void mainDlg::userdel() {
     else
       reloadUsers(i-1);
     changed = TRUE;
-  }
+    }
 }
 
 void mainDlg::useradd() {
@@ -293,12 +328,6 @@ void mainDlg::quit() {
   save();
 
   qApp->quit();
-}
-
-void mainDlg::about() {
-    QString tmp;
-    tmp.sprintf(_("KUser version %s\nKDE project\nThis program was created by\nDenis Y. Pershin\ndyp@inetlab.com\nCopyright 1997(c)"), _KU_VERSION);
-    KMsgBox::message(0, _("Message"), tmp, KMsgBox::INFORMATION);
 }
 
 void mainDlg::setpwd() {

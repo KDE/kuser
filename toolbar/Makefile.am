@@ -1,6 +1,6 @@
 
 # add here all files
-data_DATA = group.xpm user.xpm
+data_DATA = profile_bw.xpm
 
 # this is the directory, where all datas are installed
 # you have given the datas in data_DATA

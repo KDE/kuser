@@ -21,7 +21,7 @@ EDITABLE	=	$(DISTFILES) $(noinst_HEADERS) $(kuser_SOURCES) Makefile.am
 bin_PROGRAMS = kuser
 
 # the subdirs we have. Better would be to include pic here too
-SUBDIRS = doc
+SUBDIRS = doc pic toolbar
 
 # override the permissions
 INSTALL_PROGRAMM = ${INSTALL} -m 0750 
@@ -30,11 +30,6 @@ INSTALL_PROGRAMM = ${INSTALL} -m 0750
 install-data-local:
 	$(mkinstalldirs) $(kde_appsdir)/System
 	$(INSTALL) -m 644 kuser.kdelnk $(kde_appsdir)/System/
-	$(mkinstalldirs) $(kde_datadir)/kuser/pics
-	$(INSTALL) -m 644 pic/user.xpm $(kde_datadir)/kuser/pics/
-	$(INSTALL) -m 644 pic/group.xpm $(kde_datadir)/kuser/pics/
-	$(mkinstalldirs) $(kde_datadir)/kuser/toolbar
-	$(INSTALL) -m 644 pic/profile_bw.xpm $(kde_datadir)/kuser/toolbar
 
 edit::
 	xemacs -fn "-edict-fixed-medium-r-*-*-*-120-*-*-*-*-koi8-r" -geometry 142x41+0+0 $(EDITABLE)&

@@ -97,8 +97,10 @@ void addUser::ok() {
   check();
   
   if (createhome->isChecked()) {
-    if (checkHome()) 
+    if (checkHome()) {
       user->setCreateHome(1);
+      printf("We will create home for this user\n");
+    }
 
     if (checkMailBox())
       user->setCreateMailBox(1);

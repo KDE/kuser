@@ -503,6 +503,7 @@ bool KUsers::loadsdw() {
 bool KUsers::save() {
   if (!savepwd())
     return (FALSE);
+
   if (!savesdw())
     return (FALSE);
 
@@ -513,10 +514,12 @@ bool KUsers::save() {
       user->createMailBox();
       user->setCreateMailBox(0);
     }
+
     if(user->getCreateHome()) {
        user->createHome();
        user->setCreateHome(0);
     }
+
     if(user->getCopySkel()) {
        user->copySkel();
        user->setCopySkel(0);
@@ -738,6 +741,8 @@ void KUser::createHome() {
     err->display();
   }
 
+printf("Directory created\n");
+
   if (chown((const char *)getp_dir(), getp_uid(), getp_gid()) != 0) {
     QString tmp;
     ksprintf(&tmp, i18n("Cannot change owner of home directory\nError: %s"), strerror(errno));
@@ -745,12 +750,16 @@ void KUser::createHome() {
     err->display();
   }
 
+printf("Owner setup\n");
+
   if (chmod(getp_dir(), 0755) != 0) {
     QString tmp;
     ksprintf(&tmp, i18n("Cannot change permissions on home directory\nError: %s"), strerror(errno));
     err->addMsg(tmp, STOP);
     err->display();
   }
+
+printf("Permissions setup\n");
 }
 
 int KUser::createMailBox() {
@@ -962,3 +971,4 @@ int KUser::removeProcesses() {
 
   return 0;
 }
+

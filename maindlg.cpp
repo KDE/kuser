@@ -161,36 +161,34 @@ void mainDlg::userdel() {
     if (u->user_lookup(uid) == NULL)
       q->delQuota(uid);
 #endif
-    if (KMsgBox::yesNo(0, i18n("WARNING"),
-        i18n("The user has as homedir.\nDo you want to delete it?"),
-        KMsgBox::STOP,
-        i18n("Cancel"), i18n("Delete")) == 2) {
-      struct stat sb;
-      QString tmp;
 
-      if(!stat(lbusers->getCurrentUser()->getp_dir(), &sb))
-        if (S_ISDIR(sb.st_mode) && sb.st_uid == uid) {
-#ifdef MINIX
-            tmp.sprintf("/usr/bin/rm -rf -- %s", (const char *)lbusers->getCurrentUser()->getp_dir());
-#else
-            tmp.sprintf("/bin/rm -rf -- %s", (const char *)lbusers->getCurrentUser()->getp_dir());
-#endif
-            system(tmp);
-          }
-      
+    char file[FILENAME_MAX], home[FILENAME_MAX];
+    /*
+     * Save these for later, since contents of pwd may be
+     * invalidated by deletion
+     */
+    snprintf(file, sizeof(file), "%s/%s", _PATH_MAILDIR, (const char*)lbusers->getCurrentUser()->getp_name());
+    strncpy(home, (const char*)lbusers->getCurrentUser()->getp_dir(), sizeof home);
+    home[sizeof home - 1] = '\0';
 
+    /*
+     * Remove crontabs
+     *
+     * TODO: remove at jobs too.
+     */
+    sprintf(file, "/var/cron/tabs/%s", (const char*)lbusers->getCurrentUser()->getp_name());
+    if (access(file, F_OK) == 0) {
+	sprintf(file, "crontab -u %s -r", (const char*)lbusers->getCurrentUser()->getp_name());
+	system(file);
     }
 
     u->delUser(lbusers->getCurrentUser());
 
-
-    // be paranoid
+    /*
+     * be paranoid -- kill all processes owned by that user, if not root.
+     */
     if (uid)
-    {
-      // kill all processes owned by that user
-      pid_t pid = fork();
-
-      switch (pid)
+      switch (fork())
       {
         case 0:
           setuid(uid);
@@ -201,7 +199,33 @@ void mainDlg::userdel() {
           perror("fork");
           break;
       }
+
+    /*
+     * Remove mail file
+     */
+    remove(file);
+
+    /*
+     * Remove home directory and contents
+     */
+    if (KMsgBox::yesNo(0, i18n("WARNING"),
+        i18n("The user has as homedir.\nDo you want to delete it?"),
+        KMsgBox::STOP,
+        i18n("Cancel"), i18n("Delete")) == 2) {
+      struct stat sb;
+      QString tmp;
+
+      if(!stat(home, &sb))
+        if (S_ISDIR(sb.st_mode) && sb.st_uid == uid) {
+#ifdef MINIX
+            tmp.sprintf("/usr/bin/rm -rf -- %s", home);
+#else
+            tmp.sprintf("/bin/rm -rf -- %s", home);
+#endif
+            system(tmp);
+        }
     }
+
     prev = -1;
 
     if (!islast)

@@ -4,7 +4,7 @@
 #include <qstring.h>
 #include <qlist.h>
 
-#include <mntent.h>
+//#include <mntent.h>
 
 class MntEnt {
 public:

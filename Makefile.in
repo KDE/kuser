@@ -1,4 +1,4 @@
-INCLUDE	=	-I@kde_includes@ -I@qt_includes@
+INCLUDE	=	@all_includes@
 
 # May be -DLINUX -D_XU_QUOTA -DAIX -D_XU_SHADOW
 SYSFLAGS = 	-DLINUX -D_XU_QUOTA -D_XU_SHADOW -D_KU_DEBUG # -g

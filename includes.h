@@ -39,7 +39,15 @@
 #include <pwd.h>
 #include <sys/types.h>
 #include <sys/stat.h>                                                          
+
+#ifdef HAVE_MNTENT_H
 #include <mntent.h>
+#endif
+
+#ifdef HAVE_SYS_MNTENT_H
+#include <sys/mntent.h>
+#endif
+
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
@@ -85,9 +93,6 @@ extern QFont rufont;
 #ifdef AIX
 extern "C" int getuid(void);
 extern "C" int unlink(const char *);
-#else
-extern "C" __uid_t getuid __P ((void));
-extern "C" int unlink __P ((__const char *__name));
 #endif
 
 #endif // _XU_INCLUDES_H_

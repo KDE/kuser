@@ -72,8 +72,11 @@ int main( int argc, char **argv )
     exit(1);
   }
 
+printf("Maindlg initializing\n");
   maindlg w(NULL, "kuser");
 
+printf("Maindlg initialized\n");
+  
   a.setMainWidget( &w );
   w.show();
 

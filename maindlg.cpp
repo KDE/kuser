@@ -7,8 +7,6 @@
 #include "maindlg.moc"
 #include "usernamedlg.h"
 
-#include <kapp.h>
-
 maindlg::maindlg( QWidget *parent, const char *name) :
 KTopLevelWidget(name)
 //, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | 
@@ -29,8 +27,12 @@ KTopLevelWidget(name)
   QObject::connect(list, SIGNAL(highlighted(int)), this, SLOT(highlighted(int)));
   QObject::connect(list, SIGNAL(selected(int)), this, SLOT(selected(int)));
 
+printf("List created\n");
+  
   reload(0);
 
+printf("Data loaded\n");
+  
   QPushButton* pbquit;
   pbquit = new QPushButton( this, "pbquit" );
   pbquit->setFont(rufont);
@@ -263,10 +265,7 @@ void maindlg::setpwd() {
 }
 
 void maindlg::help() {
-    // Torben
-    kapp->invokeHTMLHelp( "", "" );
-    
-    /* int id = 0;
+  int id = 0;
 
   id = fork();
 
@@ -280,7 +279,7 @@ void maindlg::help() {
 
     system(path);
     exit(0);
-  } */
+  }
 }
 
 void maindlg::properties() {

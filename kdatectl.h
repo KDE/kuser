@@ -20,10 +20,10 @@ public:
 	QCheckBox *isempty;
         QLabel *label;
 
-
 	KDateCtl(QWidget *parent, const char *name, const char *checkTitle,
 		 const char *title, long int adate, int ax, int ay);
-	void setDate(long int adate);
+	~KDateCtl();
+ 	void setDate(long int adate);
 	long int getDate();	
 	void setFont(const QFont &f);
 private:

@@ -52,6 +52,14 @@ long int adate, int ax, int ay) {
   setDate(adate);
 }
 
+KDateCtl::~KDateCtl() {
+  delete day;
+  delete month;
+  delete year;
+  delete isempty;
+  delete label;
+}
+
 void KDateCtl::setDate(long int adate) {
   QDate *qd = NULL;
 
@@ -97,10 +105,6 @@ long int KDateCtl::getDate() {
 
 void KDateCtl::updateControls() {
   QString s("");
-
-//  day->setText(s.setNum(iday));
-//  month->setCurrentItem(imonth-1);
-//  year->setText(s.setNum(iyear));
 
   if (isempty->isChecked() == TRUE) {
     day->setText("");

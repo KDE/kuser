@@ -75,7 +75,7 @@ int isquotainkernel() {
   struct dqblk dq;
 
   if (is_quota == 0)
-    return 0;
+    return;
 
   qcmd = QCMD(Q_GETQUOTA, USRQUOTA);
 
@@ -172,7 +172,7 @@ void getmntprivs(long id, QList<Quota> *q)
 
   if (is_quota == 0)
     return;
-
+printf("User: %d\n", id);
   qcmd = QCMD(Q_GETQUOTA, USRQUOTA);
 
   for (uint i=0; i<mounts.count(); i++) {
@@ -180,47 +180,17 @@ void getmntprivs(long id, QList<Quota> *q)
         continue;
 
       if (quotactl(qcmd, (const char *)mounts.at(i)->fsname, id, (caddr_t) &dq) != 0) {
+/*
         if ((errno == EOPNOTSUPP || errno == ENOSYS) && !warned) {
+*/
           warned++;
           QMessageBox::message(_("Error"), _("Quotas are not compiled into this kernel."), "Ok");
           sleep(3);
           is_quota = 0;
+	  break;
+/*
         }
-        if ((fd = open(qfpathname, O_RDONLY)) < 0) {
-          fd = open(qfpathname, O_RDWR | O_CREAT, 0640);
-          if (fd < 0 && errno != ENOENT) {
-            sprintf(s, _("Error opening %s"), qfpathname);
-            QMessageBox::message(_("Error"), s, "Ok");
-            continue;
-          }
-          sprintf(s, _("Creating quota file %s"), qfpathname);
-          QMessageBox::message(_("Warning"), s, "Ok");
-          sleep(3);
-          (void) fchown(fd, getuid(), getentry(quotagroup, GRPQUOTA));
-          (void) fchmod(fd, 0640);
-        }
-
-        lseek(fd, (long) (id * sizeof(struct dqblk)), L_SET);
-        switch (read(fd, &dq, sizeof(struct dqblk))) {
-          case 0:/* EOF */
-               /*
-                * Convert implicit 0 quota (EOF) into an
-                * explicit one (zero'ed dqblk)
-                */
-               bzero((caddr_t) &dq,
-                     sizeof(struct dqblk));
-               break;
-
-          case sizeof(struct dqblk):   /* OK */
-               break;
-
-          default:   /* ERROR */
-               sprintf(s, _("Error reading %s"), qfpathname);
-               QMessageBox::message(_("Error"), s, "Ok");
-               close(fd);
-               continue;
-        }
-        close(fd);
+*/
       }
       q->append(new Quota(dbtob(dq.dqb_curblocks),
                           dbtob(dq.dqb_bsoftlimit),
@@ -289,6 +259,8 @@ void quota_read() {
 
   for (uint i=0; i<users.count(); i++) {
 printf("%d\n",i);
+  if (is_quota == 0)
+    return;
     getquota(users.at(i)->p_name, &users.at(i)->quota);
   }
 }

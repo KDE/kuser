@@ -11,7 +11,7 @@
 #include "editDefaults.h"
 #include <klocale.h>
 
-editDefaults::editDefaults(QWidget* parent, const char* name)
+editDefaults::editDefaults(QWidget* parent, const QString &name)
   : QTabDialog(parent, name, TRUE, 184320) {
   page1 = new userDefaultsPage(this, "user_page");
   addTab(page1, i18n("User"));
@@ -23,11 +23,11 @@ editDefaults::editDefaults(QWidget* parent, const char* name)
 editDefaults::~editDefaults() {
 }
 
-const char *editDefaults::getShell() const {
+const QString &editDefaults::getShell() const {
   return page1->getShell();
 }
 
-const char *editDefaults::getHomeBase() const {
+const QString &editDefaults::getHomeBase() const {
   return page1->getHomeBase();
 }
 
@@ -43,11 +43,11 @@ bool editDefaults::getUserPrivateGroup() const {
   return page1->getUserPrivateGroup();
 }
 
-void editDefaults::setShell(const char *data) {
+void editDefaults::setShell(const QString &data) {
   page1->setShell(data);
 }
 
-void editDefaults::setHomeBase(const char *data) {
+void editDefaults::setHomeBase(const QString &data) {
   page1->setHomeBase(data);
 }
 

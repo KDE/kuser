@@ -9,22 +9,22 @@ public:
   MntEnt() {
   }
   
-  MntEnt(const char *afsname, const char *adir,
-         const char *atype, const char *aopts,
-         const char *aquotafilename);
+  MntEnt(const QString &afsname, const QString &adir,
+         const QString &atype, const QString &aopts,
+         const QString &aquotafilename);
   ~MntEnt();
 
-  QString getfsname();
-  QString getdir();
-  QString gettype();
-  QString getopts();
-  QString getquotafilename();
+  const QString &getfsname() const;
+  const QString &getdir() const;
+  const QString &gettype() const;
+  const QString &getopts() const;
+  const QString &getquotafilename() const;
 
-  void setfsname(const char *data);
-  void setdir(const char *data);
-  void settype(const char *data);
-  void setopts(const char *data);
-  void setquotafilename(const char *data);
+  void setfsname(const QString &data);
+  void setdir(const QString &data);
+  void settype(const QString &data);
+  void setopts(const QString &data);
+  void setquotafilename(const QString &data);
 
 public:
   QString fsname;

@@ -1,6 +1,4 @@
-+ Rename mainDlg to mainView.
-+ Move all global objects out of mainViw.
-- Simplify quota.cpp
+- Replace listbox with something standard.
 - Add right mouse popup
 - Add 'Help' button to user and group properties dialogs.
 - Home dir permission configuration in Preferences dialog.
@@ -11,9 +9,6 @@
 - First available UID and GID in preferences dialog.
 - Group quotas.
 - Update last change field when changed
-+ When deleting the user, dialog box appears for confirming the delete, but
-  it does not mention the name of the user in it.  Should have username being
-  deleted in the message. 
 - After performing File/Save, and Quiting right after that requires confirming
   Save twice.  After File/Save, if one is Quiting it should be without any
   message.

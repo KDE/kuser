@@ -1,7 +1,10 @@
+29/04/2000: Simplified quota.cpp(becames 2 times smaller). Please test it.
 28/04/2000: Move KUser to actions.
             User is shown in delete user message box.
             Use operator[] for list item access.
 	    Use & instead of pointers to objects (cosy for []).
+	    Rename mainDlg to mainView.
+	    Move all global objects out of mainView.
 24/03/2000: Move quota ifdef code to kuqconf.h.
             Error messages are without flags now.
 12/07/1999: fgetpwent/getpwent/fgetgrent/getgrent issue fixed (FreeBSD have no

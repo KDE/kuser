@@ -7,9 +7,9 @@
 
 #include <qfile.h>
 
-MntEnt::MntEnt(const char *afsname, const char *adir,
-               const char *atype, const char *aopts,
-               const char *aquotafilename){
+MntEnt::MntEnt(const QString &afsname, const QString &adir,
+               const QString &atype, const QString &aopts,
+               const QString &aquotafilename){
     fsname = afsname;
     dir    = adir;
     type   = atype;
@@ -20,43 +20,43 @@ MntEnt::MntEnt(const char *afsname, const char *adir,
 MntEnt::~MntEnt() {
 }
 
-QString MntEnt::getfsname() {
-  return (fsname);
+const QString &MntEnt::getfsname() const {
+  return fsname;
 }
 
-QString MntEnt::getdir() {
-  return (dir);
+const QString &MntEnt::getdir() const {
+  return dir;
 }
 
-QString MntEnt::gettype() {
-  return (type);
+const QString &MntEnt::gettype() const {
+  return type;
 }
 
-QString MntEnt::getopts() {
-  return (opts);
+const QString &MntEnt::getopts() const {
+  return opts;
 }
 
-QString MntEnt::getquotafilename() {
-  return (quotafilename);
+const QString &MntEnt::getquotafilename() const {
+  return quotafilename;
 }
 
-void MntEnt::setfsname(const char *data) {
+void MntEnt::setfsname(const QString &data) {
   fsname = data;
 }
 
-void MntEnt::setdir(const char *data) {
+void MntEnt::setdir(const QString &data) {
   dir = data;
 }
 
-void MntEnt::settype(const char *data) {
+void MntEnt::settype(const QString &data) {
   type = data;
 }
 
-void MntEnt::setopts(const char *data) {
+void MntEnt::setopts(const QString &data) {
   opts = data;
 }
 
-void MntEnt::setquotafilename(const char *data) {
+void MntEnt::setquotafilename(const QString &data) {
   quotafilename = data;
 }
 

@@ -2,7 +2,7 @@
 #define _KU_MISC_H
 
 #include <klocale.h>
-#include <kapp.h>
+#include <kapplication.h>
 #include <qstring.h>
 #include <qwidget.h>
 #include <qlabel.h>

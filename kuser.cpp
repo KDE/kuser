@@ -19,13 +19,20 @@
 #include "misc.h"
 
 #ifdef _KU_SHADOW
+#ifdef HAVE_PAM
+__BEGIN_DECLS
+#include <pwdb/pwdb_shadow.h>
+__END_DECLS
+#else
 #include <shadow.h>
+#endif
 #endif
 
 #ifdef _KU_QUOTA
 #include "mnt.h"
 #include "quota.h"
 #endif
+
 
 // class KUser
 
@@ -377,7 +384,11 @@ bool KUsers::loadsdw() {
 #ifdef _KU_SHADOW
   QString tmp;
   FILE *f;
+#ifdef HAVE_PAM
+  struct __pwdb_spwd *spw;
+#else
   struct spwd *spw;
+#endif
   KUser *up = NULL;
 
   if (!is_shadow)
@@ -390,7 +401,11 @@ bool KUsers::loadsdw() {
     return (FALSE);
   }
 
+#ifdef HAVE_PAM
+  while ((spw = __pwdb_fgetspent(f))) {     // read a shadow password structure
+#else
   while ((spw = fgetspent(f))) {     // read a shadow password structure
+#endif
     if ((up = user_lookup(spw->sp_namp)) == NULL) {
       tmp.sprintf(_("No /etc/passwd entry for %s.\nEntry will be removed at the next `Save'-operation."),
                   spw->sp_namp);
@@ -499,10 +514,14 @@ bool KUsers::savesdw() {
 #ifdef _KU_SHADOW
   QString tmp;
   FILE *f;
-  spwd *spwp;
-  spwd s;
+#ifdef HAVE_PAM
+  struct __pwdb_spwd *spwp;
+  struct __pwdb_spwd s;
+#else
+  struct spwd *spwp;
+  struct spwd s;
+#endif
   KUser *up;
-
 
   if (!is_shadow)
     return FALSE;
@@ -540,7 +559,11 @@ bool KUsers::savesdw() {
     s.sp_flag   = up->gets_flag();
 
     spwp = &s;
+#ifdef HAVE_PAM
+    __pwdb_putspent(spwp, f);
+#else
     putspent(spwp, f);
+#endif
   }
   fclose(f);
 

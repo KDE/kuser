@@ -40,13 +40,16 @@
 #include <paths.h>
 #endif
 
+#ifdef HAVE_SYS_PARAM_H
+#include <sys/param.h>
+#endif
+
 #ifdef HAVE_SYS_FS_UFS_QUOTA_H
 #  include <sys/fs/ufs_quota.h>
 #  define CORRECT_FSTYPE(type) (!strcmp(type,MNTTYPE_UFS))
 #  define _KU_QUOTAFILENAME "quotas"
 #  define _KU_UFS_QUOTA
-#else
-#  ifdef HAVE_LINUX
+#elif HAVE_LINUX
 #    if defined __GLIBC__ && __GLIBC__ >= 2
        typedef unsigned int __u32;
 #      define MNTTYPE_EXT2 "ext2"
@@ -56,37 +59,30 @@
 #    elif HAVE_LINUX_QUOTA_H
 #      include <linux/quota.h>
 #    else
-#      error cannot find your quota.h
+#      error "Cannot find your quota.h"
 #    endif
 #    define CORRECT_FSTYPE(type) (!strcmp(type,MNTTYPE_EXT2))
 #    define _KU_QUOTAFILENAME "quota.user"
 #    define _KU_EXT2_QUOTA
-#  else
-#    ifdef HAVE_IRIX
+#  elif HAVE_IRIX
 #    include <sys/quota.h>
 #    include <sys/param.h>
 #    define CORRECT_FSTYPE(type) (!strcmp(type,MNTTYPE_EFS) || !strcmp(type,MNTTYPE_XFS))
 #    define _KU_QUOTAFILENAME "quotas"
-#    else
-#      ifdef BSD /* I'm not 100% sure about this, but it should work with Net/OpenBSD */
+#  elif BSD /* I'm not 100% sure about this, but it should work with Net/OpenBSD */
 #      include <machine/param.h> /* for dbtob and the like */
 #      include <sys/types.h>
 #      include <ufs/ufs/quota.h>
 #      include <fstab.h>
 /* Assuming all we're supporting is USER based quotas, not GROUP based ones */
 #      define _KU_QUOTAFILENAME "quota.user"
-#      else
-#        ifdef __hpux
+#  elif __hpux
 #        include <sys/quota.h>
 #        define CORRECT_FSTYPE(type) (!strcmp(type,MNTTYPE_HFS))
 #        define _KU_QUOTAFILENAME "quotas"
 #        define _KU_HPUX_QUOTA
-#        else
-#          error "Your platform is not supported"
-#        endif // HPUX
-#      endif // FreeBSD
-#    endif // HAVE_IRIX
-#  endif // HAVE_LINUX_QUOTA_H
+#  else
+#        error "Your platform is not supported"
 #endif // HAVE_SYS_FS_UFS_QUOTA_H
 
 class QuotaMnt {

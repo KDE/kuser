@@ -102,7 +102,8 @@ void pwddlg::ok()
   const char * set = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./";
 
   if (strcmp(leusername1->text(), leusername2->text())) {
-    KMsgBox::message(0, i18n("Error"), i18n("Passwords are not identical.\nTry again"), KMsgBox::STOP);
+    err->addMsg(i18n("Passwords are not identical.\nTry again"), STOP);
+    err->display();
     leusername1->setText("");
     leusername2->setText("");
     leusername1->setFocus();

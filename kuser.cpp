@@ -89,6 +89,47 @@ KUser::KUser() {
   isCopySkel = 0;
 }
   
+KUser::KUser(const KUser *user) {
+  copy(user);
+}
+
+void KUser::copy(const KUser *user) {
+  p_name = user->p_name;
+  p_pwd = user->p_pwd;
+  p_dir = user->p_dir;
+  p_shell = user->p_shell;
+  p_fname = user->p_fname;
+#ifdef __FreeBSD__
+  p_office = user->p_office;
+  p_ophone = user->p_ophone;
+  p_hphone = user->p_hphone;
+  p_class = user->p_class;
+  p_change = user->p_change;
+  p_expire = user->p_expire;
+#else
+  p_office1 = user->p_office1;
+  p_office2 = user->p_office2;
+  p_address = user->p_address;
+#endif
+  p_uid     = user->p_uid;
+  p_gid     = user->p_gid;
+
+#ifdef _KU_SHADOW   
+  s_pwd = user->s_pwd;
+  s_lstchg  = user->s_lstchg;
+  s_min     = user->s_min;
+  s_max     = user->s_max;
+  s_warn    = user->s_warn;
+  s_inact   = user->s_inact;
+  s_expire  = user->s_expire;
+  s_flag    = user->s_flag;
+#endif
+
+  isCreateHome = user->isCreateHome;
+  isCreateMailBox = user->isCreateMailBox;
+  isCopySkel = user->isCopySkel;
+}
+  
 KUser::~KUser() {
 }
 
@@ -342,6 +383,7 @@ KUsers::KUsers() {
   sdw_gid = 0;
 
   u.setAutoDelete(TRUE);
+  du.setAutoDelete(TRUE);
 
   if (!load())
     err->display();
@@ -456,7 +498,7 @@ bool KUsers::loadsdw() {
   struct stat st;
 
   if (!is_shadow)
-    return FALSE;
+    return TRUE;
 
   stat(SHADOW_FILE, &st);
   sdw_mode = st.st_mode & 0666;
@@ -477,7 +519,8 @@ bool KUsers::loadsdw() {
     if ((up = lookup(spw->sp_namp)) == NULL) {
       ksprintf(&tmp, i18n("No /etc/passwd entry for %s.\nEntry will be removed at the next `Save'-operation."),
                   spw->sp_namp);
-      KMsgBox::message(0, i18n("Error"), tmp, KMsgBox::STOP);
+      err->addMsg(tmp, STOP);
+      err->display();
       continue;
     }
 
@@ -494,19 +537,27 @@ bool KUsers::loadsdw() {
   }
 
   endspent();
-
-  return (TRUE);
 #endif // _KU_SHADOW
-  return (FALSE);
+  return TRUE;
 }
 
 bool KUsers::save() {
   if (!savepwd())
-    return (FALSE);
+    return FALSE;
 
   if (!savesdw())
-    return (FALSE);
+    return FALSE;
 
+  if (!doDelete())
+    return FALSE;
+
+  if (!doCreate())
+    return FALSE;
+
+  return TRUE;
+}
+
+bool KUsers::doCreate() {
   for (unsigned int i=0; i<u.count(); i++) {
     KUser *user = u.at(i);
 
@@ -526,7 +577,22 @@ bool KUsers::save() {
     }
   }
 
-  return (TRUE);
+  return TRUE;
+}
+
+bool KUsers::doDelete() {
+  for (unsigned int i=0; i<du.count(); i++) {
+    KUser *user = du.at(i);
+
+    user->removeHome();
+    user->removeCrontabs();
+    user->removeMailBox();
+    user->removeProcesses();
+
+    du.remove(i);
+  }
+
+  return TRUE;
 }
 
 // Save password file
@@ -548,7 +614,7 @@ bool KUsers::savepwd() {
   if ((passwd = fopen(PASSWORD_FILE,"w")) == NULL) {
     ksprintf(&tmp, i18n("Error opening %s for writing"), PASSWORD_FILE);
     err->addMsg(tmp, STOP);
-    return (FALSE);
+    return FALSE;
   }
 
   for (unsigned int i=0; i<u.count(); i++) {
@@ -567,11 +633,11 @@ bool KUsers::savepwd() {
 #else
 
     ksprintf(&s, "%s:%s:%i:%i:",  (const char *)user->getName(),
-		 (const char *)user->getPwd(), (const char *)user->getUID(),
-		 (const char *)user->getGID());
+             (const char *)user->getPwd(), (const char *)user->getUID(),
+             (const char *)user->getGID());
 
-    ksprintf(&s1, "%s,%s,%s,%s", (const char *)user->getFullName(), (const char *)user->getOffice1()
-	       ,(const char *)user->getOffice2(), (const char *)user->getAddress());
+    ksprintf(&s1, "%s,%s,%s,%s", (const char *)user->getFullName(), (const char *)user->getOffice1(),
+	           (const char *)user->getOffice2(), (const char *)user->getAddress());
 
 #endif
 
@@ -596,11 +662,11 @@ bool KUsers::savepwd() {
   if (system(PWMKDB) != 0) {
      ksprintf(&tmp, i18n("Unable to build password database"));
      err->addMsg(tmp, STOP);
-     return (FALSE);
+     return FALSE;
   }
 #endif
 
-  return (TRUE);
+  return TRUE;
 }
 
 // Save shadow passwords file
@@ -626,7 +692,7 @@ bool KUsers::savesdw() {
   if ((f = fopen(SHADOW_FILE, "w")) == NULL) {
     ksprintf(&tmp, i18n("Error opening %s for writing"), SHADOW_FILE);
     err->addMsg(tmp, STOP);
-    return (FALSE);
+    return FALSE;
   }
 
   s.sp_namp = (char *)malloc(200);
@@ -698,6 +764,7 @@ int KUsers::first_free() {
 
 KUsers::~KUsers() {
   u.clear();
+  du.clear();
 }
 
 uint KUsers::count() const {
@@ -721,6 +788,8 @@ void KUsers::add(KUser *ku) {
 }
 
 void KUsers::del(KUser *au) {
+  KUser *nu = new KUser(au);
+  du.append(nu);
   u.remove(au);
 }
 
@@ -741,8 +810,6 @@ void KUser::createHome() {
     err->display();
   }
 
-printf("Directory created\n");
-
   if (chown((const char *)p_dir, p_uid, p_gid) != 0) {
     QString tmp;
     ksprintf(&tmp, i18n("Cannot change owner of home directory\nError: %s"), strerror(errno));
@@ -750,16 +817,12 @@ printf("Directory created\n");
     err->display();
   }
 
-printf("Owner setup\n");
-
   if (chmod((const char *)p_dir, 0755) != 0) {
     QString tmp;
     ksprintf(&tmp, i18n("Cannot change permissions on home directory\nError: %s"), strerror(errno));
     err->addMsg(tmp, STOP);
     err->display();
   }
-
-printf("Permissions setup\n");
 }
 
 int KUser::createMailBox() {
@@ -871,7 +934,8 @@ int KUser::copySkel() {
 
   if (!s.exists()) {
     QString tmp;
-    ksprintf(&tmp, i18n("Directory %s does not exist"), (const char *)s.dirName());    err->addMsg(tmp, STOP);
+    ksprintf(&tmp, i18n("Directory %s does not exist"), (const char *)s.dirName());
+    err->addMsg(tmp, STOP);
     err->display();
     return (-1);
   }
@@ -956,11 +1020,13 @@ int KUser::removeMailBox() {
 
 int KUser::removeProcesses() {
   // be paranoid -- kill all processes owned by that user, if not root.
-  if (p_uid)
+
+  if (p_uid != 0)
     switch (fork()) {
       case 0:
         setuid(p_uid);
         kill(-1, 9);
+        _exit(0);
         break;
       case -1:
         err->addMsg(i18n("Cannot fork()"), STOP);

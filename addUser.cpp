@@ -17,6 +17,7 @@
 
 #include <kmsgbox.h>
 #include <kstring.h>
+#include <kerror.h>
 
 #include "globals.h"
 #include "maindlg.h"
@@ -90,17 +91,16 @@ void addUser::ok() {
   
   if (users->lookup(newuid) != NULL) {
     ksprintf(&tmp, i18n("User with UID %u already exists"), newuid);
-    KMsgBox::message(0, i18n("Message"), tmp, KMsgBox::STOP, i18n("OK"));
+    err->addMsg(tmp, STOP);
+    err->display();
     return;
   }
 
   check();
   
   if (createhome->isChecked()) {
-    if (checkHome()) {
+    if (checkHome())
       user->setCreateHome(1);
-      printf("We will create home for this user\n");
-    }
 
     if (checkMailBox())
       user->setCreateMailBox(1);

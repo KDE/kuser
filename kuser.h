@@ -17,7 +17,10 @@ class KUsers;
 class KUser {
 public:
   KUser();
+  KUser(const KUser *user);
   ~KUser();
+
+  void copy(const KUser *user);
 
   const QString &getName() const;
   const QString &getPwd() const;
@@ -171,16 +174,9 @@ public:
   void del(KUser *au);
 
 protected:
-  void fillGecos(KUser *user, const char *gecos);
-  bool loadpwd();
-  bool loadsdw();
-
-  bool savepwd();
-  bool savesdw();
 
   int p_backuped;
   int s_backuped;
-  QList<KUser> u;
 
   int pwd_mode;
   int sdw_mode;
@@ -190,6 +186,18 @@ protected:
 
   uid_t sdw_uid;
   gid_t sdw_gid;
+
+  QList<KUser> u;
+  QList<KUser> du;
+
+  bool doCreate();
+  bool doDelete();
+  void fillGecos(KUser *user, const char *gecos);
+  bool loadpwd();
+  bool loadsdw();
+
+  bool savepwd();
+  bool savesdw();
 };
 
 #endif // _KUSER_H_

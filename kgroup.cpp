@@ -182,7 +182,7 @@ bool KGroups::save() {
   if ((grp = fopen(GROUP_FILE, "w")) == NULL) {
     ksprintf(&tmp, i18n("Error opening %s for writing"), GROUP_FILE);
     err->addMsg(tmp, STOP);
-    return (FALSE);
+    return FALSE;
   }
 
   for (unsigned int i=0; i<g.count(); i++) {

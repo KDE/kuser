@@ -177,11 +177,13 @@ void mainDlg::userdel() {
     else
       reloadUsers(i-1);
     changed = TRUE;
+
+    config->setGroup("template"); 
     if (config->readBoolEntry("userPrivateGroup", KU_USERPRIVATEGROUP)) {
       bool found = false;
 
       for (uint i=0; i<u->count(); i++)
-        if (u->user(i)->getGID() == gid) {
+        if (u->user(i)->getName() == gid) {
           found = true;
           break;
         }

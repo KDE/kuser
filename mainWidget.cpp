@@ -9,9 +9,7 @@
 
 #include "misc.h"
 
-mainWidget::mainWidget(const char *name) :
-KTopLevelWidget(name)
-{
+mainWidget::mainWidget(const char *name) : KTMainWindow(name) {
   md = new mainDlg(this);
   md->init();
 

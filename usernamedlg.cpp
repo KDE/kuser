@@ -65,18 +65,19 @@ usernamedlg::~usernamedlg() {
   delete pbCancel;
 }
 
-void usernamedlg::ok()
-{
+void usernamedlg::ok() {
   QString tmp;
 
   if (users->lookup(leusername->text()) != NULL) {
     tmp.sprintf(i18n("User with name %s already exists."), leusername->text());
-    KMsgBox::message(0, i18n("Error"), tmp, KMsgBox::STOP);
+    err->addMsg(tmp, STOP);
+    err->display();
     return;
   }
 
   if (strlen(leusername->text()) == 0) {
-    KMsgBox::message(0, i18n("Error"), i18n("You have to enter a user name."), KMsgBox::STOP);
+    err->addMsg(i18n("You have to enter a user name."), STOP);
+    err->display();
     return;
   }
   

@@ -23,10 +23,10 @@
 
 #include <klocale.h>
 
-delUser::delUser(KUser *AUser, QWidget *parent, const char *name) 
+delUser::delUser(KUser *AUser, QWidget *parent, const char *name)
  : KDialogBase( parent, name, true, i18n("Delete User"),
                 KDialogBase::Ok|KDialogBase::Cancel, KDialogBase::Ok, true )
-{                   
+{
   QVBox *page = makeVBoxMainWidget();
   new QLabel( i18n("<p>Deleting user <b>%1</b>"
                    "<p>Also perform the following actions:").arg(AUser->getName()),
@@ -34,7 +34,7 @@ delUser::delUser(KUser *AUser, QWidget *parent, const char *name)
   m_deleteHomeDir = new QCheckBox(i18n("Delete &home folder: %1").arg(AUser->getHomeDir()), page);
   QString mailboxpath = QString::fromLatin1("%1/%2").arg(QString::fromLatin1(MAIL_SPOOL_DIR)).arg(AUser->getName());
   m_deleteMailBox = new QCheckBox(i18n("Delete &mailbox: %1").arg(mailboxpath), page);
-  setButtonText(Ok, i18n("&Delete"));
+  setButtonGuiItem(KDialogBase::Ok, KGuiItem(i18n("&Delete"), QString::fromLatin1("editdelete")) );
 }
 
 #include "delUser.moc"

@@ -104,4 +104,4 @@ Comment[xh]=Umphathi womsebenzisi onomsebenzi opheleleyo osemqoka
 Comment[zh_CN.GB2312]=多功能帐号管理器
 Comment[zh_TW.Big5]=全功能的使用者管理員
 Terminal=0
-KDE-X-StartupNotify=true
+X-KDE-StartupNotify=true

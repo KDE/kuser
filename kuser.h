@@ -97,6 +97,8 @@ public:
   int removeProcesses();
 
 protected:
+  void copyDir(const char *srcPath, const char *dstPath);
+
   QString
     p_name,                        // parsed pw information
     p_pwd,

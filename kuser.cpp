@@ -401,7 +401,7 @@ bool KUsers::loadpwd() {
   struct stat st;
 
   stat(PASSWORD_FILE, &st);
-  pwd_mode = st.st_mode;
+  pwd_mode = st.st_mode & 0666;
   pwd_uid = st.st_uid;
   pwd_gid = st.st_gid;
 
@@ -459,7 +459,7 @@ bool KUsers::loadsdw() {
     return FALSE;
 
   stat(SHADOW_FILE, &st);
-  sdw_mode = st.st_mode;
+  sdw_mode = st.st_mode & 0666;
   sdw_uid = st.st_uid;
   sdw_gid = st.st_gid;
 
@@ -505,6 +505,23 @@ bool KUsers::save() {
     return (FALSE);
   if (!savesdw())
     return (FALSE);
+
+  for (unsigned int i=0; i<u.count(); i++) {
+    KUser *user = u.at(i);
+
+    if(user->getCreateMailBox()) {
+      user->createMailBox();
+      user->setCreateMailBox(0);
+    }
+    if(user->getCreateHome()) {
+       user->createHome();
+       user->setCreateHome(0);
+    }
+    if(user->getCopySkel()) {
+       user->copySkel();
+       user->setCopySkel(0);
+    }
+  }
 
   return (TRUE);
 }
@@ -564,19 +581,6 @@ bool KUsers::savepwd() {
 
     s+=s1+":"+user->getp_dir()+":"+user->getp_shell()+"\n";
     fputs((const char *)s, passwd);
-
-    if(user->getCreateMailBox()) {
-      user->createMailBox();
-      user->setCreateMailBox(0);
-    }
-    if(user->getCreateHome()) {
-       user->createHome();
-       user->setCreateHome(0);
-    }
-    if(user->getCopySkel()) {
-       user->copySkel();
-       user->setCopySkel(0);
-    }
   }
   fclose(passwd);
 
@@ -592,6 +596,7 @@ bool KUsers::savepwd() {
      return (FALSE);
   }
 #endif
+
   return (TRUE);
 }
 
@@ -772,14 +777,88 @@ int KUser::createMailBox() {
   return 0;
 }
 
-int KUser::copySkel() {
-  QDir s(SKELDIR);
-  QDir d(getp_dir());
-  QString tmp;
+void KUser::copyDir(const char *srcPath, const char *dstPath) {
+  struct stat st;
+  QDir s(srcPath);
+  QDir d(dstPath);
   QString prefix(SKEL_FILE_PREFIX);
   int len = prefix.length();
 
+  s.setFilter(QDir::Dirs);
+
+  for (uint i=0; i<s.count(); i++) {
+    QString name(s[i]);
+
+    if (name == ".")
+      continue;
+    if (name == "..")
+      continue;
+
+    QString filename(s.filePath(name));
+    QDir dir(filename);
+
+    if (stat(filename, &st) != 0)
+      printf("errno = %d, '%s'\n", errno, strerror(errno));
+
+    if (name.left(len) == prefix)
+      name = name.remove(0, len);
+
+    d.mkdir(name, FALSE);
+    if (chown(d.filePath(name), p_uid, p_gid) != 0) {
+      QString tmp;
+      ksprintf(&tmp, i18n("Cannot change owner of directory %s\nError: %s"), (const char *)d.filePath(s[i]), strerror(errno));
+      err->addMsg(tmp, STOP);
+      err->display();
+    }
+
+    if (chmod(d.filePath(name), st.st_mode & 07777) != 0) {
+      QString tmp;
+      ksprintf(&tmp, i18n("Cannot change permissions on directory %s\nError: %s"), (const char *)d.filePath(s[i]), strerror(errno));
+      err->addMsg(tmp, STOP);
+      err->display();
+    }
+
+    copyDir(s.filePath(name), d.filePath(name));
+  }
+
   s.setFilter(QDir::Files | QDir::Hidden);
+
+  for (uint i=0; i<s.count(); i++) {
+    QString name(s[i]);
+
+    QString filename(s.filePath(name));
+
+    stat(filename, &st);
+
+    if (name.left(len) == prefix)
+      name = name.remove(0, len);
+
+    if (copyFile(filename, d.filePath(name)) == -1) {
+      err->display();
+      continue;
+    }
+
+    if (chown(d.filePath(name), p_uid, p_gid) != 0) {
+      QString tmp;
+      ksprintf(&tmp, i18n("Cannot change owner of file %s\nError: %s"), (const char *)d.filePath(s[i]), strerror(errno));
+      err->addMsg(tmp, STOP);
+      err->display();
+    }
+
+    if (chmod(d.filePath(name), st.st_mode & 07777) != 0) {
+      QString tmp;
+      ksprintf(&tmp, i18n("Cannot change permissions on file %s\nError: %s"), (const char *)d.filePath(s[i]), strerror(errno));
+      err->addMsg(tmp, STOP);
+      err->display();
+    }
+  }
+}
+
+int KUser::copySkel() {
+  QDir s(SKELDIR);
+  QDir d(getp_dir());
+
+  umask(0777);
 
   if (!s.exists()) {
     QString tmp;
@@ -795,30 +874,7 @@ int KUser::copySkel() {
     return (-1);
   }
 
-  for (uint i=0; i<s.count(); i++) {
-    QString filename(s[i]);
-    if (filename.left(len) == prefix) {
-      filename = filename.remove(0, len);
-    }
-    if (copyFile(s.filePath(s[i]), d.filePath(filename)) == -1) {
-      err->display();
-      continue;
-    }
-
-    if (chown(d.filePath(filename), p_uid, p_gid) != 0) {
-      QString tmp;
-      ksprintf(&tmp, i18n("Cannot change owner of file %s\nError: %s"), (const char *)d.filePath(s[i]), strerror(errno));
-      err->addMsg(tmp, STOP);
-      err->display();
-    }
-
-    if (chmod(d.filePath(filename), 0644) != 0) {
-      QString tmp;
-      ksprintf(&tmp, i18n("Cannot change permissions on file %s\nError: %s"), (const char *)d.filePath(s[i]), strerror(errno));
-      err->addMsg(tmp, STOP);
-      err->display();
-    }
-  }
+  copyDir(s.absPath(), d.absPath());
 
   return 0;
 }

@@ -17,7 +17,6 @@ extern int is_shadow;
 #define KU_BACKUP_EXT ".bak"
 
 #define MAIL_SPOOL_DIR "/var/spool/mail"
-#define COPYSKEL_SCRIPT "/opt/kde/share/apps/kuser/copyskel"
 
 #ifdef _KU_NIS
   #define SHELL_FILE "/etc/shells"

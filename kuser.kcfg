@@ -107,12 +107,12 @@
     </entry>
     <entry name="shadowsrc" type="String">
       <label>Shadow password file</label>
-      <whatsthis>Specifies the shadow password file (usually /etc/shadow). Leave this empty if your system doesn't use shadow password file.</whatsthis>
+      <whatsthis>Specifies the shadow password file (usually /etc/shadow). Leave this empty if your system does not use a shadow password file.</whatsthis>
       <default>/etc/shadow</default>
     </entry>
     <entry name="gshadowsrc" type="String">
       <label>Group shadow file</label>
-      <whatsthis>Specifies the shadow group file (usually /etc/gshadow). Leave this empty if your system doesn't use shadow group file.</whatsthis>
+      <whatsthis>Specifies the shadow group file (usually /etc/gshadow). Leave this empty if your system does not use a shadow group file.</whatsthis>
       <default>/etc/gshadow</default>
     </entry>
     <entry name="nispasswdsrc" type="String">

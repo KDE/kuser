@@ -1,7 +1,7 @@
 /* XPM */
 static char * grpadd_xpm[] = {
 "22 22 11 1",
-" 	c #c6c3c6",
+" 	c None",
 ".	c blue",
 "X	c orange",
 "o	c yellow",

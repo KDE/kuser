@@ -617,8 +617,11 @@ void propdlg::saveq() {
   tmpq->setitime(leqit->text().toLong());
 #endif
 }
+
+/* These do not seem to be necessary but leaving just in case...  */
+
 #else
-void propdlg::qcharchanged(const QString &) {
+void propdlg::qchanged() {
 }
 
 void propdlg::mntsel(int) {

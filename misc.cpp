@@ -24,7 +24,7 @@
 #include <qmessagebox.h>
 
 #include "misc.h"
-#include "kglobal.h"
+#include "kglobal_.h"
 
 QString readentry(const QString &name, const QString def) {
   if (config->hasKey(name))

@@ -1,8 +1,7 @@
-#include <kglobal.h>
 #include <kiconloader.h>
 
 #include "kusertbl.h"
-
+#include "kglobal_.h"
 #include "kuser.h"
 
 #ifndef max
@@ -36,7 +35,7 @@ KUser *KUserRow::getData() {
 }
 
 KUserTable::KUserTable(QWidget *parent, const char *name) : KRowTable(SelectRow, parent, name) {
-  pmUser = new QPixmap(BarIcon("user"));
+  pmUser = new QPixmap(UserIcon("user"));
 
   setCellHeight( max( fontMetrics().lineSpacing(), pmUser->height()) );
 

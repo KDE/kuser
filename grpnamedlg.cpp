@@ -8,7 +8,7 @@
 
 #include "grpnamedlg.h"
 #include "misc.h"
-#include "kglobal.h"
+#include "kglobal_.h"
 
 grpnamedlg::grpnamedlg(KGroup &AGroup, QWidget* parent, const char* name)
   : QDialog(parent, name, TRUE), group(AGroup) {

@@ -10,7 +10,7 @@
 
 #include "propdlg.h"
 #include "pwddlg.h"
-#include "kglobal.h"
+#include "kglobal_.h"
 #include "misc.h"
 #include "kdatectl.h"
 

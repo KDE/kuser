@@ -24,7 +24,7 @@ noinst_HEADERS	=	\
 	krowtable.h kusertbl.h kdatectl.h kuser.h mainView.h kgroup.h \
 	kgrouptbl.h kgroupvw.h propdlg.h mnt.h quota.h globals.h misc.h \
 	usernamedlg.h pwddlg.h grpnamedlg.h kerror.h addUser.h \
-	userDefaultsPage.h editDefaults.h kglobal.cpp
+	userDefaultsPage.h editDefaults.h kglobal_.h
 
 EDITABLE	=	$(DISTFILES) $(noinst_HEADERS) $(kuser_SOURCES) Makefile.am
 

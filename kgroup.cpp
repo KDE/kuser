@@ -17,7 +17,7 @@
 
 #include <qstring.h>
 
-#include "kglobal.h"
+#include "kglobal_.h"
 #include "kgroup.h"
 #include "misc.h"
 

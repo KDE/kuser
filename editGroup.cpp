@@ -9,7 +9,7 @@
 
 #include <kapp.h>
 
-#include "kglobal.h"
+#include "kglobal_.h"
 #include "editGroup.h"
 
 #include <klocale.h>

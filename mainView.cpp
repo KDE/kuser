@@ -16,7 +16,7 @@
 #include <kiconloader.h>
 
 #include "misc.h"
-#include "kglobal.h"
+#include "kglobal_.h"
 #include "usernamedlg.h"
 #include "grpnamedlg.h"
 #include "propdlg.h"

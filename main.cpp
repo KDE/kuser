@@ -13,7 +13,7 @@
 #include <ktmainwindow.h>
 #include <kaboutdata.h>
 
-#include "kglobal.h"
+#include "kglobal_.h"
 #include "kerror.h"
 #include "misc.h"
 #include "mainWidget.h"

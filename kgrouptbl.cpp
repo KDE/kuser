@@ -1,8 +1,7 @@
-#include <kglobal.h>
 #include <kiconloader.h>
 
 #include "kgrouptbl.h"
-
+#include "kglobal_.h"
 #include "kgroup.h"
 
 #ifndef max
@@ -42,7 +41,7 @@ KGroup *KGroupRow::getData() {
 
 KGroupTable::KGroupTable(QWidget *parent, const char *name) : KRowTable(SelectRow, parent, name)
 {
-  pmGroup = new QPixmap(BarIcon("group"));
+  pmGroup = new QPixmap(UserIcon("group"));
 
   setCellHeight(max( fontMetrics().lineSpacing(), pmGroup->height()));
 

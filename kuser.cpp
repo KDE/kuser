@@ -30,7 +30,7 @@
 #include <qstring.h>
 #include <qdir.h>
 
-#include "kglobal.h"
+#include "kglobal_.h"
 #include "kuser.h"
 #include "misc.h"
 

@@ -14,7 +14,7 @@ int quotactl(int cmd, const char * special, int id, caddr_t addr) {
 #endif
 
 #include "misc.h"
-#include "kglobal.h"
+#include "kglobal_.h"
 #include "mnt.h"
 #include "quota.h"
 #include "kuqconf.h"

@@ -1,4 +1,4 @@
-#include "kglobal.h"
+#include "kglobal_.h"
 
 KUserGlobals::KUserGlobals() {
 }

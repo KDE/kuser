@@ -16,7 +16,7 @@
 #include <qdir.h>
 
 #include "globals.h"
-#include "kglobal.h"
+#include "kglobal_.h"
 #include "misc.h"
 
 #include "addUser.h"

@@ -7,7 +7,7 @@
 
 #include "usernamedlg.h"
 #include "misc.h"
-#include "kglobal.h"
+#include "kglobal_.h"
 
 usernamedlg::usernamedlg(KUser *auser, QWidget* parent, const char* name)
            :QDialog(parent, name, TRUE) {

@@ -326,6 +326,7 @@ bool KUsers::loadsdw() {
 
   return (TRUE);
 #endif // _KU_SHADOW
+  return (FALSE);
 }
 
 bool KUsers::save() {

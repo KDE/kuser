@@ -641,7 +641,7 @@ bool KUsers::savesdw() {
     }
 
     strncpy(s.sp_namp, (const char *)up->getName(), 200);
-    strncpy(s.sp_pwdp, (const char *)up->getPwd(), 200);
+    strncpy(s.sp_pwdp, (const char *)up->getSPwd(), 200);
     s.sp_lstchg = up->getLastChange();
     s.sp_min    = up->getMin();
     s.sp_max    = up->getMax();

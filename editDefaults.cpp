@@ -96,8 +96,8 @@ editDefaults::editDefaults(QWidget* parent, const char* name)
 	qtarch_layout_1_2->addWidget( qtarch_PushButton_16, 0, 36 );
 	qtarch_layout_1_2->addWidget( qtarch_Label_14, 1, 36 );
 	resize(290, 290);
-	setMinimumSize(290, 290);
-	setMaximumSize(290, 290);
+	setMinimumSize(290, 320);
+	setMaximumSize(290, 320);
 }
 
 
@@ -128,6 +128,10 @@ bool editDefaults::getCopySkel() const {
   return page1->getCopySkel();
 }
 
+bool editDefaults::getUsePrivateGroup() const {
+  return page1->getUsePrivateGroup();
+}
+
 void editDefaults::setShell(const char *data) {
   page1->setShell(data);
 }
@@ -142,5 +146,9 @@ void editDefaults::setCreateHomeDir(bool data) {
 
 void editDefaults::setCopySkel(bool data) {
   page1->setCopySkel(data);
+}
+
+void editDefaults::setUsePrivateGroup(bool data) {
+  page1->setUsePrivateGroup(data);
 }
 

@@ -138,4 +138,25 @@ CheckBox {
 		FontPropagation {NoChildren}
 		PalettePropagation {NoChildren}
 }
+CheckBox {
+		Checked {FALSE}
+		Text {Use Private Group}
+		AutoRepeat {FALSE}
+		AutoResize {TRUE}
+		Rect {10 220 126 17}
+		Name {CheckBox_3}
+		Variable {usePrivateGroup}
+		MinimumSize {0 0}
+		MaximumSize {32767 32767}
+		BackgroundPixmap {}
+		UseBackgroundPixmap {FALSE}
+		AdjustSize {FALSE}
+		ReadPixmapFromData {FALSE}
+		DataVarName {}
+		DataLenName {}
+		FocusPolicy {TabFocus}
+		BackgroundMode {PaletteBackground}
+		FontPropagation {NoChildren}
+		PalettePropagation {NoChildren}
+}
 }

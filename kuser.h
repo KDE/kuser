@@ -48,9 +48,9 @@ public:
   int gets_flag();
 #endif
 
-  int getr_createhome();
-  int getr_createmailbox();
-  int getr_copyskel();
+  int getCreateHome();
+  int getCreateMailBox();
+  int getCopySkel();
 
   void setp_name(const char *data);
   void setp_pwd(const char *data);
@@ -83,9 +83,9 @@ public:
   void sets_flag(int data);
 #endif
 
-  void setr_createhome(int data);
-  void setr_createmailbox(int data);
-  void setr_copyskel(int data);
+  void setCreateHome(int data);
+  void setCreateMailBox(int data);
+  void setCopySkel(int data);
 
   void createHome();
   int createMailBox();
@@ -134,17 +134,17 @@ protected:
     s_flag;                        // reserved for future use
 #endif
   int
-    r_createhome,              // create homedir
-    r_createmailbox,           // create mailbox
-    r_copyskel;                // copy sceleton
+    isCreateHome,              // create homedir
+    isCreateMailBox,           // create mailbox
+    isCopySkel;                // copy skeleton
 };
 
 class KUsers {
 public:
   KUsers();
   ~KUsers();
-  KUser *user_lookup(const char *name);
-  KUser *user_lookup(unsigned int uid);
+  KUser *lookup(const char *name);
+  KUser *lookup(unsigned int uid);
   int first_free();
 
   bool load();
@@ -153,11 +153,11 @@ public:
 
   KUser *first();
   KUser *next();
-  uint getUsersNumber();
-  KUser *getUser(uint num);
+  uint getNumber();
+  KUser *get(uint num);
 
-  void addUser(KUser *ku);
-  void delUser(KUser *au);
+  void add(KUser *ku);
+  void del(KUser *au);
 
 protected:
   void fillGecos(KUser *user, const char *gecos);

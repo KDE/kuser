@@ -8,23 +8,28 @@ kuser_LDADD	=	     $(LIB_KDEUI) $(LIBCRYPT) $(PAMLIBS) $(LIBPWDB) $(LIBGEN)
 
 ####### Files
 
-kuser_SOURCES	=	mainWidget.cpp editGroup.cpp editGroupData.cpp kuservw.cpp\
-			kheader.cpp krowtable.cpp kusertbl.cpp kgrouptbl.cpp kgroupvw.cpp\
-			kdatectl.cpp kuser.cpp kgroup.cpp main.cpp maindlg.cpp mnt.cpp\
-			propdlg.cpp quota.cpp misc.cpp usernamedlg.cpp pwddlg.cpp\
-			grpnamedlg.cpp kerror.cpp addUser.cpp editDefaults.cpp \
-			userDefaultsPage.cpp userDefaultsPageData.cpp
+kuser_SOURCES	=	\
+	mainWidget.cpp editGroup.cpp editGroupData.cpp kuservw.cpp \
+	kheader.cpp krowtable.cpp kusertbl.cpp kgrouptbl.cpp kgroupvw.cpp \
+	kdatectl.cpp kuser.cpp kgroup.cpp main.cpp maindlg.cpp mnt.cpp \
+	propdlg.cpp quota.cpp misc.cpp usernamedlg.cpp pwddlg.cpp \
+	grpnamedlg.cpp kerror.cpp addUser.cpp editDefaults.cpp \
+	userDefaultsPage.cpp userDefaultsPageData.cpp
 
-BUILTSOURCE	=       mainWidget.moc editGroup.moc editGroupData.moc kuservw.moc kheader.moc\
-			krowtable.moc kusertbl.moc kgrouptbl.moc kgroupvw.moc kdatectl.moc\
-			maindlg.moc propdlg.moc usernamedlg.moc pwddlg.moc grpnamedlg.moc\
-			addUser.moc userDefaultsPageData.moc userDefaultsPage.moc editDefaults.moc
+BUILTSOURCE	=	\
+	mainWidget.moc editGroup.moc editGroupData.moc kuservw.moc kheader.moc \
+	krowtable.moc kusertbl.moc kgrouptbl.moc kgroupvw.moc kdatectl.moc \
+	maindlg.moc propdlg.moc usernamedlg.moc pwddlg.moc grpnamedlg.moc \
+	addUser.moc userDefaultsPageData.moc userDefaultsPage.moc \
+	editDefaults.moc
 
 # the following are only useful, if you want to use "make dist"
-noinst_HEADERS	=       mainWidget.h editGroup.h editGroupData.h kuservw.h kheader.h krowtable.h\
-			kusertbl.h kdatectl.h kuser.h maindlg.h kgroup.h kgrouptbl.h kgroupvw.h\
-			propdlg.h  mnt.h quota.h globals.h misc.h usernamedlg.h pwddlg.h grpnamedlg.h\
-			kerror.h addUser.h
+noinst_HEADERS	=	\
+	mainWidget.h editGroup.h editGroupData.h kuservw.h kheader.h \
+	krowtable.h kusertbl.h kdatectl.h kuser.h maindlg.h kgroup.h \
+	kgrouptbl.h kgroupvw.h propdlg.h mnt.h quota.h globals.h misc.h \
+	usernamedlg.h pwddlg.h grpnamedlg.h kerror.h addUser.h \
+	userDefaultsPageData.h userDefaultsPage.h editDefaults.h
 
 #DISTFILES 	=	README AUTHORS THANKS
 DISTCLEANFILES	= 	$(BUILTSOURCE)
@@ -103,12 +108,11 @@ kgroupvw.cpp: kgroupvw.moc
 kgroupvw.moc: kgroupvw.h
 	$(MOC) kgroupvw.h -o kgroupvw.moc
 
-editGroup.cpp: editGroup.moc
+editGroup.cpp: editGroup.moc editGroupData.moc
 editGroup.moc: editGroup.h
 	$(MOC) editGroup.h -o editGroup.moc
 
 editGroupData.cpp: editGroupData.moc
-editGroup.cpp: editGroupData.moc
 editGroupData.moc: editGroupData.h
 	$(MOC) editGroupData.h -o editGroupData.moc
 
@@ -124,8 +128,7 @@ editDefaults.cpp: editDefaults.moc
 editDefaults.moc: editDefaults.h
 	$(MOC) editDefaults.h -o editDefaults.moc
 
-userDefaultsPage.cpp: userDefaultsPageData.moc
-userDefaultsPage.cpp: userDefaultsPage.moc
+userDefaultsPage.cpp: userDefaultsPage.moc userDefaultsPageData.moc
 userDefaultsPage.moc: userDefaultsPage.h
 	$(MOC) userDefaultsPage.h -o userDefaultsPage.moc
 

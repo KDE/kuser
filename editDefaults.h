@@ -15,11 +15,13 @@ public:
   const char *getHomeBase() const;
   bool getCreateHomeDir() const;
   bool getCopySkel() const;
+  bool getUsePrivateGroup() const;
 
   void setShell(const char *data);
   void setHomeBase(const char *data);
   void setCreateHomeDir(bool data);
   void setCopySkel(bool data);
+  void setUsePrivateGroup(bool data);
 
 protected:
   userDefaultsPage *page1;

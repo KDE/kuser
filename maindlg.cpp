@@ -117,8 +117,8 @@ void mainDlg::reloadUsers(int id) {
   lbusers->setAutoUpdate(FALSE);
   lbusers->clear();
 
-  for (uint i = 0; i<u->getUsersNumber(); i++) {
-    ku = u->getUser(i);
+  for (uint i = 0; i<u->getNumber(); i++) {
+    ku = u->get(i);
     lbusers->insertItem(ku);
   }
 
@@ -133,8 +133,8 @@ void mainDlg::reloadGroups(int gid) {
   lbgroups->setAutoUpdate(FALSE);
   lbgroups->clear();
 
-  for (uint i = 0; i<g->getGroupsNumber(); i++) {
-    kg = g->getGroup(i);
+  for (uint i = 0; i<g->getNumber(); i++) {
+    kg = g->get(i);
     lbgroups->insertItem(kg);
   }
 
@@ -157,17 +157,18 @@ void mainDlg::userdel() {
                      i18n("Cancel"), i18n("Delete")) == 2) {
 
     i = lbusers->currentItem();
-    if (i == u->getUsersNumber()-1)
+    if (i == u->getNumber()-1)
       islast = TRUE;
 
-    unsigned int uid = lbusers->getCurrentUser()->getp_uid();
+    uint uid = lbusers->getCurrentUser()->getp_uid();
+		uint gid = lbusers->getCurrentUser()->getp_gid();
 
 #ifdef _KU_QUOTA
-    if (u->user_lookup(uid) == NULL)
+    if (u->lookup(uid) == NULL)
       q->delQuota(uid);
 #endif
 
-    u->delUser(lbusers->getCurrentUser());
+    u->del(lbusers->getCurrentUser());
 
     prev = -1;
 
@@ -176,7 +177,28 @@ void mainDlg::userdel() {
     else
       reloadUsers(i-1);
     changed = TRUE;
-    }
+		if (config->readBoolEntry("usePrivateGroup", KU_USEPRIVATEGROUP)) {
+			bool found = false;
+
+			for (uint i=0; i<u->getNumber(); i++)
+				if (u->get(i)->getp_gid() == gid) {
+					found = true;
+					break;
+				}
+			if (!found)
+				if (KMsgBox::yesNo(0, i18n("WARNING"),
+													 i18n("You are using private groups.\nDo you want delete user's private group ?"),
+													 KMsgBox::STOP,
+													 i18n("Cancel"), i18n("Delete")) == 2) {
+					uint oldc = lbgroups->currentItem();
+					g->del(g->lookup(gid));
+					if (oldc == g->count())
+						reloadGroups(oldc-1);
+					else
+						reloadGroups(oldc);
+				}
+		}
+	}
 }
 
 void mainDlg::useradd() {
@@ -210,7 +232,7 @@ void mainDlg::useradd() {
 
   config->setGroup("template");
   tk->setp_shell(readentry("shell"));
-  tk->setp_dir(readentry("homeprefix")+"/"+tk->getp_name());
+  tk->setp_dir(readentry("homeprefix", KU_HOMEPREFIX)+"/"+tk->getp_name());
   tk->setp_gid(readnumentry("gid"));
   tk->setp_fname(readentry("p_fname"));
 #ifdef __FreeBSD__
@@ -256,8 +278,23 @@ void mainDlg::useradd() {
   au = new addUser(tk, this, "userin");
 #endif
 
+  au->setUsePrivateGroup(config->readBoolEntry("usePrivateGroup", KU_USEPRIVATEGROUP));
+
   if (au->exec() != 0) {
-    u->addUser(tk);
+		if (config->readBoolEntry("usePrivateGroup", KU_USEPRIVATEGROUP)) {
+			KGroup *tg;
+
+			if ((tg = g->lookup(tk->getp_name())) == NULL) {
+				tg = new KGroup();
+				tg->setgid(g->first_free());
+				tg->setname(tk->getp_name());
+				g->add(tg);
+				reloadGroups(lbgroups->currentItem());
+			}
+
+			tk->setp_gid(tg->getgid());
+		}
+    u->add(tk);
 #ifdef _KU_QUOTA
     q->addQuota(tq);
 #endif
@@ -270,7 +307,7 @@ void mainDlg::useradd() {
 #endif
   }
 
-  reloadUsers(u->getUsersNumber()-1);
+  reloadUsers(u->getNumber()-1);
 
   delete au;
 }
@@ -315,109 +352,6 @@ void mainDlg::help() {
 }
 
 void mainDlg::properties() {
-/*
-  propdlg *editUser;
-  KUser *tk;
-
-  tk = new KUser();
-#ifdef _KU_QUOTA
-  Quota *tq = new Quota(0, FALSE);
-#endif
-
-  config->setGroup("template");
-  tk->setp_shell(readentry("shell"));
-  tk->setp_dir(readentry("homeprefix"));
-  tk->setp_gid(readnumentry("gid"));
-  tk->setp_fname(readentry("p_fname"));
-#ifdef __FreeBSD__
-  tk->setp_office(readentry("p_office"));
-  tk->setp_ophone(readentry("p_ophone"));
-  tk->setp_hphone(readentry("p_hphone"));
-  tk->setp_class(readentry("p_class"));
-  tk->setp_change(readnumentry("p_change"));
-  tk->setp_expire(readnumentry("p_expire"));
-#else
-  tk->setp_office1(readentry("p_office1"));
-  tk->setp_office2(readentry("p_office2"));
-  tk->setp_address(readentry("p_address"));
-#endif
-
-#ifdef _KU_SHADOW
-  tk->sets_lstchg(readnumentry("s_lstchg"));
-  tk->sets_min(readnumentry("s_min"));
-  tk->sets_max(readnumentry("s_max"));
-  tk->sets_warn(readnumentry("s_warn"));
-  tk->sets_inact(readnumentry("s_inact"));
-  tk->sets_expire(readnumentry("s_expire"));
-  tk->sets_flag(readnumentry("s_flag"));
-#endif
-
-#ifdef _KU_QUOTA
-  if (is_quota != 0) {
-*/
-    /*
-    tk->quota.at(0)->fsoft = readnumentry("quota.fsoft");
-    tk->quota.at(0)->fhard = readnumentry("quota.fhard");
-    tk->quota.at(0)->isoft = readnumentry("quota.isoft");
-    tk->quota.at(0)->ihard = readnumentry("quota.ihard");
-    */
-/*
-  }
-#endif
-
-#ifdef _KU_QUOTA
-  editUser = new propdlg(tk, tq, this, "userin");
-#else
-  editUser = new propdlg(tk, this, "userin");
-#endif
-  if (editUser->exec() != 0) {
-    config->writeEntry("shell", tk->getp_shell());
-    config->writeEntry("homeprefix", tk->getp_dir());
-    config->writeEntry("gid", tk->getp_gid());
-    config->writeEntry("p_fname", tk->getp_fname());
-#ifdef __FreeBSD__
-    config->writeEntry("p_office", tk->getp_office());
-    config->writeEntry("p_ophone", tk->getp_ophone());
-    config->writeEntry("p_hphone", tk->getp_hphone());
-    config->writeEntry("p_class", tk->getp_class());
-    config->writeEntry("p_change", tk->getp_change());
-    config->writeEntry("p_expire", tk->getp_expire());
-#else
-    config->writeEntry("p_office1", tk->getp_office1());
-    config->writeEntry("p_office2", tk->getp_office2());
-    config->writeEntry("p_address", tk->getp_address());
-#endif
-
-#ifdef _KU_SHADOW
-    config->writeEntry("s_lstchg", tk->gets_lstchg());
-    config->writeEntry("s_min", tk->gets_min());
-    config->writeEntry("s_max", tk->gets_max());
-    config->writeEntry("s_warn", tk->gets_warn());
-    config->writeEntry("s_inact", tk->gets_inact());
-    config->writeEntry("s_expire", tk->gets_expire());
-    config->writeEntry("s_flag", tk->gets_flag());
-#endif
-
-#ifdef _KU_QUOTA
-    if (is_quota != 0) {
-*/
-      /*
-      config->writeEntry("quota.fsoft", tk->quota.at(0)->fsoft);
-      config->writeEntry("quota.fhard", tk->quota.at(0)->fhard);
-      config->writeEntry("quota.isoft", tk->quota.at(0)->isoft);
-      config->writeEntry("quota.ihard", tk->quota.at(0)->ihard);
-      */
-/*
-    }
-#endif
-  }
-
-  delete tk;
-#ifdef _KU_QUOTA
-  delete tq;
-#endif
-  delete editUser;
-*/
   editDefaults *eddlg;
 
   eddlg = new editDefaults();
@@ -429,6 +363,7 @@ void mainDlg::properties() {
   eddlg->setHomeBase(config->readEntry("homeBase", "/home"));
   eddlg->setCreateHomeDir(config->readBoolEntry("createHomeDir", true));
   eddlg->setCopySkel(config->readBoolEntry("copySkel", true));
+  eddlg->setUsePrivateGroup(config->readBoolEntry("usePrivateGroup", KU_USEPRIVATEGROUP));
 
   if (eddlg->exec() != 0) {
     config->setGroup("template");
@@ -436,6 +371,7 @@ void mainDlg::properties() {
     config->writeEntry("homeBase", eddlg->getHomeBase());
     config->writeEntry("createHomeDir", eddlg->getCreateHomeDir());
     config->writeEntry("copySkel", eddlg->getCopySkel());
+    config->writeEntry("usePrivateGroup", eddlg->getUsePrivateGroup());
   }
 
   delete eddlg;
@@ -445,7 +381,7 @@ void mainDlg::groupSelected(int i) {
   editGroup *egdlg;
   KGroup *tmpKG;
 
-  tmpKG = g->getGroup(i);
+  tmpKG = g->get(i);
 
   if (tmpKG == NULL) {
     printf(i18n("Null pointer tmpKG in mainDlg::groupSelected(%d)\n"), i);
@@ -542,7 +478,7 @@ void mainDlg::grpadd() {
   }
 
   delete gd;
-  g->addGroup(tk);
+  g->add(tk);
   reloadGroups(lbgroups->currentItem());
   changed = TRUE;
 }
@@ -561,10 +497,10 @@ void mainDlg::grpdel() {
                      i18n("Cancel"), i18n("Delete")) == 2) {
 
     i = lbgroups->currentItem();
-    if (i == g->getGroupsNumber()-1)
+    if (i == g->getNumber()-1)
       islast = TRUE;
 
-    g->delGroup(lbgroups->getCurrentGroup());
+    g->del(lbgroups->getCurrentGroup());
 
     prev = -1;
 

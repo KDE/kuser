@@ -67,6 +67,10 @@ bool userDefaultsPage::getCopySkel() const {
   return copySkel->isChecked();
 }
 
+bool userDefaultsPage::getUsePrivateGroup() const {
+  return usePrivateGroup->isChecked();
+}
+
 void userDefaultsPage::setShell(const char *data) {
   for (int i=0; i<shell->count(); i++)
     if (strcmp(shell->text(i), data) == 0) {
@@ -88,5 +92,9 @@ void userDefaultsPage::setCreateHomeDir(bool data) {
 
 void userDefaultsPage::setCopySkel(bool data) {
   copySkel->setChecked(data);
+}
+
+void userDefaultsPage::setUsePrivateGroup(bool data) {
+  usePrivateGroup->setChecked(data);
 }
 

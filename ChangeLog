@@ -1,3 +1,7 @@
+22/12/98: RedHat awared issues added.
+	  Private group mechanism implemented. Works both for
+	  add and delete.
+	
 12/10/98: Simple property dialog added
 
 04/10/98: Use layouts in Edit group dialog (QtArch is rulez!!!)

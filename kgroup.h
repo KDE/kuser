@@ -43,8 +43,8 @@ class KGroups {
 public:
   KGroups();
   ~KGroups();
-  KGroup *group_lookup(const char *name);
-  KGroup *group_lookup(unsigned int gid);
+  KGroup *lookup(const char *name);
+  KGroup *lookup(unsigned int gid);
   int first_free();
 
   bool save();
@@ -52,11 +52,13 @@ public:
 
   KGroup *first();
   KGroup *next();
-  uint getGroupsNumber();
-  KGroup *getGroup(uint num);
+  uint getNumber();
+  KGroup *get(uint num);
 
-  void addGroup(KGroup *ku);
-  void delGroup(KGroup *au);
+  void add(KGroup *ku);
+  void del(KGroup *au);
+
+	uint count();
 
 protected:
   int g_saved;

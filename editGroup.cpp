@@ -25,9 +25,9 @@ editGroup::editGroup(KGroup *akg,
   for (i = 0; i<kg->getUsersNumber(); i++)
     m_Group->insertItem(kg->getUserName(i));
 
-  for (i = 0; i<users->getUsersNumber(); i++)
-    if (kg->lookup_user(users->getUser(i)->getp_name()) == 0)
-      m_Users->insertItem(users->getUser(i)->getp_name());
+  for (i = 0; i<users->getNumber(); i++)
+    if (kg->lookup_user(users->get(i)->getp_name()) == 0)
+      m_Users->insertItem(users->get(i)->getp_name());
 
   if (m_Users->count() != 0)
     m_Users->setCurrentItem(0);

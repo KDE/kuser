@@ -64,7 +64,7 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
 //  ld3 = addLabel(w1, "mld3", 200, 60, 50, 20, i18n("Primary group id"));
 
   pbsetpwd = new QPushButton(w1, "pbsetpwd");
-  pbsetpwd->setGeometry(260, 160, 120, 30);
+  pbsetpwd->setGeometry(260, 180, 120, 30);
   pbsetpwd->setText(i18n("Set password"));
   QObject::connect(pbsetpwd, SIGNAL(clicked()), this, SLOT(setpwd()));
 
@@ -387,14 +387,14 @@ propdlg::~propdlg() {
 void propdlg::loadgroups() {
   uint i;
 
-  for (i = 0; i<groups->getGroupsNumber(); i++) {
-    if (groups->getGroup(i)->lookup_user(user->getp_name())!=0)
-      m_Group->insertItem(groups->getGroup(i)->getname());
+  for (i = 0; i<groups->getNumber(); i++) {
+    if (groups->get(i)->lookup_user(user->getp_name())!=0)
+      m_Group->insertItem(groups->get(i)->getname());
     else
-      m_Other->insertItem(groups->getGroup(i)->getname());
+      m_Other->insertItem(groups->get(i)->getname());
 
-    cbpgrp->insertItem(groups->getGroup(i)->getname());
-    if (groups->getGroup(i)->getgid() == user->getp_gid())
+    cbpgrp->insertItem(groups->get(i)->getname());
+    if (groups->get(i)->getgid() == user->getp_gid())
       cbpgrp->setCurrentItem(i);
   }
 
@@ -519,14 +519,14 @@ void propdlg::saveg() {
   uint i;
 
   for (i=0;i<m_Group->count();i++)
-    if (groups->group_lookup(m_Group->text(i))->lookup_user(user->getp_name()) == NULL)
-      groups->group_lookup(m_Group->text(i))->addUser(user->getp_name());
+    if (groups->lookup(m_Group->text(i))->lookup_user(user->getp_name()) == NULL)
+      groups->lookup(m_Group->text(i))->addUser(user->getp_name());
   
   for (i=0;i<m_Other->count();i++)
-    if (groups->group_lookup(m_Other->text(i))->lookup_user(user->getp_name()) != NULL)
-      groups->group_lookup(m_Other->text(i))->removeUser(user->getp_name());
+    if (groups->lookup(m_Other->text(i))->lookup_user(user->getp_name()) != NULL)
+      groups->lookup(m_Other->text(i))->removeUser(user->getp_name());
 
-  user->setp_gid(groups->group_lookup(cbpgrp->text(cbpgrp->currentItem()))->getgid());
+  user->setp_gid(groups->lookup(cbpgrp->text(cbpgrp->currentItem()))->getgid());
 }
 
 #ifdef _KU_QUOTA
@@ -682,7 +682,7 @@ void propdlg::ok() {
 printf("propdlg::ok\n");
   
   if (olduid != newuid)
-    if (users->user_lookup(newuid) != NULL) {
+    if (users->lookup(newuid) != NULL) {
       tmp.sprintf(i18n("User with UID %u already exists"), newuid);
       KMsgBox::message(0, i18n("Message"), tmp, KMsgBox::STOP, i18n("OK"));
       return;

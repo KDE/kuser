@@ -69,7 +69,7 @@ void usernamedlg::ok()
 {
   QString tmp;
 
-  if (users->user_lookup(leusername->text()) != NULL) {
+  if (users->lookup(leusername->text()) != NULL) {
     tmp.sprintf(i18n("User with name %s already exists."), leusername->text());
     KMsgBox::message(0, i18n("Error"), tmp, KMsgBox::STOP);
     return;

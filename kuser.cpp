@@ -74,24 +74,24 @@ KUser::KUser() {
   s_flag    = 0;
 #endif
 
-  r_createhome = 0;
-  r_createmailbox = 0;
-  r_copyskel = 0;
+  isCreateHome = 0;
+  isCreateMailBox = 0;
+  isCopySkel = 0;
 }
   
 KUser::~KUser() {
 }
 
-int KUser::getr_createhome() {
-  return r_createhome;
+int KUser::getCreateHome() {
+  return isCreateHome;
 }
 
-int KUser::getr_createmailbox() {
-  return r_createmailbox;
+int KUser::getCreateMailBox() {
+  return isCreateMailBox;
 }
 
-int KUser::getr_copyskel() {
-  return r_copyskel;
+int KUser::getCopySkel() {
+  return isCopySkel;
 }
 
 QString KUser::getp_name() {
@@ -307,19 +307,17 @@ void KUser::sets_flag(int data) {
 
 #endif
 
-void KUser::setr_createhome(int data) {
-  r_createhome = data;
+void KUser::setCreateHome(int data) {
+  isCreateHome = data;
 }
 
-void KUser::setr_createmailbox(int data) {
-  r_createhome = data;
+void KUser::setCreateMailBox(int data) {
+  isCreateMailBox = data;
 }
 
-void KUser::setr_copyskel(int data) {
-  r_copyskel = data;
+void KUser::setCopySkel(int data) {
+  isCopySkel = data;
 }
-
-// class KUsers
 
 KUsers::KUsers() {
   p_backuped = 0;
@@ -438,14 +436,23 @@ bool KUsers::loadsdw() {
   QString tmp;
   struct spwd *spw;
   KUser *up = NULL;
+  FILE *f;
 
   if (!is_shadow)
     return FALSE;
 
+  if ((f = fopen(SHADOW_FILE, "r")) == NULL) {
+    is_shadow = 0;
+    printf("Shadow file missing detected\n");
+    return TRUE;
+  }
+
+  fclose(f);
+
   setspent();
 
   while ((spw = getspent())) {     // read a shadow password structure
-    if ((up = user_lookup(spw->sp_namp)) == NULL) {
+    if ((up = lookup(spw->sp_namp)) == NULL) {
       ksprintf(&tmp, i18n("No /etc/passwd entry for %s.\nEntry will be removed at the next `Save'-operation."),
                   spw->sp_namp);
       KMsgBox::message(0, i18n("Error"), tmp, KMsgBox::STOP);
@@ -532,17 +539,17 @@ bool KUsers::savepwd() {
     s+=s1+":"+user->getp_dir()+":"+user->getp_shell()+"\n";
     fputs((const char *)s, passwd);
 
-    if(user->getr_createmailbox()) {
+    if(user->getCreateMailBox()) {
       user->createMailBox();
-      user->setr_createmailbox(0);
+      user->setCreateMailBox(0);
     }
-    if(user->getr_createhome()) {
+    if(user->getCreateHome()) {
        user->createHome();
-       user->setr_createhome(0);
+       user->setCreateHome(0);
     }
-    if(user->getr_copyskel()) {
+    if(user->getCopySkel()) {
        user->copySkel();
-       user->setr_copyskel(0);
+       user->setCopySkel(0);
     }
   }
   fclose(passwd);
@@ -617,14 +624,14 @@ bool KUsers::savesdw() {
   return (TRUE);
 }
 
-KUser *KUsers::user_lookup(const char *name) {
+KUser *KUsers::lookup(const char *name) {
   for (uint i = 0; i<u.count(); i++)
     if (u.at(i)->getp_name() == name)
       return (u.at(i));
   return (NULL);
 }
 
-KUser *KUsers::user_lookup(unsigned int uid) {
+KUser *KUsers::lookup(unsigned int uid) {
   for (uint i = 0; i<u.count(); i++)
     if (u.at(i)->getp_uid() == uid)
       return (u.at(i));
@@ -652,11 +659,11 @@ KUsers::~KUsers() {
   u.clear();
 }
 
-uint KUsers::getUsersNumber() {
+uint KUsers::getNumber() {
   return (u.count());
 }
 
-KUser *KUsers::getUser(uint num) {
+KUser *KUsers::get(uint num) {
   return (u.at(num));
 }
 
@@ -668,11 +675,11 @@ KUser *KUsers::next() {
   return (u.next());
 }
 
-void KUsers::addUser(KUser *ku) {
+void KUsers::add(KUser *ku) {
   u.append(ku);
 }
 
-void KUsers::delUser(KUser *au) {
+void KUsers::del(KUser *au) {
   u.remove(au);
 }
 

@@ -24,11 +24,11 @@
 #include "globals.h"
 #include "maindlg.h"
 
-QString readentry(const QString &name) {
+QString readentry(const QString &name, const QString def) {
   if (config->hasKey(name))
     return config->readEntry(name);
   else
-    return (QString)("");
+    return def;
 }
 
 int readnumentry(const QString &name) {

@@ -34,6 +34,11 @@ addUser::addUser(KUser *auser, Quota *aquota, QWidget *parent = 0, const char *n
   copyskel = new QCheckBox(w1, "copySkel");
   copyskel->setText(i18n("Copy skeleton"));
   copyskel->setGeometry(200, 110, 200, 30);
+
+  usePrivateGroup = new QCheckBox(w1, "usePrivateGroup");
+  usePrivateGroup->setText(i18n("Use Private Group"));
+  usePrivateGroup->setGeometry(200, 150, 200, 30);
+  connect(usePrivateGroup, SIGNAL(toggled(bool)), this, SLOT(usePrivateGroupChecked(bool)));
 }
 #else
 addUser::addUser(KUser *auser, QWidget *parent = 0, const char *name = 0, int isprep = false) :
@@ -46,8 +51,16 @@ addUser::addUser(KUser *auser, QWidget *parent = 0, const char *name = 0, int is
   copyskel = new QCheckBox(w1, "copySkel");
   copyskel->setText(i18n("Copy skeleton"));
   copyskel->setGeometry(200, 110, 200, 30);
+
+  usePrivateGroup = new QCheckBox(w1, "usePrivateGroup");
+  usePrivateGroup->setText(i18n("Use Private Group"));
+  usePrivateGroup->setGeometry(200, 150, 200, 30);
 }
 #endif
+
+void addUser::setUsePrivateGroup(bool data) {
+  usePrivateGroup->setChecked(data);
+}
 
 void addUser::ok() {
   QString tmp;
@@ -55,7 +68,7 @@ void addUser::ok() {
   tmp.setStr(leid->text());
   newuid = tmp.toInt();
   
-  if (users->user_lookup(newuid) != NULL) {
+  if (users->lookup(newuid) != NULL) {
     ksprintf(&tmp, i18n("User with UID %u already exists"), newuid);
     KMsgBox::message(0, i18n("Message"), tmp, KMsgBox::STOP, i18n("OK"));
     return;
@@ -65,14 +78,18 @@ void addUser::ok() {
   
   if (createhome->isChecked())
     if ((checkHome()) && (checkMailBox())) {
-      user->setr_createhome(1);
-      user->setr_createmailbox(1);
+      user->setCreateHome(1);
+      user->setCreateMailBox(1);
     }
 
   if (copyskel->isChecked())
-    user->setr_copyskel(1);
+    user->setCopySkel(1);
 
   accept();
+}
+
+void addUser::usePrivateGroupChecked(bool data) {
+  cbpgrp->setEnabled(!data);
 }
 
 bool addUser::checkHome() {

@@ -10,7 +10,7 @@
 
 class KUser;
 
-QString readentry(const QString &name);
+QString readentry(const QString &name, const QString def = "");
 int readnumentry(const QString &name);
 void backup(const char *name);
 char *convertdate(char *buf, const long int base, const long int days);

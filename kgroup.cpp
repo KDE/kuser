@@ -199,18 +199,18 @@ bool KGroups::save() {
   return (TRUE);
 }
 
-KGroup *KGroups::group_lookup(const char *name) {
+KGroup *KGroups::lookup(const char *name) {
   for (uint i = 0; i<g.count(); i++)
     if (g.at(i)->getname() == name)
       return (g.at(i));
-  return (NULL);
+  return NULL;
 }
 
-KGroup *KGroups::group_lookup(unsigned int gid) {
+KGroup *KGroups::lookup(unsigned int gid) {
   for (uint i = 0; i<g.count(); i++)
     if (g.at(i)->getgid() == gid)
       return (g.at(i));
-  return (NULL);
+  return NULL;
 }
 
 int KGroups::first_free() {
@@ -233,11 +233,11 @@ KGroups::~KGroups() {
   g.clear();
 }
 
-uint KGroups::getGroupsNumber() {
+uint KGroups::getNumber() {
   return (g.count());
 }
 
-KGroup *KGroups::getGroup(uint num) {
+KGroup *KGroups::get(uint num) {
   return (g.at(num));
 }
 
@@ -249,10 +249,14 @@ KGroup *KGroups::next() {
   return (g.next());
 }
 
-void KGroups::addGroup(KGroup *ku) {
+void KGroups::add(KGroup *ku) {
   g.append(ku);
 }
 
-void KGroups::delGroup(KGroup *au) {
+void KGroups::del(KGroup *au) {
   g.remove(au);
+}
+
+uint KGroups::count() {
+	return g.count();
 }

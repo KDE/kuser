@@ -31,9 +31,9 @@ delUser::delUser(KUser *AUser, QWidget *parent, const char *name)
   new QLabel( i18n("<p>Deleting user <b>%1</b>"
                    "<p>Also perform the following actions:").arg(AUser->getName()),
               page);
-  m_deleteHomeDir = new QCheckBox(i18n("Delete &Home Directory: %1").arg(AUser->getHomeDir()), page);
+  m_deleteHomeDir = new QCheckBox(i18n("Delete &home directory: %1").arg(AUser->getHomeDir()), page);
   QString mailboxpath = QString::fromLatin1("%1/%2").arg(QString::fromLatin1(MAIL_SPOOL_DIR)).arg(AUser->getName());
-  m_deleteMailBox = new QCheckBox(i18n("Delete &Mailbox: %1").arg(mailboxpath), page);
+  m_deleteMailBox = new QCheckBox(i18n("Delete &mailbox: %1").arg(mailboxpath), page);
   setButtonText(Ok, i18n("&Delete"));
 }
 

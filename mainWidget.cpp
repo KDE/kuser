@@ -19,7 +19,7 @@ mainWidget::mainWidget(const char *name) : KMainWindow(0,name) {
   md->slotTabChanged();
 
   sbar = new KStatusBar(this);
-  sbar->insertItem(i18n("Reading config"), 0);
+  sbar->insertItem(i18n("Reading configuration"), 0);
   
   setCentralWidget(md);
 

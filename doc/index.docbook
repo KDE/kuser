@@ -3,8 +3,6 @@
   <!ENTITY kappname "&kuser;">
   <!ENTITY % addindex "IGNORE">
   <!ENTITY % English "INCLUDE" > <!-- change language only here -->
-  
-  
 ]>
 
 <book lang="&language;">
@@ -24,7 +22,7 @@
 <firstname>Lauri</firstname>
 <surname>Watts</surname>
 <affiliation>
-<address><email>vampyr@atconnex.net</email></address>
+<address><email>lauri@kde.org</email></address>
 </affiliation>
 <contrib>Reviewer</contrib>
 </othercredit>
@@ -41,8 +39,9 @@
 <date>2000-08-22</date>
 <releaseinfo>1.03.00</releaseinfo>
 
-<abstract><para>This documentation describes &kuser; version 1.0. This program
-allows you to manage users and groups on your system.</para> </abstract>
+<abstract><para>This documentation describes &kuser; version 1.0. This
+program allows you to manage users and groups on your system.</para>
+</abstract>
 
 <keywordset>
 <keyword>kuser</keyword>
@@ -57,15 +56,16 @@ allows you to manage users and groups on your system.</para> </abstract>
 
 <chapter id="start">
 <title>Getting Started</title>
-<para>This is a short introduction to &kuser;. For more detailed information see
-<link linkend="using">Usage</link>.</para>
 
-<para>Actually you do not need to do anything to begin using &kuser; except
-<link linkend="customizing">configuration</link>.</para>
+<para>This is a short introduction to &kuser;. For more detailed
+information see <link linkend="using">Usage</link>.</para>
+
+<para>Actually you do not need to do anything to begin using &kuser;
+except <link linkend="customizing">configuration</link>.</para>
 
 <para>When you have made the changes you want, you must
-<guimenuitem>Save</guimenuitem> them for them to take effect. Either choose
-the Toolbar icon, or use the <guimenu>File</guimenu> menu.</para>
+<guimenuitem>Save</guimenuitem> them for them to take effect. Either
+choose the Toolbar icon, or use the <guimenu>File</guimenu> menu.</para>
 
 </chapter>
 
@@ -75,10 +75,10 @@ the Toolbar icon, or use the <guimenu>File</guimenu> menu.</para>
 <sect1 id="sec1mainwindow">
 <title>Main Window</title>
 
-<para>&kuser; is a very simple application. In the main window you can see two
-lists: the list of users and the list of groups. To edit a user or a group you
-just double click on it. The user/group properties dialog will
-appear.</para>
+<para>&kuser; is a very simple application. In the main window you can
+see two lists: the list of users and the list of groups. To edit a user
+or a group you just double click on it. The user/group properties dialog
+will appear.</para>
 
 </sect1>
 
@@ -87,15 +87,16 @@ appear.</para>
 
 <para>The user properties dialog has various tabs.</para>
 
-<para>The number of tabs depends on the type of the user storage system and
-whether quotas are being used. Additional tabs will appear if you have shadow
-passwords, or any other similar things such as
-<filename>/etc/master.passwd</filename> in BSD flavor Unices.</para> 
+<para>The number of tabs depends on the type of the user storage system
+and whether quotas are being used. Additional tabs will appear if you
+have shadow passwords, or any other similar things such as
+<filename>/etc/master.passwd</filename> in BSD flavor Unices.</para>
 
 <sect2 id="user-info"> 
 <title><guilabel>User Info</guilabel> Tab</title>
 
-<para>In the "<guilabel>User Info</guilabel>" tab you can modify: </para>
+<para>In the "<guilabel>User Info</guilabel>" tab you can modify:
+</para>
 
 <itemizedlist>
 <listitem><para><guilabel>Full name</guilabel></para></listitem>
@@ -112,12 +113,13 @@ taken from the <filename>/etc/shells</filename> file)</para></listitem>
 <sect2 id="extended-info">
 <title><guilabel>Extended Info</guilabel> Tab</title>
 
-<para>The "<guilabel>Extended Info</guilabel>" tab will appear if you have
+<para>The <guilabel>Extended Info</guilabel> tab will appear if you have
 shadow passwords, or any other similar things such as
-<filename>/etc/master.passwd</filename> in BSD flavor Unices.</para>
+<filename>/etc/master.passwd</filename> in <acronym>BSD</acronym> flavor
+Unices.</para>
 
-<para>In the "<guilabel>Extended Info</guilabel>" tab you can modify parameters
-related to extended account control: </para>
+<para>In the <guilabel>Extended Info</guilabel> tab you can modify
+parameters related to extended account control: </para>
 
 <itemizedlist>
 <listitem><para><guilabel>Date until change allowed</guilabel></para></listitem>
@@ -127,7 +129,7 @@ expiration</guilabel></para></listitem>
 <listitem><para><guilabel>Date before account
 inactivation</guilabel></para></listitem>
 <listitem><para><guilabel>Date when account expires</guilabel></para></listitem>
-<listitem><para><guilabel>Class</guilabel> (on BSD systems)</para></listitem>
+<listitem><para><guilabel>Class</guilabel> (on <acronym>BSD</acronym> systems)</para></listitem>
 </itemizedlist>
 
 </sect2>
@@ -135,7 +137,7 @@ inactivation</guilabel></para></listitem>
 <sect2 id="quota">
 <title><guilabel>Quota</guilabel> Tab</title>
 
-<para>You will probably see the "<guilabel>Quota</guilabel>" tab only if you
+<para>You will probably see the <guilabel>Quota</guilabel> tab only if you
 have at least one mounted volume with quota enabled and a quota file
 present. There you may modify all quota related parameters: </para>
 
@@ -157,7 +159,7 @@ Filesystem</guilabel>" combobox.</para>
 <sect2 id="group">
 <title><guilabel>Groups</guilabel> Tab</title>
 
-<para>The "<guilabel>Groups</guilabel>" tab contains all the information about
+<para>The <guilabel>Groups</guilabel> tab contains all the information about
 user's participation in groups. First of all, it shows the user's primary
 group. Also, you can assign as many secondary groups as you wish using the arrow
 buttons.</para> 
@@ -169,9 +171,9 @@ buttons.</para>
 <title><guilabel>Group Properties</guilabel></title>
 
 <para>The <guilabel>Group</guilabel> properties dialog has two list boxes. The
-right one contains users ("<guilabel>Users in group</guilabel>"), who are
+right one contains users (<guilabel>Users in group</guilabel>), who are
 included in the group, and the left one contains the list of all other users in
-the system ("<guilabel>Users not in group</guilabel>"). You can use the
+the system (<guilabel>Users not in group</guilabel>). You can use the
 <guibutton>arrow</guibutton> buttons to move a user from one list to the
 other. Select the user you want to move, then use the
 <guibutton>arrow</guibutton> button  to move the user.</para> 
@@ -183,7 +185,7 @@ other. Select the user you want to move, then use the
 
 <para>To add a user or group to the system, either choose
 <guimenuitem>Add</guimenuitem> from the <guimenu>User</guimenu> or
-<guimenu>Group</guimenu> menu, or click the "<guiicon>Add</guiicon>" button on
+<guimenu>Group</guimenu> menu, or click the <guiicon>Add</guiicon> button on
 the toolbar. The same applies to removing users. </para> 
 </sect1> 
 </chapter>
@@ -194,16 +196,17 @@ the toolbar. The same applies to removing users. </para>
 <sect1 id="defaults">
 <title>Edit user creation defaults</title>
 
-<para>To edit the user creation defaults you can use the "<guilabel>Edit
-defaults</guilabel>" dialog, which is accessible via the menu
+<para>To edit the user creation defaults you can use the <guilabel>Edit
+defaults</guilabel> dialog, which is accessible via the menu
 <menuchoice><guimenu>Settings</guimenu>
-<guimenuitem>Preferences</guimenuitem></menuchoice>. There you may change the
-defaults that are used when creating a new user: Shell and Home Directory (or
-home directories volume). You can choose whether to make a home directory on
-"create" or not, to copy a skeleton to the home directory or not. You can also
-enable "User Private Group" mechanism, which creates a new personal group with
-the creation of a new user, and removes the personal group when the user is
-removed.</para>
+<guimenuitem>Preferences</guimenuitem></menuchoice>. There you may
+change the defaults that are used when creating a new user: Shell and
+Home Directory (or home directories volume). You can choose whether to
+make a home directory on <quote>create</quote> or not, to copy a
+skeleton to the home directory or not. You can also enable
+<guilabel>User Private Group</guilabel> mechanism, which creates a new
+personal group with the creation of a new user, and removes the personal
+group when the user is removed.</para>
 
 </sect1>
 </chapter>

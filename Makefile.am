@@ -34,7 +34,7 @@ EXTRA_DIST = README AUTHORS THANKS kuser.desktop
 bin_PROGRAMS = kuser
 
 # the subdirs we have. Better would be to include pic here too
-SUBDIRS = pic toolbar icon mini-icon lsm
+SUBDIRS = pic toolbar icon lsm
 
 # only install in your own directories
 install-data-local:

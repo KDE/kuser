@@ -1,10 +1,10 @@
 #ifndef _KU_PROPDLG_H_
 #define _KU_PROPDLG_H_
 
-#include <qlined.h>
+#include <qlineedit.h>
 #include <qlabel.h>
-#include <qcombo.h>
-#include <qpushbt.h>
+#include <qcombobox.h>
+#include <qpushbutton.h>
 #include <qwidget.h>
 #include <qlistbox.h>
 #include <qtooltip.h>

@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 #include <qvalidator.h>
-#include <qdatetm.h>
+#include <qdatetime.h>
 
 #include <kstring.h>
 

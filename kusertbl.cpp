@@ -24,7 +24,7 @@ void KUserRow::paint( QPainter *p, int col, int width )
       width -= 2 + pmUser->width();
 
       p->drawPixmap( 1, 0, *pmUser );
-      p->drawText( start, fontpos, width, p->fontMetrics().lineSpacing(), AlignLeft, ku->getp_name());
+      p->drawText( start, fontpos, width, p->fontMetrics().lineSpacing(), Qt::AlignLeft, ku->getp_name());
     }
       break;
     case 1:	// size

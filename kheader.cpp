@@ -1,6 +1,6 @@
 #include "kheader.moc"
 #include "qpainter.h"
-#include "qdrawutl.h"
+#include "qdrawutil.h"
 
 //=======================================================================
 // KHeaderItem internal class
@@ -13,7 +13,7 @@ public:
 	virtual ~KHeaderItem();
     void setSize( int size );
     int size();
-	void setText( QString label, int alignment = AlignCenter );
+	void setText( QString label, int alignment = Qt::AlignCenter );
 	QString text();
 	void setFlags( int aflags );
 	int flags();

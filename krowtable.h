@@ -1,7 +1,7 @@
 #ifndef _KROWTABLE_H
 #define _KROWTABLE_H
 
-#include "qtablevw.h"
+#include "qtableview.h"
 #include "qpainter.h"
 #include "qlist.h"
 #include "qarray.h"

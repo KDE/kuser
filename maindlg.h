@@ -3,7 +3,7 @@
 
 #include <qevent.h>
 #include <qlist.h>
-#include <qpushbt.h>
+#include <qpushbutton.h>
 #include <qpixmap.h>
 #include <knewpanner.h>
 #include <stdlib.h>

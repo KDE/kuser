@@ -27,11 +27,11 @@ void KGroupRow::paint( QPainter *p, int col, int width )
 
       p->drawPixmap( 1, 0, *pmGroup );
       tmpS.setNum(ku->getgid());
-      p->drawText( start, fontpos, width, p->fontMetrics().lineSpacing(), AlignRight, tmpS);
+      p->drawText( start, fontpos, width, p->fontMetrics().lineSpacing(), Qt::AlignRight, tmpS);
     }
       break;
     case 1:	// size
-      p->drawText( 2, fontpos, width-4, p->fontMetrics().lineSpacing(), AlignLeft, ku->getname());
+      p->drawText( 2, fontpos, width-4, p->fontMetrics().lineSpacing(), Qt::AlignLeft, ku->getname());
       break;
   }
 }

@@ -2,8 +2,8 @@
 #define _KU_PWDDLG
 
 #include <qdialog.h>
-#include <qpushbt.h>
-#include <qlined.h>
+#include <qpushbutton.h>
+#include <qlineedit.h>
 #include <qlayout.h>
 
 #include "kuser.h"

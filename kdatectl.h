@@ -3,9 +3,9 @@
 
 //#include "includes.h"
 #include <qobject.h>
-#include <qlined.h>
+#include <qlineedit.h>
 #include <qlabel.h>
-#include <qchkbox.h>
+#include <qcheckbox.h>
 #include <qfont.h>
 
 #include <kcombo.h>

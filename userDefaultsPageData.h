@@ -14,9 +14,9 @@
 #define userDefaultsPageData_included
 
 #include <qwidget.h>
-#include <qchkbox.h>
-#include <qlined.h>
-#include <qcombo.h>
+#include <qcheckbox.h>
+#include <qlineedit.h>
+#include <qcombobox.h>
 
 class userDefaultsPageData : public QWidget
 {

@@ -5,7 +5,7 @@
 #define Inherited QDialog
 
 #include <qlabel.h>
-#include <qpushbt.h>
+#include <qpushbutton.h>
 #include <qtabbar.h>
 
 #include <kapp.h>

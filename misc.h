@@ -6,7 +6,7 @@
 #include <qstring.h>
 #include <qwidget.h>
 #include <qlabel.h>
-#include <qlined.h>
+#include <qlineedit.h>
 
 class KUser;
 

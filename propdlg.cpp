@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #ifdef __FreeBSD__
-#include <qdatetm.h>
+#include <qdatetime.h>
 #endif
 #include "globals.h"
 #include "propdlg.h"

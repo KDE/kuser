@@ -21,11 +21,7 @@
 #ifndef _EDITDEFAULTS_H_
 #define _EDITDEFAULTS_H_
 
-#include <qtabdialog.h>
-
-#include "kconfigdialog.h"
-
-class LdapSettings;
+#include <kconfigdialog.h>
 
 class editDefaults : public KConfigDialog {
   Q_OBJECT

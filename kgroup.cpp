@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <limits.h>
+#include <stdlib.h>
 
 #ifdef _KU_SHADOW
 #include <shadow.h>
@@ -205,7 +206,7 @@ bool KGroups::save() {
 
 #ifdef GRMKDB
   if (system(GRMKDB) != 0) {
-    err->addMsg(i18n("Unable to build group database");
+    err->addMsg(i18n("Unable to build group database"));
     return FALSE;
   }
 #endif

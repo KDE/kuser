@@ -39,9 +39,9 @@ SelectConn::SelectConn(const QString &selected, QWidget* parent, const char * na
 {
   QStringList conns;
 
-  setButtonText( User1, i18n("&New...") );
+  setButtonText( User3, i18n("&New...") );
   setButtonText( User2, i18n("&Edit") );
-  setButtonText( User3, i18n("&Delete") );
+  setButtonText( User1, i18n("&Delete") );
 
   QFrame *page = plainPage();
   QVBoxLayout *topLayout = new QVBoxLayout( page, 0, KDialog::spacingHint() );
@@ -75,7 +75,7 @@ QString SelectConn::connSelected()
   return mCombo->currentText();
 }
 
-void SelectConn::slotUser1()
+void SelectConn::slotUser3()
 {
   newconn = KInputDialog::getText( QString::null,
     i18n("Please type the name of the new connection:") );
@@ -116,7 +116,7 @@ void SelectConn::slotUser2()
   eddlg.exec();
 }
 
-void SelectConn::slotUser3()
+void SelectConn::slotUser1()
 {
   QString conn = connSelected();
   kapp->sharedConfig()->deleteGroup( "connection-" + conn, true );
@@ -126,7 +126,7 @@ void SelectConn::slotUser3()
     mCombo->insertItem( "default" );
     mCombo->setCurrentItem( 0 );
   }
-  kdDebug() << "slotUser3: " << conn << " " << mSelected << endl;
+  kdDebug() << "slotUser1: " << conn << " " << mSelected << endl;
   if ( mSelected == conn )
     emit( applyClicked() );
 }

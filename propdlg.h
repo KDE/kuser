@@ -1,6 +1,15 @@
 #ifndef _KU_PROPDLG_H_
 #define _KU_PROPDLG_H_
 
+// FreeBSD and BSDI have slightly different GECOS handling
+// from Linux systems. Define this to distinguish flavors of
+// handling (still not nice, but hey ...)
+//
+#if defined(__FreeBSD__) || defined(__bsdi__)
+#define EXTENDED_GECOS_BSD
+#endif
+
+
 #include <qlineedit.h>
 #include <qlabel.h>
 #include <qcombobox.h>
@@ -53,10 +62,8 @@ protected:
   int chquota;
   bool isqchanged;
 #endif
-#ifdef HAVE_SHADOW
   KDateWidget *addDateGroup(QWidget  *parent, QGridLayout *layout, int row, const QString &title, int days);
   KIntSpinBox *addDaysGroup(QWidget  *parent, QGridLayout *layout, int row, const QString &title, const QString &title2, int days, bool never=true);
-#endif
 
   QFrame *frontpage;
   QGridLayout *frontlayout;
@@ -79,7 +86,7 @@ protected:
   QLineEdit   *lefname;
   QComboBox   *leshell;
   QLineEdit   *lehome;
-#if defined(__FreeBSD__) || defined(__bsdi__)
+#ifdef EXTENDED_GECOS_BSD
   QLineEdit   *leoffice;
   QLineEdit   *leophone;
   QLineEdit   *lehphone;

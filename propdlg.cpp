@@ -12,15 +12,17 @@
 #include <kseparator.h>
 #include <kglobal.h>
 
-#if defined(__FreeBSD__) || defined(__bsdi__)
-#include <qdatetm.h>
-#endif
 #include <qvalidator.h>
+
 
 #include "propdlg.h"
 #include "pwddlg.h"
 #include "kglobal_.h"
 #include "misc.h"
+
+#ifdef EXTENDED_GECOS_BSD
+#include <qdatetm.h>
+#endif
 
 static void addRow(QWidget *parent, QGridLayout *layout, int row, QWidget *widget, 
                    const QString &label, const QString &what, bool two_column=true)
@@ -40,40 +42,6 @@ static void addRow(QWidget *parent, QGridLayout *layout, int row, QWidget *widge
       layout->addWidget(widget, row, 1);
 }
 
-#ifdef HAVE_SHADOW
-#if 0
-KDateWidget *propdlg::addDateGroup(QWidget *parent, QGridLayout *layout, int row, 
-	const QString &title, int days)
-{
-    KDateWidget *date;
-    QGroupBox *group = new QGroupBox( parent );
-    group->setTitle(title);
-    QGridLayout *groupLayout = new QGridLayout(group, 2, 3, marginHint(), spacingHint()); 
-    groupLayout->addRowSpacing(0, group->fontMetrics().lineSpacing());
-    groupLayout->addColSpacing(1, 20);
-
-    bool never = false;
-    if (days == -1)
-    {
-       never = true;
-       days = 0;
-    }
-    date = new KDateWidget(QDate(1970,1,1).addDays(days), group);
-    groupLayout->addWidget(date, 1, 0);
-    
-    QCheckBox *date_disabled = new QCheckBox(group);
-    date_disabled->setText(i18n("Never"));
-    groupLayout->addWidget(date_disabled, 1, 2);
-
-    layout->addMultiCellWidget(group, row,  row, 0, 2);
-    QObject::connect(date, SIGNAL(changed(QDate)), this, SLOT(changed()));
-    QObject::connect(date_disabled, SIGNAL(toggled(bool)), this, SLOT(changed()));
-    QObject::connect(date_disabled, SIGNAL(toggled(bool)), date, SLOT(setDisabled(bool)));
-    if (never)
-       date_disabled->setChecked(true);
-    return date;
-}
-#endif
 KDateWidget *propdlg::addDateGroup(QWidget *parent, QGridLayout *layout, int row, 
 	const QString &title, int days)
 {
@@ -133,7 +101,6 @@ KIntSpinBox *propdlg::addDaysGroup(QWidget *parent, QGridLayout *layout, int row
     QObject::connect(days, SIGNAL(valueChanged(int)), this, SLOT(changed()));
     return days;
 }
-#endif
 
 #ifdef _KU_QUOTA
 propdlg::propdlg(KUser *AUser, Quota *AQuota, QWidget *parent, const char *name, int)
@@ -142,16 +109,19 @@ propdlg::propdlg(KUser *AUser, QWidget *parent, const char *name, int)
 #endif
  : KDialogBase(Tabbed, i18n("User Properties"), 
 	Ok | Cancel, Ok, parent, name, true),
-#ifdef _KU_QUOTA
- user(AUser), quota(AQuota) 
-#else
  user(AUser)
+#ifdef _KU_QUOTA
+ , quota(AQuota) 
 #endif
+#ifdef EXTENDED_GECOS_BSD
+ , leexpire(0L)
+#endif
+
 {
   QString whatstr;
-#if defined(__FreeBSD__) || defined(__bsdi__)
-  QDateTime *epoch = new QDateTime();
-  QDateTime *temp_time = new QDateTime();
+#ifdef EXTENDED_GECOS_BSD
+  QDateTime epoch ;
+  QDateTime temp_time ;
 #endif
 
 #ifdef _KU_QUOTA
@@ -221,7 +191,7 @@ propdlg::propdlg(KUser *AUser, QWidget *parent, const char *name, int)
 //    whatstr = i18n("WHAT IS THIS: Home Directory");
     addRow(frame, layout, row++, lehome, i18n("Home Directory:"), whatstr);
 
-#if defined(__FreeBSD__) || defined(__bsdi__)
+#ifdef EXTENDED_GECOS_BSD
     // FreeBSD appears to use the comma separated fields in the GECOS entry
     // differently than Linux.
     leoffice = new QLineEdit(frame);  
@@ -393,7 +363,7 @@ propdlg::propdlg(KUser *AUser, QWidget *parent, const char *name, int)
     QObject::connect(lstgrp, SIGNAL(clicked(QListViewItem *)), this, SLOT(gchanged())); 
   }
   
-#if defined(__FreeBSD__) || defined(__bsdi__)
+#ifdef EXTENDED_GECOS_BSD
   // Tab5: extended BSD tab
   {
     QFrame *frame = addPage(i18n("Groups"));
@@ -405,9 +375,6 @@ propdlg::propdlg(KUser *AUser, QWidget *parent, const char *name, int)
 //    whatstr = i18n("WHAT IS THIS: Login class");
     addRow(frame, layout, row++, leclass, i18n("Login class:"), whatstr, true);
 
-#if 0
-    lechange = addDaysGroup(frame, layout, row++, i18n("Password must be changed before:"), user->getMax());
-#endif
     leexpire = addDateGroup(frame, layout, row++, i18n("Account will expire after:"), user->getExpire()); 
   }
 #endif
@@ -494,15 +461,14 @@ void propdlg::gchanged() {
 }
 
 void propdlg::save() {
-#if defined(__FreeBSD__) || defined(__bsdi__)
-  QDateTime *epoch = new QDateTime();
-  QDateTime *temp_time = new QDateTime();
-#endif
   
   user->setUID(leid->text().toInt());
   user->setFullName(lefname->text());
 
-#if defined(__FreeBSD__) || defined(__bsdi__)
+#ifdef EXTENDED_GECOS_BSD
+  QDateTime epoch ;
+  QDateTime temp_time ;
+
   user->setOffice(leoffice->text());
   user->setWorkPhone(leophone->text());
   user->setHomePhone(lehphone->text());
@@ -512,21 +478,8 @@ void propdlg::save() {
   // which we convert to seconds since the epoch.
   // date() returns 0 if the `never expires' box is checked which
   // ends up being converted to 0 seconds which is what we need.
-  epoch->setTime_t(0);
-
-#if 0
-  // HUH? What is this?
-  temp_time->setTime_t(0);
-  *temp_time = temp_time->addDays(lechange->date());
-  user->setLastChange(epoch->secsTo(*temp_time));
-#endif
-
-  temp_time->setTime_t(0);
-  *temp_time = temp_time->addDays(leexpire);
-  user->setExpire(epoch->secsTo(*temp_time));
-
-  delete epoch;
-  delete temp_time;
+  epoch.setTime_t(0);
+  user->setExpire(epoch.secsTo(leexpire->date()));
 #else
   user->setOffice1(leoffice1->text());
   user->setOffice2(leoffice2->text());
@@ -678,7 +631,7 @@ void propdlg::selectuser() {
     leshell->setCurrentItem(0);
 
   lehome->setText(user->getHomeDir());
-#if defined(__FreeBSD__) || defined(__bsdi__)
+#ifdef EXTENDED_GECOS_BSD
   leoffice->setText(user->getOffice());
   leophone->setText(user->getWorkPhone());
   lehphone->setText(user->getHomePhone());

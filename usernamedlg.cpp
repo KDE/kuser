@@ -74,6 +74,11 @@ void usernamedlg::ok()
     KMsgBox::message(0, _("Error"), tmp, KMsgBox::STOP);
     return;
   }
+
+  if (strlen(leusername->text()) == 0) {
+    KMsgBox::message(0, i18n("Error"), i18n("You have to enter a user name."), KMsgBox::STOP);
+    return;
+  }
   
   user->setp_name(leusername->text());
   accept();

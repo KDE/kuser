@@ -12,6 +12,8 @@
 #include "maindlg.h"
 #include "mainWidget.h"
 
+#include <kaboutdata.h>
+
 static const char *description = 
 	I18N_NOOP("KDE User editor");
 
@@ -44,7 +46,14 @@ void donemain() {
 mainDlg *md = NULL;
 
 int main(int argc, char **argv) {
-  KCmdLineArgs::init(argc, argv, "kuser", description, _KU_VERSION);
+  
+  KAboutData aboutData( "kuser", I18N_NOOP("KUser"), 
+    _KU_VERSION, description, KAboutData::GPL, 
+    "(c) 1999-2000, Denis Pershin");
+  aboutData.addAuthor("Denis Pershin",0, "dyp@inetlab.com");
+  KCmdLineArgs::init( argc, argv, &aboutData );
+//  KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
+  KApplication app;
   mainWidget *mw = NULL;
 
   KApplication a;

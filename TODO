@@ -1,0 +1,12 @@
+- Add 'Help' button to user and group properties dialogs.
+- Home dir permission configuration in Preferences dialog.
+- Mailbox permission configuration in Preferences dialog.
+- Mailbox group in Preferences dialog.
+- Allow to edit GID in group properties.
+- Allow to edit Group name in group properties.
+- First available UID and GID in preferences dialog.
+- Group quotas.
+- Update last change field when changed
+- When deleting an user, the dialog box appears for confirming the delete, but it does not mention the name of the user in it.  Should have username being deleted in the message. 
+- After performing File/Save, and Quiting right after that requires confirming Save twice.  After File/Save, if one is Quiting it should be without any message.
+- How about having group name(s) next to the Full name of a user in the upper panel, and similarly user names for a group in the lower pannel -- in a separate column?

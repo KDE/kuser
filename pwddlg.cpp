@@ -117,12 +117,12 @@ void pwddlg::ok()
 
 #ifdef _KU_SHADOW
     if (is_shadow != 0) {
-      user->sets_pwd(tmp);
-      user->setp_pwd("x");
+      user->setSPwd(tmp);
+      user->setPwd("x");
     }
     else
 #endif
-      user->setp_pwd(tmp);
+      user->setPwd(tmp);
     accept();
   }
 }

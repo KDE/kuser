@@ -125,7 +125,7 @@ bool addUser::checkHome() {
   int r;
   QString tmp;
 
-  r = stat(user->getp_dir(), &s);
+  r = stat(user->getHomeDir(), &s);
 
   if ((r == -1) && (errno = ENOENT))
     return true;
@@ -133,9 +133,9 @@ bool addUser::checkHome() {
   if (r == 0)
     if (S_ISDIR(s.st_mode))
       ksprintf(&tmp, i18n("Directory %s already exists (uid = %d, gid = %d)"), 
-           (const char *)user->getp_dir(), s.st_uid, s.st_gid);
+           (const char *)user->getHomeDir(), s.st_uid, s.st_gid);
     else
-      ksprintf(&tmp, i18n("%s is not a directory") ,(const char *)user->getp_dir());
+      ksprintf(&tmp, i18n("%s is not a directory") ,(const char *)user->getHomeDir());
   else
     ksprintf(&tmp, "checkHome: stat: %s ", strerror(errno));
   
@@ -153,7 +153,7 @@ bool addUser::checkMailBox() {
   int r;
 
   ksprintf(&mailboxpath, "%s/%s", MAIL_SPOOL_DIR,
-           (const char *)user->getp_name());
+           (const char *)user->getName());
   r = stat(mailboxpath, &s);
   
   if ((r == -1) && (errno == ENOENT))

@@ -80,7 +80,7 @@ void usernamedlg::ok()
     return;
   }
   
-  user->setp_name(leusername->text());
+  user->setName(leusername->text());
   accept();
 }
 

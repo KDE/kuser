@@ -12,80 +12,90 @@
 #undef _KU_SHADOW
 #endif
 
+class KUsers;
+
 class KUser {
 public:
   KUser();
   ~KUser();
 
-  QString getp_name();
-  QString getp_pwd();
-  QString getp_dir();
-  QString getp_shell();
-  QString getp_fname();
+  const QString &getName() const;
+  const QString &getPwd() const;
+  const QString &getHomeDir() const;
+  const QString &getShell() const;
+  const QString &getFullName() const;
+
+  unsigned int getUID() const;
+  unsigned int getGID() const;
+
 #ifdef __FreeBSD__
-  QString getp_office();
-  QString getp_ophone();
-  QString getp_hphone();
-  QString getp_class();
-  time_t getp_change();
-  time_t getp_expire();
+  const QString &getOffice() const;
+  const QString &getWorkPhone() const;
+  const QString &getHomePhone() const;
+  const QString &getClass() const;
+  time_t getLastChange() const;
+  time_t getExpire() const;
 #else
-  QString getp_office1();
-  QString getp_office2();
-  QString getp_address();
+  const QString &getOffice1() const;
+  const QString &getOffice2() const;
+  const QString &getAddress() const;
+
 #endif
-  unsigned int getp_uid();
-  unsigned int getp_gid();
 
 #ifdef _KU_SHADOW
-  QString gets_pwd();
-  long gets_lstchg();
-  int gets_min();
-  int gets_max();
-  int gets_warn();
-  int gets_inact();
-  int gets_expire();
-  int gets_flag();
+  const QString &getSPwd() const;
+  long getLastChange() const;
+  int getMin() const;
+  int getMax() const;
+  int getWarn() const;
+  int getInactive() const;
+  int getExpire() const;
+  int getFlag() const;
+#endif
+
+  void setName(const QString &data);
+  void setPwd(const QString &data);
+  void setHomeDir(const QString &data);
+  void setShell(const QString &data);
+  void setFullName(const QString &data);
+
+  void setUID(unsigned int data);
+  void setGID(unsigned int data);
+
+#ifdef __FreeBSD__
+  void setOffice(const QString &data);
+  void setWorkPhone(const QString &data);
+  void setHomePhone(const QString &data);
+  void setClass(const QString &data);
+  void setExpire(time_t data);
+  void setLastChange(time_t data);
+#else
+  void setOffice1(const QString &data);
+  void setOffice2(const QString &data);
+  void setAddress(const QString &data);
+#endif
+
+#ifdef _KU_SHADOW
+  void setSPwd(const QString &data);
+  void setLastChange(long data);
+  void setMin(int data);
+  void setMax(int data);
+  void setWarn(int data);
+  void setInactive(int data);
+  void setExpire(int data);
+  void setFlag(int data);
 #endif
 
   int getCreateHome();
   int getCreateMailBox();
   int getCopySkel();
 
-  void setp_name(const char *data);
-  void setp_pwd(const char *data);
-  void setp_dir(const char *data);
-  void setp_shell(const char *data);
-  void setp_fname(const char *data);
-#ifdef __FreeBSD__
-  void setp_office(const char *data);
-  void setp_ophone(const char *data);
-  void setp_hphone(const char *data);
-  void setp_class(const char *data);
-  void setp_expire(time_t data);
-  void setp_change(time_t data);
-#else
-  void setp_office1(const char *data);
-  void setp_office2(const char *data);
-  void setp_address(const char *data);
-#endif
-  void setp_uid(unsigned int data);
-  void setp_gid(unsigned int data);
-
-#ifdef _KU_SHADOW
-  void sets_pwd(const char *data);
-  void sets_lstchg(long data);
-  void sets_min(int data);
-  void sets_max(int data);
-  void sets_warn(int data);
-  void sets_inact(int data);
-  void sets_expire(int data);
-  void sets_flag(int data);
-#endif
-
   void setCreateHome(int data);
   void setCreateMailBox(int data);
   void setCopySkel(int data);
+
+protected:
+  friend KUsers;
 
   void createHome();
   int createMailBox();
@@ -96,8 +106,7 @@ public:
   int removeMailBox();
   int removeProcesses();
 
-protected:
-  void copyDir(const char *srcPath, const char *dstPath);
+  void copyDir(const QString &srcPath, const QString &dstPath);
 
   QString
     p_name,                        // parsed pw information

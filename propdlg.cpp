@@ -24,7 +24,7 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
        WStyle_Customize | WStyle_DialogBorder | WStyle_SysMenu |
        WStyle_MinMax | WType_Modal) {
   user = auser;
-  olduid = user->getp_uid();
+  olduid = user->getUID();
 #ifdef __FreeBSD__
   QDateTime *epoch = new QDateTime();
   QDateTime *temp_time = new QDateTime();
@@ -50,7 +50,7 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
 
   w1 = new QWidget(this, "wd_Password");
 
-  leuser = addLabel(w1, "leuser", 10, 27, 150, 27, user->getp_name());
+  leuser = addLabel(w1, "leuser", 10, 27, 150, 27, user->getName());
   QToolTip::add(leuser, i18n("User name"));
   l1 = addLabel(w1, "ml1", 10, 10, 50, 20, i18n("User login"));
   leid = addLineEdit(w1, "leid", 200, 30, 70, 22, "");
@@ -199,36 +199,36 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
     l16 = addLabel(w2, "ml16", 95, 30, 50, 20, i18n("Last password change"));
     lesmin = new KDateCtl(w2, "lesmin", i18n("Change never allowed"),
                i18n("Date until change allowed"),
-                  user->gets_lstchg()+user->gets_min(), 
-                  user->gets_lstchg(), 10, 70);
+                  user->getLastChange()+user->getMin(), 
+                  user->getLastChange(), 10, 70);
     QObject::connect(lesmin, SIGNAL(textChanged()), this, SLOT(changed()));
 //    QToolTip::add(lesmin, i18n("Date until change allowed"));
 
     lesmax = new KDateCtl(w2, "lesmax", i18n("Change does not required"),
                           i18n("Date before change required"),
-                          user->gets_lstchg()+user->gets_max(),
-                          user->gets_lstchg(), 10, 130);
+                          user->getLastChange()+user->getMax(),
+                          user->getLastChange(), 10, 130);
     QObject::connect(lesmax, SIGNAL(textChanged()), this, SLOT(changed()));
 //    QToolTip::add(lesmax, i18n("Date before change required"));
 
     leswarn = new KDateCtl(w2, "leswarn", i18n("User will never be warned"),
                            i18n("Date user will be warned about\nexpiration"),
-                           user->gets_lstchg()+user->gets_warn(),
-                           user->gets_lstchg(), 10, 190);
+                           user->getLastChange()+user->getWarn(),
+                           user->getLastChange(), 10, 190);
     QObject::connect(leswarn, SIGNAL(textChanged()), this, SLOT(changed()));
 //    QToolTip::add(leswarn, i18n("Date user will be warned about expiration"));
 
     lesinact = new KDateCtl(w2, "lesinact", i18n("Account is active from the day of creation"),
                             i18n("Date before account inactive"),
-                            user->gets_lstchg()+user->gets_inact(),
-                            user->gets_lstchg(), 10, 250);
+                            user->getLastChange()+user->getInactive(),
+                            user->getLastChange(), 10, 250);
     QObject::connect(lesinact, SIGNAL(textChanged()), this, SLOT(changed()));
 //    QToolTip::add(lesinact, i18n("Date before account inactive"));
 
     lesexpire = new KDateCtl(w2, "lesexpire", i18n("Account never expires"),
                              i18n("Date when account expires"),
-                             user->gets_lstchg()+user->gets_expire(),
-                             user->gets_lstchg(), 10, 310);
+                             user->getLastChange()+user->getExpire(),
+                             user->getLastChange(), 10, 310);
     QObject::connect(lesexpire, SIGNAL(textChanged()), this, SLOT(changed()));
 //    QToolTip::add(lesexpire, i18n("Date when account expires"));
 
@@ -388,13 +388,13 @@ void propdlg::loadgroups() {
   uint i;
 
   for (i = 0; i<groups->getNumber(); i++) {
-    if (groups->get(i)->lookup_user(user->getp_name())!=0)
+    if (groups->get(i)->lookup_user(user->getName())!=0)
       m_Group->insertItem(groups->get(i)->getname());
     else
       m_Other->insertItem(groups->get(i)->getname());
 
     cbpgrp->insertItem(groups->get(i)->getname());
-    if (groups->get(i)->getgid() == user->getp_gid())
+    if (groups->get(i)->getgid() == user->getGID())
       cbpgrp->setCurrentItem(i);
   }
 
@@ -466,14 +466,14 @@ void propdlg::save() {
   QDateTime *temp_time = new QDateTime();
 #endif
   
-  user->setp_uid(newuid);
+  user->setUID(newuid);
 
-  user->setp_fname(lefname->text());
+  user->setFullName(lefname->text());
 #ifdef __FreeBSD__
-  user->setp_office(leoffice->text());
-  user->setp_ophone(leophone->text());
-  user->setp_hphone(lehphone->text());
-  user->setp_class(leclass->text());
+  user->setOffice(leoffice->text());
+  user->setWorkPhone(leophone->text());
+  user->setHomePhone(lehphone->text());
+  user->setClass(leclass->text());
 
   // getDate() returns days since the epoch if a date is specified
   // which we convert to seconds since the epoch.
@@ -483,34 +483,34 @@ void propdlg::save() {
 
   temp_time->setTime_t(0);
   *temp_time = temp_time->addDays(lechange->getDate());
-  user->setp_change(epoch->secsTo(*temp_time));
+  user->setLastChange(epoch->secsTo(*temp_time));
 
   temp_time->setTime_t(0);
   *temp_time = temp_time->addDays(leexpire->getDate());
-  user->setp_expire(epoch->secsTo(*temp_time));
+  user->setExpire(epoch->secsTo(*temp_time));
 
   delete epoch;
   delete temp_time;
 #else
-  user->setp_office1(leoffice1->text());
-  user->setp_office2(leoffice2->text());
-  user->setp_address(leaddress->text());
+  user->setOffice1(leoffice1->text());
+  user->setOffice2(leoffice2->text());
+  user->setAddress(leaddress->text());
 #endif
 
-  user->setp_dir(lehome->text());
+  user->setHomeDir(lehome->text());
   if (leshell->currentItem() != 0)
-    user->setp_shell(leshell->text(leshell->currentItem()));
+    user->setShell(leshell->text(leshell->currentItem()));
   else
-    user->setp_shell("");
+    user->setShell("");
 
 #ifdef _KU_SHADOW
   if (is_shadow) {
-    user->sets_min(lesmin->getDate()-user->gets_lstchg());
-    user->sets_max(lesmax->getDate()-user->gets_lstchg());
-    user->sets_warn(leswarn->getDate()-user->gets_lstchg());
-    user->sets_inact(lesinact->getDate()-user->gets_lstchg());
-    user->sets_expire(lesexpire->getDate()-user->gets_lstchg());
-    user->sets_lstchg(today());
+    user->setMin(lesmin->getDate()-user->getLastChange());
+    user->setMax(lesmax->getDate()-user->getLastChange());
+    user->setWarn(leswarn->getDate()-user->getLastChange());
+    user->setInactive(lesinact->getDate()-user->getLastChange());
+    user->setExpire(lesexpire->getDate()-user->getLastChange());
+    user->setLastChange(today());
   }
 #endif
 }
@@ -519,14 +519,14 @@ void propdlg::saveg() {
   uint i;
 
   for (i=0;i<m_Group->count();i++)
-    if (groups->lookup(m_Group->text(i))->lookup_user(user->getp_name()) == NULL)
-      groups->lookup(m_Group->text(i))->addUser(user->getp_name());
+    if (groups->lookup(m_Group->text(i))->lookup_user(user->getName()) == NULL)
+      groups->lookup(m_Group->text(i))->addUser(user->getName());
   
   for (i=0;i<m_Other->count();i++)
-    if (groups->lookup(m_Other->text(i))->lookup_user(user->getp_name()) != NULL)
-      groups->lookup(m_Other->text(i))->removeUser(user->getp_name());
+    if (groups->lookup(m_Other->text(i))->lookup_user(user->getName()) != NULL)
+      groups->lookup(m_Other->text(i))->removeUser(user->getName());
 
-  user->setp_gid(groups->lookup(cbpgrp->text(cbpgrp->currentItem()))->getgid());
+  user->setGID(groups->lookup(cbpgrp->text(cbpgrp->currentItem()))->getgid());
 }
 
 #ifdef _KU_QUOTA
@@ -591,42 +591,42 @@ bool propdlg::check() {
 void propdlg::selectuser() {
   char uname[100];
 
-  leuser->setText(user->getp_name());
+  leuser->setText(user->getName());
 
-  sprintf(uname,"%i",user->getp_uid());
+  sprintf(uname,"%i",user->getUID());
   leid->setText(uname);
 
 //  sprintf(uname,"%i",user->getp_gid());
 //  legid->setText(uname);
 
-  lefname->setText(user->getp_fname());
+  lefname->setText(user->getFullName());
 
-  if (user->getp_shell().isEmpty() != TRUE) {
+  if (user->getShell().isEmpty() != TRUE) {
     int tested = 0;
     for (int i=0; i<leshell->count(); i++)
-      if (!strcmp(leshell->text(i), user->getp_shell())) {
+      if (!strcmp(leshell->text(i), user->getShell())) {
         tested = 1;
         leshell->setCurrentItem(i);
         break;
       }
     if (!tested) {
-      leshell->insertItem(user->getp_shell());
+      leshell->insertItem(user->getShell());
       leshell->setCurrentItem(leshell->count()-1);
     }
   } else
     leshell->setCurrentItem(0);
 
-  lehome->setText(user->getp_dir());
+  lehome->setText(user->getHomeDir());
 #ifdef __FreeBSD__
-  leoffice->setText(user->getp_office());
-  leophone->setText(user->getp_ophone());
-  lehphone->setText(user->getp_hphone());
-  leclass->setText(user->getp_class());
+  leoffice->setText(user->getOffice());
+  leophone->setText(user->getWorkPhone());
+  lehphone->setText(user->getHomePhone());
+  leclass->setText(user->getClass());
   // the date fields get set when the dialogue is built
 #else
-  leoffice1->setText(user->getp_office1());
-  leoffice2->setText(user->getp_office2());
-  leaddress->setText(user->getp_address());
+  leoffice1->setText(user->getOffice1());
+  leoffice2->setText(user->getOffice2());
+  leaddress->setText(user->getAddress());
 #endif
 
 #ifdef _KU_QUOTA
@@ -679,8 +679,6 @@ void propdlg::ok() {
   tmp.setStr(leid->text());
   newuid = tmp.toInt();
 
-printf("propdlg::ok\n");
-  
   if (olduid != newuid)
     if (users->lookup(newuid) != NULL) {
       tmp.sprintf(i18n("User with UID %u already exists"), newuid);

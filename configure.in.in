@@ -1,26 +1,15 @@
+dnl this is for kuser:
+
+AC_REQUIRE([KDE_MISC_TESTS]) dnl for LIBCRYPT
+AC_REQUIRE([KDE_SHADOWPASSWD]) dnl for LIBSHADOW and LIBGEN
+
+if test "$use_shadow" = "yes"; then
+  KU_SHADOW="-D_KU_SHADOW"
+fi
+AC_SUBST(KU_SHADOW)
+
 AC_CHECK_LIB(c, quotactl, [QUOTACTL="-DQUOTACTL_IN_LIBC"]) dnl for FreeBSD
 AC_SUBST(QUOTACTL)
-AC_CHECK_LIB(crypt, main, [LIBCRYPT="-lcrypt"]) dnl for BSD
-AC_SUBST(LIBCRYPT)
-AC_CHECK_LIB(pwdb, __pwdb_fgetspent, [LIBPWDB="-lpwdb"]) dnl pwdb support for PAM systems
-AC_SUBST(LIBPWDB)
-AC_CHECK_LIB(gen,getspent,[LIBGEN="-lgen"])dnl for UnixWare
-AC_SUBST(LIBGEN)
-
-AC_PATH_PAM
-if test "x$no_pam" = "xyes"; then
-        pam_support="no"
-else
-        pam_support="yes"
-        shadow_support="no" # if pam is installed, use it. We can't savely
-                            # test, if it works *sigh*
-fi
-if test "$pam_support" = "yes"; then
-  AC_CHECK_LIB(pam, main, [PASSWDLIB="-lpam -ldl"
-  AC_DEFINE_UNQUOTED(HAVE_PAM_LIB, 1, [If you have the pam libraries])],
-  [],-ldl)
-fi
-
 
 dnl Checks for header files.
 AC_HEADER_DIRENT
@@ -33,15 +22,9 @@ AC_CHECK_HEADERS(crypt.h fcntl.h mntent.h linux/quota.h linux/unistd.h \
 case "$host" in 
 *irix*) AC_DEFINE(HAVE_IRIX, 1, [Irix])
        ;;
-*linux*) AC_DEFINE(HAVE_LINUX,1, [Linux])
+*linux*) AC_DEFINE(HAVE_LINUX, 1, [Linux])
        ;;
 esac
-
-AC_ARG_WITH(shadow, [  --without-shadow        Compile without shadow support], enable_shadow="$withval", enable_shadow="yes")
-if test "$enable_shadow" = "yes"; then
-  KU_SHADOW="-D_KU_SHADOW"
-fi
-AC_SUBST(KU_SHADOW)
 
 AC_ARG_WITH(quota, [  --without-quota         Compile without quota support], enable_quota="$withval", enable_quota="yes")
 if test "$enable_quota" = "yes"; then
@@ -66,60 +49,4 @@ else
 fi
 AC_DEFINE_UNQUOTED(KU_USERPRIVATEGROUP, $ku_userprivategroup, [private groups])
 
-AC_LANG_CPLUSPLUS
-save_CXXFLAGS="$CXXFLAGS"
-if test "$GCC" = "yes"; then
-CXXFLAGS="$CXXFLAGS -pedantic-errors"
-fi
-AC_MSG_CHECKING(for fgetpwent)
-AC_CACHE_VAL(ac_cv_func_fgetpwent,
-[
-AC_TRY_COMPILE([
-#include <stdlib.h>
-#include <unistd.h>
-#include <pwd.h>
-],
-[
-passwd *p;
-FILE *f;
-p = fgetpwent(f);
-],
-ac_cv_func_fgetpwent=yes,
-ac_cv_func_fgetpwent=no)
-])
-AC_MSG_RESULT($ac_cv_func_fgetpwent)
-if eval "test \"`echo $ac_cv_func_fgetpwent`\" = yes"; then
-  AC_DEFINE(HAVE_FGETPWENT, 1, [Define if you have fgetpwent])
-fi
-CXXFLAGS="$save_CXXFLAGS"
-
-AC_LANG_CPLUSPLUS
-save_CXXFLAGS="$CXXFLAGS"
-if test "$GCC" = "yes"; then
-CXXFLAGS="$CXXFLAGS -pedantic-errors"
-fi
-AC_MSG_CHECKING(for fgetgrent)
-AC_CACHE_VAL(ac_cv_func_fgetgrent,
-[
-AC_TRY_COMPILE([
-#include <stdlib.h>
-#include <unistd.h>
-#include <grp.h>
-],
-[
-group *g;
-FILE *f;
-g = fgetgrent(f);
-],
-ac_cv_func_fgetgrent=yes,
-ac_cv_func_fgetgrent=no)
-])
-AC_MSG_RESULT($ac_cv_func_fgetgrent)
-if eval "test \"`echo $ac_cv_func_fgetgrent`\" = yes"; then
-  AC_DEFINE(HAVE_FGETGRENT, 1, [Define if you have fgetgrent])
-fi
-CXXFLAGS="$save_CXXFLAGS"
-
-
-
-
+AC_CHECK_FUNCS(fgetpwent fgetgrent)

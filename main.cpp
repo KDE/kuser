@@ -25,7 +25,7 @@ KConfig *config;
 KError *err;
 bool changed = false;
 
-KUserGlobals *kug = NULL;
+KUserGlobals *kug = 0;
 
 #ifdef _KU_QUOTA
 int is_quota = 1;
@@ -56,7 +56,7 @@ int main(int argc, char **argv) {
   aboutData.addAuthor("Denis Perchine", I18N_NOOP("kuser author"),
     "dyp@perchine.com", "http://www.perchine.com/dyp/");
   KCmdLineArgs::init(argc, argv, &aboutData);
-  mainWidget *mw = NULL;
+  mainWidget *mw = 0;
 
   KApplication a;
 

@@ -72,9 +72,9 @@ KUser::KUser() : p_pwd("*") {
   s_flag    = 0;
 #endif
 
-  isCreateHome = 0;
-  isCreateMailBox = 0;
-  isCopySkel = 0;
+  isCreateHome = false;
+  isCreateMailBox = false;
+  isCopySkel = false;
 }
   
 KUser::KUser(const KUser *user) {
@@ -121,15 +121,15 @@ void KUser::copy(const KUser *user) {
 KUser::~KUser() {
 }
 
-int KUser::getCreateHome() {
+bool KUser::getCreateHome() {
   return isCreateHome;
 }
 
-int KUser::getCreateMailBox() {
+bool KUser::getCreateMailBox() {
   return isCreateMailBox;
 }
 
-int KUser::getCopySkel() {
+bool KUser::getCopySkel() {
   return isCopySkel;
 }
 
@@ -346,15 +346,15 @@ void KUser::setFlag(int data) {
 
 #endif
 
-void KUser::setCreateHome(int data) {
+void KUser::setCreateHome(bool data) {
   isCreateHome = data;
 }
 
-void KUser::setCreateMailBox(int data) {
+void KUser::setCreateMailBox(bool data) {
   isCreateMailBox = data;
 }
 
-void KUser::setCopySkel(int data) {
+void KUser::setCopySkel(bool data) {
   isCopySkel = data;
 }
 
@@ -555,17 +555,17 @@ bool KUsers::doCreate() {
 
     if(user->getCreateMailBox()) {
       user->createMailBox();
-      user->setCreateMailBox(0);
+      user->setCreateMailBox(false);
     }
 
     if(user->getCreateHome()) {
        user->createHome();
-       user->setCreateHome(0);
+       user->setCreateHome(false);
     }
 
     if(user->getCopySkel()) {
        user->copySkel();
-       user->setCopySkel(0);
+       user->setCopySkel(false);
        user->createKDE();
     }
   }

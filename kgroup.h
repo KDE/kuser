@@ -4,6 +4,7 @@
 #include <sys/types.h>
 
 #include <qstring.h>
+#include <qstringlist.h>
 #include <qlist.h>
 
 #ifdef _KU_QUOTA
@@ -25,7 +26,7 @@ public:
   void setGID(gid_t data);
 
   void addUser(const QString &name);
-  bool removeUser(const QString &name);
+  void removeUser(const QString &name);
   bool lookup_user(const QString &name);
   uint count() const;
   QString user(uint i);
@@ -37,7 +38,7 @@ protected:
     pwd;
   gid_t gid;
 
-  QList<QString> u;
+  QStringList u;
 };
 
 class KGroups {

@@ -3,45 +3,25 @@
 
 #include <qwidget.h>
 
-#include "kheader.h"
-#include "kusertbl.h"
+#include <klistview.h>
 
-class KUserView : public QWidget
+#include "kuser.h"
+
+class KUserView : public KListView
 {
     Q_OBJECT
 
 public:
-  KUserView( QWidget* parent = NULL, const char* name = NULL );
+  KUserView( QWidget* parent = 0, const char* name = 0 );
 
   virtual ~KUserView();
 
-  void clear();
   void insertItem(KUser *aku);
-  int currentItem();
+  void removeItem(KUser *aku);
   KUser *getCurrentUser();
-  void setCurrentItem( int item );
-  void setAutoUpdate(bool state);
-  void sortBy(int num);
-  void repaint();
-
-protected:
-  virtual void resizeEvent( QResizeEvent *rev );
-
-signals:
-  void selected(int item);
-  void highlighted(int item);
-  void headerClicked(int num);
-
-private slots:
-  void onSelect(int row, int);
-  void onHighlight(int row, int);
-  void onHeaderClicked(int num);
 
 private:
   void init();
-  KHeader *m_Header;
-  KUserTable *m_Users;
-  int current;
 };
 
 #endif // _KU_USERVW_H

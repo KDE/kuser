@@ -55,48 +55,8 @@ void backup(const QString & name)
   }
 }
 
-char *convertdate(char *buf, const long int base, const long int days) {
-  time_t tmpd;
-
-  tm *t;
-
-  if ((base+days)<24855l) {
-    if (days >0) {
-      tmpd = (base+days)*24*60*60;
-      t = localtime(&tmpd);
-
-      sprintf(buf, "%d %d %d", t->tm_mday, t->tm_mon+1, t->tm_year+1900);
-    } else {
-      strcpy(buf, "Nothing");
-    }
-  } else {
-    strcpy(buf, "Never");
-  }
-
-  return buf;
-}
-
 long today() {
   return (time(NULL)/(24*60*60));
-}
-
-QLabel *addLabel(QWidget *parent, const char *name, int x, int y, int w, int h, const QString & text) {
-
-  QLabel *tmpLabel = new QLabel(parent, name);
-  tmpLabel->setGeometry(x, y, w, h);
-  tmpLabel->setAutoResize(TRUE);
-  tmpLabel->setText(text);
-
-  return (tmpLabel);
-}
-
-QLineEdit *addLineEdit(QWidget *parent, const char *name, int x, int y, int w, int h, const QString & text) {
-
-  QLineEdit *tmpLE = new QLineEdit(parent, name);
-  tmpLE->setGeometry(x, y, w, h);
-  tmpLE->setText(text);
-
-  return (tmpLE);
 }
 
 char *updateString(char *d, const char *t) {

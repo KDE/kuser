@@ -93,13 +93,13 @@ public:
   void setFlag(int data);
 #endif
 
-  int getCreateHome();
-  int getCreateMailBox();
-  int getCopySkel();
+  bool getCreateHome();
+  bool getCreateMailBox();
+  bool getCopySkel();
 
-  void setCreateHome(int data);
-  void setCreateMailBox(int data);
-  void setCopySkel(int data);
+  void setCreateHome(bool data);
+  void setCreateMailBox(bool data);
+  void setCopySkel(bool data);
 
 protected:
   friend class KUsers;
@@ -152,7 +152,7 @@ protected:
     s_expire,                      // date when account expires
     s_flag;                        // reserved for future use
 #endif
-  int
+  bool
     isCreateHome,              // create homedir
     isCreateMailBox,           // create mailbox
     isCopySkel;                // copy skeleton

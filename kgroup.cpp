@@ -36,7 +36,6 @@
 #endif
 
 KGroup::KGroup() : pwd("*") {
-  u.setAutoDelete(TRUE);
   gid = 0;
 }
   
@@ -44,12 +43,9 @@ KGroup::KGroup(KGroup *copy) {
   name    = copy->name;
   pwd     = copy->pwd;
   gid     = copy->gid;
-
-  u.setAutoDelete(TRUE);
 }
 
 KGroup::~KGroup() {
-  u.clear();
 }
 
 const QString &KGroup::getName() const {
@@ -77,25 +73,16 @@ void KGroup::setGID(gid_t data) {
 }
 
 bool KGroup::lookup_user(const QString &name) {
-  for (uint i = 0; i<u.count(); i++)
-    if (name == (*u.at(i)))
-      return true;
-  return false;
+  return (u.find(name) != u.end());
 }
 
 void KGroup::addUser(const QString &name) {
-  u.append(new QString(name));
+  if (!lookup_user(name))
+     u.append(name);
 }
 
-bool KGroup::removeUser(const QString &name) {
-  QString *q;
-
-  for (uint i=0;i<u.count();i++)
-    if ((*(q = u.at(i))) == name) {
-      u.remove(q);
-      return TRUE;
-    }
-  return FALSE;
+void KGroup::removeUser(const QString &name) {
+  u.remove(name);
 }
 
 uint KGroup::count() const {
@@ -103,7 +90,7 @@ uint KGroup::count() const {
 }
 
 QString KGroup::user(uint i) {
-  return *u.at(i);
+  return u[i];
 }
 
 void KGroup::clear() {
@@ -193,7 +180,6 @@ bool KGroups::save() {
     for (uint j=0; j<gr->count(); j++) {
        if (j != 0)
 	 tmpS += ',';
-
        tmpS += gr->user(j);
     }
     tmpS += '\n';

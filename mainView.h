@@ -7,13 +7,12 @@
 #include <qlist.h>
 #include <qpushbutton.h>
 #include <qpixmap.h>
-#include <qsplitter.h>
+#include <qtabwidget.h>
 
 #include "kuservw.h"
 #include "kgroupvw.h"
-#include "kheader.h"
 
-class mainView : public QWidget {
+class mainView : public QTabWidget {
 Q_OBJECT
 public:
   mainView(QWidget *parent = 0);
@@ -24,11 +23,13 @@ public:
   QPixmap pic_user;
 
 public slots:
+  void slotTabChanged();
+ 
   void save();
   void properties();
   void quit();
-  void userSelected(int i);
-  void groupSelected(int i);
+  void userSelected();
+  void groupSelected();
   
   void useradd();
   void useredit();
@@ -38,23 +39,19 @@ public slots:
   void grpedit();
   void grpdel();
   
-  void help();
   void setpwd();
-  void setUsersSort(int col);
-  void setGroupsSort(int col);
+
+signals:
+  void userSelected(bool);
+  void groupSelected(bool);
   
 protected:
-  void reloadUsers(int id);
-  void reloadGroups(int gid);
-  virtual void resizeEvent (QResizeEvent *rse);
+  void reloadUsers();
+  void reloadGroups();
 
   KUserView *lbusers;
   KGroupView *lbgroups;
-  int prev;
-  QSplitter *kp;
 private:
-  int usort;
-  int gsort;
   bool changed;
 };
 

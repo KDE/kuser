@@ -1,27 +1,24 @@
 #ifndef _KU_USERNAMEDLG_H
 #define _KU_USERNAMEDLG_H
 
-#include <qdialog.h>
-#include <qpushbutton.h>
 #include <qlineedit.h>
-#include <qlayout.h>
+#include <qcheckbox.h>
+
+#include <kdialogbase.h>
+
 #include "kuser.h"
 
-class usernamedlg : public QDialog {
+class usernamedlg : public KDialogBase {
   Q_OBJECT
 public:
   usernamedlg(KUser*auser, QWidget* parent = NULL, const char* name = NULL);
   ~usernamedlg();
 
 protected slots:
-  void ok();
-  void cancel();
+  void slotOk();
 
 protected:
   KUser *user;
-
-  QPushButton *pbOk;
-  QPushButton *pbCancel;
   QLineEdit   *leusername;
 };
 

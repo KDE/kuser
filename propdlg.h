@@ -8,38 +8,38 @@
 #include <qwidget.h>
 #include <qlistbox.h>
 #include <qtooltip.h>
-#include <qdialog.h>
+#include <qcheckbox.h>
+#include <qlayout.h>
 
-#include <ktabctl.h>
-#include "kdatectl.h"
+#include <kdatewidget.h>
+#include <knuminput.h>
+#include <kdialogbase.h>
+#include <klistview.h>
+
 #include "kuser.h"
 #include "quota.h"
 #include "globals.h"
 
-class propdlg : public QDialog
+class propdlg : public KDialogBase
 {
   Q_OBJECT
 
 public:
 #ifdef _KU_QUOTA
-  propdlg(KUser &AUser, Quota &AQuota, QWidget *parent = 0, const char *name = 0, int isprep = false);
+  propdlg(KUser *AUser, Quota *AQuota, QWidget *parent = 0, const char *name = 0, int isprep = false);
 #else
-  propdlg(KUser &AUser, QWidget *parent = 0, const char *name = 0, int isprep = false);
+  propdlg(KUser *AUser, QWidget *parent = 0, const char *name = 0, int isprep = false);
 #endif
   ~propdlg();
 
 protected slots:
-  virtual void ok();
-  void cancel();
+  virtual void slotOk();
   void setpwd();
   void mntsel(int index);
-  void qcharchanged(const QString &);
-  void shactivated(const QString &);
-  void changed();
-  void charchanged(const QString &);
-  void add();
-  void del();
-  void setpgroup(const QString &);
+  void qchanged(); // Change to quota settings
+  void changed(); // Change to misc settings
+  void gchanged(); // Change to group settings
+  void setpgroup(const QString &); // Change in primary group
 
 protected:
   void selectuser();
@@ -53,65 +53,29 @@ protected:
   int chquota;
   bool isqchanged;
 #endif
+#ifdef _KU_SHADOW
+  KDateWidget *addDateGroup(QWidget  *parent, QGridLayout *layout, int row, const QString &title, int days);
+  KIntSpinBox *addDaysGroup(QWidget  *parent, QGridLayout *layout, int row, const QString &title, const QString &title2, int days, bool never=true);
+#endif
 
-  KUser &user;
+  QFrame *frontpage;
+  QGridLayout *frontlayout;
+  int frontrow;
+
+  KUser *user;
 #ifdef _KU_QUOTA
-  Quota &quota;
+  Quota *quota;
 #endif
   bool ischanged;
+  bool isgchanged;
   uid_t olduid;
 
-  KTabCtl *tw;
-  
-  QWidget *w1;
-  QWidget *w2;
-  QWidget *w3;
-  QWidget *w4;
-#if defined(__FreeBSD__) || defined(__bsdi__)
-  // extra tab page for login class & expiry dates
-  QWidget *w5;
-#endif
-
-  QListBox* m_Other;
-  QListBox* m_Group;
-  QPushButton* pbadd;
-  QPushButton* pbdel;
-
-  QLabel *l1;
-  QLabel *l2;
-//  QLabel *ld3;
-  QLabel *l4;
-  QLabel *l5;
-  QLabel *l6;
-  QLabel *l7;
-  QLabel *ld7;
-  QLabel *l8;
-  QLabel *ld8;
-  QLabel *l9;
-  QLabel *ld9;
-  QLabel *l10a;
-  QLabel *l10;
-  QLabel *l11;
-  QLabel *l12;
-  QLabel *l13;
-  QLabel *l14;
-  QLabel *l15;
-  QLabel *l16;
-  QLabel *l17;
-  QLabel *l18;
-#if defined(__FreeBSD__) || defined(__bsdi__)
-  // labels for login class
-  QLabel *l19;
-  QLabel *ld19;
-#endif
+  KListView *lstgrp;
 
   QPushButton *pbsetpwd;
-  QPushButton *pbok;
-  QPushButton *pbcancel;
 
   QLabel      *leuser;
   QLineEdit   *leid;
-//  QLineEdit   *legid;
   QLineEdit   *lefname;
   QComboBox   *leshell;
   QLineEdit   *lehome;
@@ -120,8 +84,8 @@ protected:
   QLineEdit   *leophone;
   QLineEdit   *lehphone;
   QLineEdit   *leclass;
-  KDateCtl    *lechange;
-  KDateCtl    *leexpire;
+  KDateWidget *lechange;
+  KDateWidget *leexpire;
 #else
   QLineEdit   *leoffice1;
   QLineEdit   *leoffice2;
@@ -129,6 +93,8 @@ protected:
 #endif
 
   QComboBox   *cbpgrp;
+  QString      primaryGroup;
+  bool	       primaryGroupWasOn;
 #ifdef _KU_QUOTA
   QComboBox   *leqmnt;
   QLineEdit   *leqfs;
@@ -146,12 +112,12 @@ protected:
 #endif
 
 #ifdef _KU_SHADOW
-  QLabel      *leslstchg;
-  KDateCtl    *lesmin;
-  KDateCtl    *lesmax;
-  KDateCtl    *leswarn;
-  KDateCtl    *lesinact;
-  KDateCtl    *lesexpire;
+  QLabel *leslstchg;
+  KIntSpinBox *lesmin;
+  KIntSpinBox *lesmax;
+  KIntSpinBox *leswarn;
+  KIntSpinBox *lesinact;
+  KDateWidget  *lesexpire;
 #endif
 };
 

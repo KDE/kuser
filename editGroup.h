@@ -10,31 +10,27 @@
 #ifndef editGroup_included
 #define editGroup_included
 
-#include <qdialog.h>
-#include <qlistbox.h>
+#include <kdialogbase.h>
+#include <klistview.h>
 
 #include "kgroup.h"
-#include "editGroupData.h"
 
-class editGroup : public editGroupData
+class editGroup : public KDialogBase
 {
   Q_OBJECT
 public:
 
-  editGroup(KGroup &akg,
+  editGroup(KGroup *akg,
 	     QWidget* parent = NULL,
 	     const char* name = NULL);
 
   virtual ~editGroup();
 
 protected slots:
-  virtual void ok();
-  virtual void cancel();
-
-  virtual void add();
-  virtual void del();
+  virtual void okClicked();
 
 protected:
-  KGroup &kg;
+  KGroup *kg;
+  KListView *m_list;
 };
 #endif // editGroup_included

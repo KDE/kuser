@@ -5,6 +5,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <qwhatsthis.h>
+#include <qlayout.h>
+#include <qgroupbox.h>
+
+#include <kseparator.h>
+#include <kglobal.h>
+
 #if defined(__FreeBSD__) || defined(__bsdi__)
 #include <qdatetm.h>
 #endif
@@ -14,451 +21,476 @@
 #include "pwddlg.h"
 #include "kglobal_.h"
 #include "misc.h"
-#include "kdatectl.h"
+
+static void addRow(QWidget *parent, QGridLayout *layout, int row, QWidget *widget, 
+                   const QString &label, const QString &what, bool two_column=true)
+{
+   QLabel *lab = new QLabel(widget, label, parent);
+   lab->setMinimumSize(lab->sizeHint());
+   widget->setMinimumSize(widget->sizeHint());
+   layout->addWidget(lab, row, 0);
+   if (!what.isEmpty())
+   {
+      QWhatsThis::add(lab, what);
+      QWhatsThis::add(widget, what);
+   }
+   if (two_column)
+      layout->addMultiCellWidget(widget, row, row, 1, 2);
+   else
+      layout->addWidget(widget, row, 1);
+}
+
+#ifdef _KU_SHADOW
+#if 0
+KDateWidget *propdlg::addDateGroup(QWidget *parent, QGridLayout *layout, int row, 
+	const QString &title, int days)
+{
+    KDateWidget *date;
+    QGroupBox *group = new QGroupBox( parent );
+    group->setTitle(title);
+    QGridLayout *groupLayout = new QGridLayout(group, 2, 3, marginHint(), spacingHint()); 
+    groupLayout->addRowSpacing(0, group->fontMetrics().lineSpacing());
+    groupLayout->addColSpacing(1, 20);
+
+    bool never = false;
+    if (days == -1)
+    {
+       never = true;
+       days = 0;
+    }
+    date = new KDateWidget(QDate(1970,1,1).addDays(days), group);
+    groupLayout->addWidget(date, 1, 0);
+    
+    QCheckBox *date_disabled = new QCheckBox(group);
+    date_disabled->setText(i18n("Never"));
+    groupLayout->addWidget(date_disabled, 1, 2);
+
+    layout->addMultiCellWidget(group, row,  row, 0, 2);
+    QObject::connect(date, SIGNAL(changed(QDate)), this, SLOT(changed()));
+    QObject::connect(date_disabled, SIGNAL(toggled(bool)), this, SLOT(changed()));
+    QObject::connect(date_disabled, SIGNAL(toggled(bool)), date, SLOT(setDisabled(bool)));
+    if (never)
+       date_disabled->setChecked(true);
+    return date;
+}
+#endif
+KDateWidget *propdlg::addDateGroup(QWidget *parent, QGridLayout *layout, int row, 
+	const QString &title, int days)
+{
+    KDateWidget *date;
+
+    QLabel *label = new QLabel(title, parent);
+    layout->addWidget(label, row, 0);
+
+    bool never = false;
+    if (days == -1)
+    {
+       never = true;
+       days = 0;
+    }
+    date = new KDateWidget(QDate(1970,1,1).addDays(days), parent);
+    layout->addMultiCellWidget(date, row, row, 1, 2);
+    
+    QCheckBox *date_disabled = new QCheckBox(parent);
+    date_disabled->setText(i18n("Never"));
+    layout->addWidget(date_disabled, row, 3);
+
+    QObject::connect(date, SIGNAL(changed(QDate)), this, SLOT(changed()));
+    QObject::connect(date_disabled, SIGNAL(toggled(bool)), this, SLOT(changed()));
+    QObject::connect(date_disabled, SIGNAL(toggled(bool)), date, SLOT(setDisabled(bool)));
+    if (never)
+       date_disabled->setChecked(true);
+    return date;
+}
+
+KIntSpinBox *propdlg::addDaysGroup(QWidget *parent, QGridLayout *layout, int row, 
+	const QString &title, const QString &title2, int nr_of_days, bool never)
+{
+    KIntSpinBox *days;
+
+    QLabel *label = new QLabel(title, parent);
+    layout->addWidget(label, row, 0, AlignRight);
+
+    days = new KIntSpinBox(parent);
+    days->setSuffix(i18n(" days"));
+    days->setMaxValue(32767);
+    if (never)
+    {
+      days->setMinValue(-1);
+      days->setSpecialValueText(i18n("Never"));
+    }
+    else
+    {
+      days->setMinValue(0);
+    }
+    days->setValue(nr_of_days);
+    layout->addWidget(days, row, 1);
+    
+    label = new QLabel(title2, parent);
+    layout->addMultiCellWidget(label, row, row, 2, 3);
+
+//    layout->addMultiCellWidget(group, row,  row, 0, 1);
+    QObject::connect(days, SIGNAL(valueChanged(int)), this, SLOT(changed()));
+    return days;
+}
+#endif
 
 #ifdef _KU_QUOTA
-propdlg::propdlg(KUser &AUser, Quota &AQuota, QWidget *parent, const char *name, int)
+propdlg::propdlg(KUser *AUser, Quota *AQuota, QWidget *parent, const char *name, int)
 #else
-propdlg::propdlg(KUser &AUser, QWidget *parent, const char *name, int)
+propdlg::propdlg(KUser *AUser, QWidget *parent, const char *name, int)
 #endif
- : QDialog(parent, name, FALSE,
-     WStyle_Customize | WStyle_DialogBorder | WStyle_SysMenu |
-     WStyle_MinMax | WType_Modal),
+ : KDialogBase(Tabbed, i18n("User Properties"), 
+	Ok | Cancel, Ok, parent, name, true),
 #ifdef _KU_QUOTA
  user(AUser), quota(AQuota) 
 #else
  user(AUser)
 #endif
 {
-
+  QString whatstr;
 #if defined(__FreeBSD__) || defined(__bsdi__)
   QDateTime *epoch = new QDateTime();
   QDateTime *temp_time = new QDateTime();
 #endif
 
 #ifdef _KU_QUOTA
-  if (&AQuota == NULL)
+  if (!AQuota)
     is_quota = 0;
   else
     quota = AQuota;
   chquota = 0;
 #endif
 
-  tw = new KTabCtl(this, "tw");
-  tw->setGeometry(0, 0, 450, 410);
 
-  pbok = new QPushButton(i18n("&OK"), this, "pbok");
-  pbok->setGeometry(200, 425, 100, 30);
-  pbok->setDefault(TRUE);
-  QObject::connect(pbok, SIGNAL(clicked()), this, SLOT(ok()));
-  pbcancel = new QPushButton(i18n("&Cancel"), this, "pbcancel");
-  pbcancel->setGeometry(320, 425, 100, 30);
-  QObject::connect(pbcancel, SIGNAL(clicked()), this, SLOT(cancel()));
+  // Tab 1: User Info
+  {
+    QFrame *frame = addPage(i18n("User Info"));
+    QGridLayout *layout = new QGridLayout(frame, 20, 3, marginHint(), spacingHint());
+    int row = 0;
 
-  w1 = new QWidget(this, "wd_Password");
+    frontpage = frame;
+    frontlayout = layout;
 
-  leuser = addLabel(w1, "leuser", 10, 27, 150, 27, user.getName());
-  QToolTip::add(leuser, i18n("User name"));
-  l1 = addLabel(w1, "ml1", 10, 10, 50, 20, i18n("User login"));
-  leid = addLineEdit(w1, "leid", 200, 30, 70, 22, "");
-  QObject::connect(leid, SIGNAL(textChanged(const QString &)), this, SLOT(charchanged(const QString &)));
-  QToolTip::add(leid, i18n("User identificator"));
-  l2 = addLabel(w1, "ml2", 200, 10, 50, 20, i18n("User id"));
+    leuser = new QLabel(frame);
+    whatstr = i18n("WHAT IS THIS: User Login");
+    addRow(frame, layout, row++, leuser, i18n("User Login:"), whatstr, false);
 
-  pbsetpwd = new QPushButton(w1, "pbsetpwd");
-  pbsetpwd->setGeometry(260, 180, 120, 30);
-  pbsetpwd->setText(i18n("Set password"));
-  QObject::connect(pbsetpwd, SIGNAL(clicked()), this, SLOT(setpwd()));
+    leid = new QLineEdit(frame);
+    whatstr = i18n("WHAT IS THIS: User Id");
+    addRow(frame, layout, row++, leid, i18n("User Id:"), whatstr, false);
 
-  lefname = addLineEdit(w1, "lefname", 10, 80, 160, 22, "");
-  QObject::connect(lefname, SIGNAL(textChanged(const QString &)), this, SLOT(charchanged(const QString &)));
-  QToolTip::add(lefname, i18n("Full name"));
-  l4 = addLabel(w1, "ml4", 10, 60, 50, 20, i18n("Full name"));
+    pbsetpwd = new QPushButton(i18n("Set password"), frame);
+    layout->addMultiCellWidget(pbsetpwd, 0, 1, 2, 2, AlignBottom);
+    QObject::connect(pbsetpwd, SIGNAL(clicked()), this, SLOT(setpwd()));
 
-  leshell = new QComboBox(TRUE, w1, "leshell");
-  QToolTip::add(leshell, i18n("Login shell"));
-  leshell->clear();
-  leshell->insertItem(i18n("<Empty>"));
+    lefname = new QLineEdit(frame);
+    whatstr = i18n("WHAT IS THIS: Full Name");
+    addRow(frame, layout, row++, lefname, i18n("Full Name:"), whatstr);
+    QObject::connect(lefname, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
 
-  FILE *f = fopen(SHELL_FILE,"r");
-  if (f) {
-    while (!feof(f)) {
-      char s[200];
+    leshell = new QComboBox(true, frame);
+    leshell->clear();
+    leshell->insertItem(i18n("<Empty>"));
 
-      fgets(s, 200, f);
-      if (feof(f))
-        break;
+    QStringList shells;
 
-      s[strlen(s)-1]=0;
-      if ((s[0])&&(s[0]!='#'))
-        leshell->insertItem(s);
+    FILE *f = fopen(SHELL_FILE,"r");
+    if (f) {
+      while (!feof(f)) {
+        char s[200];
+
+        fgets(s, 200, f);
+        if (feof(f))
+          break;
+
+        s[strlen(s)-1]=0;
+        if ((s[0])&&(s[0]!='#'))
+          shells.append(s);
+      }
+      fclose(f);
     }
-    fclose(f);
-  }
+    shells.sort();
+    leshell->insertStringList(shells);
+    QObject::connect(leshell, SIGNAL(activated(const QString &)), this, SLOT(changed()));
+    whatstr = i18n("WHAT IS THIS: Login Shell");
+    addRow(frame, layout, row++, leshell, i18n("Login Shell:"), whatstr);
 
-  leshell->setGeometry(10, 122, 160, 27);
-  QObject::connect(leshell, SIGNAL(activated(const QString &)), this, SLOT(shactivated(const QString &)));
-
-  l5 = addLabel(w1, "ml5", 10, 105, 50, 20, i18n("Login shell"));
-
-  lehome = addLineEdit(w1, "lehome", 10, 175, 160, 22, "");
-  QObject::connect(lehome, SIGNAL(textChanged(const QString &)), this, SLOT(charchanged(const QString &)));
-
-  QToolTip::add(lehome, i18n("Home directory"));
-  l6 = addLabel(w1, "ml6", 10, 155, 50, 20, i18n("Home directory"));
+    lehome = new QLineEdit(frame);
+    QObject::connect(lehome, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
+    whatstr = i18n("WHAT IS THIS: Home Directory");
+    addRow(frame, layout, row++, lehome, i18n("Home Directory:"), whatstr);
 
 #if defined(__FreeBSD__) || defined(__bsdi__)
-  // FreeBSD appears to use the comma separated fields in the GECOS entry
-  // differently than Linux.
-  leoffice = addLineEdit(w1, "leoffice", 10, 220, 160, 22, "");
-  QObject::connect(leoffice, SIGNAL(textChanged(const QString &)), this, SLOT(charchanged(const QString &)));
-  QToolTip::add(leoffice, i18n("Office"));
-  l7 = addLabel(w1, "ml7", 10, 200, 50, 20, i18n("Office"));
+    // FreeBSD appears to use the comma separated fields in the GECOS entry
+    // differently than Linux.
+    leoffice = new QLineEdit(frame);  
+    QObject::connect(leoffice, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
+    whatstr = i18n("WHAT IS THIS: Office");
+    addRow(frame, layout, row++, leoffice, i18n("Office:"), whatstr);
 
-  ld7 = addLabel(w1, "mld7", 190, 225, 50, 20, i18n("Office description"));
+    leophone = new QLineEdit(frame);
+    QObject::connect(leophone, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
+    whatstr = i18n("WHAT IS THIS: Office Phone");
+    addRow(frame, layout, row++, leophone, i18n("Office Phone:"), whatstr);
 
-  leophone = addLineEdit(w1, "leophone", 10, 265, 160, 22, "");
-  QObject::connect(leophone, SIGNAL(textChanged(const QString &)), this, SLOT(charchanged(const QString &)));
-  QToolTip::add(leophone, i18n("Office phone"));
-  l8 = addLabel(w1, "ml8", 10, 245, 50, 20, i18n("Office phone"));
-
-  ld8 = addLabel(w1, "mld8", 190, 270, 50, 20, i18n("Office phone number"));
-
-  lehphone = addLineEdit(w1, "lehphone", 10, 310, 160, 22, "");
-  QObject::connect(lehphone, SIGNAL(textChanged(const QString &)), this, SLOT(charchanged(const QString &)));
-  QToolTip::add(lehphone, i18n("Home phone"));
-  l9 = addLabel(w1, "ml9", 10, 290, 50, 20, i18n("Home phone"));
-
-  ld9 = addLabel(w1, "mld9", 190, 315, 50, 20, i18n("Home phone number"));
-  tw->addTab(w1, i18n("User info"));
-
-  // put the new fields on a separate tab page just to avoid rewriting all
-  // the positioning code.
-  w5 = new QWidget(this, "wd_Extended");
-
-  leclass = addLineEdit(w5, "leclass", 10, 80, 160, 22, "");
-  QObject::connect(leclass, SIGNAL(textChanged(const QString &)), this, SLOT(charchanged(const QString &)));
-  QToolTip::add(leclass, i18n("Login class"));
-  l19 = addLabel(w5, "ml19", 10, 60, 50, 20, i18n("Login class"));
-
-  ld19 = addLabel(w5, "mld19", 190, 85, 50, 20, i18n("Login resource class"));
-
-  // KDateCtl works in `days since the epoch' so we convert from seconds.
-  // Set the `base' to 1 so getDate returns 0 (base - 1) if the `never expires'
-  // box is checked.
-  epoch->setTime_t(0);
-  temp_time->setTime_t(user.getLastChange());
-  lechange = new KDateCtl(w5, "lechange", i18n("Password never expires"),
-                         i18n("Date when password expires"),
-                         epoch->daysTo(*temp_time), 1,
-                         10, 150);
-
-  QObject::connect(lechange, SIGNAL(textChanged()), this, SLOT(changed()));
-
-  temp_time->setTime_t(user.getExpire());
-
-  leexpire = new KDateCtl(w5, "leexpire", i18n("Account never expires"),
-                         i18n("Date when account expires"),
-                         epoch->daysTo(*temp_time), 1,
-                         10, 250);
-
-  QObject::connect(leexpire, SIGNAL(textChanged()), this, SLOT(changed()));
-
-  delete epoch;
-  delete temp_time;
-  tw->addTab(w5, i18n("Extended"));
-
+    lehphone = new QLineEdit(frame);
+    QObject::connect(lehphone, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
+    whatstr = i18n("WHAT IS THIS: Home Phone");
+    addRow(frame, layout, row++, lehphone, i18n("Home Phone:"), whatstr);
 #else
+    leoffice1 = new QLineEdit(frame);
+    QObject::connect(leoffice1, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
+    whatstr = i18n("WHAT IS THIS: Office1");
+    addRow(frame, layout, row++, leoffice1, i18n("Office #1:"), whatstr);
 
-  leoffice1 = addLineEdit(w1, "leoffice1", 10, 220, 160, 22, "");
-  QObject::connect(leoffice1, SIGNAL(textChanged(const QString &)), this, SLOT(charchanged(const QString &)));
-  QToolTip::add(leoffice1, i18n("The first office"));
-  l7 = addLabel(w1, "ml7", 10, 200, 50, 20, i18n("Office1"));
+    leoffice2 = new QLineEdit(frame);
+    QObject::connect(leoffice2, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
+    whatstr = i18n("WHAT IS THIS: Office2");
+    addRow(frame, layout, row++, leoffice2, i18n("Office #2:"), whatstr);
 
-  ld7 = addLabel(w1, "mld7", 190, 225, 50, 20, i18n("First office description"));
-
-  leoffice2 = addLineEdit(w1, "leoffice2", 10, 265, 160, 22, "");
-  QObject::connect(leoffice2, SIGNAL(textChanged(const QString &)), this, SLOT(charchanged(const QString &)));
-  QToolTip::add(leoffice2, i18n("The second office"));
-  l8 = addLabel(w1, "ml8", 10, 245, 50, 20, i18n("Office2"));
-
-  ld8 = addLabel(w1, "mld8", 190, 270, 50, 20, i18n("Second office description"));
-  leaddress = addLineEdit(w1, "leaddress", 10, 310, 160, 22, "");
-  QObject::connect(leaddress, SIGNAL(textChanged(const QString &)), this, SLOT(charchanged(const QString &)));
-  QToolTip::add(leaddress, i18n("Postal address"));
-  l9 = addLabel(w1, "ml9", 10, 290, 50, 20, i18n("Address"));
-  ld9 = addLabel(w1, "mld9", 190, 315, 50, 20, i18n("Full postal address"));
-
-  tw->addTab(w1, i18n("User info"));
+    leaddress = new QLineEdit(frame);
+    QObject::connect(leaddress, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
+    whatstr = i18n("WHAT IS THIS: Address");
+    addRow(frame, layout, row++, leaddress, i18n("Address:"), whatstr);
 #endif
+    frontrow = row;
+  }
 
 #ifdef _KU_SHADOW
+  // Tab 2 : Password Management
   if (is_shadow != 0) {
-    w2 = new QWidget(this, "wd_Shadow");
+    QFrame *frame = addPage(i18n("Password Managment"));
+    QGridLayout *layout = new QGridLayout(frame, 20, 4, marginHint(), spacingHint());
+    int row = 0;
 
-    char buf[1024];
+    QDate lastChange = QDate(1970,1,1).addDays(user->getLastChange());
+    leslstchg = new QLabel(frame);
+    leslstchg->setText(KGlobal::locale()->formatDate(lastChange));
+    addRow(frame, layout, row++, leslstchg, i18n("Last Password Change:"), QString::null, true);
+ 
+    layout->addMultiCellWidget(new KSeparator(KSeparator::HLine, frame), row, row, 0, 3);
+    row++;
 
-    convertdate(buf, 0, user.getLastChange());
-    leslstchg = addLabel(w2, "leslstchg", 140, 30, 70, 20, buf);
-    l16 = addLabel(w2, "ml16", 10, 30, 50, 20, i18n("Last password change"));
+    lesmin = addDaysGroup(frame, layout, row++, i18n("Password may not be changed before"), i18n("after last password change."), user->getMin(), false);
+    lesmax = addDaysGroup(frame, layout, row++, i18n("Password expires"), i18n("after last password change."), user->getMax());
+    leswarn = addDaysGroup(frame, layout, row++, i18n("Issue expire warning"), i18n("before password expires."), user->getWarn());
+    lesinact = addDaysGroup(frame, layout, row++, i18n("Account will be disabled"), i18n("after expiration of password"), user->getInactive());
 
-    lesmin = new KDateCtl(w2, "lesmin", i18n("Password change not allowed"),
-               i18n("Date before which password cannot\nbe changed"),
-                  user.getLastChange() + user.getMin(),
-                  user.getLastChange(), 10, 70);
-    QObject::connect(lesmin, SIGNAL(textChanged()), this, SLOT(changed()));
+    layout->addMultiCellWidget(new KSeparator(KSeparator::HLine, frame), row, row, 0, 3);
+    row++;
 
-    lesmax = new KDateCtl(w2, "lesmax", i18n("Password will not expire"),
-                          i18n("Date when password expires and\nmust be changed"),
-                          user.getLastChange() + user.getMax(),
-                          user.getLastChange(), 10, 130);
-    QObject::connect(lesmax, SIGNAL(textChanged()), this, SLOT(changed()));
-
-
-    leswarn = new KDateCtl(w2, "leswarn", i18n("No warning will be given"),
-                           i18n("Date after which warning about pending\npassword expiration will be given"),
-                           user.getLastChange() + user.getWarn(),
-                           user.getLastChange(), 10, 190);
-    QObject::connect(leswarn, SIGNAL(textChanged()), this, SLOT(changed()));
-
-    lesinact = new KDateCtl(w2, "lesinact", i18n("Account will remain enabled"),
-                            i18n("Date when account will be disabled\nif password has expired"),
-                            user.getLastChange() + user.getInactive(),
-                            user.getLastChange(), 10, 250);
-    QObject::connect(lesinact, SIGNAL(textChanged()), this, SLOT(changed()));
-
-    lesexpire = new KDateCtl(w2, "lesexpire", i18n("Account never expires"),
-                             i18n("Date when account expires and will\nbe disabled"),
-                             user.getExpire(),
-                             0, 10, 310);
-    QObject::connect(lesexpire, SIGNAL(textChanged()), this, SLOT(changed()));
-
-    tw->addTab(w2, i18n("Extended"));
+    lesexpire = addDateGroup(frame, layout, row++, i18n("Account will expire on:"), user->getExpire());
   }
 #endif
 
 #ifdef _KU_QUOTA
+  // Tab 3: Quotas
   if (is_quota != 0) {
-    w3 = new QWidget(this, "wd_Quota");
+    QFrame *frame = addPage(i18n("Quota"));
+    QGridLayout *layout = new QGridLayout(frame, 3, 2, marginHint(), spacingHint());
 
-    leqmnt = new QComboBox(TRUE, w3, "leqmnt");
-    QToolTip::add(leqmnt, i18n("Filesystem with quotas"));
+    leqmnt = new QComboBox(false, frame);
+    whatstr = i18n("WHAT IS THIS: Select filesystem");
+    addRow(frame, layout, 0, leqmnt, i18n("Filesystem with quotas:"), whatstr, false);
+
     leqmnt->clear();
 
     for (uint i = 0; i<kug->getMounts().getMountsNumber(); i++)
        leqmnt->insertItem(kug->getMounts()[i]->getdir());
 
-    leqmnt->setGeometry(250, 20, 160, 27);
     QObject::connect(leqmnt, SIGNAL(highlighted(int)), this, SLOT(mntsel(int)));
 
-    l10a = addLabel(w3, "ml10a", 20, 28, 230, 20, i18n("Filesystem with quotas:"));
-    l10a->setAlignment(AlignVCenter | AlignRight);
+    {
+      QGroupBox *group = new QGroupBox( frame );
+      layout->addMultiCellWidget(group, 1, 1, 0, 1);
+      group->setTitle("Disk Space");
+      QGridLayout *groupLayout = new QGridLayout(group, 6, 2, marginHint(), spacingHint()); 
+      groupLayout->addRowSpacing(0, group->fontMetrics().lineSpacing());
+      groupLayout->setColStretch(0,1);
+      int row = 1;
 
-    leqfs = addLineEdit(w3, "leqfs", 10, 80, 70, 22, "");
-    leqfs->setValidator(new QIntValidator(w3, "vaqfs"));
-    QObject::connect(leqfs, SIGNAL(textChanged(const QString &)), this, SLOT(qcharchanged(const QString &)));
-    QToolTip::add(leqfs, i18n("Disk space soft quota"));
-    l10 = addLabel(w3, "ml10", 95, 85, 50, 20, i18n("Disk space soft quota"));
+      leqfs = new QLineEdit(group);
+      leqfs->setValidator(new QIntValidator(group));
+      QObject::connect(leqfs, SIGNAL(textChanged(const QString &)), this, SLOT(qchanged()));
+      whatstr = i18n("WHAT IS THIS: Disk space soft quota");
+      addRow(group, groupLayout, row++, leqfs, i18n("Disk space soft quota:"), whatstr, false);
 
-    leqfh = addLineEdit(w3, "leqfh", 10, 120, 70, 22, "");
-    leqfh->setValidator(new QIntValidator(w3, "vaqfh"));
-    QObject::connect(leqfh, SIGNAL(textChanged(const QString &)), this, SLOT(qcharchanged(const QString &)));
-    QToolTip::add(leqfh, i18n("Disk space hard quota"));
-    l11 = addLabel(w3, "ml11", 95, 125, 50, 20, i18n("Disk space hard quota"));
+      leqfh = new QLineEdit(group);
+      leqfh->setValidator(new QIntValidator(group));
+      QObject::connect(leqfh, SIGNAL(textChanged(const QString &)), this, SLOT(qchanged()));
+      whatstr = i18n("WHAT IS THIS: Disk space hard quota");
+      addRow(group, groupLayout, row++, leqfh, i18n("Disk space hard quota:"), whatstr, false);
 
-    leqfcur = addLabel(w3, "leqfcur", 13, 160, 70, 20, "");
-    QToolTip::add(leqfcur, i18n("Disk space usage"));
-    l14 = addLabel(w3, "ml14", 95, 160, 50, 20, i18n("Disk space usage"));
-
-#ifndef BSD
-    leqft = addLineEdit(w3, "leqft", 10, 190, 70, 22, "");
-    leqft->setValidator(new QIntValidator(w3, "vaqft"));
-    QObject::connect(leqft, SIGNAL(textChanged(const QString &)), this, SLOT(qcharchanged(const QString &)));
-    QToolTip::add(leqft, i18n("Time limit allowed for Disk space over soft quota"));
-    l18 = addLabel(w3, "ml18", 95, 195, 50, 20, i18n("Time limit allowed for Disk space over soft quota"));
-#endif
-
-    leqis = addLineEdit(w3, "leqis", 10, 235, 70, 22, "");
-    leqis->setValidator(new QIntValidator(w3, "vaqis"));
-    QObject::connect(leqis, SIGNAL(textChanged(const QString &)), this, SLOT(qcharchanged(const QString &)));
-    QToolTip::add(leqis, i18n("File number soft quota"));
-    l12 = addLabel(w3, "ml12", 95, 240, 50, 20, i18n("File number soft quota"));
-
-    leqih = addLineEdit(w3, "leqih", 10, 275, 70, 22, "");
-    leqih->setValidator(new QIntValidator(w3, "vaqih"));
-    QObject::connect(leqih, SIGNAL(textChanged(const QString &)), this, SLOT(qcharchanged(const QString &)));
-    QToolTip::add(leqih, i18n("File number hard quota"));
-    l13 = addLabel(w3, "ml13", 95, 280, 50, 20, i18n("File number hard quota"));
-
-    leqicur = addLabel(w3, "leqicur", 13, 315, 70, 20, "");
-    QToolTip::add(leqicur, i18n("File number usage"));
-    l15 = addLabel(w3, "ml15", 95, 315, 50, 20, i18n("File number usage"));
+      leqfcur = new QLabel(group);
+      whatstr = i18n("WHAT IS THIS: Disk usage");
+      addRow(group, groupLayout, row++, leqfcur, i18n("Disk space in use:"), whatstr, false);
 
 #ifndef BSD
-    leqit = addLineEdit(w3, "leqit", 10, 345, 70, 22, "");
-    leqit->setValidator(new QIntValidator(w3, "vaqit"));
-    QObject::connect(leqit, SIGNAL(textChanged(const QString &)), this, SLOT(qcharchanged(const QString &)));
-    QToolTip::add(leqit, i18n("Time limit allowed for File number over soft quota"));
-    l17 = addLabel(w3, "ml17", 95, 350, 50, 20, i18n("Time limit allowed for File number over soft quota"));
+      leqft = new QLineEdit(group);
+      leqft->setValidator(new QIntValidator(group));
+      QObject::connect(leqft, SIGNAL(textChanged(const QString &)), this, SLOT(qchanged()));
+      whatstr = i18n("WHAT IS THIS: Time limit allowed for soft quota");
+      addRow(group, groupLayout, row++, leqft, i18n("Grace period:"), whatstr, false);
 #endif
+    }
 
-    tw->addTab(w3, i18n("Quota"));
+
+    {
+      QGroupBox *group = new QGroupBox( frame );
+      layout->addMultiCellWidget(group, 2, 2, 0, 1);
+      group->setTitle("Number of Files");
+      QGridLayout *groupLayout = new QGridLayout(group, 6, 2, marginHint(), spacingHint()); 
+      groupLayout->addRowSpacing(0, group->fontMetrics().lineSpacing());
+      groupLayout->setColStretch(0,1);
+      int row = 1;
+
+      leqis = new QLineEdit(group);
+      leqis->setValidator(new QIntValidator(group));
+      QObject::connect(leqis, SIGNAL(textChanged(const QString &)), this, SLOT(qchanged()));
+      whatstr = i18n("WHAT IS THIS: File number soft quota");
+      addRow(group, groupLayout, row++, leqis, i18n("File number soft quota:"), whatstr, false);
+
+      leqih = new QLineEdit(group);
+      leqih->setValidator(new QIntValidator(group));
+      QObject::connect(leqih, SIGNAL(textChanged(const QString &)), this, SLOT(qchanged()));
+      whatstr = i18n("WHAT IS THIS: File number hard quota");
+      addRow(group, groupLayout, row++, leqih, i18n("File number hard quota:"), whatstr, false);
+
+      leqicur = new QLabel(group);
+      whatstr = i18n("WHAT IS THIS: File number usage");
+      addRow(group, groupLayout, row++, leqicur, i18n("Number of files in use:"), whatstr, false);
+
+#ifndef BSD
+      leqit = new QLineEdit(group);
+      leqit->setValidator(new QIntValidator(group));
+      QObject::connect(leqit, SIGNAL(textChanged(const QString &)), this, SLOT(qchanged()));
+      whatstr = i18n("WHAT IS THIS: Time limit allowed for file number soft quota");
+      addRow(group, groupLayout, row++, leqit, i18n("Grace period:"), whatstr, false);
+#endif
+    }
   }
 #endif
 
-  w4 = new QWidget(this, "wd_Groups");
+  // Tab 4: Groups
+  {
+    QFrame *frame = addPage(i18n("Groups"));
+    QGridLayout *layout = new QGridLayout(frame, 20, 3, marginHint(), spacingHint());
+    int row = 0;
 
-  m_Other = new QListBox( w4, "m_Other" );
-  m_Other->setGeometry( 15, 85, 160, 130 );
-  m_Other->setFrameStyle( 51 );
-  m_Other->setLineWidth( 2 );
+    whatstr = i18n("WHATSTHIS: Primary Group");
+    cbpgrp = new QComboBox(false, frame, "cbpgrp");
+    addRow(frame, layout, row++, cbpgrp, i18n("Primary Group:"), whatstr, false);
+    QObject::connect(cbpgrp, SIGNAL(activated(const QString &)), this, SLOT(setpgroup(const QString &)));
 
-  QLabel* tmpQLabel;
-  tmpQLabel = new QLabel(w4, "Label_1");
-  tmpQLabel->setGeometry(20, 65, 150, 20);
-  tmpQLabel->setText(i18n("Groups not belonged to"));
-  tmpQLabel->setAutoResize(true);
-  tmpQLabel->setAlignment(289);
-  tmpQLabel->setMargin(-1);
+    lstgrp = new KListView(frame);
+    lstgrp->setFullWidth(); // Single column, full widget width.
+    lstgrp->addColumn(i18n("Groups user '%1' belongs to:").arg(user->getName()));
+    QString whatstr = i18n("Select the groups that this user belongs to.");
+    QWhatsThis::add(lstgrp, whatstr);
+    layout->addMultiCellWidget(lstgrp, row, row, 0, 1);
+    row++;    
+    QObject::connect(lstgrp, SIGNAL(clicked(QListViewItem *)), this, SLOT(gchanged())); 
+  }
+  
+#if defined(__FreeBSD__) || defined(__bsdi__)
+  // Tab5: extended BSD tab
+  {
+    QFrame *frame = addPage(i18n("Groups"));
+    QGridLayout *layout = new QGridLayout(frame, 20, 4, marginHint(), spacingHint());
+    int row = 0;
 
-  m_Group = new QListBox(w4, "m_Group");
-  m_Group->setGeometry(250, 85, 160, 130);
-  m_Group->setFrameStyle(51);
-  m_Group->setLineWidth(2);
+    leclass = new QLineEdit(frame);
+    QObject::connect(leclass, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
+    whatstr = i18n("WHAT IS THIS: Login class");
+    addRow(group, groupLayout, row++, leclass, i18n("Login class:"), whatstr, true);
 
-  pbadd = new QPushButton(w4, "pbadd");
-  pbadd->setGeometry(195, 105, 40, 30);
-  connect( pbadd, SIGNAL(clicked()), SLOT(add()) );
-  pbadd->setText("->");
-  pbadd->setAutoRepeat( FALSE );
-  pbadd->setAutoResize( FALSE );
-
-  pbdel = new QPushButton( w4, "pbdel" );
-  pbdel->setGeometry( 195, 155, 40, 30 );
-  connect( pbdel, SIGNAL(clicked()), SLOT(del()) );
-  pbdel->setText("<-");
-  pbdel->setAutoRepeat( FALSE );
-  pbdel->setAutoResize( FALSE );
-
-  tmpQLabel = new QLabel(w4, "Label_2");
-  tmpQLabel->setGeometry(255, 65, 150, 20);
-  tmpQLabel->setText(i18n("Groups belonged to"));
-  tmpQLabel->setAutoResize(true);
-  tmpQLabel->setAlignment(289);
-  tmpQLabel->setMargin(-1);
-
-  cbpgrp = new QComboBox(FALSE, w4, "cbpgrp");
-  cbpgrp->setGeometry(250, 30, 160, 30);
-  QObject::connect(cbpgrp, SIGNAL(activated(const QString &)), this, SLOT(setpgroup(const QString &)));
-
-  tmpQLabel = new QLabel(w4, "Label_3");
-  tmpQLabel->setGeometry(100, 35, 140, 20);
-  tmpQLabel->setText(i18n("Primary group"));
-  tmpQLabel->setAlignment(AlignVCenter | AlignRight);
-  tmpQLabel->setMargin(-1);
-
-  tw->addTab(w4, i18n("Groups"));
+#if 0
+    lechange = addDaysGroup(frame, layout, row++, i18n("Password must be changed before:"), user->getMax());
+#endif
+    leexpire = addDateGroup(frame, layout, row++, i18n("Account will expire after:"), user->getExpire());
+  }
+#endif
 
   loadgroups();
   selectuser();
-  setFixedSize(450, 470);
+//  setFixedSize(450, 470);
 
-  ischanged = FALSE;
+  ischanged = false;
+  isgchanged = false;
 #ifdef _KU_QUOTA
-  isqchanged = FALSE;
+  isqchanged = false;
 #endif
 
-  setCaption(i18n("User properties"));
 }
 
 propdlg::~propdlg() {
-  delete w1;
-  
-#ifdef _KU_SHADOW
-  if (is_shadow != 0)
-    delete w2;
-#endif
-  
-#ifdef _KU_QUOTA
-  if (is_quota != 0)
-    delete w3;
-#endif
-
-  delete w4;
 }
 
 void propdlg::loadgroups() {
-  uint i;
-
-  for (i = 0; i<kug->getGroups().count(); i++) {
-    if (kug->getGroups()[i]->lookup_user(user.getName()))
-      m_Group->insertItem(kug->getGroups()[i]->getName());
-    else
-      m_Other->insertItem(kug->getGroups()[i]->getName());
-
-    cbpgrp->insertItem(kug->getGroups()[i]->getName());
-    if (kug->getGroups()[i]->getGID() == user.getGID())
-      cbpgrp->setCurrentItem(i);
+  QStringList groups;
+  for (uint i = 0; i<kug->getGroups().count(); i++) {
+    KGroup *group = kug->getGroups()[i];
+    QString groupName = group->getName();
+    QCheckListItem *item = new QCheckListItem(lstgrp, groupName, QCheckListItem::CheckBox);
+    groups.append(groupName);
+    if (group->getGID() == user->getGID())
+    {
+      item->setOn(true);
+      item->setEnabled(false);
+      primaryGroup = groupName;
+      primaryGroupWasOn = group->lookup_user(user->getName());
+    }
+    else if (group->lookup_user(user->getName()))
+    {
+      item->setOn(true);
+    }
   }
-
-  if (m_Other->count() != 0)
-    m_Other->setCurrentItem(0);
-  if (m_Group->count() != 0)
-    m_Group->setCurrentItem(0);
+  groups.sort();
+  cbpgrp->insertStringList(groups);
+  cbpgrp->setCurrentItem(groups.findIndex(primaryGroup));
 }
 
 void propdlg::setpgroup(const QString &) {
-  ischanged = TRUE;
+  isgchanged = true;
+  if (cbpgrp->currentText() == primaryGroup)
+     return;
+
+  QString prevPrimaryGroup = primaryGroup;
+  bool prevPrimaryGroupWasOn = primaryGroupWasOn;
+  primaryGroup = cbpgrp->currentText();
+
+  QCheckListItem *item = (QCheckListItem *) lstgrp->firstChild();
+
+  QString userName = user->getName();
+  while(item)
+  {
+     QString groupName = item->text();
+     if (groupName  == prevPrimaryGroup)
+     {
+        KGroup *group = kug->getGroups().lookup(groupName);
+        item->setEnabled(true);
+        item->setOn(prevPrimaryGroupWasOn);
+        item->repaint();
+     }
+     else if (groupName == primaryGroup)
+     {
+        primaryGroupWasOn = item->isOn();
+        item->setEnabled(false);
+        item->setOn(true);
+        item->repaint();
+     }
+
+     item = (QCheckListItem *) item->nextSibling();
+  }
 }
 
 void propdlg::changed() {
-  ischanged = TRUE;
+  ischanged = true;
 }
 
-void propdlg::add() {
-  int cur = m_Other->currentItem();
-
-  if (cur == -1)
-    return;
-
-  m_Group->insertItem(m_Other->text(cur));
-  m_Other->removeItem(cur);
-	saveg();										/* save groups user added to */
-
-  if (((uint)cur) == m_Other->count())
-    m_Other->setCurrentItem(cur-1);
-  else
-    m_Other->setCurrentItem(cur);
-
-  m_Group->setCurrentItem(m_Group->count()-1);
-  m_Group->centerCurrentItem();
-
-  ischanged = TRUE;
-}
-
-void propdlg::del() {
-  int cur = m_Group->currentItem();
-
-  if (cur == -1)
-    return;
-
-  m_Other->insertItem(m_Group->text(cur));
-  m_Group->removeItem(cur);
-	saveg();										/* save groups user removed from */
-
-  if (((uint)cur) == m_Group->count())
-    m_Group->setCurrentItem(cur-1);
-  else
-    m_Group->setCurrentItem(cur);
-  
-  m_Other->setCurrentItem(m_Other->count()-1);
-  m_Other->centerCurrentItem();
-
-  ischanged = TRUE;
-}
-
-void propdlg::charchanged(const QString &) {
-  ischanged = TRUE;
+void propdlg::gchanged() {
+  isgchanged = true;
 }
 
 void propdlg::save() {
@@ -467,14 +499,14 @@ void propdlg::save() {
   QDateTime *temp_time = new QDateTime();
 #endif
   
-  user.setUID(leid->text().toInt());
-  user.setFullName(lefname->text());
+  user->setUID(leid->text().toInt());
+  user->setFullName(lefname->text());
 
 #if defined(__FreeBSD__) || defined(__bsdi__)
-  user.setOffice(leoffice->text());
-  user.setWorkPhone(leophone->text());
-  user.setHomePhone(lehphone->text());
-  user.setClass(leclass->text());
+  user->setOffice(leoffice->text());
+  user->setWorkPhone(leophone->text());
+  user->setHomePhone(lehphone->text());
+  user->setClass(leclass->text());
 
   // getDate() returns days since the epoch if a date is specified
   // which we convert to seconds since the epoch.
@@ -482,55 +514,80 @@ void propdlg::save() {
   // ends up being converted to 0 seconds which is what we need.
   epoch->setTime_t(0);
 
+#if 0
+  // HUH? What is this?
   temp_time->setTime_t(0);
   *temp_time = temp_time->addDays(lechange->getDate());
-  user.setLastChange(epoch->secsTo(*temp_time));
+  user->setLastChange(epoch->secsTo(*temp_time));
+#endif
 
   temp_time->setTime_t(0);
   *temp_time = temp_time->addDays(leexpire->getDate());
-  user.setExpire(epoch->secsTo(*temp_time));
+  user->setExpire(epoch->secsTo(*temp_time));
 
   delete epoch;
   delete temp_time;
 #else
-  user.setOffice1(leoffice1->text());
-  user.setOffice2(leoffice2->text());
-  user.setAddress(leaddress->text());
+  user->setOffice1(leoffice1->text());
+  user->setOffice2(leoffice2->text());
+  user->setAddress(leaddress->text());
 #endif
 
-  user.setHomeDir(lehome->text());
+  user->setHomeDir(lehome->text());
   if (leshell->currentItem() != 0)
-    user.setShell(leshell->text(leshell->currentItem()));
+    user->setShell(leshell->text(leshell->currentItem()));
   else
-    user.setShell("");
+    user->setShell("");
 
 #ifdef _KU_SHADOW
   if (is_shadow) {
-    user.setMin(lesmin->getDate() - user.getLastChange());
-    user.setMax(lesmax->getDate() - user.getLastChange());
-    user.setWarn(leswarn->getDate() - user.getLastChange());
-    user.setInactive(lesinact->getDate() - user.getLastChange());
-    user.setExpire(lesexpire->getDate());
-    user.setLastChange(today());
+    QDate epoch(1970,1,1);
+    if (lesmin->isEnabled())
+       user->setMin(lesmin->value());
+    else
+       user->setMin(-1);
+
+    if (lesmax->isEnabled())
+       user->setMax(lesmax->value());
+    else
+       user->setMin(-1);
+
+    if (leswarn->isEnabled())
+       user->setWarn(leswarn->value());
+    else
+       user->setMin(-1);
+
+    if (lesinact->isEnabled())
+       user->setInactive(lesinact->value());
+    else
+       user->setMin(-1);
+
+    if (lesexpire->isEnabled())
+       user->setExpire(lesexpire->date().daysTo(epoch));
+    else
+       user->setExpire(-1);
+
+//    user->setLastChange(today()); // Huh?
   }
 #endif
 }
 
 void propdlg::saveg() {
-  uint i;
-  uint G_cnt = m_Group->count();				/* determine #groups included in */
-  uint O_cnt = m_Other->count();				/* determine #groups excluded from */
+  QCheckListItem *item = (QCheckListItem *) lstgrp->firstChild();
 
-  const QString &userName = user.getName();
-  for (i=0;i<G_cnt;i++)
-    if (!kug->getGroups().lookup(m_Group->text(i))->lookup_user(userName))
-      kug->getGroups().lookup(m_Group->text(i))->addUser(userName);
-  
-  for (i=0;i<O_cnt;i++)
-    if (kug->getGroups().lookup(m_Other->text(i))->lookup_user(userName))
-      kug->getGroups().lookup(m_Other->text(i))->removeUser(userName);
+  QString userName = user->getName();
+  while(item)
+  {
+     KGroup *group = kug->getGroups().lookup(item->text());
+     if (item->isOn())
+        group->addUser(userName);
+     else
+        group->removeUser(userName);
 
-  user.setGID(kug->getGroups().lookup(cbpgrp->text(cbpgrp->currentItem()))->getGID());
+     item = (QCheckListItem *) item->nextSibling();
+  }
+
+  user->setGID(kug->getGroups().lookup(cbpgrp->currentText())->getGID());
 }
 
 #ifdef _KU_QUOTA
@@ -541,12 +598,12 @@ void propdlg::mntsel(int index) {
   selectuser();
 }
 
-void propdlg::qcharchanged(const QString &) {
-  isqchanged = TRUE;
+void propdlg::qchanged() {
+  isqchanged = true;
 }
 
 void propdlg::saveq() {
-  QuotaMnt *tmpq = quota[chquota];
+  QuotaMnt *tmpq = (*quota)[chquota];
 
   tmpq->setfhard(leqfh->text().toLong());
   tmpq->setfsoft(leqfs->text().toLong());
@@ -567,24 +624,23 @@ void propdlg::mntsel(int) {
 }
 #endif
 
-void propdlg::shactivated(const QString &text) { 
-  int id = leshell->currentItem();
-  leshell->changeItem(text, id);
-  changed();
-}
-
 bool propdlg::check() {
-  bool ret = FALSE;
+  bool ret = false;
 
   if (ischanged) {
     save();
-    ret = TRUE;
+    ret = true;
+  }
+
+  if (isgchanged) {
+    saveg();
+    ret = true;
   }
 
 #ifdef _KU_QUOTA
   if (isqchanged) {
     saveq();
-    ret = TRUE;
+    ret = true;
   }
 #endif
 
@@ -592,42 +648,42 @@ bool propdlg::check() {
 }
 
 void propdlg::selectuser() {
-  leuser->setText(user.getName());
+  leuser->setText(user->getName());
 
-  leid->setText(QString("%1").arg(user.getUID()));
-  olduid = user.getUID();
+  leid->setText(QString("%1").arg(user->getUID()));
+  olduid = user->getUID();
 
-//  sprintf(uname, "%i", user.getp_gid());
+//  sprintf(uname, "%i", user->getp_gid());
 //  legid->setText(uname);
 
-  lefname->setText(user.getFullName());
+  lefname->setText(user->getFullName());
 
-  if (user.getShell().isEmpty() != TRUE) {
+  if (user->getShell().isEmpty() != TRUE) {
     bool tested = FALSE;
     for (int i=0; i<leshell->count(); i++)
-      if (leshell->text(i) == user.getShell()) {
+      if (leshell->text(i) == user->getShell()) {
         tested = TRUE;
         leshell->setCurrentItem(i);
         break;
       }
     if (!tested) {
-      leshell->insertItem(user.getShell());
+      leshell->insertItem(user->getShell());
       leshell->setCurrentItem(leshell->count()-1);
     }
   } else
     leshell->setCurrentItem(0);
 
-  lehome->setText(user.getHomeDir());
+  lehome->setText(user->getHomeDir());
 #if defined(__FreeBSD__) || defined(__bsdi__)
-  leoffice->setText(user.getOffice());
-  leophone->setText(user.getWorkPhone());
-  lehphone->setText(user.getHomePhone());
-  leclass->setText(user.getClass());
+  leoffice->setText(user->getOffice());
+  leophone->setText(user->getWorkPhone());
+  lehphone->setText(user->getHomePhone());
+  leclass->setText(user->getClass());
   // the date fields get set when the dialogue is built
 #else
-  leoffice1->setText(user.getOffice1());
-  leoffice2->setText(user.getOffice2());
-  leaddress->setText(user.getAddress());
+  leoffice1->setText(user->getOffice1());
+  leoffice2->setText(user->getOffice2());
+  leaddress->setText(user->getAddress());
 #endif
 
 #ifdef _KU_QUOTA
@@ -636,7 +692,7 @@ void propdlg::selectuser() {
     if (chquota != -1) {
       q = chquota;
 
-      QuotaMnt *qm = quota[q];
+      QuotaMnt *qm = (*quota)[q];
       leqfs->setText(QString("%1").arg(qm->getfsoft()));
       leqfh->setText(QString("%1").arg(qm->getfhard()));
       leqis->setText(QString("%1").arg(qm->getisoft()));
@@ -658,15 +714,15 @@ void propdlg::setpwd() {
 
   pd = new pwddlg(user, this, "pwddlg");
   pd->exec();
-  ischanged = TRUE;
+  ischanged = true;
   delete pd;
 }
 
-void propdlg::ok() {
+void propdlg::slotOk() {
   uid_t newuid = leid->text().toInt();
 
   if (olduid != newuid)
-    if (kug->getUsers().lookup(newuid) != NULL) {
+    if (kug->getUsers().lookup(newuid)) {
       err->addMsg(i18n("User with UID %1 already exists").arg(newuid));
       err->display();
       return;
@@ -676,10 +732,6 @@ void propdlg::ok() {
     accept();
   else
     reject();
-}
-
-void propdlg::cancel() {
-  reject();
 }
 
 #include "propdlg.moc"

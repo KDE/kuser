@@ -8,30 +8,33 @@ class addUser: public propdlg {
   Q_OBJECT
 public:
 #ifdef _KU_QUOTA
-  addUser(KUser &AUser, Quota &AQuota, QWidget *parent = 0, const char *name = 0, int isprep = false);
+  addUser(KUser *AUser, Quota *AQuota, QWidget *parent = 0, const char *name = 0, int isprep = false);
 #else
-  addUser(KUser &AUser, QWidget *parent = 0, const char *name = 0, int isprep = false);
+  addUser(KUser *AUser, QWidget *parent = 0, const char *name = 0, int isprep = false);
 #endif
-  void setUserPrivateGroup(bool data);
-  void setCreateHomeDir(bool data);
-  void setCopySkel(bool data);
 
-  bool getUserPrivateGroup();
-  bool getCreateHomeDir();
-  bool getCopySkel();
+  void setCreateHomeDir(bool b) 
+     { createhome->setChecked(b); }
+
+  void setCopySkel(bool b)
+     { copyskel->setChecked(b); }
+
+  void setUsePrivateGroup(bool b)
+     { usePrivateGroup->setChecked(b); }
+
+  bool getUsePrivateGroup()
+     { return usePrivateGroup->isChecked(); }
+
+
 protected slots:
-  virtual void ok();
-
-  virtual void userPrivateGroupChecked(bool data);
-  virtual void createHomeChecked(bool data);
-
+  virtual void slotOk();
 protected:
   bool checkHome();
   bool checkMailBox();
 
   QCheckBox *createhome;
   QCheckBox *copyskel;
-  QCheckBox *userPrivateGroup;
+  QCheckBox *usePrivateGroup;
 };
 
 #endif // _KU_ADDUSER_H

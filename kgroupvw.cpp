@@ -2,94 +2,73 @@
 
 #include "kgroupvw.h"
 
-KGroupView::KGroupView(QWidget *parent, const char *name) : QWidget( parent, name ) {
+class KListViewGroup : public QListViewItem
+{
+public:
+  KListViewGroup(QListView *parent, KGroup *aku);
+  virtual QString text ( int ) const;
+
+  KGroup *group;
+};
+
+KListViewGroup::KListViewGroup(QListView *parent, KGroup *aku)
+ : QListViewItem(parent), group(aku)
+{
+}
+
+QString KListViewGroup::text(int num) const
+{
+  switch(num)
+  {
+     case 0: return QString("%1 ").arg(group->getGID(),6);
+     case 1: return group->getName();
+  }
+  return QString::null;
+}
+
+
+KGroupView::KGroupView(QWidget *parent, const char *name) 
+  : KListView( parent, name ) 
+{
   init();
-  current = -1;
 }
 
 KGroupView::~KGroupView() {
-  delete m_Header;
-  delete m_Groups;
-}
-
-void KGroupView::setAutoUpdate(bool state) {
-  m_Groups->setAutoUpdate(state);
-}
-
-void KGroupView::clear() {
-  m_Groups->clear();
 }
 
 void KGroupView::insertItem(KGroup *aku) {
-  m_Groups->insertItem(aku);
+  KListViewGroup *groupItem = new KListViewGroup(this, aku);
+  KListView::insertItem(groupItem);
+  setSelected(groupItem, true);
 }
 
-int KGroupView::currentItem() {
-  return (current);
+void KGroupView::removeItem(KGroup *aku) {
+  KListViewGroup *groupItem = (KListViewGroup *)firstChild();
+  
+  while(groupItem)
+  {
+     if (groupItem->group == aku)
+     {
+        delete groupItem;
+        return;
+     }
+     groupItem = (KListViewGroup*) groupItem->nextSibling();
+  }
 }
 
-void KGroupView::setCurrentItem(int item) {
-  current = item;
-  m_Groups->setCurrentItem(item);
-}
-
-void KGroupView::sortBy(int num) {
-  m_Groups->sortBy(num);
-}
-
-void KGroupView::init() {
-  m_Header = new KHeader(this, "_gheader", 2, KHeader::Resizable|KHeader::Buttons );
-  m_Header->setGeometry(2, 0, width(), 0 );
-
-  m_Groups = new KGroupTable(this, "_gtable" );
-  m_Groups->setGeometry(0, m_Header->height(), width(), height()-m_Header->height() );
-
-  m_Header->setHeaderLabel(0, i18n("GID"));
-  m_Header->setHeaderLabel(1, i18n("Group name"));
-
-  connect(m_Groups, SIGNAL(highlighted(int,int)), SLOT(onHighlight(int,int)));
-  connect(m_Groups, SIGNAL(selected(int,int)), SLOT(onSelect(int,int)));
-  connect(m_Header, SIGNAL(selected(int)), SLOT(onHeaderClicked(int)));
-  connect(m_Header, SIGNAL(sizeChanged(int,int)), m_Groups, SLOT(setColumnWidth(int,int)));
-
-// This connection makes it jumpy and slow (but it works!)
-  connect(m_Header, SIGNAL(sizeChanging(int,int)), m_Groups, SLOT(setColumnWidth(int,int)));
-
-  connect(m_Groups, SIGNAL(hSliderMoved(int)), m_Header, SLOT(setOrigin(int)));
-
-  m_Header->setHeaderSize(0, 60);
-  m_Header->setHeaderSize(1, 300);
-}
-
-void KGroupView::repaint() {
-  m_Groups->repaint();
-  m_Header->repaint();
+void KGroupView::init() 
+{
+  setAllColumnsShowFocus(true);
+  addColumn(i18n("GID"));
+  setColumnAlignment(0, AlignRight);
+  addColumn(i18n("Group name"));
 }
 
 KGroup *KGroupView::getCurrentGroup() {
-  return (((KGroupRow *)m_Groups->getRow(current))->getData());
-}
+  KListViewGroup *groupItem = (KListViewGroup *)currentItem();
+  if (!groupItem) return 0;
 
-void KGroupView::onSelect(int row, int) {
-  current = row;
-  emit selected(row);
-}
-
-void KGroupView::onHighlight(int row, int) {
-  current = row;
-  emit highlighted(row);
-}
-
-void KGroupView::onHeaderClicked(int num) {
-  emit headerClicked(num);
-}
-
-void KGroupView::resizeEvent(QResizeEvent *rev) {
-  m_Header->resize(rev->size().width(), 0);
-  m_Header->setHeaderSize(0, (rev->size().width()-20)*3/18);
-  m_Header->setHeaderSize(1, (rev->size().width()-20)*15/18);
-
-  m_Groups->setGeometry(0, m_Header->height(), rev->size().width(), rev->size().height()-m_Header->height());
+  return groupItem->group;
 }
 
 #include "kgroupvw.moc"

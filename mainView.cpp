@@ -25,107 +25,81 @@
 #include "editGroup.h"
 #include "editDefaults.h"
 
-mainView::mainView(QWidget *parent) : QWidget(parent) {
-  changed = FALSE;
-  prev = 0;
+mainView::mainView(QWidget *parent) : QTabWidget(parent) {
+  changed = false;
 
-  usort = -1;
-  gsort = -1;
-  
   init();
 }
 
 void mainView::init() {
-  kp = new QSplitter(QSplitter::Horizontal, this, "splitter");
-  kp->setGeometry(10, 80, 380, 416);
-  
-  lbusers = new KUserView(kp, "lbusers");
-  //  lbusers->setGeometry(10,80,380,208);
 
-  lbgroups = new KGroupView(kp, "lbgroups");
-  //  lbgroups->setGeometry(10,400,380,208);
+  lbusers = new KUserView(this, "lbusers");
+  addTab(lbusers, i18n("Users"));
 
-  QObject::connect(lbusers, SIGNAL(headerClicked(int)), this, SLOT(setUsersSort(int)));
-  QObject::connect(lbusers, SIGNAL(selected(int)), this, SLOT(userSelected(int)));
+  lbgroups = new KGroupView(this, "lbgroups");
+  addTab(lbgroups, i18n("Groups"));
 
-  QObject::connect(lbgroups, SIGNAL(headerClicked(int)), this, SLOT(setGroupsSort(int)));
-  QObject::connect(lbgroups, SIGNAL(selected(int)), this, SLOT(groupSelected(int)));
+  connect(lbusers, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(userSelected()));
+  connect(lbusers, SIGNAL(returnPressed(QListViewItem *)), this, SLOT(userSelected()));
 
-  reloadUsers(0);
-  reloadGroups(0);
+  connect(lbgroups, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(groupSelected()));
+  connect(lbgroups, SIGNAL(returnPressed(QListViewItem *)), this, SLOT(groupSelected()));
+
+  reloadUsers();
+  reloadGroups();
+
+  connect(this, SIGNAL(currentChanged(QWidget *)), this, SLOT(slotTabChanged()));
 }
 
 mainView::~mainView() {
-  lbusers->setAutoUpdate(FALSE);
-  lbgroups->setAutoUpdate(FALSE);
-
-  delete lbusers;
-  delete lbgroups;
-
-  delete kp;
 }
 
-void mainView::setUsersSort(int col) {
-  if (usort == col)
-    usort = -1;
+void mainView::slotTabChanged()
+{
+  if (currentPage() == lbusers)
+  {
+     emit userSelected(true);
+     emit groupSelected(false);
+  }
   else
-    usort = col;
-
-  lbusers->sortBy(usort);
-
-  reloadUsers(lbusers->currentItem());
+  {
+     emit userSelected(false);
+     emit groupSelected(true);
+  }
 }
 
-void mainView::setGroupsSort(int col) {
-  if (gsort == col)
-    gsort = -1;
-  else
-    gsort = col;
-
-  lbgroups->sortBy(gsort);
-
-  reloadGroups(lbgroups->currentItem());
-}
-
-void mainView::reloadUsers(int id) {
+void mainView::reloadUsers() {
   KUser *ku;
 
-  lbusers->setAutoUpdate(FALSE);
   lbusers->clear();
 
   for (uint i = 0; i<kug->getUsers().count(); i++) {
     ku = kug->getUsers()[i];
     lbusers->insertItem(ku);
   }
-
-  lbusers->setAutoUpdate(TRUE);
-  lbusers->setCurrentItem(id);
-  lbusers->repaint();
+  if (lbusers->firstChild())
+    lbusers->setSelected(lbusers->firstChild(), true);
 }
 
-void mainView::reloadGroups(int gid) {
+void mainView::reloadGroups() {
   KGroup *kg;
 
-  lbgroups->setAutoUpdate(FALSE);
   lbgroups->clear();
 
   for (uint i = 0; i<kug->getGroups().count(); i++) {
     kg = kug->getGroups()[i];
     lbgroups->insertItem(kg);
   }
+  if (lbgroups->firstChild())
+    lbgroups->setSelected(lbgroups->firstChild(), true);
 
-  lbgroups->setAutoUpdate(TRUE);
-  lbgroups->setCurrentItem(gid);
-  lbgroups->repaint();
 }
 
 void mainView::useredit() {
-  userSelected(lbusers->currentItem());
+  userSelected();
 }
 
 void mainView::userdel() {
-  uint i = 0;
-  bool islast = FALSE;
   KUser *user = lbusers->getCurrentUser();
 
   if (KMessageBox::warningContinueCancel(0, i18n("Do you really want to delete user '%1'?")
@@ -133,33 +107,24 @@ void mainView::userdel() {
                      i18n("&Delete")) != KMessageBox::Continue)
     return;
 
-  i = lbusers->currentItem();
-  if (i == kug->getUsers().count()-1)
-    islast = TRUE;
-
 #ifdef _KU_QUOTA
   uint uid = user->getUID();
 
-  if (kug->getUsers().lookup(uid) == NULL)
+  if (kug->getUsers().lookup(uid) == 0)
     kug->getQuotas().delQuota(uid);
 #endif
 
   kug->getUsers().del(user);
+  lbusers->removeItem(user);
 
-  prev = -1;
-
-  if (!islast)
-    reloadUsers(i);
-  else
-    reloadUsers(i-1);
-  changed = TRUE;
+  changed = true;
 
   config->setGroup("template"); 
   if (!config->readBoolEntry("userPrivateGroup", KU_USERPRIVATEGROUP))
     return;
     
   const QString &userName = user->getName();
-  KGroup *group = NULL;
+  KGroup *group = 0;
 
   for (uint i=0; i<kug->getGroups().count(); i++)
     if (kug->getGroups()[i]->getName() == userName) {
@@ -167,7 +132,7 @@ void mainView::userdel() {
       break;
     }
 
-  if (group == NULL)
+  if (!group)
     return;
     
   if (KMessageBox::warningContinueCancel(0, 
@@ -177,12 +142,8 @@ void mainView::userdel() {
 	     i18n("&Delete")) != KMessageBox::Continue)
     return;
     
-  uint oldc = lbgroups->currentItem();
   kug->getGroups().del(group);
-  if (oldc == kug->getGroups().count())
-    reloadGroups(oldc-1);
-  else
-    reloadGroups(oldc);
+  lbgroups->removeItem(group);
 }
 
 void mainView::useradd() {
@@ -190,6 +151,8 @@ void mainView::useradd() {
 #ifdef _KU_QUOTA
   Quota *tq;
 #endif // _KU_QUOTA
+
+  showPage(lbusers);
 
   int uid;
 
@@ -251,55 +214,54 @@ void mainView::useradd() {
 #ifdef _KU_QUOTA
   if (is_quota == 0) {
     delete tq;
-    tq = NULL;
+    tq = 0;
   }
 #endif // _KU_QUOTA
   
 #ifdef _KU_QUOTA
-  addUser au(*tk, *tq, this, "userin");
+  addUser au(tk, tq, this, "userin");
 #else
-  addUser au(*tk, this, "userin");
+  addUser au(tk, this, "userin");
 #endif
 
   au.setCreateHomeDir(config->readBoolEntry("createHomeDir", true));
   au.setCopySkel(config->readBoolEntry("copySkel", true));
-  au.setUserPrivateGroup(config->readBoolEntry("userPrivateGroup", KU_USERPRIVATEGROUP));
+  au.setUsePrivateGroup(config->readBoolEntry("userPrivateGroup", KU_USERPRIVATEGROUP));
 
   if (au.exec() != 0) {
-    if (au.getUserPrivateGroup()) {
+    if (au.getUsePrivateGroup()) {
       KGroup *tg;
 
-      if ((tg = kug->getGroups().lookup(tk->getName())) == NULL) {
+      if ((tg = kug->getGroups().lookup(tk->getName())) == 0) {
         tg = new KGroup();
         tg->setGID(kug->getGroups().first_free());
         tg->setName(tk->getName());
         kug->getGroups().add(tg);
-        reloadGroups(lbgroups->currentItem());
+        lbgroups->insertItem(tg);
       }
 
       tk->setGID(tg->getGID());
     }
     kug->getUsers().add(tk);
 #ifdef _KU_QUOTA
-    if (tq != NULL)
+    if (tq)
       kug->getQuotas().addQuota(tq);
 #endif
-    changed = TRUE;
+    changed = true;
   }
   else {
     delete tk;
 #ifdef _KU_QUOTA
-    if (tq != NULL)
-      delete tq;
+    delete tq;
 #endif
   }
 
-  reloadUsers(kug->getUsers().count()-1);
+  lbusers->insertItem(tk);
 }
 
 
 void mainView::save() {
-  if (changed != TRUE)
+  if (!changed)
     return;
     
   if (KMessageBox::questionYesNo(0, i18n("Would you like to save changes?"),
@@ -327,13 +289,9 @@ void mainView::quit() {
 }
 
 void mainView::setpwd() {
-  pwddlg d(*(lbusers->getCurrentUser()), this, "pwddlg");
+  pwddlg d(lbusers->getCurrentUser(), this, "pwddlg");
   if (d.exec() != 0)
-    changed = TRUE;
-}
-
-void mainView::help() {
-  kapp->invokeHelp();
+    changed = true;
 }
 
 void mainView::properties() {
@@ -358,62 +316,51 @@ void mainView::properties() {
   }
 }
 
-void mainView::groupSelected(int i) {
-  KGroup *tmpKG;
+void mainView::groupSelected() {
+  KGroup *tmpKG = lbgroups->getCurrentGroup();
 
-  tmpKG = kug->getGroups()[i];
-
-  if (tmpKG == NULL) {
-    printf("Null pointer tmpKG in mainView::groupSelected(%d)\n", i);
+  if (!tmpKG) {
+    printf("Null pointer tmpKG in mainView::groupSelected()\n");
     return;
   }
 
-  editGroup egdlg(*tmpKG);
+  editGroup egdlg(tmpKG);
 
   if (egdlg.exec() != 0)
-    changed = TRUE;
+    changed = true;
 }
 
-void mainView::userSelected(int i) {
+void mainView::userSelected() {
   KUser *tmpKU;
 
   tmpKU =  lbusers->getCurrentUser();
-  if (tmpKU == NULL) {
-    printf("Null pointer tmpKU in mainView::userSelected(%d)\n", i);
+  if (!tmpKU) 
     return;
-  }
 
 #ifdef _KU_QUOTA
   Quota *tmpQ = 0;
 
   if (is_quota != 0) {
     tmpQ = kug->getQuotas()[tmpKU->getUID()];
-    if (tmpQ == NULL) {
-      printf("Null pointer tmpQ in mainView::selected(%d)\n", i);
+    if (!tmpQ) {
+      printf("Null pointer tmpQ in mainView::selected()\n");
       return;
     }
   }
   
-  propdlg editUser(*tmpKU, *tmpQ, this, "userin");
+  propdlg editUser(tmpKU, tmpQ, this, "userin");
 #else
-  propdlg editUser(*tmpKU, this, "userin");
+  propdlg editUser(tmpKU, this, "userin");
 #endif
 
   if (editUser.exec() != 0) {
-    reloadUsers(lbusers->currentItem());
-    changed = TRUE;
+    changed = true;
   }
 }
 
-void mainView::resizeEvent (QResizeEvent *rse) {
-  QSize sz;
-
-  sz = rse->size();
-
-  kp->setGeometry(10, 10, sz.width()-20, sz.height()-20);
-}
-
 void mainView::grpadd() {
+  showPage(lbgroups);
+
   int gid;
 
   if ((gid = kug->getGroups().first_free()) == -1) {
@@ -431,35 +378,23 @@ void mainView::grpadd() {
   }
 
   kug->getGroups().add(tk);
-  reloadGroups(lbgroups->currentItem());
-  changed = TRUE;
+  lbgroups->insertItem(tk);
+  changed = true;
 }
 
 void mainView::grpedit() {
-  groupSelected(lbgroups->currentItem());
+  groupSelected();
 }
 
 void mainView::grpdel() {
-  if (KMessageBox::warningContinueCancel(0, i18n("Do you really want to delete group?"),
+  KGroup *group = lbgroups->getCurrentGroup();
+  if (KMessageBox::warningContinueCancel(0, i18n("Do you really want to delete the group '%1'?").arg(group->getName()),
                      QString::null, i18n("&Delete")) != KMessageBox::Continue)
     return;
 
-  uint i = 0;
-  bool islast = FALSE;
-
-  i = lbgroups->currentItem();
-  if (i == kug->getGroups().count()-1)
-    islast = TRUE;
-
-  kug->getGroups().del(lbgroups->getCurrentGroup());
-
-  prev = -1;
-
-  if (!islast)
-    reloadGroups(i);
-  else
-    reloadGroups(i-1);
-  changed = TRUE;
+  kug->getGroups().del(group);
+  lbgroups->removeItem(group);
+  changed = true;
 }
 
 #include "mainView.moc"

@@ -16,7 +16,6 @@
 #include <qdir.h>
 
 #include <kmsgbox.h>
-#include <kstring.h>
 
 #include "globals.h"
 #include "maindlg.h"
@@ -69,7 +68,7 @@ void addUser::ok() {
   newuid = tmp.toInt();
   
   if (users->lookup(newuid) != NULL) {
-    ksprintf(&tmp, i18n("User with UID %u already exists"), newuid);
+    tmp.sprintf(i18n("User with UID %u already exists"), newuid);
     KMsgBox::message(0, i18n("Message"), tmp, KMsgBox::STOP, i18n("OK"));
     return;
   }
@@ -104,12 +103,12 @@ bool addUser::checkHome() {
 
   if (r == 0)
     if (S_ISDIR(s.st_mode))
-      ksprintf(&tmp, i18n("Directory %s already exists (uid = %d, gid = %d)"), 
+      tmp.sprintf(i18n("Directory %s already exists (uid = %d, gid = %d)"), 
            (const char *)user->getp_dir(), s.st_uid, s.st_gid);
     else
-      ksprintf(&tmp, i18n("%s is not a directory") ,(const char *)user->getp_dir());
+      tmp.sprintf(i18n("%s is not a directory") ,(const char *)user->getp_dir());
   else
-    ksprintf(&tmp, "checkHome: stat: %s ", strerror(errno));
+    tmp.sprintf("checkHome: stat: %s ", strerror(errno));
   
   err->addMsg(tmp, STOP);
   err->display();
@@ -124,7 +123,7 @@ bool addUser::checkMailBox() {
   struct stat s;
   int r;
 
-  ksprintf(&mailboxpath, "%s/%s", MAIL_SPOOL_DIR,
+  mailboxpath.sprintf("%s/%s", MAIL_SPOOL_DIR,
            (const char *)user->getp_name());
   r = stat(mailboxpath, &s);
   
@@ -133,13 +132,13 @@ bool addUser::checkMailBox() {
 
   if (r == 0)
     if (S_ISREG(s.st_mode))
-      ksprintf(&tmp, i18n("Mailbox %s already exist (uid=%d)"),
+      tmp.sprintf(i18n("Mailbox %s already exist (uid=%d)"),
                (const char *)mailboxpath, s.st_uid);
     else
-      ksprintf(&tmp, i18n("%s exists but is not a regular file"),
+      tmp.sprintf(i18n("%s exists but is not a regular file"),
                (const char *)mailboxpath);
   else
-    ksprintf(&tmp, "checkMail: stat: %s ", strerror(errno));
+    tmp.sprintf("checkMail: stat: %s ", strerror(errno));
   
   err->addMsg(tmp, STOP);
   err->display();

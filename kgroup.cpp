@@ -11,8 +11,6 @@
 
 #include <qstring.h>
 
-#include <kstring.h>
-
 #include <kmsgbox.h>
 
 #include "maindlg.h"
@@ -170,7 +168,7 @@ bool KGroups::save() {
   }
 
   if ((grp = fopen(GROUP_FILE,"w")) == NULL) {
-    ksprintf(&tmp, i18n("Error opening %s for writing"), GROUP_FILE);
+    tmp.sprintf(i18n("Error opening %s for writing"), GROUP_FILE);
     err->addMsg(tmp, STOP);
     return (FALSE);
   }

@@ -10,7 +10,6 @@
 #include <ktoolbar.h>
 #include <kiconloader.h>
 #include <knewpanner.h>
-#include <kstring.h>
 
 #include <unistd.h>
 #include <signal.h>

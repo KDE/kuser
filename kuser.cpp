@@ -24,7 +24,6 @@
 #include <qdir.h>
 
 #include <kmsgbox.h>
-#include <kstring.h>
 
 #include "maindlg.h"
 #include "kuser.h"
@@ -385,7 +384,7 @@ bool KUsers::loadpwd() {
   QString tmp;
   FILE *fpwd = fopen(PASSWORD_FILE,"r");
   if(fpwd == NULL) {
-     ksprintf(&tmp, i18n("Error opening %s for reading"), PASSWORD_FILE);
+     tmp.sprintf(i18n("Error opening %s for reading"), PASSWORD_FILE);
      err->addMsg(tmp, STOP);
      return FALSE;
   }
@@ -453,7 +452,7 @@ bool KUsers::loadsdw() {
 
   while ((spw = getspent())) {     // read a shadow password structure
     if ((up = lookup(spw->sp_namp)) == NULL) {
-      ksprintf(&tmp, i18n("No /etc/passwd entry for %s.\nEntry will be removed at the next `Save'-operation."),
+      tmp.sprintf(i18n("No /etc/passwd entry for %s.\nEntry will be removed at the next `Save'-operation."),
                   spw->sp_namp);
       KMsgBox::message(0, i18n("Error"), tmp, KMsgBox::STOP);
       continue;
@@ -500,7 +499,7 @@ bool KUsers::savepwd() {
   }
 
   if ((passwd = fopen(PASSWORD_FILE,"w")) == NULL) {
-    ksprintf(&tmp, i18n("Error opening %s for writing"), PASSWORD_FILE);
+    tmp.sprintf(i18n("Error opening %s for writing"), PASSWORD_FILE);
     err->addMsg(tmp, STOP);
     return (FALSE);
   }
@@ -509,22 +508,22 @@ bool KUsers::savepwd() {
     KUser *user = u.at(i);
 
 #ifdef __FreeBSD__
-    ksprintf(&s, "%s:%s:%i:%i:%s:%i:%i:", (const char *)user->getp_name(),
+    s.sprintf("%s:%s:%i:%i:%s:%i:%i:", (const char *)user->getp_name(),
              (const char *)user->getp_pwd(), user->getp_uid(),
              user->getp_gid(), (const char *)user->getp_class(),
              user->getp_change(), user->getp_expire());
 
-    ksprintf(&s1, "%s,%s,%s,%s", (const char *)user->getp_fname(),
+    s1.sprintf("%s,%s,%s,%s", (const char *)user->getp_fname(),
               (const char *)user->getp_office(),
               (const char *)user->getp_ophone(),
               (const char *)user->getp_hphone());
 #else
 
-    ksprintf(&s, "%s:%s:%i:%i:",  (const char *)user->getp_name(),
+    s.sprintf("%s:%s:%i:%i:",  (const char *)user->getp_name(),
 		 (const char *)user->getp_pwd(), (const char *)user->getp_uid(),
 		 (const char *)user->getp_gid());
 
-    ksprintf(&s1, "%s,%s,%s,%s", (const char *)user->getp_fname(), (const char *)user->getp_office1()
+    s1.sprintf("%s,%s,%s,%s", (const char *)user->getp_fname(), (const char *)user->getp_office1()
 	       ,(const char *)user->getp_office2(), (const char *)user->getp_address());
 
 #endif
@@ -559,7 +558,7 @@ bool KUsers::savepwd() {
   // need to run a utility program to build /etc/passwd, /etc/pwd.db
   // and /etc/spwd.db from /etc/master.passwd
   if (system(PWMKDB) != 0) {
-     ksprintf(&tmp, i18n("Unable to build password database"));
+     tmp.sprintf(i18n("Unable to build password database"));
      err->addMsg(tmp, STOP);
      return (FALSE);
   }
@@ -586,7 +585,7 @@ bool KUsers::savesdw() {
   }
 
   if ((f = fopen(SHADOW_FILE, "w")) == NULL) {
-    ksprintf(&tmp, i18n("Error opening %s for writing"), SHADOW_FILE);
+    tmp.sprintf(i18n("Error opening %s for writing"), SHADOW_FILE);
     err->addMsg(tmp, STOP);
     return (FALSE);
   }
@@ -597,7 +596,7 @@ bool KUsers::savesdw() {
   for (uint index = 0; index < u.count(); index++) {
     up = u.at(index);
     if (!(const char *)up->gets_pwd()) {
-      ksprintf(&tmp, i18n("No shadow entry for %s."), (const char *)up->getp_name());
+      tmp.sprintf(i18n("No shadow entry for %s."), (const char *)up->getp_name());
       err->addMsg(tmp, STOP);
       continue;
     }
@@ -688,28 +687,28 @@ void KUser::createHome() {
 
   if (d.cd(getp_dir())) {
     QString tmp;
-    ksprintf(&tmp, i18n("Directory %s already exists"), (const char *)getp_dir());
+    tmp.sprintf(i18n("Directory %s already exists"), (const char *)getp_dir());
     err->addMsg(tmp, STOP);
     err->display();
   }
 
   if (mkdir((const char *)getp_dir(), 0700) != 0) {
     QString tmp;
-    ksprintf(&tmp, i18n("Cannot create home directory\nError: %s"), strerror(errno));
+    tmp.sprintf(i18n("Cannot create home directory\nError: %s"), strerror(errno));
     err->addMsg(tmp, STOP);
     err->display();
   }
 
   if (chown((const char *)getp_dir(), getp_uid(), getp_gid()) != 0) {
     QString tmp;
-    ksprintf(&tmp, i18n("Cannot change owner of home directory\nError: %s"), strerror(errno));
+    tmp.sprintf(i18n("Cannot change owner of home directory\nError: %s"), strerror(errno));
     err->addMsg(tmp, STOP);
     err->display();
   }
 
   if (chmod(getp_dir(), 0755) != 0) {
     QString tmp;
-    ksprintf(&tmp, i18n("Cannot change permissions on home directory\nError: %s"), strerror(errno));
+    tmp.sprintf(i18n("Cannot change permissions on home directory\nError: %s"), strerror(errno));
     err->addMsg(tmp, STOP);
     err->display();
   }
@@ -718,11 +717,11 @@ void KUser::createHome() {
 int KUser::createMailBox() {
   QString mailboxpath;
   int fd;
-  ksprintf(&mailboxpath, "%s/%s", MAIL_SPOOL_DIR, (const char *)p_name);
+  mailboxpath.sprintf("%s/%s", MAIL_SPOOL_DIR, (const char *)p_name);
   if((fd = open((const char *)mailboxpath, O_CREAT|O_EXCL|O_WRONLY,
                 S_IRUSR|S_IWUSR)) < 0) {
     QString tmp;
-    ksprintf(&tmp, "Cannot create %s: %s", (const char *)mailboxpath,
+    tmp.sprintf("Cannot create %s: %s", (const char *)mailboxpath,
              strerror(errno));
     err->addMsg(tmp, STOP);
     err->display();
@@ -730,7 +729,7 @@ int KUser::createMailBox() {
   }
   if(fchown(fd, getp_uid(), 0) < 0) {
     QString tmp;
-    ksprintf(&tmp, "Cannot chown %s: %s", (const char *)mailboxpath,
+    tmp.sprintf("Cannot chown %s: %s", (const char *)mailboxpath,
              strerror(errno));
     err->addMsg(tmp, STOP);
     err->display();
@@ -750,14 +749,14 @@ int KUser::copySkel() {
 
   if (!s.exists()) {
     QString tmp;
-    ksprintf(&tmp, i18n("Directory %s does not exist"), (const char *)s.dirName());    err->addMsg(tmp, STOP);
+    tmp.sprintf(i18n("Directory %s does not exist"), (const char *)s.dirName());    err->addMsg(tmp, STOP);
     err->display();
     return (-1);
   }
 
   if (!d.exists()) {
     QString tmp;
-    ksprintf(&tmp, i18n("Directory %s does not exist"), (const char *)d.dirName());    err->addMsg(tmp, STOP);
+    tmp.sprintf(i18n("Directory %s does not exist"), (const char *)d.dirName());    err->addMsg(tmp, STOP);
     err->display();
     return (-1);
   }
@@ -774,14 +773,14 @@ int KUser::copySkel() {
 
     if (chown(d.filePath(filename), p_uid, p_gid) != 0) {
       QString tmp;
-      ksprintf(&tmp, i18n("Cannot change owner of file %s\nError: %s"), (const char *)d.filePath(s[i]), strerror(errno));
+      tmp.sprintf(i18n("Cannot change owner of file %s\nError: %s"), (const char *)d.filePath(s[i]), strerror(errno));
       err->addMsg(tmp, STOP);
       err->display();
     }
 
     if (chmod(d.filePath(filename), 0644) != 0) {
       QString tmp;
-      ksprintf(&tmp, i18n("Cannot change permissions on file %s\nError: %s"), (const char *)d.filePath(s[i]), strerror(errno));
+      tmp.sprintf(i18n("Cannot change permissions on file %s\nError: %s"), (const char *)d.filePath(s[i]), strerror(errno));
       err->addMsg(tmp, STOP);
       err->display();
     }
@@ -801,13 +800,13 @@ int KUser::removeHome() {
   if (!stat((const char *)p_dir, &sb))
     if (S_ISDIR(sb.st_mode) && sb.st_uid == p_uid) {
 #ifdef MINIX
-      ksprintf(&command, "/usr/bin/rm -rf -- %s", (const char *)p_dir);
+      command.sprintf("/usr/bin/rm -rf -- %s", (const char *)p_dir);
 #else
-      ksprintf(&command, "/bin/rm -rf -- %s", (const char *)p_dir);
+      command.sprintf("/bin/rm -rf -- %s", (const char *)p_dir);
 #endif
     if (system((const char *)command) != 0) {
       QString tmp;
-      ksprintf(&tmp, i18n("Cannot remove home directory %s\nError: %s"),
+      tmp.sprintf(i18n("Cannot remove home directory %s\nError: %s"),
                (const char *)command, strerror(errno));
       err->addMsg(tmp, STOP);
       err->display();
@@ -823,14 +822,14 @@ int KUser::removeCrontabs() {
   QString file;
   QString command;
 
-  ksprintf(&file, "/var/cron/tabs/%s",
+  file.sprintf("/var/cron/tabs/%s",
            (const char*)p_name);
   if (access((const char *)file, F_OK) == 0) {
-  	ksprintf(&command, "crontab -u %s -r",
+  	command.sprintf("crontab -u %s -r",
              (const char*)p_name);
     if (system((const char *)command) != 0) {
       QString tmp;
-      ksprintf(&tmp, i18n("Cannot remove crontab %s\nError: %s"),
+      tmp.sprintf(i18n("Cannot remove crontab %s\nError: %s"),
                (const char *)command, strerror(errno));
       err->addMsg(tmp, STOP);
       err->display();
@@ -843,11 +842,11 @@ int KUser::removeCrontabs() {
 int KUser::removeMailBox() {
   QString file;
 
-  ksprintf(&file, "%s/%s", MAIL_SPOOL_DIR,
+  file.sprintf("%s/%s", MAIL_SPOOL_DIR,
            (const char*)p_name);
   if (remove((const char *)file) != 0) {
     QString tmp;
-    ksprintf(&tmp, i18n("Cannot remove mailbox %s\nError: %s"),
+    tmp.sprintf(i18n("Cannot remove mailbox %s\nError: %s"),
              (const char *)file, strerror(errno));
     err->addMsg(tmp, STOP);
     err->display();

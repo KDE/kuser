@@ -1,6 +1,6 @@
 #include "globals.h"
 #include <kmsgbox.h>
-#include <kstring.h>
+#include <qstring.h>
 #include <kbuttonbox.h>
 #include <qlayout.h>
 #include <qvalidator.h>
@@ -95,13 +95,13 @@ void grpnamedlg::ok()
   s = legid->text();
 
   if (groups->lookup(legrpname->text()) != NULL) {
-    ksprintf(&tmp, i18n("Group with name %s already exists."), legrpname->text());
+    tmp.sprintf(i18n("Group with name %s already exists."), legrpname->text().data());
     KMsgBox::message(0, i18n("Error"), tmp, KMsgBox::STOP);
     return;
   }
   
   if (groups->lookup(s.toInt()) != NULL) {
-    ksprintf(&tmp, i18n("Group with gid %d already exists."), s.toInt());
+    tmp.sprintf(i18n("Group with gid %d already exists."), s.toInt());
     KMsgBox::message(0, i18n("Error"), tmp, KMsgBox::STOP);
     return;
   }

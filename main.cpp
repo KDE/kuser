@@ -35,7 +35,7 @@
 #include "misc.h"
 #include "mainWidget.h"
 
-static const char *description =
+static const char description[] =
 	I18N_NOOP("KDE User Editor");
 
 char tmp[1024];

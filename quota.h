@@ -47,11 +47,19 @@
 #  define _KU_UFS_QUOTA
 #else
 #  ifdef HAVE_LINUX_QUOTA_H
+#  include <linux/quota.h>
+#  ifndef QUOTACTL_IN_LIBC
+#    include <syscall.h>
+
+int quotactl(int cmd, const char * special, int id, caddr_t addr) {
+  return syscall(SYS_quotactl, cmd, special, id, addr);
+}
+
+#  endif
 #  if defined __GLIBC__ && __GLIBC__ >= 2
      typedef unsigned int __u32;
 #    define MNTTYPE_EXT2 "ext2"
 #  endif
-#  include <linux/quota.h>
 #  define CORRECT_FSTYPE(type) (!strcmp(type,MNTTYPE_EXT2))
 #  define _KU_QUOTAFILENAME "quota.user"
 #  define _KU_EXT2_QUOTA

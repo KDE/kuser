@@ -25,15 +25,17 @@ noinst_HEADERS	=       mainWidget.h editGroup.h editGroupData.h kuservw.h kheade
 			propdlg.h  mnt.h quota.h globals.h misc.h usernamedlg.h pwddlg.h grpnamedlg.h\
 			kerror.h addUser.h
 
-DISTFILES 	=	README AUTHORS THANKS
+#DISTFILES 	=	README AUTHORS THANKS
 DISTCLEANFILES	= 	$(BUILTSOURCE)
 EDITABLE	=	$(DISTFILES) $(noinst_HEADERS) $(kuser_SOURCES) Makefile.am
+
+EXTRA_DIST = README AUTHORS THANKS kuser.kdelnk
 
 # the programs get installed in $(prefix)/bin
 bin_PROGRAMS = kuser
 
 # the subdirs we have. Better would be to include pic here too
-SUBDIRS = doc pic toolbar icon mini-icon
+SUBDIRS = doc pic toolbar icon mini-icon lsm
 
 # override the permissions
 INSTALL_PROGRAMM = ${INSTALL} -m 0750 

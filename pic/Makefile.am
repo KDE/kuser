@@ -6,3 +6,4 @@ data_DATA = group.xpm user.xpm
 # you have given the datas in data_DATA
 datadir = $(kde_datadir)/kuser/pics/
 
+EXTRA_DIST = $(data_DATA)

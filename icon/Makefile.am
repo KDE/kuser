@@ -6,3 +6,5 @@ data_DATA = kuser.xpm
 # you have given the datas in data_DATA
 datadir = $(kde_icondir)
 
+EXTRA_DIST = $(data_DATA)
+

@@ -6,3 +6,5 @@ data_DATA = index.html bugnet-member.gif
 # you have given the datas in data_DATA
 datadir = $(kde_htmldir)/es/kuser
 
+
+EXTRA_DIST = $(data_DATA)

@@ -111,7 +111,7 @@ public:
   void setftime(long data);
   void setitime(long data);
 
-protected:
+public:
   long
     fcur,
     fsoft,

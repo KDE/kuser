@@ -26,7 +26,7 @@ public:
   void setopts(const char *data);
   void setquotafilename(const char *data);
 
-protected:
+public:
   QString fsname;
   QString dir;
   QString type;

@@ -132,7 +132,11 @@ KGroups::KGroups() {
   endgrent();
 }
 
+#ifdef _PATH_GROUP
+#define GROUP_FILE _PATH_GROUP
+#else
 #define GROUP_FILE "/etc/group"
+#endif
 #define GROUP_FILE_MASK S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH
 
 bool KGroups::save() {

@@ -46,7 +46,7 @@ KGroup *KGroupRow::getData() {
 
 KGroupTable::KGroupTable(QWidget *parent, const char *name) : KRowTable(SelectRow, parent, name)
 {
-  QString pixdir = kapp->kdedir() + QString("/share/apps/kuser/pics/");
+  QString pixdir = kapp->kde_datadir() + QString("/kuser/pics/");
   pmGroup = new QPixmap(pixdir + "group.xpm");
 
   setCellHeight( max( fontMetrics().lineSpacing(), pmGroup->height()) );

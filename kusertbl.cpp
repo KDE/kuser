@@ -43,7 +43,7 @@ KUser *KUserRow::getData() {
 
 KUserTable::KUserTable(QWidget *parent, const char *name) : KRowTable(SelectRow, parent, name)
 {
-  QString pixdir = kapp->kdedir() + QString("/share/apps/kuser/pics/");
+  QString pixdir = kapp->kde_datadir() + QString("/kuser/pics/");
   pmUser = new QPixmap(pixdir + "user.xpm");
 
   setCellHeight( max( fontMetrics().lineSpacing(), pmUser->height()) );

@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 #include <qevent.h>
-#include <qlist.h>
+#include <qptrlist.h>
 #include <qpushbutton.h>
 #include <qpixmap.h>
 #include <qtabwidget.h>
@@ -26,26 +26,26 @@ public:
 
 public slots:
   void slotTabChanged();
- 
+
   void save();
   void properties();
   void userSelected();
   void groupSelected();
-  
+
   void useradd();
   void useredit();
   void userdel();
-  
+
   void grpadd();
   void grpedit();
   void grpdel();
-  
+
   void setpwd();
 
 signals:
   void userSelected(bool);
   void groupSelected(bool);
-  
+
 protected:
   void reloadUsers();
   void reloadGroups();

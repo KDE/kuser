@@ -1,7 +1,7 @@
 #ifndef _KU_ADDUSER_H_
 #define _KU_ADDUSER_H_
 
-#include <qchkbox.h>
+#include <qcheckbox.h>
 #include "propdlg.h"
 
 class addUser: public propdlg {
@@ -13,7 +13,7 @@ public:
   addUser(KUser *AUser, QWidget *parent = 0, const char *name = 0, int isprep = false);
 #endif
 
-  void setCreateHomeDir(bool b) 
+  void setCreateHomeDir(bool b)
      { createhome->setChecked(b); }
 
   void setCopySkel(bool b)

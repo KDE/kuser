@@ -963,7 +963,7 @@ void KUsers::del(KUser *au) {
 int KUser::createHome() {
 
   if(p_dir.isNull() || p_dir.isEmpty()) {
-    err->addMsg(i18n("Cannot create Home directory for %1, is null or empty\n").arg(p_name));
+    err->addMsg(i18n("Cannot create home directory for %1: it is null or empty\n").arg(p_name));
     err->display();
     return(0);
   }

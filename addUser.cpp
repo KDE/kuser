@@ -23,16 +23,19 @@
 #include "addUser.moc"
 
 #ifdef _KU_QUOTA
-addUser::addUser(KUser *auser, Quota *aquota, QWidget *parent = 0, const char *name = 0, int isprep = false) :
+addUser::addUser(KUser *auser, Quota *aquota, QWidget *parent, const char *name, int isprep) :
   propdlg(auser, aquota, parent, name, isprep) {
 
   createhome = new QCheckBox(w1, "createHome");
   createhome->setText(i18n("Create home directory"));
   createhome->setGeometry(200, 70, 200, 30);
+  createhome->setChecked(true);
+  connect(createhome, SIGNAL(toggled(bool)), this, SLOT(createHomeChecked(bool)));
 
   copyskel = new QCheckBox(w1, "copySkel");
   copyskel->setText(i18n("Copy skeleton"));
   copyskel->setGeometry(200, 110, 200, 30);
+  copyskel->setEnabled(FALSE);
 
   usePrivateGroup = new QCheckBox(w1, "usePrivateGroup");
   usePrivateGroup->setText(i18n("Use Private Group"));
@@ -46,19 +49,32 @@ addUser::addUser(KUser *auser, QWidget *parent = 0, const char *name = 0, int is
   createhome = new QCheckBox(w1, "createHome");
   createhome->setText(i18n("Create home directory"));
   createhome->setGeometry(200, 70, 200, 30);
+  createhome->setChecked(true);
+  connect(createhome, SIGNAL(toggled(bool)), this, SLOT(createHomeChecked(bool)));
 
   copyskel = new QCheckBox(w1, "copySkel");
   copyskel->setText(i18n("Copy skeleton"));
   copyskel->setGeometry(200, 110, 200, 30);
+  copyskel->setEnabled(FALSE);
 
   usePrivateGroup = new QCheckBox(w1, "usePrivateGroup");
   usePrivateGroup->setText(i18n("Use Private Group"));
   usePrivateGroup->setGeometry(200, 150, 200, 30);
+  connect(usePrivateGroup, SIGNAL(toggled(bool)), this, SLOT(usePrivateGroupChecked(bool)));
 }
 #endif
 
 void addUser::setUsePrivateGroup(bool data) {
   usePrivateGroup->setChecked(data);
+}
+
+void addUser::setCreateHomeDir(bool data) {
+  createhome->setChecked(data);
+  copyskel->setEnabled(data);
+}
+
+void addUser::setCopySkel(bool data) {
+  copyskel->setChecked(data);
 }
 
 void addUser::ok() {
@@ -89,6 +105,10 @@ void addUser::ok() {
 
 void addUser::usePrivateGroupChecked(bool data) {
   cbpgrp->setEnabled(!data);
+}
+
+void addUser::createHomeChecked(bool data) {
+  copyskel->setEnabled(data);
 }
 
 bool addUser::checkHome() {

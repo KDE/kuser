@@ -13,10 +13,15 @@ public:
   addUser(KUser *auser, QWidget *parent = 0, const char *name = 0, int isprep = false);
 #endif
   void setUsePrivateGroup(bool data);
+  void setCreateHomeDir(bool data);
+  void setCopySkel(bool data);
 
 protected slots:
   virtual void ok();
+
   virtual void usePrivateGroupChecked(bool data);
+  virtual void createHomeChecked(bool data);
+
 protected:
   bool checkHome();
   bool checkMailBox();

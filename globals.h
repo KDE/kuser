@@ -3,13 +3,13 @@
 
 #define _KU_VERSION "0.4"
 
-#ifdef HAVE_SYS_PARAM_H
-#include <sys/param.h>
-#endif
-
 #include "../config.h"
 #include <kconfig.h>
 #include "kerror.h"
+
+#ifdef HAVE_SYS_PARAM_H
+#include <sys/param.h>
+#endif
 
 extern int is_quota;
 extern int is_shadow;
@@ -18,12 +18,16 @@ extern int is_shadow;
 
 #ifdef __FreeBSD__
 #undef _KU_SHADOW
-#define PASSWORD_FILE "/etc/master.passwd"
+#include <pwd.h>
+#include <paths.h>
+#define SHELL_FILE _PATH_SHELLS
+#define PASSWORD_FILE _PATH_MASTERPASSWD
 #define PASSWORD_FILE_MASK S_IRUSR | S_IWUSR
-#define PWMKDB "/usr/sbin/pwd_mkdb -p /etc/master.passwd"
+#define PWMKDB _PATH_PWD_MKDB" -p "PASSWORD_FILE
 #define SKEL_DIR "/usr/share/skel"
 #define SKEL_FILE_PREFIX "dot"
 #else
+#define SHELL_FILE "/etc/shells"
 #define PASSWORD_FILE "/etc/passwd"
 #define PASSWORD_FILE_MASK S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH
 #define SKEL_DIR "/etc/skel"

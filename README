@@ -1,0 +1,10 @@
+KUser is rewriten XUser which was writen in XForms.
+It supports Solaris & Linux.
+
+It's prerelease only it's rather untested.
+
+ATTENTION: BACKUP ALL OF YOUR DATA. THIS PROGRAM MAY DESTROY
+IT. BE CAREFUL.
+
+If you found a bug please contact
+Denis Yu. Pershin <dyp@inetlab.com>

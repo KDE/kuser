@@ -337,7 +337,6 @@ void maindlg::properties() {
 
 void maindlg::selected(int i) {
   propdlg *editUser;
-
   editUser = new propdlg(users.at(i), this, "userin");
   if (editUser->exec() != 0) {
     highlighted(list->currentItem());

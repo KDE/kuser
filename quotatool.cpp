@@ -187,7 +187,7 @@ void setquota(long int id, QList<Quota> *q)
 #endif
 
 #ifdef _KU_EXT2_QUOTA
-printf("setquota: id = %il\n", id);
+  int dd = 0;
   qcmd = QCMD(Q_SETQUOTA, USRQUOTA);
   for (uint i=0; i<mounts.count(); i++) {
     dq.dqb_curblocks  = btodb(q->at(i)->fcur*1024);
@@ -196,11 +196,13 @@ printf("setquota: id = %il\n", id);
     dq.dqb_curinodes  = q->at(i)->icur;
     dq.dqb_isoftlimit = q->at(i)->isoft;
     dq.dqb_ihardlimit = q->at(i)->ihard;
-    dq.dqb_btime = MX_DQ_TIME;
-    dq.dqb_itime = MX_IQ_TIME;
+    dq.dqb_btime = MAX_DQ_TIME;
+    dq.dqb_itime = MAX_IQ_TIME;
 
-    if (quotactl(qcmd, (const char *)mounts.at(i)->fsname, id, (caddr_t) &dq) != 0)
+    if ((dd =quotactl(qcmd, (const char *)mounts.at(i)->fsname, id, (caddr_t) &dq)) != 0) {
+      printf("Quotactl returned: %d\n", dd);
       continue;
+    }
     /*
     if ((fd = open((const char *)mounts.at(i)->quotafilename, O_WRONLY)) < 0) {
       sprintf(s, _("Error opening %s"), (const char *)mounts.at(i)->quotafilename);

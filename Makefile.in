@@ -28,7 +28,7 @@ SRCMETA =       kdatectl.moc maindlg.moc propdlg.moc usernamedlg.moc pwddlg.moc 
 HEADERS =       kdatectl.h kuser.h maindlg.h   propdlg.h  mnt.h quotatool.h sdwtool.h pwdtool.h includes.h misc.h usernamedlg.h pwddlg.h mrqpasswdlined.h
 OBJECTS =	kdatectl.o kuser.o main.o maindlg.o mnt.o propdlg.o   quotatool.o pwdtool.o sdwtool.o misc.o usernamedlg.o pwddlg.o mrqpasswdlined.o
 TARGET	=	kuser
-EDITABLE =	$(POFILES) $(HTMLFILES) $(SOURCES) $(HEADERS) Makefile.in
+EDITABLE =	$(POFILES) $(HTMLFILES) $(SOURCES) $(HEADERS) README Makefile.in
 
 # Where to install binaries
 PREFIX	=	@prefix@

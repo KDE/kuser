@@ -312,6 +312,7 @@ void propdlg::mntsel(int index) {
 
 void propdlg::saveq() {
   Quota *tmpq = user->quota.at(chquota);
+printf("chquota = %d\n", chquota);
 
   tmpq->fhard = atol(leqfh->text());
   tmpq->fsoft = atol(leqfs->text());

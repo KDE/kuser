@@ -196,35 +196,37 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
     leslstchg = addLabel(w2, "leslstchg", 140, 30, 70, 20, buf);
     l16 = addLabel(w2, "ml16", 10, 30, 50, 20, i18n("Last password change"));
 
-    lesmin = new KDateCtl(w2, "lesmin", i18n("Password change not allowed"),
-               i18n("Date after which password change\nis allowed"),
+    lesmin = new KDateCtl(w2, "lesmin", i18n("Password change is not allowed"),
+               i18n("Date before which password may not\nbe changed"),
                   user->getLastChange()+user->getMin(),
                   user->getLastChange(), 10, 70);
     QObject::connect(lesmin, SIGNAL(textChanged()), this, SLOT(changed()));
 
     lesmax = new KDateCtl(w2, "lesmax", i18n("Password change not required"),
-                          i18n("Date after which password change\nis required"),
+                          i18n("Date after which password must\nbe changed"),
                           user->getLastChange()+user->getMax(),
                           user->getLastChange(), 10, 130);
     QObject::connect(lesmax, SIGNAL(textChanged()), this, SLOT(changed()));
 
 
-    leswarn = new KDateCtl(w2, "leswarn", i18n("User will not be warned"),
-                           i18n("Date after which user will be warned\nabout pending password expiration"),
+    leswarn = new KDateCtl(w2, "leswarn", i18n("No warning will be given"),
+                           i18n("Date after which warning of pending\n\
+password expiration is given"),
                            user->getLastChange()+user->getWarn(),
                            user->getLastChange(), 10, 190);
     QObject::connect(leswarn, SIGNAL(textChanged()), this, SLOT(changed()));
 
-    lesinact = new KDateCtl(w2, "lesinact", i18n("Account is active when created"),
-                            i18n("Date when account becomes active"),
+    lesinact = new KDateCtl(w2, "lesinact", i18n("Account will remain enabled"),
+                            i18n("Date when account will be disabled\n\
+if password has expired"),
                             user->getLastChange()+user->getInactive(),
                             user->getLastChange(), 10, 250);
     QObject::connect(lesinact, SIGNAL(textChanged()), this, SLOT(changed()));
 
     lesexpire = new KDateCtl(w2, "lesexpire", i18n("Account never expires"),
                              i18n("Date when account expires"),
-                             user->getLastChange()+user->getExpire(),
-                             user->getLastChange(), 10, 310);
+                             user->getExpire(),
+                             0, 10, 310);
     QObject::connect(lesexpire, SIGNAL(textChanged()), this, SLOT(changed()));
 
     tw->addTab(w2, i18n("Extended"));
@@ -504,7 +506,7 @@ void propdlg::save() {
     user->setMax(lesmax->getDate()-user->getLastChange());
     user->setWarn(leswarn->getDate()-user->getLastChange());
     user->setInactive(lesinact->getDate()-user->getLastChange());
-    user->setExpire(lesexpire->getDate()-user->getLastChange());
+    user->setExpire(lesexpire->getDate());
     user->setLastChange(today());
   }
 #endif

@@ -129,7 +129,7 @@ public:
   QuotaMnt *getQuotaMnt(uint mntnum);
   uint getMountsNumber();
   unsigned int getUid();
-  void save();
+  bool save();
 protected:
   unsigned int uid;
   QList<QuotaMnt> q;
@@ -144,7 +144,7 @@ public:
   void addQuota(unsigned int uid);
   void addQuota(Quota *aq);
   void delQuota(unsigned int uid);
-  void save();
+  bool save();
  protected:
   QIntDict<Quota> q;
 };

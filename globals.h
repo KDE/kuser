@@ -1,7 +1,7 @@
 #ifndef _KU_GLOBALS_H_
 #define _KU_GLOBALS_H_
 
-#define _KU_VERSION "0.1"
+#define _KU_VERSION "0.3"
 
 #ifdef __FreeBSD__
 #undef _KU_SHADOW
@@ -9,6 +9,7 @@
 
 #include "../config.h"
 #include <kconfig.h>
+#include "kerror.h"
 
 extern int is_quota;
 extern int is_shadow;
@@ -20,6 +21,7 @@ extern int is_shadow;
 
 extern char picspath[200];
 extern KConfig *config;
+extern KError *err;
 //extern bool changed;
 
 #ifdef _KU_SHADOW

@@ -177,9 +177,15 @@ void mainDlg::useradd() {
   Quota *tq;
 #endif // _KU_QUOTA
 
-  tk = new KUser();
+  int uid;
 
-  tk->setp_uid(u->first_free());
+  if ((uid = u->first_free()) == -1) {
+    err->display();
+    return;
+  }
+
+  tk = new KUser();
+  tk->setp_uid(uid);
 
 #ifdef _KU_QUOTA
   tq = new Quota(tk->getp_uid(), FALSE);
@@ -244,11 +250,15 @@ void mainDlg::quit() {
                       _("Would you like to save changes ?"),
   		      KMsgBox::INFORMATION,
 		      _("Save"), _("Discard changes")) == 1) {
-      u->save();
-      g->save();
+      if (!u->save())
+        err->display();
+
+      if (!g->save())
+        err->display();
 #ifdef _KU_QUOTA
       if (is_quota)
-        q->save();
+        if (!q->save())
+          err->display();
 #endif
     }
 
@@ -270,7 +280,7 @@ void mainDlg::setpwd() {
 }
 
 void mainDlg::help() {
-	kapp->invokeHTMLHelp(0,0);
+  kapp->invokeHTMLHelp(0,0);
 }
 
 void mainDlg::properties() {
@@ -438,9 +448,16 @@ void mainDlg::resizeEvent (QResizeEvent *rse) {
 
 void mainDlg::grpadd() {
   grpnamedlg *gd;
+  int gid;
   KGroup *tk;
 
+  if ((gid = g->first_free()) == -1) {
+    err->display();
+    return;
+  }
+
   tk = new KGroup();
+  tk->setgid(gid);
   
   gd = new grpnamedlg(tk, this);
   if (gd->exec() == 0) {

@@ -134,7 +134,7 @@ KGroups::KGroups() {
 #define GROUP_FILE "/etc/group"
 #define GROUP_FILE_MASK S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH
 
-void KGroups::save() {
+bool KGroups::save() {
   FILE *grp;
   QString tmpS;
   QString tmpN;
@@ -147,7 +147,8 @@ void KGroups::save() {
 
   if ((grp = fopen(GROUP_FILE,"w")) == NULL) {
     sprintf(other, _("Error opening %s for writing"), GROUP_FILE);
-    KMsgBox::message(0, _("Error"), other, KMsgBox::STOP);
+    err->addMsg(other, STOP);
+    return (FALSE);
   }
 
   for (unsigned int i=0; i<g.count(); i++) {
@@ -165,6 +166,7 @@ void KGroups::save() {
   fclose(grp);
 
   chmod(GROUP_FILE, GROUP_FILE_MASK);
+  return (TRUE);
 }
 
 KGroup *KGroups::group_lookup(const char *name) {
@@ -181,7 +183,7 @@ KGroup *KGroups::group_lookup(unsigned int gid) {
   return (NULL);
 }
 
-unsigned int KGroups::first_free() {
+int KGroups::first_free() {
   uint i = 0;
   uint t = 1001;
 
@@ -193,7 +195,7 @@ unsigned int KGroups::first_free() {
       return (t);
   }
 
-  KMsgBox::message(0, _("Error"), _("You have more than 65534 groups!?!? You have ran out of gid space!"), KMsgBox::STOP);
+  err->addMsg(_("You have more than 65534 groups!?!? You have ran out of gid space!"), STOP);
   return (-1);
 }
 

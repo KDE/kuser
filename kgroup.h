@@ -45,8 +45,8 @@ public:
   ~KGroups();
   KGroup *group_lookup(const char *name);
   KGroup *group_lookup(unsigned int gid);
-  unsigned int first_free();
-  void save();
+  int first_free();
+  bool save();
   KGroup *first();
   KGroup *next();
   uint getGroupsNumber();

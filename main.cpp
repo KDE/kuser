@@ -1,6 +1,7 @@
 #include <kmsgbox.h>
 #include <kiconloader.h>
 #include <kapp.h>
+#include "kerror.h"
 #include <kconfig.h>
 #include <ktopwidget.h>
 #include <qfont.h>
@@ -11,6 +12,7 @@
 
 char tmp[1024];
 KConfig *config;
+KError *err;
 bool changed = false;
 
 #ifdef _KU_QUOTA
@@ -27,10 +29,13 @@ int is_shadow = 0;
 
 void initmain() {
   config = kapp->getConfig();
+  err = new KError();
 }
 
 void donemain() {
+  delete err;
 }
+
 mainDlg *md = NULL;
 
 int main( int argc, char **argv )

@@ -293,9 +293,9 @@ uint Quota::getMountsNumber() {
   return (q.count());
 }
 
-void Quota::save() {
+bool Quota::save() {
   if (is_quota == 0)
-    return;
+    return (TRUE);
 
   struct dqblk dq;
 
@@ -413,6 +413,8 @@ void Quota::save() {
     }
   }
 #endif
+
+  return (TRUE);
 }
 
 unsigned int Quota::getUid() {
@@ -453,14 +455,15 @@ void Quotas::delQuota(unsigned int uid) {
   q.remove(uid);
 }
 
-void Quotas::save() {
+bool Quotas::save() {
   QIntDictIterator<Quota> qi(q);
 
   while (qi.current()) {
-    qi.current()->save();
+    if (!qi.current()->save())
+      return (FALSE);
     ++qi;
   }
-
+  return (TRUE);
 }
 
 #endif // _KU_QUOTA

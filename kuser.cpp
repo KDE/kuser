@@ -241,9 +241,14 @@ void KUsers::fillGecos(KUser *user, const char *gecos) {
   }
 }
 
-void KUsers::load() {
-  loadpwd();
-  loadsdw();
+bool KUsers::load() {
+  if (!loadpwd())
+    return (FALSE);
+
+  if (!loadsdw())
+    return (FALSE);
+
+  return (TRUE);
 }
 
 // Load passwd file
@@ -323,9 +328,13 @@ bool KUsers::loadsdw() {
 #endif // _KU_SHADOW
 }
 
-void KUsers::save() {
-  savepwd();
-  savesdw();
+bool KUsers::save() {
+  if (!savepwd())
+    return (FALSE);
+  if (!savesdw())
+    return (FALSE);
+
+  return (TRUE);
 }
 
 // Save password file
@@ -344,7 +353,7 @@ bool KUsers::savepwd() {
 
   if ((passwd = fopen(PASSWORD_FILE,"w")) == NULL) {
     sprintf(other, _("Error opening %s for writing"), PASSWORD_FILE);
-    KMsgBox::message(0, _("Error"), other, KMsgBox::STOP);
+    err->addMsg(other, STOP);
     return (FALSE);
   }
 
@@ -357,11 +366,11 @@ bool KUsers::savepwd() {
     s1.sprintf("%s,%s,%s,%s", (const char *)user->getp_fname(), (const char *)user->getp_office1()
 	       ,(const char *)user->getp_office2(), (const char *)user->getp_address());
 
-    for (int i=(s1.length()-1); i>=0; i--) {
-      if (s1[i] != ',')
+    for (int j=(s1.length()-1); j>=0; j--) {
+      if (s1[j] != ',')
 	break;
 
-      s1.truncate(i);
+      s1.truncate(j);
     }
 
     s+=s1+":"+user->getp_dir()+":"+user->getp_shell()+"\n";
@@ -392,7 +401,7 @@ bool KUsers::savesdw() {
 
     if ((f = fopen(SHADOW_FILE, "w")) == NULL) {
       tmp.sprintf(_("Error opening %s for writing"), SHADOW_FILE);
-      KMsgBox::message(0, _("Error"), (const char *)tmp, KMsgBox::STOP);
+      err->addMsg((const char *)tmp, STOP);
       return (FALSE);
     }
 
@@ -403,7 +412,7 @@ bool KUsers::savesdw() {
       up = u.at(index);
       if (!(const char *)up->gets_pwd()) {
         tmp.sprintf(_("No shadow entry for %s."), (const char *)up->getp_name());
-        KMsgBox::message(0, _("Error"), tmp, KMsgBox::STOP);
+        err->addMsg(tmp, STOP);
 	continue;
       }
 
@@ -444,7 +453,7 @@ KUser *KUsers::user_lookup(unsigned int uid) {
   return (NULL);
 }
 
-unsigned int KUsers::first_free() {
+int KUsers::first_free() {
   uint i = 0;
   uint t = 1001;
 
@@ -457,7 +466,7 @@ unsigned int KUsers::first_free() {
     i = 0;
   }
 
-  KMsgBox::message(0, _("Error"), _("You have more than 65534 users!?!? You have ran out of uid space!"), KMsgBox::STOP);
+  err->addMsg(_("You have more than 65534 users!?!? You have ran out of uid space!"), STOP);
   return (-1);
 }
 

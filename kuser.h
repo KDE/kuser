@@ -92,11 +92,11 @@ public:
   ~KUsers();
   KUser *user_lookup(const char *name);
   KUser *user_lookup(unsigned int uid);
-  unsigned int first_free();
+  int first_free();
 
-  void load();
+  bool load();
 
-  void save();
+  bool save();
 
   KUser *first();
   KUser *next();

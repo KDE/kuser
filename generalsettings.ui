@@ -43,6 +43,11 @@
                             <string>LDAP</string>
                         </property>
                     </item>
+                    <item>
+                        <property name="text">
+                            <string>System</string>
+                        </property>
+                    </item>
                     <property name="name">
                         <cstring>kcfg_source</cstring>
                     </property>

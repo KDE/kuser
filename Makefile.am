@@ -15,7 +15,8 @@ kuser_SOURCES	=	\
 	propdlg.cpp misc.cpp pwddlg.cpp \
 	addUser.cpp editDefaults.cpp \
 	kglobal.cpp sid.cpp\
-	kuserfiles.cpp kgroupfiles.cpp kuserldap.cpp kgroupldap.cpp selectconn.cpp\
+	kuserfiles.cpp kgroupfiles.cpp kuserldap.cpp kgroupldap.cpp \
+	kusersystem.cpp kgroupsystem.cpp selectconn.cpp\
 	sha1.cpp md4.cpp kuserprefs.kcfgc \
 	filessettings.ui generalsettings.ui ldapsettings.ui passwordpolicy.ui
 
@@ -27,8 +28,8 @@ noinst_HEADERS	=	\
 	kuser.h mainView.h kgroup.h delUser.h \
 	kgroupvw.h propdlg.h globals.h misc.h \
 	pwddlg.h addUser.h \
-	editDefaults.h selectconn.h sha1.h md4.h sid.h\
-	kglobal_.h kuserfiles.h kgroupfiles.h kuserldap.h kgroupldap.h
+	editDefaults.h selectconn.h sha1.h md4.h sid.h kglobal_.h \
+	kusersystem.h kgroupsystem.h kuserfiles.h kgroupfiles.h kuserldap.h kgroupldap.h
 
 kde_kcfg_DATA = kuser.kcfg
 

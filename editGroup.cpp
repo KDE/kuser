@@ -43,6 +43,7 @@ editGroup::editGroup(KGroup *akg, bool samba, bool add,
   mSamba = samba;
   mOldName = kg->getName();
   SID sid = kg->getSID();
+  ro = kug->getGroups().getCaps() & KGroups::Cap_ReadOnly;
   
   RID rid;
   rid.rid = 512; rid.name = i18n("Domain Admins"); rid.desc = i18n("Admins"); mRids.append( rid );
@@ -61,6 +62,7 @@ editGroup::editGroup(KGroup *akg, bool samba, bool add,
   legid->setText(QString::fromLatin1("%1").arg(kg->getGID()));
   legid->setValidator( new QIntValidator(this) );
   legid->setEnabled( mAdd );
+  legid->setReadOnly( ro );
   lb->setBuddy( legid );
   layout->addWidget( lb, 0, 0 );
   layout->addMultiCellWidget( legid, 0, 0, 1, 2 );
@@ -69,7 +71,7 @@ editGroup::editGroup(KGroup *akg, bool samba, bool add,
     lb = new QLabel( page );
     lb->setText(i18n("Group rid:"));
     lerid = new KComboBox( page );
-    lerid->setEditable( true );
+    lerid->setEditable( !ro );
     QValueList<RID>::Iterator it;
     for ( it = mRids.begin(); it != mRids.end(); ++it ) {
       lerid->insertItem( QString::number( (*it).rid ) + " - " + (*it).name );
@@ -91,6 +93,7 @@ editGroup::editGroup(KGroup *akg, bool samba, bool add,
   // ensure it fits at least 20 characters
   legrpname->setText(QString::fromLatin1("XXXXXXXXXXXXXXXXXXX"));
   legrpname->setText( kg->getName() );
+  legrpname->setReadOnly( ro );
   legrpname->setFocus();
   lb->setBuddy( legrpname );
   layout->addWidget( lb, 2, 0 );
@@ -101,6 +104,7 @@ editGroup::editGroup(KGroup *akg, bool samba, bool add,
     lb->setText(i18n("Description:"));
     ledesc = new KLineEdit(page);
     ledesc->setText( kg->getDesc() );
+    ledesc->setReadOnly( ro );
     lb->setBuddy( ledesc );
     layout->addWidget( lb, 3, 0 );
     layout->addMultiCellWidget( ledesc, 3, 3, 1, 2 );
@@ -109,6 +113,7 @@ editGroup::editGroup(KGroup *akg, bool samba, bool add,
     lb->setText(i18n("Display name:"));
     ledispname = new KLineEdit(page);
     ledispname->setText( kg->getDisplayName() );
+    ledispname->setReadOnly( ro );
     lb->setBuddy( ledispname );
     layout->addWidget( lb, 4, 0 );
     layout->addMultiCellWidget( ledispname, 4, 4, 1, 2 );
@@ -138,6 +143,7 @@ editGroup::editGroup(KGroup *akg, bool samba, bool add,
     lb->setText(i18n("Domain SID:"));
     ledomsid = new KLineEdit(page);
     ledomsid->setText( sid.getDOM() );
+    ledomsid->setReadOnly( ro );
     lb->setBuddy( ledomsid );
     layout->addWidget( lb, 6, 0 );
     layout->addMultiCellWidget( ledomsid, 6, 6, 1, 2 );
@@ -179,6 +185,11 @@ editGroup::editGroup(KGroup *akg, bool samba, bool add,
   
   connect(btadd, SIGNAL(clicked()), SLOT(addClicked()));
   connect(btdel, SIGNAL(clicked()), SLOT(delClicked()));
+  
+  if ( ro ) {
+    btadd->setEnabled( false );
+    btdel->setEnabled( false );
+  }
 }
 
 editGroup::~editGroup() 
@@ -229,6 +240,11 @@ void editGroup::delClicked()
 
 void editGroup::slotOk()
 {
+  if ( ro ) {
+    reject();
+    return;
+  }
+  
   SID sid;
   kg->clear();
   QString s;

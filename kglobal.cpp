@@ -25,6 +25,8 @@
 #include "kgroupfiles.h"
 #include "kuserldap.h"
 #include "kgroupldap.h"
+#include "kusersystem.h"
+#include "kgroupsystem.h"
 
 KUserGlobals::KUserGlobals() 
 {
@@ -56,6 +58,10 @@ void KUserGlobals::init()
     case KUserPrefsBase::EnumSource::LDAP:
       users = new KUserLDAP( cfg );
       groups = new KGroupLDAP( cfg );
+      break;
+    case KUserPrefsBase::EnumSource::System:
+      users = new KUserSystem( cfg );
+      groups = new KGroupSystem( cfg );
       break;
   }
 }

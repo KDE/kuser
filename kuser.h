@@ -199,11 +199,12 @@ protected:
 class KUsers {
 public:
   enum Cap {
-    Cap_Passwd = 1,
-    Cap_Shadow = 2,
-    Cap_InetOrg = 4,
-    Cap_Samba = 8,
-    Cap_BSD = 16
+    Cap_ReadOnly = 1,
+    Cap_Passwd = 2,
+    Cap_Shadow = 4,
+    Cap_InetOrg = 8,
+    Cap_Samba = 16,
+    Cap_BSD = 32
   };
   typedef QPtrListIterator<KUser> DelIt;
   typedef QPtrListIterator<KUser> AddIt;

@@ -56,7 +56,7 @@ void propdlg::addRow(QWidget *parent, QGridLayout *layout, int row,
    else
       layout->addWidget(widget, row, 1);
 
-   if ( !nochange ) return;
+   if ( !nochange || ro ) return;
    QCheckBox *nc = new QCheckBox( i18n("Do not change"), parent );
    layout->addWidget( nc, row, 3 );
    nc->hide();
@@ -101,6 +101,8 @@ KIntSpinBox *propdlg::addDaysGroup(QWidget *parent, QGridLayout *layout, int row
 
 void propdlg::initDlg()
 {
+  ro = kug->getUsers().getCaps() & KUsers::Cap_ReadOnly;
+  
   QString whatstr;
 
   // Tab 1: User Info
@@ -123,9 +125,11 @@ void propdlg::initDlg()
     addRow(frame, layout, row++, leid, i18n("&User ID:"), whatstr);
     connect(leid, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
 
-    pbsetpwd = new QPushButton(i18n("Set &Password..."), frame);
-    layout->addWidget(pbsetpwd, 0, 2);
-    connect(pbsetpwd, SIGNAL(clicked()), this, SLOT(setpwd()));
+    if ( !ro ) {
+      pbsetpwd = new QPushButton(i18n("Set &Password..."), frame);
+      layout->addWidget(pbsetpwd, 0, 2);
+      connect(pbsetpwd, SIGNAL(clicked()), this, SLOT(setpwd()));
+    }
 
 
     lefname = new KLineEdit(frame);
@@ -294,14 +298,17 @@ void propdlg::initDlg()
     lstgrp = new KListView(frame);
     lstgrp->setFullWidth(true); // Single column, full widget width.
     lstgrp->addColumn( i18n("Groups") );
+    if ( ro ) lstgrp->setSelectionMode( QListView::NoSelection );
 //    QString whatstr = i18n("Select the groups that this user belongs to.");
     QWhatsThis::add(lstgrp, whatstr);
     layout->addMultiCellWidget(lstgrp, 0, 0, 0, 1);
     leprigr = new QLabel( i18n("Primary group: "), frame );
     layout->addWidget( leprigr, 1, 0 );
-    pbprigr = new QPushButton( i18n("Set as Primary"), frame );
-    layout->addWidget( pbprigr, 1, 1 );
-    connect( pbprigr, SIGNAL(clicked()), this, SLOT(setpgroup()) );
+    if ( !ro ) {
+      pbprigr = new QPushButton( i18n("Set as Primary"), frame );
+      layout->addWidget( pbprigr, 1, 1 );
+      connect( pbprigr, SIGNAL(clicked()), this, SLOT(setpgroup()) );
+    }
     connect( lstgrp, SIGNAL(clicked(QListViewItem *)), this, SLOT(gchanged()) );
   }
 
@@ -343,12 +350,13 @@ void propdlg::setLE( KLineEdit *le, const QString &val, bool first )
 {
   if ( first ) {
     le->setText( val );
+    if ( ro ) le->setReadOnly( true );
     return;
   }
   if ( val.isEmpty() && le->text().isEmpty() ) return;
   if ( le->text() != val ) {
     le->setText( "" );
-    if ( mNoChanges.contains( le ) ) {
+    if ( !ro && mNoChanges.contains( le ) ) {
       mNoChanges[ le ]->show();
       mNoChanges[ le ]->setChecked( true );
     }
@@ -359,6 +367,7 @@ void propdlg::setCB( QCheckBox *cb, bool val, bool first )
 {
   if ( first ) {
     cb->setChecked( val );
+    if ( ro ) cb->setEnabled( false );
     return;
   }
   if ( cb->isChecked() != val ) {
@@ -371,11 +380,12 @@ void propdlg::setSB( KIntSpinBox *sb, int val, bool first )
 {
   if ( first ) {
     sb->setValue( val );
+    if ( ro ) sb->setEnabled( false );
     return;
   }
   if ( sb->value() != val ) {
     sb->setValue( 0 );
-    if ( mNoChanges.contains( sb ) ) {
+    if ( !ro && mNoChanges.contains( sb ) ) {
       mNoChanges[ sb ]->show();
       mNoChanges[ sb ]->setChecked( true );
     }
@@ -405,8 +415,10 @@ void propdlg::selectuser()
   if ( one ) {
     lbuser->setText( user->getName() );
     leid->setText( QString::number( user->getUID() ) );
+    if ( ro ) leid->setReadOnly( true );
     if ( kug->getUsers().getCaps() & KUsers::Cap_Samba ) {
       lerid->setText( QString::number( user->getSID().getRID() ) );
+      if ( ro ) lerid->setReadOnly( true );
     }
   } else {
     leid->setEnabled( false );
@@ -414,6 +426,7 @@ void propdlg::selectuser()
       lerid->setEnabled( false );
     }
   }
+  if ( ro ) leshell->setEditable( false );
 
   while ( user ) {
 
@@ -814,6 +827,11 @@ void propdlg::setpwd()
 
 void propdlg::slotOk()
 {
+  if ( ro ) {
+    reject();
+    return;
+  }
+  
   bool one = ( mUsers.getFirst() == mUsers.getLast() );
 
   uid_t newuid = leid->text().toInt();

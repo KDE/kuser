@@ -79,9 +79,10 @@ protected:
 class KGroups {
 public:
   enum Cap {
-    Cap_Passwd = 1,
-    Cap_Shadow = 2,
-    Cap_Samba = 4
+    Cap_ReadOnly = 1,
+    Cap_Passwd = 2,
+    Cap_Shadow = 4,
+    Cap_Samba = 8
   };
 
   typedef QPtrListIterator<KGroup> DelIt;

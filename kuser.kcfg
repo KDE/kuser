@@ -26,6 +26,7 @@
     <choices>
       <choice name="Files"/>
       <choice name="LDAP"/>
+      <choice name="System"/>
     </choices>
     <default>Files</default>
     </entry>

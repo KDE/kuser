@@ -18,63 +18,29 @@
  *  Boston, MA 02111-1307, USA.
  **/
 
-#ifndef _KU_MAINDLG_H
-#define _KU_MAINDLG_H
+#ifndef _KUSERSYSTEM_H_
+#define _KUSERSYSTEM_H_
 
-#include <stdlib.h>
+#include <sys/types.h>
 
-#include <qevent.h>
+#include <qstring.h>
 #include <qptrlist.h>
-#include <qpushbutton.h>
-#include <qpixmap.h>
-#include <qtabwidget.h>
 
-#include "kuservw.h"
-#include "kgroupvw.h"
+#include "kuser.h"
 
-class mainView : public QTabWidget {
-Q_OBJECT
+class KUserSystem : public KUsers {
 public:
-  mainView(QWidget *parent = 0);
-  ~mainView();
+  KUserSystem(KUserPrefsBase *cfg);
+  virtual ~KUserSystem();
 
-  void init();
-  void setShowSys( bool b ) { mShowSys = b; }
+  virtual bool dbcommit() { return true; }
+  virtual bool reload();
+  virtual void createPassword( KUser *user, const QString &password ) {}
 
-  bool queryClose();
+private:
 
-  void clearUsers();
-  void clearGroups();
-  void reloadUsers();
-  void reloadGroups();
-
-public slots:
-  void slotTabChanged();
-
-  void userSelected();
-  void groupSelected();
-
-  void useradd();
-  void useredit();
-  void userdel();
-
-  void grpadd();
-  void grpedit();
-  void grpdel();
-
-  void setpwd();
-  
-signals:
-  void userSelected(bool);
-  void groupSelected(bool);
-
-protected:
-  bool updateUsers();  
-  bool updateGroups();  
-
-  KUserView *lbusers;
-  KGroupView *lbgroups;
-  bool mShowSys;
+  bool loadpwd();
+  bool loadsdw();
 };
+#endif // _KUSER_H_
 
-#endif // _KU_MAINDLG_H

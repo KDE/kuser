@@ -47,6 +47,7 @@ protected slots:
   
 private:
   bool mSamba, mAdd;
+  bool ro;
   KGroup *kg;
   KListView *m_list_in,*m_list_notin;
   KLineEdit   *legrpname;

@@ -23,7 +23,6 @@
 #include <stdio.h>
 
 #include <qtooltip.h>
-#include <qsplitter.h>
 #include <qfile.h>
 
 #include <kinputdialog.h>
@@ -39,7 +38,6 @@
 #include "delUser.h"
 #include "pwddlg.h"
 #include "editGroup.h"
-#include "editDefaults.h"
 
 mainView::mainView(QWidget *parent) : QTabWidget(parent) 
 {
@@ -79,6 +77,16 @@ void mainView::slotTabChanged()
      emit userSelected(false);
      emit groupSelected(true);
   }
+}
+
+void mainView::clearUsers()
+{
+  lbusers->clear();
+}
+
+void mainView::clearGroups()
+{
+  lbgroups->clear();
 }
 
 void mainView::reloadUsers() 
@@ -276,16 +284,6 @@ bool mainView::queryClose()
   return true;
 }
 
-void mainView::slotApplySettings()
-{
-  kdDebug() << "settings changed!" << endl;
-  lbusers->clear();
-  lbgroups->clear();
-  kug->init();
-  reloadUsers();
-  reloadGroups();
-}
-
 void mainView::setpwd() 
 {
   int count = lbusers->selectedItems().count();
@@ -312,14 +310,6 @@ void mainView::setpwd()
     item = item->nextSibling();
   }
   updateUsers();
-}
-
-void mainView::properties() 
-{
-  editDefaults *eddlg = new editDefaults( kug->kcfg(), this );
-  connect(eddlg, SIGNAL(settingsChanged()), this, SLOT(slotApplySettings()));
-
-  eddlg->show();
 }
 
 void mainView::groupSelected() 
@@ -508,21 +498,5 @@ bool mainView::updateUsers()
   return ret;
 }
   
-void mainView::slotApplyConnection()
-{
-  kdDebug() << "slotApplyConnection()" << endl;
-  QString conn = sc->connSelected();
-  kug->kcfg()->setConnection( conn );
-  kug->initCfg( conn );
-  slotApplySettings();
-}
-
-void mainView::selectconn()
-{
-  sc = new SelectConn( kug->kcfg()->connection(), this, "selectconn" );
-  connect( sc, SIGNAL(applyClicked()), SLOT(slotApplyConnection()) );
-  connect( sc, SIGNAL(okClicked()), SLOT(slotApplyConnection()) );
-  sc->show();
-}
 
 #include "mainView.moc"

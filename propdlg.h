@@ -93,6 +93,7 @@ protected:
   QString oldshell;
   QString  primaryGroup;
   bool  primaryGroupWasOn;
+  bool ro;
   
   QString newpass;
   time_t lstchg;

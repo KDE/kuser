@@ -55,7 +55,6 @@ int main(int argc, char **argv)
   kapp->sharedConfig()->setGroup( "general" );
   kug = new KUserGlobals();
   kug->initCfg( kapp->sharedConfig()->readEntry( "connection", "default" ) );
-  kug->init();
   
   mw = new mainWidget("kuser");
   a.setMainWidget(mw);
@@ -66,4 +65,5 @@ int main(int argc, char **argv)
 
   kug->kcfg()->writeConfig();
   delete kug;
+
 }

@@ -350,11 +350,11 @@ bool KGroupFiles::save()
   }
 
   if( (errors_found & NOMINGID) != 0 ) {
-    KMessageBox::error( 0, i18n("Unable to process NIS group file without a minimum GID specified.\nPlease update KUser settings (sources).") );
+    KMessageBox::error( 0, i18n("Unable to process NIS group file without a minimum GID specified.\nPlease update KUser settings (File Source Settings).") );
   }
 
   if( (errors_found & NONISGROUP) != 0 ) {
-    KMessageBox::error( 0, i18n("Specifying NIS minimum GID requires NIS file(s).\nPlease update KUser settings (sources).") );
+    KMessageBox::error( 0, i18n("Specifying NIS minimum GID requires NIS file(s).\nPlease update KUser settings (File Source Settings).") );
   }
 
 #ifdef GRMKDB

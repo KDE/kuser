@@ -26,6 +26,7 @@
 
 #include <kmainwindow.h>
 
+#include "selectconn.h"
 #include "mainView.h"
 
 class KToggleAction;
@@ -40,6 +41,7 @@ public:
   bool queryClose();
 
 protected:
+  void init();
   void setupActions();
   void readSettings();
   void writeSettings();
@@ -48,8 +50,12 @@ protected slots:
   void toggleToolBar();
   void toggleStatusBar();
   void showSys();
-    void slotConfigureToolbars();
-    void saveToolbarConfig();
+  void properties();
+  void slotApplySettings();
+  void slotApplyConnection();
+  void selectconn();
+  void slotConfigureToolbars();
+  void saveToolbarConfig();
 
 private:
 //  KMenuBar   *menubar;
@@ -59,6 +65,7 @@ private:
   KToggleAction *mActionStatusbar;
   KToggleAction *mShowSys;
   mainView *md;
+  SelectConn *sc;
 };
 
 #endif // _KU_MAINWIDGET_H

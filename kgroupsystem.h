@@ -18,63 +18,25 @@
  *  Boston, MA 02111-1307, USA.
  **/
 
-#ifndef _KU_MAINDLG_H
-#define _KU_MAINDLG_H
+#ifndef _KGROUPSYSTEM_H_
+#define _KGROUPSYSTEM_H_
 
-#include <stdlib.h>
+#include <sys/types.h>
 
-#include <qevent.h>
+#include <qstring.h>
+#include <qstringlist.h>
 #include <qptrlist.h>
-#include <qpushbutton.h>
-#include <qpixmap.h>
-#include <qtabwidget.h>
 
-#include "kuservw.h"
-#include "kgroupvw.h"
+#include "kgroup.h"
 
-class mainView : public QTabWidget {
-Q_OBJECT
+class KGroupSystem : public KGroups {
 public:
-  mainView(QWidget *parent = 0);
-  ~mainView();
+  KGroupSystem( KUserPrefsBase *cfg );
+  virtual ~KGroupSystem();
 
-  void init();
-  void setShowSys( bool b ) { mShowSys = b; }
-
-  bool queryClose();
-
-  void clearUsers();
-  void clearGroups();
-  void reloadUsers();
-  void reloadGroups();
-
-public slots:
-  void slotTabChanged();
-
-  void userSelected();
-  void groupSelected();
-
-  void useradd();
-  void useredit();
-  void userdel();
-
-  void grpadd();
-  void grpedit();
-  void grpdel();
-
-  void setpwd();
-  
-signals:
-  void userSelected(bool);
-  void groupSelected(bool);
-
-protected:
-  bool updateUsers();  
-  bool updateGroups();  
-
-  KUserView *lbusers;
-  KGroupView *lbgroups;
-  bool mShowSys;
+  virtual bool reload();
+  virtual bool dbcommit() { return true; }
 };
 
-#endif // _KU_MAINDLG_H
+#endif // _KGROUPSYSTEM_H_
+

@@ -302,7 +302,7 @@ void mainView::save() {
     return;
     
   if (QMessageBox::information(0, i18n("Data was modified"),
-                               i18n("Would you like to save changes ?"),
+                               i18n("Would you like to save changes?"),
                                i18n("Save"), i18n("Discard changes")) != 0)
     return;
     
@@ -440,7 +440,7 @@ void mainView::grpedit() {
 
 void mainView::grpdel() {
   if (QMessageBox::information(0, i18n("WARNING"),
-                     i18n("Do you really want to delete group ?"),
+                     i18n("Do you really want to delete group?"),
                      i18n("Cancel"), i18n("Delete")) != 1)
     return;
 

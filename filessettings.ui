@@ -40,7 +40,7 @@
                 </sizepolicy>
             </property>
             <property name="title">
-                <string>Local user database files</string>
+                <string>Local User Database Files</string>
             </property>
             <grid>
                 <property name="name">
@@ -103,7 +103,7 @@
                         <cstring>kcfg_md5shadow</cstring>
                     </property>
                     <property name="text">
-                        <string>MD5 Shadow passwords</string>
+                        <string>MD5 shadow passwords</string>
                     </property>
                 </widget>
             </grid>

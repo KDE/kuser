@@ -38,8 +38,8 @@
 #include "kglobal_.h"
 #include "misc.h"
 
-void propdlg::addRow(QWidget *parent, QGridLayout *layout, int row, 
-  QWidget *widget, const QString &label, const QString &what, 
+void propdlg::addRow(QWidget *parent, QGridLayout *layout, int row,
+  QWidget *widget, const QString &label, const QString &what,
   bool two_column)
 {
    QLabel *lab = new QLabel(widget, label, parent);
@@ -55,7 +55,7 @@ void propdlg::addRow(QWidget *parent, QGridLayout *layout, int row,
       layout->addMultiCellWidget(widget, row, row, 1, 2);
    else
       layout->addWidget(widget, row, 1);
-      
+
    QCheckBox *nc = new QCheckBox( i18n("Do not change"), parent );
    layout->addWidget( nc, row, 3 );
    nc->hide();
@@ -89,12 +89,12 @@ KIntSpinBox *propdlg::addDaysGroup(QWidget *parent, QGridLayout *layout, int row
     layout->addWidget( label, row, 2 );
 
     connect(days, SIGNAL(valueChanged(int)), this, SLOT(changed()));
-   
+
     QCheckBox *nc = new QCheckBox( i18n("Do not change"), parent );
     layout->addWidget( nc, row, 3 );
     nc->hide();
     mNoChanges[ days ] = nc;
-    
+
     return days;
 }
 
@@ -126,7 +126,7 @@ void propdlg::initDlg()
     layout->addWidget(pbsetpwd, 0, 2);
     connect(pbsetpwd, SIGNAL(clicked()), this, SLOT(setpwd()));
 
-    
+
     lefname = new KLineEdit(frame);
 //    whatstr = i18n("WHAT IS THIS: Full Name");
     addRow(frame, layout, row++, lefname, i18n("Full &name:"), whatstr);
@@ -138,13 +138,13 @@ void propdlg::initDlg()
 //    whatstr = i18n("WHAT IS THIS: Surname");
       addRow(frame, layout, row++, lesurname, i18n("Surname:"), whatstr);
       connect(lesurname, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
-      
+
       lemail = new KLineEdit(frame);
-//    whatstr = i18n("WHAT IS THIS: E-mail");
-      addRow(frame, layout, row++, lemail, i18n("E-mail address:"), whatstr);
+//    whatstr = i18n("WHAT IS THIS: Email");
+      addRow(frame, layout, row++, lemail, i18n("Email address:"), whatstr);
       connect(lemail, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
     }
-    
+
     leshell = new KComboBox(true, frame);
     leshell->clear();
     leshell->insertItem(i18n("<Empty>"));
@@ -179,7 +179,7 @@ void propdlg::initDlg()
       connect(lehphone, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
 //    whatstr = i18n("WHAT IS THIS: Home Phone");
       addRow(frame, layout, row++, lehphone, i18n("Ho&me Phone:"), whatstr);
-    
+
       leclass = new KLineEdit(frame);
       connect(leclass, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
 //    whatstr = i18n("WHAT IS THIS: Login class");
@@ -203,14 +203,14 @@ void propdlg::initDlg()
     cbdisabled = new QCheckBox(frame);
     connect(cbdisabled, SIGNAL(stateChanged(int)), this, SLOT(changed()));
     addRow(frame, layout, row++, cbdisabled, i18n("Account &disabled"), whatstr);
-    
+
     frontrow = row;
   }
 
-  if ( kug->getUsers().getCaps() & KUsers::Cap_Shadow || 
-       kug->getUsers().getCaps() & KUsers::Cap_Samba || 
+  if ( kug->getUsers().getCaps() & KUsers::Cap_Shadow ||
+       kug->getUsers().getCaps() & KUsers::Cap_Samba ||
        kug->getUsers().getCaps() & KUsers::Cap_BSD ) {
-       
+
   // Tab 2 : Password Management
     QFrame *frame = addPage(i18n("Password Management"));
     QGridLayout *layout = new QGridLayout(frame, 20, 4, marginHint(), spacingHint());
@@ -224,7 +224,7 @@ void propdlg::initDlg()
     row++;
 
     if ( kug->getUsers().getCaps() & KUsers::Cap_Shadow ) {
-    
+
       lesmin = addDaysGroup(frame, layout, row++, i18n("Password may &not be changed before"), i18n("after last password change."), false);
       lesmax = addDaysGroup(frame, layout, row++, i18n("Password &expires"), i18n("after last password change.") );
       leswarn = addDaysGroup(frame, layout, row++, i18n("&Issue expire warning"), i18n("before password expires."));
@@ -246,13 +246,13 @@ void propdlg::initDlg()
     connect( cbexpire, SIGNAL(stateChanged(int)), this, SLOT(changed()) );
     connect( cbexpire, SIGNAL(toggled(bool)), lesexpire, SLOT(setDisabled(bool)) );
   }
-  
+
   // Tab 3: Samba
   if ( kug->getUsers().getCaps() & KUsers::Cap_Samba ) {
     QFrame *frame = addPage(i18n("Samba"));
     QGridLayout *layout = new QGridLayout(frame, 10, 4, marginHint(), spacingHint());
     int row = 0;
-    
+
     lerid = new KLineEdit(frame);
 //  whatstr = i18n("WHAT IS THIS: Rid");
     lerid->setValidator(new QIntValidator(frame));
@@ -263,28 +263,28 @@ void propdlg::initDlg()
 //  whatstr = i18n("WHAT IS THIS: Login script");
     addRow(frame, layout, row++, leliscript, i18n("Login script:"), whatstr);
     connect(leliscript, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
-        
+
     leprofile = new KLineEdit(frame);
 //  whatstr = i18n("WHAT IS THIS: Login script");
     addRow(frame, layout, row++, leprofile, i18n("Profile path:"), whatstr);
     connect(leprofile, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
-  
+
     lehomedrive = new KLineEdit(frame);
 //  whatstr = i18n("WHAT IS THIS: Login script");
     addRow(frame, layout, row++, lehomedrive, i18n("Home drive:"), whatstr);
     connect(lehomedrive, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
-  
+
     lehomepath = new KLineEdit(frame);
 //  whatstr = i18n("WHAT IS THIS: Login script");
     addRow(frame, layout, row++, lehomepath, i18n("Home path:"), whatstr);
     connect(lehomepath, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
-  
+
     ledomsid = new KLineEdit(frame);
 //  whatstr = i18n("WHAT IS THIS: Login script");
     addRow(frame, layout, row++, ledomsid, i18n("Domain SID:"), whatstr);
     connect(ledomsid, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
   }
-  
+
   // Tab 4: Groups
   {
     QFrame *frame = addPage(i18n("Groups"));
@@ -298,12 +298,12 @@ void propdlg::initDlg()
     layout->addMultiCellWidget(lstgrp, 0, 0, 0, 1);
     leprigr = new QLabel( i18n("Primary group: "), frame );
     layout->addWidget( leprigr, 1, 0 );
-    pbprigr = new QPushButton( i18n("Set as primary"), frame );
+    pbprigr = new QPushButton( i18n("Set as Primary"), frame );
     layout->addWidget( pbprigr, 1, 1 );
     connect( pbprigr, SIGNAL(clicked()), this, SLOT(setpgroup()) );
     connect( lstgrp, SIGNAL(clicked(QListViewItem *)), this, SLOT(gchanged()) );
   }
-  
+
 }
 
 propdlg::propdlg( const QPtrList<KUser> &users,
@@ -320,11 +320,11 @@ propdlg::propdlg( const QPtrList<KUser> &users,
   ischanged = false;
   isgchanged = false;
 }
-  
-propdlg::propdlg( KUser *AUser, bool fixedprivgroup, 
+
+propdlg::propdlg( KUser *AUser, bool fixedprivgroup,
   QWidget *parent, const char *name ) :
   KDialogBase(Tabbed, i18n("User Properties"), Ok | Cancel, Ok, parent, name, true)
-    
+
 {
   mUsers.append( AUser );
   initDlg();
@@ -334,7 +334,7 @@ propdlg::propdlg( KUser *AUser, bool fixedprivgroup,
   isgchanged = false;
 }
 
-propdlg::~propdlg() 
+propdlg::~propdlg()
 {
 }
 
@@ -381,11 +381,11 @@ void propdlg::setSB( KIntSpinBox *sb, int val, bool first )
   }
 }
 
-void propdlg::selectuser() 
+void propdlg::selectuser()
 {
   KUser *user;
   bool first = true, one = ( mUsers.getFirst() == mUsers.getLast() );
-    
+
   ismoreshells = false;
   user = mUsers.first();
   olduid = user->getUID();
@@ -395,7 +395,7 @@ void propdlg::selectuser()
   QDateTime datetime;
   datetime.setTime_t( lstchg );
   leslstchg->setText( KGlobal::locale()->formatDateTime( datetime, false ) );
-  
+
   if ( one ) {
     leuser->setText( user->getName() );
     leid->setText( QString::number( user->getUID() ) );
@@ -408,7 +408,7 @@ void propdlg::selectuser()
       lerid->setEnabled( false );
     }
   }
-  
+
   while ( user ) {
 
     setLE( lefname, user->getFullName(), first );
@@ -416,7 +416,7 @@ void propdlg::selectuser()
     home = user->getHomeDir();
     if ( !one ) home.replace( user->getName(), "%U" );
     setLE( lehome, home, first );
-    
+
     QString shell = user->getShell();
     if ( first ) {
       if ( !shell.isEmpty() ) {
@@ -442,9 +442,9 @@ void propdlg::selectuser()
         leshell->setCurrentItem( 0 );
       }
     }
-    
+
     setCB( cbdisabled, user->getDisabled(), first );
-    
+
     if ( kug->getUsers().getCaps() & KUsers::Cap_Samba ) {
       setLE( leliscript, user->getLoginScript(), first );
       QString profile;
@@ -457,16 +457,16 @@ void propdlg::selectuser()
       setLE( lehomepath, home, first );
       setLE( ledomsid, user->getSID().getDOM(), first );
     }
-    
+
     if ( kug->getUsers().getCaps() & KUsers::Cap_Shadow ||
          kug->getUsers().getCaps() & KUsers::Cap_Samba ||
          kug->getUsers().getCaps() & KUsers::Cap_BSD ) {
-      
+
       if ( user->getLastChange() != lstchg ) {
         leslstchg->setText( "" );
         lstchg = 0;
       }
-      
+
       QDateTime expire;
       expire.setTime_t( user->getExpire() );
       setCB( cbexpire, (int) expire.toTime_t() == -1, first );
@@ -480,14 +480,14 @@ void propdlg::selectuser()
         }
       }
     }
-    
+
     if ( kug->getUsers().getCaps() & KUsers::Cap_Shadow ) {
       setSB( lesmin, user->getMin(), first );
       setSB( lesmax, user->getMax(), first );
       setSB( leswarn, user->getWarn(), first );
       setSB( lesinact, user->getInactive(), first );
     }
-  
+
     if ( kug->getUsers().getCaps() & KUsers::Cap_InetOrg ) {
       setLE( lesurname, user->getSurname(), first );
       setLE( lemail, user->getEmail(), first );
@@ -504,27 +504,27 @@ void propdlg::selectuser()
     }
 
     first = false;
-    user = mUsers.next();  
+    user = mUsers.next();
   }
 }
 
-void propdlg::loadgroups( bool fixedprivgroup ) 
+void propdlg::loadgroups( bool fixedprivgroup )
 {
   bool wasprivgr = false;
-  
+
   primaryGroupWasOn = false;
-  
+
   KGroup *group = kug->getGroups().first();
   while ( group ) {
     QString groupName = group->getName();
     QCheckListItem *item = new QCheckListItem(lstgrp, groupName, QCheckListItem::CheckBox);
     KUser *user = mUsers.first();
     while ( user ) {
-      bool prigr = 
+      bool prigr =
         ( !fixedprivgroup && group->getGID() == user->getGID() ) ||
         ( fixedprivgroup && groupName == user->getName() );
       bool on = group->lookup_user( user->getName() ) || prigr;
-      
+
       if ( prigr ) {
         item->setEnabled( false );
         if ( !wasprivgr )
@@ -534,10 +534,10 @@ void propdlg::loadgroups( bool fixedprivgroup )
 //      primaryGroupWasOn = group->lookup_user(user->getName());
         wasprivgr = true;
       }
-      
+
       if ( mUsers.getFirst() == user )
         item->setOn( on );
-      else 
+      else
         if ( item->isOn() != on ) {
           item->setTristate( true );
           item->setState( QCheckListItem::NoChange );
@@ -546,7 +546,7 @@ void propdlg::loadgroups( bool fixedprivgroup )
     }
     group = kug->getGroups().next();
   }
-  
+
   if ( fixedprivgroup ) {
     KUser *user = mUsers.first();
     kdDebug() << "privgroup: " << user->getName() << endl;
@@ -560,11 +560,11 @@ void propdlg::loadgroups( bool fixedprivgroup )
   leprigr->setText( i18n("Primary group: ") + primaryGroup );
 }
 
-void propdlg::setpgroup() 
+void propdlg::setpgroup()
 {
   isgchanged = true;
   QCheckListItem *item;
-  item = (QCheckListItem *) lstgrp->selectedItem(); 
+  item = (QCheckListItem *) lstgrp->selectedItem();
   if ( item == 0 || item->text() == primaryGroup )
      return;
 
@@ -595,7 +595,7 @@ void propdlg::setpgroup()
   leprigr->setText( i18n("Primary group: ") + primaryGroup );
 }
 
-void propdlg::changed() 
+void propdlg::changed()
 {
   QWidget *widget = (QWidget*) sender();
   if ( mNoChanges.contains( widget ) ) mNoChanges[ widget ]->setChecked( false );
@@ -603,7 +603,7 @@ void propdlg::changed()
   kdDebug() << "changed" << endl;
 }
 
-void propdlg::gchanged() 
+void propdlg::gchanged()
 {
   isgchanged = true;
 }
@@ -614,7 +614,7 @@ QString propdlg::mergeLE( KLineEdit *le, const QString &val, bool one )
   if ( mNoChanges.contains( le ) ) cb = mNoChanges[ le ];
   return ( one || ( cb && !cb->isChecked() ) ) ? le->text() : val;
 }
-  
+
 int propdlg::mergeSB( KIntSpinBox *sb, int val, bool one )
 {
   QCheckBox *cb = 0;
@@ -627,9 +627,9 @@ void propdlg::mergeUser( KUser *user, KUser *newuser )
   QDateTime epoch ;
   epoch.setTime_t(0);
   bool one = ( mUsers.getFirst() == mUsers.getLast() );
-  
+
   newuser->copy( user );
-  
+
   if ( one ) {
     newuser->setName( leuser->text() );
     newuser->setUID( leid->text().toInt() );
@@ -665,33 +665,33 @@ void propdlg::mergeUser( KUser *user, KUser *newuser )
   if ( leshell->currentItem() == 0 && ismoreshells ) {
     newuser->setShell( user->getShell() );
   } else if  (
-    ( leshell->currentItem() == 0 && !ismoreshells ) || 
+    ( leshell->currentItem() == 0 && !ismoreshells ) ||
     ( leshell->currentItem() == 1 && ismoreshells ) ) {
-    
+
     newuser->setShell( QString::null );
-  } else { 
+  } else {
   // TODO: Check shell.
     newuser->setShell( leshell->currentText() );
   }
-  
+
   newuser->setDisabled( (cbdisabled->state() == QButton::NoChange) ? user->getDisabled() : cbdisabled->isChecked() );
-  
+
   if ( kug->getUsers().getCaps() & KUsers::Cap_InetOrg ) {
     newuser->setSurname( mergeLE( lesurname, user->getSurname(), one ) );
     newuser->setEmail( mergeLE( lemail, user->getEmail(), one ) );
   }
-  
+
   if ( kug->getUsers().getCaps() & KUsers::Cap_Shadow ) {
     newuser->setMin( mergeSB( lesmin, user->getMin(), one ) );
     newuser->setMax( mergeSB( lesmax, user->getMax(), one ) );
     newuser->setWarn( mergeSB( leswarn, user->getWarn(), one ) );
     newuser->setInactive( mergeSB( lesinact, user->getInactive(), one ) );
   }
-  
-  if ( kug->getUsers().getCaps() & KUsers::Cap_Shadow || 
+
+  if ( kug->getUsers().getCaps() & KUsers::Cap_Shadow ||
        kug->getUsers().getCaps() & KUsers::Cap_Samba ||
        kug->getUsers().getCaps() & KUsers::Cap_BSD ) {
-    
+
     switch ( cbexpire->state() ) {
       case QButton::NoChange:
         newuser->setExpire( user->getExpire() );
@@ -700,12 +700,12 @@ void propdlg::mergeUser( KUser *user, KUser *newuser )
         newuser->setExpire( -1 );
         break;
       case QButton::Off:
-        newuser->setExpire( !one && lesexpire->dateTime().toTime_t() == 0 ? 
+        newuser->setExpire( !one && lesexpire->dateTime().toTime_t() == 0 ?
           user->getExpire() : lesexpire->dateTime().toTime_t() );
         break;
     }
   }
-  
+
   if ( !primaryGroup.isEmpty() ) {
     KGroup *group = kug->getGroups().lookup( primaryGroup );
     if ( group ) {
@@ -720,21 +720,21 @@ void propdlg::mergeUser( KUser *user, KUser *newuser )
 bool propdlg::saveg()
 {
   if ( !isgchanged ) return true;
-  
+
   QCheckListItem *item = (QCheckListItem *) lstgrp->firstChild();
   KGroup *group;
-    
+
   while(item)
   {
     kdDebug() << "saveg: group name: " << item->text() << endl;
     group = kug->getGroups().lookup(item->text());
     if ( group && item->state() != QCheckListItem::NoChange ) {
-      
+
       KGroup newgroup( group );
       bool mod = false;
       bool on = item->isOn();
       KUser *user = mUsers.first();
-      
+
       while ( user ) {
         if ( on && (( !primaryGroup.isEmpty() && primaryGroup != group->getName() ) ||
                     ( primaryGroup.isEmpty() && user->getGID() != group->getGID() )) ) {
@@ -744,7 +744,7 @@ bool propdlg::saveg()
         }
         user = mUsers.next();
       }
-      
+
       if ( mod ) kug->getGroups().mod( group, newgroup );
     }
     item = (QCheckListItem *) item->nextSibling();
@@ -760,7 +760,7 @@ bool propdlg::checkShell(const QString &shell)
    return shells.contains(shell);
 }
 
-bool propdlg::check() 
+bool propdlg::check()
 {
   bool one = ( mUsers.getFirst() == mUsers.getLast() );
 
@@ -768,12 +768,12 @@ bool propdlg::check()
     KMessageBox::sorry( 0, i18n("You need to specify a name.") );
     return false;
   }
-  
+
   if ( one && leid->text().isEmpty() ) {
     KMessageBox::sorry( 0, i18n("You need to specify an UID.") );
     return false;
   }
-  
+
   if ( one && lehome->text().isEmpty() ) {
     KMessageBox::sorry( 0, i18n("You must specify a home directory.") );
     return false;
@@ -785,18 +785,18 @@ bool propdlg::check()
       return false;
     }
   }
-  
+
   if ( kug->getUsers().getCaps() & KUsers::Cap_Samba ) {
     if ( one && lerid->text().isEmpty() ) {
       KMessageBox::sorry( 0, i18n("You need to specify a samba RID.") );
       return false;
     }
   }
-  
+
   return true;
 }
 
-void propdlg::setpwd() 
+void propdlg::setpwd()
 {
   pwddlg pd( this );
 
@@ -810,26 +810,26 @@ void propdlg::setpwd()
   }
 }
 
-void propdlg::slotOk() 
+void propdlg::slotOk()
 {
   bool one = ( mUsers.getFirst() == mUsers.getLast() );
-  
+
   uid_t newuid = leid->text().toInt();
-  
+
   if ( one && olduid != newuid )
   {
     if (kug->getUsers().lookup(newuid)) {
-      KMessageBox::sorry( 0, 
+      KMessageBox::sorry( 0,
         i18n("User with UID %1 already exists").arg(newuid) );
       return;
     }
   }
-  
+
   if ( kug->getUsers().getCaps() & KUsers::Cap_Samba ) {
     uint newrid = lerid->text().toInt();
     if ( one && oldrid != newrid ) {
       if (kug->getUsers().lookup_sam(newrid)) {
-        KMessageBox::sorry( 0, 
+        KMessageBox::sorry( 0,
           i18n("User with RID %1 already exists").arg(newrid) );
         return;
       }

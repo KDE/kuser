@@ -31,7 +31,7 @@
 #include "kglobal_.h"
 #include "mainWidget.h"
 
-mainWidget::mainWidget(const char *name) : KMainWindow(0,name) 
+mainWidget::mainWidget(const char *name) : KMainWindow(0,name)
 {
   md = new mainView(this);
 
@@ -41,7 +41,7 @@ mainWidget::mainWidget(const char *name) : KMainWindow(0,name)
 
   sbar = new KStatusBar(this);
   sbar->insertItem(i18n("Reading configuration"), 0);
-  
+
   setCentralWidget(md);
 
   resize(500, 400);
@@ -49,7 +49,7 @@ mainWidget::mainWidget(const char *name) : KMainWindow(0,name)
   sbar->changeItem(i18n("Ready"), 0);
 }
 
-mainWidget::~mainWidget() 
+mainWidget::~mainWidget()
 {
   writeSettings();
   delete md;
@@ -61,7 +61,7 @@ bool mainWidget::queryClose()
   return md->queryClose();
 }
 
-void mainWidget::setupActions() 
+void mainWidget::setupActions()
 {
   KStdAction::quit(this, SLOT(close()), actionCollection());
 
@@ -98,19 +98,20 @@ void mainWidget::setupActions()
   action = new KAction(i18n("&Delete"), QIconSet(BarIconC("delete_group")), 0, md,
     SLOT(grpdel()), actionCollection(), "delete_group");
   connect(md, SIGNAL(groupSelected(bool)), action, SLOT(setEnabled(bool)));
-  
-  action = new KAction(i18n("&Select connection"), 
+
+  action = new KAction(i18n("&Select Connection..."),
     QIconSet(BarIconC("select_conn")), 0, md,
     SLOT(selectconn()), actionCollection(), "select_conn");
-  
-  mShowSys = new KToggleAction(i18n("Show system users/groups"), 
+
+  mShowSys = new KToggleAction(i18n("Show System Users/Groups"),
     0, 0, this,
     SLOT(showSys()), actionCollection(), "show_sys");
+  mShowSys->setCheckedState(i18n("Hide System Users/Groups"));
 
   createGUI(QString::fromLatin1("kuserui.rc"));
 }
 
-void mainWidget::readSettings() 
+void mainWidget::readSettings()
 {
   QValueList<int> geom = kug->kcfg()->geometry();
   if ( geom.size() < 2 ) return;
@@ -119,7 +120,7 @@ void mainWidget::readSettings()
   if ( width && height ) resize(width, height);
 }
 
-void mainWidget::writeSettings() 
+void mainWidget::writeSettings()
 {
   kdDebug() << "mainWidget::writeSettings() width=" << width() << " height: " << height() << endl;
   QValueList<int> geom;
@@ -129,7 +130,7 @@ void mainWidget::writeSettings()
   kug->kcfg()->setGeometry( geom );
 }
 
-void mainWidget::toggleToolBar() 
+void mainWidget::toggleToolBar()
 {
   if (mActionToolbar->isChecked())
     toolBar("mainToolBar")->show();
@@ -137,7 +138,7 @@ void mainWidget::toggleToolBar()
     toolBar("mainToolBar")->hide();
 }
 
-void mainWidget::toggleStatusBar() 
+void mainWidget::toggleStatusBar()
 {
   if (mActionStatusbar->isChecked())
     statusBar()->show();

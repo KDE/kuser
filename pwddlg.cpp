@@ -28,7 +28,7 @@
 pwddlg::pwddlg( QWidget* parent, const char* name )
   : KDialogBase(parent, name, true, i18n("Enter Password"), Ok | Cancel, Ok, true)
 {
-  QGrid *page = makeGridMainWidget(2, QGrid::Horizontal);  
+  QGrid *page = makeGridMainWidget(2, QGrid::Horizontal);
 
   QLabel* lb1 = new QLabel(page, "lb1");
   lb1->setText(i18n("Password:"));
@@ -62,16 +62,16 @@ pwddlg::pwddlg( QWidget* parent, const char* name )
   lepw2->setEchoMode(KLineEdit::Password);
 }
 
-pwddlg::~pwddlg() 
+pwddlg::~pwddlg()
 {
   delete lepw1;
   delete lepw2;
 }
 
-void pwddlg::slotOk() 
+void pwddlg::slotOk()
 {
   if ( lepw1->text() != lepw2->text() ) {
-    KMessageBox::sorry( 0, i18n("Passwords are not identical.\nTry again") );
+    KMessageBox::sorry( 0, i18n("Passwords are not identical.\nTry again.") );
     lepw1->clear();
     lepw2->clear();
     lepw1->setFocus();

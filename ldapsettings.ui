@@ -94,7 +94,7 @@
         <widget class="KComboBox" row="2" column="1">
             <item>
                 <property name="text">
-                    <string>Plain text</string>
+                    <string>Plain Text</string>
                 </property>
             </item>
             <item>
@@ -173,7 +173,7 @@
                 <bool>true</bool>
             </property>
             <property name="title">
-                <string>Samba settings</string>
+                <string>Samba Settings</string>
             </property>
             <property name="checkable">
                 <bool>true</bool>

@@ -2,7 +2,7 @@
 <!DOCTYPE kcfg SYSTEM "http://www.kde.org/standards/kcfg/1.0/kcfg.dtd">
 <kcfg>
   <kcfgfile name="kuserrc"/>
-  
+
   <include>qfile.h</include>
   <include>kapplication.h</include>
   <include>config.h</include>
@@ -110,7 +110,7 @@
       <default>389</default>
     </entry>
     <entry name="ldapver" type="Int">
-      <label>LDAP Version</label>
+      <label>LDAP version</label>
       <default>3</default>
     </entry>
     <entry name="ldapsizelimit" type="Int">
@@ -221,6 +221,6 @@
     <entry name="samhomepath" type="String">
       <label>Samba home path template</label>
     </entry>
-    
+
   </group>
 </kcfg>

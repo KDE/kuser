@@ -33,23 +33,23 @@
 #include "selectconn.h"
 #include "editDefaults.h"
 
-SelectConn::SelectConn(const QString &selected, QWidget* parent, const char * name) : 
-  KDialogBase( Plain, WStyle_DialogBorder, parent, name, true, 
-  i18n("Connection selection"), Ok | Apply | Cancel | User1 | User2 | User3 )
+SelectConn::SelectConn(const QString &selected, QWidget* parent, const char * name) :
+  KDialogBase( Plain, WStyle_DialogBorder, parent, name, true,
+  i18n("Connection Selection"), Ok | Apply | Cancel | User1 | User2 | User3 )
 {
   QStringList conns;
-  
-  setButtonText( User1, i18n("New") );
+
+  setButtonText( User1, i18n("New...") );
   setButtonText( User2, i18n("Edit") );
   setButtonText( User3, i18n("Delete") );
-  
+
   QFrame *page = plainPage();
   QVBoxLayout *topLayout = new QVBoxLayout( page, 0, KDialog::spacingHint() );
   QLabel *label = new QLabel( i18n("Defined connections:"), page );
   mCombo = new KComboBox( page );
   mSelected = selected;
   kdDebug() << "selected item: " << mSelected << endl;
-  
+
   conns = kapp->sharedConfig()->groupList();
   QStringList::iterator it = conns.begin();
   int i = 0, sel = 0;
@@ -77,20 +77,20 @@ QString SelectConn::connSelected()
 
 void SelectConn::slotUser1()
 {
-  newconn = KInputDialog::getText( QString::null, 
-    i18n("Please type the name of the new connection") );
-  if ( newconn.isEmpty() ) return;    
+  newconn = KInputDialog::getText( QString::null,
+    i18n("Please type the name of the new connection:") );
+  if ( newconn.isEmpty() ) return;
   if ( kapp->sharedConfig()->groupList().contains( "connection-" + newconn ) ) {
     KMessageBox::sorry( 0, i18n("A connection with this name already exists.") );
     return;
   }
-  
+
   KUserPrefsBase kcfg( kapp->sharedConfig(), newconn );
-  
+
   editDefaults eddlg( &kcfg, this );
   connect(&eddlg, SIGNAL(settingsChanged()), this, SLOT(slotNewApplySettings()));
   eddlg.exec();
-  
+
   if ( newconn.isEmpty() )
     emit( applyClicked() );
 }
@@ -109,7 +109,7 @@ void SelectConn::slotUser2()
   kdDebug() << "slotUser2: " << connSelected() << endl;
   KUserPrefsBase kcfg( kapp->sharedConfig(), connSelected() );
   kcfg.readConfig();
-  
+
   editDefaults eddlg( &kcfg, this );
   connect( &eddlg, SIGNAL(settingsChanged()), this, SLOT(slotApplySettings()) );
 
@@ -118,7 +118,7 @@ void SelectConn::slotUser2()
 
 void SelectConn::slotUser3()
 {
-  QString conn = connSelected();  
+  QString conn = connSelected();
   kapp->sharedConfig()->deleteGroup( "connection-" + conn, true );
   kapp->sharedConfig()->sync();
   mCombo->removeItem( mCombo->currentItem() );

@@ -36,7 +36,7 @@ int KUserViewItem::compare( QListViewItem *i, int col, bool ascending ) const
 
     uid1 = mUser->getUID();
     uid2 = ((KUserViewItem*) i)->mUser->getUID();
-    
+
     if ( uid1 == uid2 ) return 0;
     return ( uid1 < uid2) ? -1: 1;
   } else {
@@ -73,11 +73,11 @@ QString KUserViewItem::text(int num) const
      case 8: return mUser->getHomeDrive();
      case 9: return mUser->getHomePath();
   }
-  
+
   return QString::null;
 }
 
-KUserView::KUserView(QWidget *parent, const char *name) 
+KUserView::KUserView(QWidget *parent, const char *name)
   : KListView( parent, name )
 {
   setSelectionMode( QListView::Extended );
@@ -94,7 +94,7 @@ void KUserView::insertItem(KUser *aku) {
 
 void KUserView::removeItem(KUser *aku) {
   KUserViewItem *userItem = (KUserViewItem *)firstChild();
-  
+
   while(userItem)
   {
      if (userItem->user() == aku)
@@ -111,30 +111,30 @@ void KUserView::init()
   while ( columns() > 5 ) {
     removeColumn( 5 );
   }
-  
+
   setAllColumnsShowFocus(true);
   if ( columns() < 5 ) {
     addColumn(i18n("UID"));
     setColumnAlignment(0, AlignRight);
     addColumn(i18n("User Login"));
     addColumn(i18n("Full Name"));
-    addColumn(i18n("Home directory"));
-    addColumn(i18n("Login shell"));
+    addColumn(i18n("Home Directory"));
+    addColumn(i18n("Login Shell"));
   }
-  
+
   if ( kug->getUsers().getCaps() & KUsers::Cap_Samba ) {
     addColumn(i18n("RID"));
-    addColumn(i18n("Samba login script"));
-    addColumn(i18n("Samba profile path"));
-    addColumn(i18n("Samba home drive"));
-    addColumn(i18n("Samba home path"));
+    addColumn(i18n("Samba Login Script"));
+    addColumn(i18n("Samba Profile Path"));
+    addColumn(i18n("Samba Home Drive"));
+    addColumn(i18n("Samba Home Path"));
   }
 }
 
 KUser *KUserView::getCurrentUser() {
   KUserViewItem *userItem = (KUserViewItem *)currentItem();
   if (!userItem) return 0;
-  
+
   return userItem->user();
 }
 

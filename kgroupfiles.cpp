@@ -52,18 +52,18 @@ KGroupFiles::KGroupFiles( KUserPrefsBase *cfg ) : KGroups( cfg )
   mode = 0644;
   uid = 0;
   gid = 0;
-  
+
   caps = Cap_Passwd;
 
   reload();
 }
 
-KGroupFiles::~KGroupFiles() 
+KGroupFiles::~KGroupFiles()
 {
   mGroups.clear();
 }
 
-bool KGroupFiles::reload() 
+bool KGroupFiles::reload()
 {
   struct group *p;
   KGroup *tmpKG = 0;
@@ -120,7 +120,7 @@ bool KGroupFiles::reload()
     FILE *fgrp = fopen(QFile::encodeName(filename), "r");
     QString tmp;
     if (fgrp == NULL) {
-      KMessageBox::error( 0, i18n("Error opening %1 for reading").arg(filename) );
+      KMessageBox::error( 0, i18n("Error opening %1 for reading.").arg(filename) );
       return FALSE;
     }
 
@@ -140,7 +140,7 @@ bool KGroupFiles::reload()
         tmpKG->addUser(QString::fromLocal8Bit(u_name));
         i++;
       }
-      
+
       mGroups.append(tmpKG);
     }
 
@@ -172,7 +172,7 @@ bool KGroupFiles::reload()
     return(TRUE);
 }
 
-bool KGroupFiles::save() 
+bool KGroupFiles::save()
 {
   kdDebug() << "KGroupFiles::save() " << endl;
   FILE *group_fd = NULL;
@@ -195,10 +195,10 @@ bool KGroupFiles::save()
 
   group_filename = mCfg->groupsrc();
   new_group_filename = group_filename + QString::fromLatin1(KU_CREATE_EXT);
-#ifdef HAVE_SHADOW  
+#ifdef HAVE_SHADOW
   gshadow_filename = mCfg->gshadowsrc();
   new_gshadow_filename = gshadow_filename + QString::fromLatin1(KU_CREATE_EXT);
-#endif  
+#endif
   nisgroup_filename = mCfg->nisgroupsrc();
   new_nisgroup_filename = nisgroup_filename + QString::fromLatin1(KU_CREATE_EXT);
   if( nisgroup_filename != group_filename ) {
@@ -230,36 +230,36 @@ bool KGroupFiles::save()
 
   if(!group_filename.isEmpty()) {
     if((group_fd = fopen(QFile::encodeName(new_group_filename), "w")) == NULL) {
-      KMessageBox::error( 0, i18n("Error opening %1 for writing").arg(new_group_filename) );
+      KMessageBox::error( 0, i18n("Error opening %1 for writing.").arg(new_group_filename) );
       return false;
     }
-  }  
-  
+  }
+
   if(!gshadow_filename.isEmpty()) {
     if((gshadow_fd = fopen(QFile::encodeName(new_gshadow_filename), "w")) == NULL) {
-      KMessageBox::error( 0, i18n("Error opening %1 for writing").arg(new_gshadow_filename) );
+      KMessageBox::error( 0, i18n("Error opening %1 for writing.").arg(new_gshadow_filename) );
       if ( group_fd ) fclose ( group_fd );
       return false;
-    }      
-  }  
+    }
+  }
 
   if(!nisgroup_filename.isEmpty() && (nisgroup_filename != group_filename)) {
     if((nisgroup_fd = fopen(QFile::encodeName(new_nisgroup_filename), "w")) == NULL) {
-      KMessageBox::error( 0, i18n("Error opening %1 for writing").arg(new_nisgroup_filename) );
+      KMessageBox::error( 0, i18n("Error opening %1 for writing.").arg(new_nisgroup_filename) );
       if ( group_fd ) fclose ( group_fd );
       if ( gshadow_fd ) fclose ( gshadow_fd );
       return false;
     }
-  }  
+  }
 
   QPtrListIterator<KGroup> it( mGroups );
   KGroup *gr;
   bool addok = false;
-  
+
   gr = (*it);
-  
+
   while (true) {
-    
+
     if ( gr == 0 ) {
       if ( addok ) break;
       it = QPtrListIterator<KGroup> ( mAdd );
@@ -267,7 +267,7 @@ bool KGroupFiles::save()
       addok = true;
       if ( gr == 0 ) break;
     };
-    
+
     if ( mDel.containsRef( gr ) ) {
       ++it;
       gr = (*it);
@@ -287,7 +287,7 @@ bool KGroupFiles::save()
     tmpSe = gr->getName() + ":!::";
     for (uint j=0; j<gr->count(); j++) {
        if (j != 0) {
-         tmpGe += ','; 
+         tmpGe += ',';
          tmpSe += ',';
        }
        tmpGe += gr->user(j); tmpSe += gr->user(j);
@@ -317,7 +317,7 @@ bool KGroupFiles::save()
     ++it;
     gr = (*it);
   }
-  
+
   if(group_fd) {
     fclose(group_fd);
     chmod(QFile::encodeName(new_group_filename), mode);
@@ -333,7 +333,7 @@ bool KGroupFiles::save()
     rename(QFile::encodeName(new_gshadow_filename),
       QFile::encodeName(gshadow_filename));
   }
-  
+
   if(nisgroup_fd) {
     fclose(nisgroup_fd);
     chmod(QFile::encodeName(nisgroup_filename), mode);
@@ -343,17 +343,17 @@ bool KGroupFiles::save()
   }
 
   if( (errors_found & NOMINGID) != 0 ) {
-    KMessageBox::error( 0, i18n("Unable to process NIS group file without a minimum GID specified.\nPlease update KUser Settings (Sources)") );
+    KMessageBox::error( 0, i18n("Unable to process NIS group file without a minimum GID specified.\nPlease update KUser Settings (Sources).") );
   }
 
   if( (errors_found & NONISGROUP) != 0 ) {
-    KMessageBox::error( 0, i18n("Specifying NIS minimum GID requires NIS file(s).\nPlease update KUser Settings (Sources)") );
+    KMessageBox::error( 0, i18n("Specifying NIS minimum GID requires NIS file(s).\nPlease update KUser Settings (Sources).") );
   }
 
 #ifdef GRMKDB
   if( (nis_groups_written > 0) || (nisgroup_filename == group_filename) ) {
     if (system(GRMKDB) != 0) {
-      KMessageBox::error( 0, i18n("Unable to build NIS group databases") );
+      KMessageBox::error( 0, i18n("Unable to build NIS group databases.") );
       return FALSE;
     }
   }
@@ -361,31 +361,31 @@ bool KGroupFiles::save()
 
   return TRUE;
 }
-  
+
 bool KGroupFiles::dbcommit()
 {
   bool ret;
   mode_t mode;
-  
+
   kdDebug() << "KGroupFiles dbcommit" << endl;
   mAddSucc.clear();
   mDelSucc.clear();
   mModSucc.clear();
   if ( mDel.isEmpty() && mAdd.isEmpty() && mMod.isEmpty() )
     return true;
-  
+
   mode = umask(0077);
   ret = save();
   umask( mode );
   if ( !ret ) return false;
-    
+
   mDelSucc = mDel;
   mAddSucc = mAdd;
   mModSucc = mMod;
   mDel.clear();
   mAdd.clear();
   mMod.clear();
-  
+
   return true;
 }
 

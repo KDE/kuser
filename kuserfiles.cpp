@@ -43,7 +43,7 @@
 #include <kstandarddirs.h>
 #include <kmessagebox.h>
 #include <kdebug.h>
-#include "editDefaults.h"	
+#include "editDefaults.h"
 
 KUserFiles::KUserFiles(KUserPrefsBase *cfg) : KUsers( cfg )
 {
@@ -64,15 +64,15 @@ KUserFiles::KUserFiles(KUserPrefsBase *cfg) : KUsers( cfg )
   caps = Cap_Passwd;
 #ifdef HAVE_SHADOW
   if ( !mCfg->shadowsrc().isEmpty() ) caps |= Cap_Shadow;
-#endif    
+#endif
 #if defined(__FreeBSD__) || defined(__bsdi__)
   caps |= Cap_BSD;
 #endif
-  
+
   reload();
 }
 
-KUserFiles::~KUserFiles() 
+KUserFiles::~KUserFiles()
 {
 }
 
@@ -88,7 +88,7 @@ bool KUserFiles::reload() {
 
 // Load passwd file
 
-bool KUserFiles::loadpwd() 
+bool KUserFiles::loadpwd()
 {
   passwd *p;
   KUser *tmpKU = 0;
@@ -104,7 +104,7 @@ bool KUserFiles::loadpwd()
   #define NISPASSWD 0x02
   #define MAXFILES 2
 
-  // Read KUser configuration	
+  // Read KUser configuration
 
   passwd_filename = mCfg->passwdsrc();
   nispasswd_filename = mCfg->nispasswdsrc();
@@ -115,7 +115,7 @@ bool KUserFiles::loadpwd()
     mCfg->setPasswdsrc( PASSWORD_FILE );
     mCfg->setGroupsrc( GROUP_FILE );
     passwd_filename = mCfg->passwdsrc();
-    KMessageBox::error( 0, i18n("KUser Sources were not configured.\nLocal passwd source set to %1\nLocal group source set to %2\n").arg(mCfg->passwdsrc().arg(mCfg->groupsrc())) );
+    KMessageBox::error( 0, i18n("KUser Sources were not configured.\nLocal passwd source set to %1\nLocal group source set to %2.").arg(mCfg->passwdsrc().arg(mCfg->groupsrc())) );
   }
 
   if(!passwd_filename.isEmpty()) {
@@ -128,7 +128,7 @@ bool KUserFiles::loadpwd()
   for(int i = 0; i < MAXFILES; i++) {
     rc = stat(QFile::encodeName(filename), &st);
     if(rc != 0) {
-      KMessageBox::error( 0, i18n("stat call on file %1 failed: %2\nCheck KUser Settings").arg(filename).arg(QString::fromLocal8Bit(strerror(errno))) );
+      KMessageBox::error( 0, i18n("Stat call on file %1 failed: %2\nCheck KUser settings.").arg(filename).arg(QString::fromLocal8Bit(strerror(errno))) );
       if( (processing_file & PASSWD) != 0 ) {
         passwd_errno = errno;
         if(!nispasswd_filename.isEmpty()) {
@@ -136,7 +136,7 @@ bool KUserFiles::loadpwd()
           processing_file = processing_file | NISPASSWD;
           filename.truncate(0);
           filename.append(nispasswd_filename);
-        } 
+        }
         continue;
       }
       else{
@@ -155,7 +155,7 @@ bool KUserFiles::loadpwd()
 #ifdef HAVE_FGETPWENT
     FILE *fpwd = fopen(QFile::encodeName(filename), "r");
     if(fpwd == NULL) {
-      KMessageBox::error( 0, i18n("Error opening %1 for reading").arg(filename) );
+      KMessageBox::error( 0, i18n("Error opening %1 for reading.").arg(filename) );
       return FALSE;
     }
 
@@ -183,7 +183,7 @@ bool KUserFiles::loadpwd()
       tmpKU->setExpire(p->pw_expire);
 #endif
 
-      if ((p->pw_gecos != 0) && (p->pw_gecos[0] != 0)) 
+      if ((p->pw_gecos != 0) && (p->pw_gecos[0] != 0))
         fillGecos(tmpKU, p->pw_gecos);
       mUsers.append(tmpKU);
     }
@@ -200,15 +200,15 @@ bool KUserFiles::loadpwd()
       processing_file = processing_file | NISPASSWD;
       filename.truncate(0);
       filename.append(nispasswd_filename);
-    } 
+    }
     else
       break;
 
   } // end of processing files, for loop
 
-  if( (passwd_errno == 0) && (nispasswd_errno == 0) )	
+  if( (passwd_errno == 0) && (nispasswd_errno == 0) )
     return (TRUE);
-  if( (passwd_errno != 0) && (nispasswd_errno != 0) )	
+  if( (passwd_errno != 0) && (nispasswd_errno != 0) )
     return (FALSE);
   else
     return(TRUE);
@@ -216,7 +216,7 @@ bool KUserFiles::loadpwd()
 
 // Load shadow passwords
 
-bool KUserFiles::loadsdw() 
+bool KUserFiles::loadsdw()
 {
 #ifdef HAVE_SHADOW
   QString shadow_file,tmp;
@@ -237,7 +237,7 @@ bool KUserFiles::loadsdw()
   FILE *f;
   kdDebug() << "open shadow file: " << shadow_file << endl;
   if ((f = fopen( QFile::encodeName(shadow_file), "r")) == NULL) {
-    KMessageBox::error( 0, i18n("Error opening %1 for reading").arg(shadow_file) );
+    KMessageBox::error( 0, i18n("Error opening %1 for reading.").arg(shadow_file) );
     return TRUE;
   }
   while ((spw = fgetspent( f ))) {     // read a shadow password structure
@@ -258,7 +258,7 @@ bool KUserFiles::loadsdw()
       tmp.remove( 0, 2 );
     } else
       up->setDisabled( false );
-    
+
     up->setSPwd( tmp );        // cp the encrypted pwd
     up->setLastChange( daysToTime( spw->sp_lstchg ) );
     up->setMin(spw->sp_min);
@@ -270,12 +270,12 @@ bool KUserFiles::loadsdw()
     up->setFlag(spw->sp_flag);
 #endif
   }
-  
+
 #ifdef HAVE_FGETSPENT
   fclose(f);
 #else
   endspent();
-#endif  
+#endif
 
 #endif // HAVE_SHADOW
   return TRUE;
@@ -283,7 +283,7 @@ bool KUserFiles::loadsdw()
 
 // Save password file
 
-bool KUserFiles::savepwd() 
+bool KUserFiles::savepwd()
 {
   FILE *passwd_fd = NULL;
   FILE *nispasswd_fd = NULL;
@@ -301,13 +301,13 @@ bool KUserFiles::savepwd()
     #define NOMINUID    0x01
     #define NONISPASSWD 0x02
 
-  // Read KUser configuration info	
+  // Read KUser configuration info
 
   passwd_filename = mCfg->passwdsrc();
   nispasswd_filename = mCfg->nispasswdsrc();
-  QString new_passwd_filename = 
+  QString new_passwd_filename =
     passwd_filename + QString::fromLatin1(KU_CREATE_EXT);
-  QString new_nispasswd_filename = 
+  QString new_nispasswd_filename =
     nispasswd_filename+QString::fromLatin1(KU_CREATE_EXT);
 
   if( nispasswd_filename != passwd_filename ) {
@@ -322,7 +322,7 @@ bool KUserFiles::savepwd()
       pw_backuped = TRUE;
     }
   }
-  if(!nispasswd_filename.isEmpty() && 
+  if(!nispasswd_filename.isEmpty() &&
     (nispasswd_filename != passwd_filename)) {
     if (!pn_backuped) {
       if (!backup(nispasswd_filename)) return FALSE;
@@ -333,15 +333,15 @@ bool KUserFiles::savepwd()
   // Open file(s)
 
   if(!passwd_filename.isEmpty()) {
-    if ((passwd_fd = 
-      fopen(QFile::encodeName(new_passwd_filename),"w")) == NULL) 
-        KMessageBox::error( 0, i18n("Error opening %1 for writing").arg(passwd_filename) );
+    if ((passwd_fd =
+      fopen(QFile::encodeName(new_passwd_filename),"w")) == NULL)
+        KMessageBox::error( 0, i18n("Error opening %1 for writing.").arg(passwd_filename) );
   }
 
-  if(!nispasswd_filename.isEmpty() && (nispasswd_filename != passwd_filename)){	
-    if ((nispasswd_fd = 
-      fopen(QFile::encodeName(new_nispasswd_filename),"w")) == NULL) 
-        KMessageBox::error( 0, i18n("Error opening %1 for writing").arg(nispasswd_filename) );
+  if(!nispasswd_filename.isEmpty() && (nispasswd_filename != passwd_filename)){
+    if ((nispasswd_fd =
+      fopen(QFile::encodeName(new_nispasswd_filename),"w")) == NULL)
+        KMessageBox::error( 0, i18n("Error opening %1 for writing.").arg(nispasswd_filename) );
   }
 
   QPtrListIterator<KUser> it( mUsers );
@@ -362,21 +362,21 @@ bool KUserFiles::savepwd()
       continue;
     }
     if ( mMod.contains( user ) ) user = &( mMod[ user ] );
-    
+
     tmp_uid = user->getUID();
-    if ( caps & Cap_Shadow ) 
+    if ( caps & Cap_Shadow )
       tmp = "x";
     else {
       tmp = user->getPwd();
       if ( user->getDisabled() && tmp != "x" && tmp != "*" )
         tmp = "!" + tmp;
     }
-        
-    
+
+
 #if defined(__FreeBSD__) || defined(__bsdi__)
     s =
       user->getName() + ":" +
-      tmp + ":" + 
+      tmp + ":" +
       QString::number( user->getUID() ) + ":" +
       QString::number( user->getGID() ) + ":" +
       user->getClass() + ":" +
@@ -423,24 +423,24 @@ bool KUserFiles::savepwd()
     }
 
     if( (nispasswd_fd != 0) && (minuid == 0) ) {
-      errors_found = errors_found | NOMINUID;  
+      errors_found = errors_found | NOMINUID;
     }
 
     if( (nispasswd_fd == 0) && (minuid != 0) ) {
-      errors_found = errors_found | NONISPASSWD;	
+      errors_found = errors_found | NONISPASSWD;
     }
-    kdDebug() << s << endl; 
-    fputs(s.local8Bit().data(), passwd_fd);	
-    
+    kdDebug() << s << endl;
+    fputs(s.local8Bit().data(), passwd_fd);
+
     ++it;
     user = (*it);
   }
 
   if(passwd_fd) {
     fclose(passwd_fd);
-    chmod(QFile::encodeName(new_passwd_filename), pwd_mode);	
+    chmod(QFile::encodeName(new_passwd_filename), pwd_mode);
     chown(QFile::encodeName(new_passwd_filename), pwd_uid, pwd_gid);
-    rename(QFile::encodeName(new_passwd_filename), 
+    rename(QFile::encodeName(new_passwd_filename),
       QFile::encodeName(passwd_filename));
   }
 
@@ -448,29 +448,29 @@ bool KUserFiles::savepwd()
     fclose(nispasswd_fd);
     chmod(QFile::encodeName(new_nispasswd_filename), pwd_mode);
     chown(QFile::encodeName(new_nispasswd_filename), pwd_uid, pwd_gid);
-    rename(QFile::encodeName(new_nispasswd_filename), 
+    rename(QFile::encodeName(new_nispasswd_filename),
       QFile::encodeName(nispasswd_filename));
   }
 
   if( (errors_found & NOMINUID) != 0 ) {
-    KMessageBox::error( 0, i18n("Unable to process NIS passwd file without a minimum UID specified.\nPlease update KUser Settings (Files)") );
+    KMessageBox::error( 0, i18n("Unable to process NIS passwd file without a minimum UID specified.\nPlease update KUser settings (Files).") );
   }
 
   if( (errors_found & NONISPASSWD) != 0 ) {
-    KMessageBox::error( 0, i18n("Specifying NIS minimum UID requires NIS file(s).\nPlease update KUser Settings (Files)") );
+    KMessageBox::error( 0, i18n("Specifying NIS minimum UID requires NIS file(s).\nPlease update KUser settings (Files).") );
   }
 
   // need to run a utility program to build /etc/passwd, /etc/pwd.db
   // and /etc/spwd.db from /etc/master.passwd
 #if defined(__FreeBSD__) || defined(__bsdi__)
   if (system(PWMKDB) != 0) {
-    KMessageBox::error( 0, i18n("Unable to build password database") );
+    KMessageBox::error( 0, i18n("Unable to build password database.") );
     return FALSE;
   }
 #else
   if( (nis_users_written > 0) || (nispasswd_filename == passwd_filename) ) {
     if (system(PWMKDB) != 0) {
-      KMessageBox::error( 0, i18n("Unable to build password databases") );
+      KMessageBox::error( 0, i18n("Unable to build password databases.") );
       return FALSE;
     }
   }
@@ -481,7 +481,7 @@ bool KUserFiles::savepwd()
 
 // Save shadow passwords file
 
-bool KUserFiles::savesdw() 
+bool KUserFiles::savesdw()
 {
 #ifdef HAVE_SHADOW
   bool addok = false;
@@ -502,17 +502,17 @@ bool KUserFiles::savesdw()
   }
 
   if ((f = fopen(QFile::encodeName(new_shadow_file), "w")) == NULL) {
-    KMessageBox::error( 0, i18n("Error opening %1 for writing").arg(new_shadow_file) );
+    KMessageBox::error( 0, i18n("Error opening %1 for writing.").arg(new_shadow_file) );
     return FALSE;
   }
 
   s.sp_namp = (char *)malloc(200);
   s.sp_pwdp = (char *)malloc(200);
-    
+
   QPtrListIterator<KUser> it( mUsers );
   up = (*it);
   while (true) {
-    
+
     if ( up == 0 ) {
       if ( addok ) break;
       it = QPtrListIterator<KUser> ( mAdd );
@@ -520,20 +520,20 @@ bool KUserFiles::savesdw()
       addok = true;
       if ( up == 0 ) break;
     };
-    
+
     if ( mDel.containsRef( up ) ) {
       ++it;
       up = (*it);
       continue;
     }
     if ( mMod.contains( up ) ) up = &( mMod[ up ] );
-    
+
     strncpy( s.sp_namp, QFile::encodeName( up->getName() ), 200 );
     if ( up->getDisabled() )
       strncpy( s.sp_pwdp, QFile::encodeName("!!" + up->getSPwd()), 200 );
     else
       strncpy( s.sp_pwdp, QFile::encodeName(up->getSPwd()), 200 );
-    
+
     s.sp_lstchg = timeToDays( up->getLastChange() );
     s.sp_min    = up->getMin();
     s.sp_max    = up->getMax();
@@ -545,7 +545,7 @@ bool KUserFiles::savesdw()
 #endif
     spwp = &s;
     putspent(spwp, f);
-    
+
     ++it;
     up = (*it);
   }
@@ -571,24 +571,24 @@ void KUserFiles::createPassword( KUser *user, const QString &password )
   } else
     user->setPwd( encryptPass( password, false ) );
 }
-  
+
 bool KUserFiles::dbcommit()
 {
   bool ret;
   mode_t mode;
-  
+
   mAddSucc.clear();
   mDelSucc.clear();
   mModSucc.clear();
   if ( mDel.isEmpty() && mAdd.isEmpty() && mMod.isEmpty() )
     return true;
-  
+
   mode = umask(0077);
   ret = savepwd();
   if ( ret ) ret = savesdw();
   umask( mode );
   if ( !ret ) return false;
-  
+
   mDelSucc = mDel;
   mAddSucc = mAdd;
   mModSucc = mMod;

@@ -40,22 +40,22 @@ editDefaults::editDefaults( KConfigSkeleton *config, QWidget *parent, const char
   Default|Ok|Apply|Cancel|Help, Ok, true )
 {
   GeneralSettings *page1 = new GeneralSettings( this );
-  addPage( page1, i18n("General"), "", i18n("General settings") );
+  addPage( page1, i18n("General"), "", i18n("General Settings") );
   page1->kcfg_shell->insertItem( i18n("<Empty>" ) );
   page1->kcfg_shell->insertStringList( readShells() );
-    
+
   FilesSettings *page2 = new FilesSettings( this );
-  addPage( page2, i18n("Files"), "", i18n("File source settings") );
-    
+  addPage( page2, i18n("Files"), "", i18n("File Source Settings") );
+
   KTabWidget *page3 = new KTabWidget( this );
   page3->setMargin( KDialog::marginHint() );
-  KABC::LdapConfigWidget *ldconf = 
+  KABC::LdapConfigWidget *ldconf =
     new KABC::LdapConfigWidget( KABC::LdapConfigWidget::W_ALL &
     ~(KABC::LdapConfigWidget::W_FILTER), page3 );
   page3->addTab( ldconf, i18n("Connection") );
 
   LdapSettings *page3b = new LdapSettings( this );
   page3->addTab( page3b, i18n("Settings") );
-  addPage( page3, i18n("LDAP"), "", i18n("LDAP source settings") );
+  addPage( page3, i18n("LDAP"), "", i18n("LDAP Source Settings") );
 }
 #include "editDefaults.moc"

@@ -172,7 +172,7 @@ Quota::Quota(unsigned int auid, bool doget) {
   int qcmd = QCMD(Q_GETQUOTA, USRQUOTA);
 
   for (uint i=0; i<mounts->getMountsNumber(); i++) {
-    if (quotactl(qcmd, (const char *)mounts->getMount(i)->fsname, uid, (caddr_t) &dq) != 0) {
+    if (quotactl(qcmd, (const char *)mounts->getMount(i)->getfsname(), uid, (caddr_t) &dq) != 0) {
 /*
         if ((errno == EOPNOTSUPP || errno == ENOSYS) && !warned) {
 */
@@ -198,7 +198,7 @@ Quota::Quota(unsigned int auid, bool doget) {
 
 #ifdef HAVE_IRIX
   for (uint i=0; i<mounts->getMountsNumber(); i++) {
-    if (quotactl(Q_GETQUOTA, (const char *)mounts->getMount(i)->fsname, uid, (caddr_t) &dq) != 0) {
+    if (quotactl(Q_GETQUOTA, (const char *)mounts->getMount(i)->getfsname(), uid, (caddr_t) &dq) != 0) {
 	if(!warned) {
             warned++;
             printf("errno: %i\n", errno);
@@ -222,7 +222,7 @@ Quota::Quota(unsigned int auid, bool doget) {
   int qcmd = QCMD(Q_GETQUOTA, USRQUOTA);
 
   for (uint i=0; i<mounts->getMountsNumber(); i++) {
-    if (quotactl((const char *)mounts->getMount(i)->fsname, qcmd, uid, (caddr_t) &dq) !=0) {
+    if (quotactl((const char *)mounts->getMount(i)->getfsname(), qcmd, uid, (caddr_t) &dq) !=0) {
       //  printf("%d\n",errno);
       warned++;
       KMsgBox::message(0, _("Error"), _("Quotas are not compiled into this kernel."), KMsgBox::STOP);
@@ -248,7 +248,7 @@ Quota::Quota(unsigned int auid, bool doget) {
 
   for (uint i=0; i<mounts->getMountsNumber(); i++) {
     
-    if ((dd = quotactl(Q_GETQUOTA, (const char *)mounts->getMount(i)->quotafilename, uid, &dq)) != 0)
+    if ((dd = quotactl(Q_GETQUOTA, (const char *)mounts->getMount(i)->getquotafilename(), uid, &dq)) != 0)
       if (errno == ESRCH) {
         q.append(new QuotaMnt());
         close(fd);
@@ -338,16 +338,16 @@ void Quota::save() {
   int dd = 0;
   int qcmd = QCMD(Q_SETQUOTA, USRQUOTA);
   for (uint i=0; i<mounts->getMountsNumber(); i++) {
-    dq.dqb_curblocks  = btodb(q.at(i)->fcur*1024);
-    dq.dqb_bsoftlimit = btodb(q.at(i)->fsoft*1024);
-    dq.dqb_bhardlimit = btodb(q.at(i)->fhard*1024);
-    dq.dqb_curinodes  = q.at(i)->icur;
-    dq.dqb_isoftlimit = q.at(i)->isoft;
-    dq.dqb_ihardlimit = q.at(i)->ihard;
-    dq.dqb_btime = q.at(i)->ftime*3600;
-    dq.dqb_itime = q.at(i)->itime*3600;
+    dq.dqb_curblocks  = btodb(q.at(i)->getfcur()*1024);
+    dq.dqb_bsoftlimit = btodb(q.at(i)->getfsoft()*1024);
+    dq.dqb_bhardlimit = btodb(q.at(i)->getfhard()*1024);
+    dq.dqb_curinodes  = q.at(i)->geticur();
+    dq.dqb_isoftlimit = q.at(i)->getisoft();
+    dq.dqb_ihardlimit = q.at(i)->getihard();
+    dq.dqb_btime = q.at(i)->getftime()*3600;
+    dq.dqb_itime = q.at(i)->getitime()*3600;
 
-    if ((dd =quotactl(qcmd, (const char *)mounts->getMount(i)->fsname, uid, (caddr_t) &dq)) != 0) {
+    if ((dd =quotactl(qcmd, (const char *)mounts->getMount(i)->getfsname(), uid, (caddr_t) &dq)) != 0) {
       printf("Quotactl returned: %d\n", dd);
       continue;
     }
@@ -357,16 +357,16 @@ void Quota::save() {
 #ifdef HAVE_IRIX
   int dd = 0;
   for (uint i=0; i<mounts->getMountsNumber(); i++) {
-    dq.dqb_curblocks  = btodb(q.at(i)->fcur*1024);
-    dq.dqb_bsoftlimit = btodb(q.at(i)->fsoft*1024);
-    dq.dqb_bhardlimit = btodb(q.at(i)->fhard*1024);
-    dq.dqb_curfiles  = q.at(i)->icur;
-    dq.dqb_fsoftlimit = q.at(i)->isoft;
-    dq.dqb_fhardlimit = q.at(i)->ihard;
-    dq.dqb_btimelimit = q.at(i)->ftime*3600;
-    dq.dqb_ftimelimit = q.at(i)->itime*3600;
+    dq.dqb_curblocks  = btodb(q.at(i)->getfcur()*1024);
+    dq.dqb_bsoftlimit = btodb(q.at(i)->getfsoft()*1024);
+    dq.dqb_bhardlimit = btodb(q.at(i)->getfhard()*1024);
+    dq.dqb_curfiles  = q.at(i)->geticur();
+    dq.dqb_fsoftlimit = q.at(i)->getisoft();
+    dq.dqb_fhardlimit = q.at(i)->getihard();
+    dq.dqb_btimelimit = q.at(i)->getftime()*3600;
+    dq.dqb_ftimelimit = q.at(i)->getitime()*3600;
 
-    if ((dd =quotactl(Q_SETQUOTA, (const char *)mounts->getMount(i)->fsname, uid, (caddr_t) &dq)) != 0) {
+    if ((dd =quotactl(Q_SETQUOTA, (const char *)mounts->getMount(i)->getfsname(), uid, (caddr_t) &dq)) != 0) {
       printf("Quotactl returned: %d\n", dd);
       continue;
     }
@@ -378,16 +378,16 @@ void Quota::save() {
   int qcmd = QCMD(Q_SETQUOTA,USRQUOTA);
 
   for (uint i=0; i<mounts->getMountsNumber(); i++) {
-    dq.dqb_curblocks  = btodb(q->at(i)->fcur*1024);
-    dq.dqb_bsoftlimit = btodb(q->at(i)->fsoft*1024);
-    dq.dqb_bhardlimit = btodb(q->at(i)->fhard*1024);
-    dq.dqb_curinodes  = q->at(i)->icur;
-    dq.dqb_isoftlimit = q->at(i)->isoft;
-    dq.dqb_ihardlimit = q->at(i)->ihard;
-    dq.dqb_btime = q.at(i)->ftime*3600;
-    dq.dqb_itime = q.at(i)->itime*3600;
+    dq.dqb_curblocks  = btodb(q->at(i)->getfcur()*1024);
+    dq.dqb_bsoftlimit = btodb(q->at(i)->getfsoft()*1024);
+    dq.dqb_bhardlimit = btodb(q->at(i)->getfhard()*1024);
+    dq.dqb_curinodes  = q->at(i)->geticur();
+    dq.dqb_isoftlimit = q->at(i)->getisoft();
+    dq.dqb_ihardlimit = q->at(i)->getihard();
+    dq.dqb_btime = q.at(i)->getftime()*3600;
+    dq.dqb_itime = q.at(i)->getitime()*3600;
 
-    if ((dd =quotactl((const char *)mounts->getMount(i)->fsname, qcmd, uid, (caddr_t) &dq)) != 0) {
+    if ((dd =quotactl((const char *)mounts->getMount(i)->getfsname(), qcmd, uid, (caddr_t) &dq)) != 0) {
       printf("Quotactl returned: %d\n", dd);
       continue;
     }
@@ -396,16 +396,16 @@ void Quota::save() {
 #ifdef _KU_HPUX_QUOTA
   int dd = 0;
   for (uint i=0; i<mounts->getMountsNumber(); i++) {
-    dq.dqb_curblocks  = btodb(q.at(i)->fcur*1024);
-    dq.dqb_bsoftlimit = btodb(q.at(i)->fsoft*1024);
-    dq.dqb_bhardlimit = btodb(q.at(i)->fhard*1024);
-    dq.dqb_curfiles  = q.at(i)->icur;
-    dq.dqb_fsoftlimit = q.at(i)->isoft;
-    dq.dqb_fhardlimit = q.at(i)->ihard;
-    dq.dqb_btimelimit = q.at(i)->ftime*3600;
-    dq.dqb_ftimelimit = q.at(i)->itime*3600;
+    dq.dqb_curblocks  = btodb(q.at(i)->getfcur()*1024);
+    dq.dqb_bsoftlimit = btodb(q.at(i)->getfsoft()*1024);
+    dq.dqb_bhardlimit = btodb(q.at(i)->getfhard()*1024);
+    dq.dqb_curfiles  = q.at(i)->geticur();
+    dq.dqb_fsoftlimit = q.at(i)->getisoft();
+    dq.dqb_fhardlimit = q.at(i)->getihard();
+    dq.dqb_btimelimit = q.at(i)->getftime()*3600;
+    dq.dqb_ftimelimit = q.at(i)->getitime()*3600;
 
-    if ((dd =quotactl(Q_SETQUOTA, (const char *)mounts->getMount(i)->fsname, uid, &dq)) != 0) {
+    if ((dd =quotactl(Q_SETQUOTA, (const char *)mounts->getMount(i)->getfsname(), uid, &dq)) != 0) {
       printf("Quotactl returned: %d\n", dd);
       continue;
     }

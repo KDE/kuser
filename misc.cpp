@@ -54,7 +54,12 @@ void backup(char const *name)
 }
 
 char *convertdate(char *buf, const long int base, const long int days) {
+#if defined(__hpux)
+  int tmpd;
+#else
   long int tmpd;
+#endif // __hpux
+
   tm *t;
 
   if ((base+days)<24855l)

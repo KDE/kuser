@@ -14,6 +14,12 @@ void KUserGlobals::init() {
 }
 
 KUserGlobals::~KUserGlobals() {
+#ifdef _KU_QUOTA
+  delete mounts;
+  delete quotas;
+#endif
+  delete users;
+  delete groups;
 }
 
 KUsers &KUserGlobals::getUsers() {

@@ -82,7 +82,7 @@ void usernamedlg::ok() {
     return;
   }
   
-  user->setFullName(leusername->text());
+  user->setName(leusername->text());
   accept();
 }
 

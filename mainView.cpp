@@ -303,7 +303,7 @@ void mainView::save() {
     
   if (QMessageBox::information(0, i18n("Data was modified"),
                                i18n("Would you like to save changes?"),
-                               i18n("Save"), i18n("Discard changes")) != 0)
+                               i18n("&Save"), i18n("&Discard changes")) != 0)
     return;
     
   if (!kug->getUsers().save())

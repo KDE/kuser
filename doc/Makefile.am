@@ -1,3 +1,3 @@
 
 # add here all the languages, you have docu for
-SUBDIRS = en es ru
+SUBDIRS = de en es ru

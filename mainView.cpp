@@ -192,8 +192,8 @@ void mainView::useradd() {
   }
 
   config->setGroup("template");
-  tk->setShell(config->readEntry("shell", QString::fromLatin1("/bin/sh")));
-  tk->setHomeDir(config->readEntry("homeBase", QFile::decodeName(KU_HOMEPREFIX))+
+  tk->setShell(config->readPathEntry("shell", QString::fromLatin1("/bin/sh")));
+  tk->setHomeDir(config->readPathEntry("homeBase", QFile::decodeName(KU_HOMEPREFIX))+
   	QString::fromLatin1("/")+tk->getName());
   tk->setGID(config->readNumEntry("gid"));
   tk->setFullName(config->readEntry("p_fname"));
@@ -343,8 +343,8 @@ void mainView::properties() {
   if (eddlg.exec() != 0)
   {
     config->setGroup("template");
-    config->writeEntry("shell", eddlg.getShell());
-    config->writeEntry("homeBase", eddlg.getHomeBase());
+    config->writePathEntry("shell", eddlg.getShell());
+    config->writePathEntry("homeBase", eddlg.getHomeBase());
     config->writeEntry("createHomeDir", eddlg.getCreateHomeDir());
     config->writeEntry("copySkel", eddlg.getCopySkel());
     config->writeEntry("userPrivateGroup", eddlg.getUserPrivateGroup());

@@ -20,7 +20,6 @@
 #include "misc.h"
 
 #include "addUser.h"
-#include <qmessagebox.h>
 
 #ifdef _KU_QUOTA
 addUser::addUser(KUser &AUser, Quota &AQuota, QWidget *parent, const char *name, int isprep) :

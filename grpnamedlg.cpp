@@ -4,7 +4,7 @@
 #include <kbuttonbox.h>
 #include <qlayout.h>
 #include <qvalidator.h>
-#include <qmessagebox.h>
+#include <kmessagebox.h>
 
 #include "grpnamedlg.h"
 #include "misc.h"
@@ -93,13 +93,13 @@ void grpnamedlg::ok()
 
   if (kug->getGroups().lookup(legrpname->text()) != NULL) {
     tmp = i18n("Group with name %1 already exists.").arg(legrpname->text());
-    QMessageBox::warning(0, i18n("Error"), tmp, i18n("&OK"));
+    KMessageBox::sorry(0, tmp);
     return;
   }
   
   if (kug->getGroups().lookup(s.toInt()) != NULL) {
     tmp = i18n("Group with gid %1 already exists.").arg(s.toInt());
-    QMessageBox::warning(0, i18n("Error"), tmp, i18n("&OK"));
+    KMessageBox::sorry(0, tmp);
     return;
   }
   

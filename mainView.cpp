@@ -9,11 +9,11 @@
 #include <signal.h>
 
 #include <qtooltip.h>
-#include <qmessagebox.h>
 #include <qsplitter.h>
 
 #include <ktoolbar.h>
 #include <kiconloader.h>
+#include <kmessagebox.h>
 
 #include "misc.h"
 #include "kglobal_.h"
@@ -128,10 +128,9 @@ void mainView::userdel() {
   bool islast = FALSE;
   KUser *user = lbusers->getCurrentUser();
 
-  if (QMessageBox::warning(0, i18n("WARNING"),
-                     i18n("Do you really want to delete user '%1'?")
-		       .arg(user->getName()),
-                     i18n("&Cancel"), i18n("&Delete")) != 1)
+  if (KMessageBox::warningContinueCancel(0, i18n("Do you really want to delete user '%1'?")
+		       .arg(user->getName()), QString::null,
+                     i18n("&Delete")) != KMessageBox::Continue)
     return;
 
   i = lbusers->currentItem();
@@ -171,11 +170,11 @@ void mainView::userdel() {
   if (group == NULL)
     return;
     
-  if (QMessageBox::information(0, i18n("WARNING"),
+  if (KMessageBox::warningContinueCancel(0, 
         i18n("You are using private groups.\n"
              "Do you want delete user's private group '%1'?")
-	       .arg(group->getName()),
-	     i18n("&Cancel"), i18n("&Delete")) != 1)
+	       .arg(group->getName()), QString::null, 
+	     i18n("&Delete")) != KMessageBox::Continue)
     return;
     
   uint oldc = lbgroups->currentItem();
@@ -301,9 +300,9 @@ void mainView::save() {
   if (changed != TRUE)
     return;
     
-  if (QMessageBox::information(0, i18n("Data was modified"),
-                               i18n("Would you like to save changes?"),
-                               i18n("&Save"), i18n("&Discard changes")) != 0)
+  if (KMessageBox::questionYesNo(0, i18n("Would you like to save changes?"),
+                               i18n("Data was modified"),
+                               i18n("&Save"), i18n("&Discard changes")) == KMessageBox::No)
     return;
     
   if (!kug->getUsers().save())
@@ -439,9 +438,8 @@ void mainView::grpedit() {
 }
 
 void mainView::grpdel() {
-  if (QMessageBox::information(0, i18n("WARNING"),
-                     i18n("Do you really want to delete group?"),
-                     i18n("&Cancel"), i18n("&Delete")) != 1)
+  if (KMessageBox::warningContinueCancel(0, i18n("Do you really want to delete group?"),
+                     QString::null, i18n("&Delete")) != KMessageBox::Continue)
     return;
 
   uint i = 0;

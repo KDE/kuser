@@ -7,6 +7,17 @@
 #include "mnt.h"
 #include "quota.h"
 
+#ifdef HAVE_LINUX_QUOTA_H
+#  ifndef QUOTACTL_IN_LIBC
+#    include <syscall.h>
+
+int quotactl(int cmd, const char * special, int id, caddr_t addr) {
+  return syscall(SYS_quotactl, cmd, special, id, addr);
+}
+
+#  endif
+#endif
+
 QuotaMnt::QuotaMnt() {
   fcur = 0; fsoft = 0; fhard = 0; ftime = 0;
   icur = 0; isoft = 0; ihard = 0; itime = 0;

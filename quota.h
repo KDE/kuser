@@ -48,14 +48,6 @@
 #else
 #  ifdef HAVE_LINUX_QUOTA_H
 #  include <linux/quota.h>
-#  ifndef QUOTACTL_IN_LIBC
-#    include <syscall.h>
-
-int quotactl(int cmd, const char * special, int id, caddr_t addr) {
-  return syscall(SYS_quotactl, cmd, special, id, addr);
-}
-
-#  endif
 #  if defined __GLIBC__ && __GLIBC__ >= 2
      typedef unsigned int __u32;
 #    define MNTTYPE_EXT2 "ext2"

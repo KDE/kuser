@@ -150,55 +150,67 @@ void mainDlg::userdel() {
   bool islast = FALSE;
 
   if (KMsgBox::yesNo(0, i18n("WARNING"),
-                     i18n("Do you really want to delete user ?"),
-                     KMsgBox::STOP,
-                     i18n("Cancel"), i18n("Delete")) == 2) {
+        i18n("Do you really want to delete user ?"),
+        KMsgBox::STOP,
+        i18n("Cancel"), i18n("Delete")) != 2)
+    return;
 
-    i = lbusers->currentItem();
-    if (i == u->count()-1)
-      islast = TRUE;
+  i = lbusers->currentItem();
+  if (i == u->count()-1)
+    islast = TRUE;
 
-    uint uid = lbusers->getCurrentUser()->getUID();
-    uint gid = lbusers->getCurrentUser()->getGID();
+  uint uid = lbusers->getCurrentUser()->getUID();
+  if (uid == 0)
+    if (KMsgBox::yesNo(0, i18n("WARNING"),
+          i18n("Are you sure that you really want to remove user\n\
+with uid = 0 ? Please take into account that\n\
+this user has admin priveleges and if you will\n\
+remove it possibly you will be unable to administer\n\
+your system any more!"),
+          KMsgBox::STOP,
+          i18n("Cancel"), i18n("Delete")) != 2)
+      return;
+
+  uint gid = lbusers->getCurrentUser()->getGID();
 
 #ifdef _KU_QUOTA
-    if (u->lookup(uid) == NULL)
-      q->delQuota(uid);
+  if (u->lookup(uid) == NULL)
+    q->delQuota(uid);
 #endif
 
-    u->del(lbusers->getCurrentUser());
+  u->del(lbusers->getCurrentUser());
 
-    prev = -1;
+  prev = -1;
 
-    if (!islast)
-      reloadUsers(i);
-    else
-      reloadUsers(i-1);
-    changed = TRUE;
+  if (!islast)
+    reloadUsers(i);
+  else
+    reloadUsers(i-1);
+  changed = TRUE;
 
-    config->setGroup("template"); 
-    if (config->readBoolEntry("userPrivateGroup", KU_USERPRIVATEGROUP)) {
-      bool found = false;
+  config->setGroup("template"); 
+  if (config->readBoolEntry("userPrivateGroup", KU_USERPRIVATEGROUP)) {
+    bool found = false;
 
-      for (uint i=0; i<u->count(); i++)
-        if (u->user(i)->getName() == gid) {
-          found = true;
-          break;
-        }
+    for (uint i=0; i<u->count(); i++)
+      if (u->user(i)->getName() == gid) {
+        found = true;
+        break;
+      }
 
-      if (!found)
-        if (KMsgBox::yesNo(0, i18n("WARNING"),
-                           i18n("You are using private groups.\nDo you want delete user's private group ?"),
-                           KMsgBox::STOP,
-                           i18n("Cancel"), i18n("Delete")) == 2) {
-          uint oldc = lbgroups->currentItem();
-          g->del(g->lookup(gid));
-          if (oldc == g->count())
-            reloadGroups(oldc-1);
-          else
-            reloadGroups(oldc);
-        }
-    }
+    if (!found)
+      if (KMsgBox::yesNo(0, i18n("WARNING"),
+            i18n("You are using private groups.\n\
+Do you want delete user's private group ?"),
+            KMsgBox::STOP,
+            i18n("Cancel"), i18n("Delete")) == 2) {
+        uint oldc = lbgroups->currentItem();
+        g->del(g->lookup(gid));
+        if (oldc == g->count())
+          reloadGroups(oldc-1);
+        else
+          reloadGroups(oldc);
+      }
   }
 }
 
@@ -317,27 +329,43 @@ void mainDlg::useradd() {
 
 
 void mainDlg::save() {
-  if (changed == TRUE)
+  if (changed)
     if (KMsgBox::yesNo(0, i18n("Data was modified"),
-                       i18n("Would you like to save changes ?"),
-    		       KMsgBox::INFORMATION,
-		       i18n("Save"), i18n("Discard changes")) == 1) {
-      if (!u->save())
-        err->display();
+          i18n("Would you like to save changes ?"),
+          KMsgBox::INFORMATION,
+          i18n("Save"), i18n("Discard changes")) == 1)
+      saveAll();
+}
 
-      if (!g->save())
-        err->display();
+void mainDlg::saveAll() {
+  if (!changed)
+    return;
+
+  if (!u->save())
+    err->display();
+
+  if (!g->save())
+    err->display();
 #ifdef _KU_QUOTA
-      if (is_quota != 0)
-        if (!q->save())
-          err->display();
+  if (is_quota != 0)
+    if (!q->save())
+      err->display();
 #endif
-    }
 }
 
 void mainDlg::quit() {
-  save();
-
+  if (changed)
+    switch (KMsgBox::yesNoCancel(0, i18n("Data was modified"),
+                       i18n("Would you like to save changes ?"),
+    		       KMsgBox::INFORMATION,
+		       i18n("Save"), i18n("Discard changes"), i18n("Cancel"))) {
+    case 1:
+      saveAll();
+    case 2:
+      break;
+    case 3:
+      return;
+    }
   qApp->quit();
 }
 

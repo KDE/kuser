@@ -1,3 +1,7 @@
+13/01/2000: Problem with groups in user property dialog fixed.
+            Reorganisation in quota handling. Support for early glibc 2.0. 
+            If remove root show warning and ask again.
+            If save ask for Save/Discard, if quit ask for Save/Discard/Cancel.
 12/07/1999: fgetpwent/getpwent/fgetgrent/getgrent issue fixed (FreeBSD have no
              fxx funcs. Thanks to Hans Petter Bieker <zerium@traad.lavvu.no>.
 24/04/1999: change _KU_FIRST_USER to KU_FIRST_USER, and put a define for it into

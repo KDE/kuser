@@ -66,6 +66,7 @@ protected:
   void reloadUsers(int id);
   void reloadGroups(int gid);
   virtual void resizeEvent (QResizeEvent *rse);
+  void saveAll();
 
   KUserView *lbusers;
   KGroupView *lbgroups;

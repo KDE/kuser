@@ -1,8 +1,9 @@
 #ifdef _KU_QUOTA
 #include <stdlib.h>
 #include <stdio.h>
+#include "globals.h"
 #include "mnt.h"
-#include "quota.h"
+#include "fs.h"
 
 MntEnt::MntEnt(const char *afsname, const char *adir,
                const char *atype, const char *aopts,

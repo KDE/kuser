@@ -516,7 +516,7 @@ void propdlg::saveg() {
   uint i;
 
   for (i=0;i<m_Group->count();i++)
-    if (groups->lookup(m_Group->text(i))->lookup_user(user->getName()))
+    if (!groups->lookup(m_Group->text(i))->lookup_user(user->getName()))
       groups->lookup(m_Group->text(i))->addUser(user->getName());
   
   for (i=0;i<m_Other->count();i++)

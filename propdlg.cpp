@@ -659,6 +659,7 @@ void propdlg::setpwd() {
 
   pd = new pwddlg(user, this, "pwddlg");
   pd->exec();
+  ischanged = TRUE;
   delete pd;
 }
 

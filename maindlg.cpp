@@ -306,6 +306,7 @@ void mainDlg::setpwd() {
   
   d = new pwddlg(lbusers->getCurrentUser(), this, "pwddlg");
   d->exec();
+  changed = TRUE;
   delete d;
 }
 

@@ -68,6 +68,14 @@
 #    include <sys/param.h>
 #    define CORRECT_FSTYPE(type) (!strcmp(type,MNTTYPE_EFS) || !strcmp(type,MNTTYPE_XFS))
 #    define _KU_QUOTAFILENAME "quotas"
+#  elif __osf__                /* OSF1, aka Digital Unix, aka Tru64 Unix */
+#      undef _POSIX_SOURCE
+#      define _OSF_SOURCE
+#      include <machine/machparam.h> /* for dbtob and the like */
+#      include <sys/types.h>
+#      include <ufs/quota.h>
+#      include <fstab.h>
+#      define _KU_QUOTAFILENAME "quota.user"
 #  elif BSD /* I'm not 100% sure about this, but it should work with Net/OpenBSD */
 #      include <machine/param.h> /* for dbtob and the like */
 #      include <sys/types.h>

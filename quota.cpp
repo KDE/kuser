@@ -151,14 +151,17 @@ static int doQuotaCtl(int ACmd, uint AUID, const MntEnt *m, struct dqblk *dq) {
   return res;
 #else
 #  if defined(_KU_EXT2_QUOTA) || defined(HAVE_IRIX)
-  return quotactl(ACmd, m->getfsname(), AUID, (caddr_t) dq);
+         return quotactl(ACmd, m->getfsname(), AUID, (caddr_t) dq);
 #  else
-#    ifdef BSD
-  return quotactl(m->getdir(), ACmd, AUID, (caddr_t) dq);
+#    ifdef __osf__
+         return quotactl((const char*) m->getdir(), ACmd, AUID, (caddr_t) dq);
 #    else
-#      ifdef _KU_HPUX_QUOTA
-  return quotactl(ACmd, m->getquotafilename(), AUID, dq);
-#      endif
+#        ifdef BSD
+             return quotactl(m->getdir(), ACmd, AUID, (caddr_t) dq);
+#        endif
+#    endif
+#    ifdef _KU_HPUX_QUOTA
+         return quotactl(ACmd, m->getquotafilename(), AUID, dq);
 #    endif
 #  endif
 #endif

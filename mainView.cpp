@@ -249,8 +249,10 @@ void mainView::useradd() {
     tk->setFlag(readnumentry("s_flag"));
 #endif
 
-  if (is_quota == 0)
+  if (is_quota == 0) {
+    delete tq;
     tq = NULL;
+  }
   
 #ifdef _KU_QUOTA
   addUser au(*tk, *tq, this, "userin");
@@ -278,14 +280,16 @@ void mainView::useradd() {
     }
     kug->getUsers().add(tk);
 #ifdef _KU_QUOTA
-    kug->getQuotas().addQuota(tq);
+    if (tq != NULL)
+      kug->getQuotas().addQuota(tq);
 #endif
     changed = TRUE;
   }
   else {
     delete tk;
 #ifdef _KU_QUOTA
-    delete tq;
+    if (tq != NULL)
+      delete tq;
 #endif
   }
 

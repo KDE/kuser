@@ -12,7 +12,7 @@
 #include <qsplitter.h>
 #include <qfile.h>
 
-#include <klineeditdlg.h>
+#include <kinputdialog.h>
 #include <ktoolbar.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
@@ -170,20 +170,21 @@ void mainView::useradd() {
   tq = new Quota(tk->getUID(), FALSE);
 #endif // _KU_QUOTA
 
-  KLineEditDlg dlg(i18n("Enter user name:"), QString::null, this);
-  dlg.setCaption(i18n("Add User"));
-  
-  if (!dlg.exec())  {
+  bool ok;
+  QString name = KInputDialog::getText( i18n( "Add User" ),
+      i18n( "Enter user name:" ), QString::null, &ok, this );
+
+  if (!ok)  {
     delete tk;
 #ifdef _KU_QUOTA
     delete tq;
 #endif
     return;
   }
-  tk->setName(dlg.text());
+  tk->setName(name);
 
-  if (kug->getUsers().lookup(dlg.text())) {
-    KMessageBox::error( 0, i18n("User with name %1 already exists.").arg(dlg.text()) );
+  if (kug->getUsers().lookup(name)) {
+    KMessageBox::error( 0, i18n("User with name %1 already exists.").arg(name) );
     delete tk;
 #ifdef _KU_QUOTA
     delete tq;

@@ -5,7 +5,7 @@
 
 #include <qstring.h>
 #include <qstringlist.h>
-#include <qlist.h>
+#include <qptrlist.h>
 
 #ifdef _KU_QUOTA
 #include "quota.h"
@@ -65,7 +65,7 @@ public:
 protected:
   int gr_backuped;
   int gn_backuped;
-  QList<KGroup> g;
+  QPtrList<KGroup> g;
 
   int mode;
   uid_t uid;

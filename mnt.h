@@ -2,7 +2,7 @@
 #define _KU_MNT_H_
 
 #include <qstring.h>
-#include <qlist.h>
+#include <qptrlist.h>
 
 class MntEnt {
 public:
@@ -42,7 +42,7 @@ public:
   MntEnt *operator[](uint num);
   uint getMountsNumber();
 protected:
-  QList<MntEnt> m;
+  QPtrList<MntEnt> m;
 };
 
 #endif // _KU_MNT_H_

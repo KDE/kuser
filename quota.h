@@ -3,7 +3,7 @@
 
 #ifdef _KU_QUOTA
 
-#include <qlist.h>
+#include <qptrlist.h>
 #include <qintdict.h>
 
 class QuotaMnt {
@@ -55,7 +55,7 @@ public:
   bool save();
 protected:
   uint uid;
-  QList<QuotaMnt> q;
+  QPtrList<QuotaMnt> q;
 };
 
 class Quotas {

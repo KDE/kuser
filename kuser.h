@@ -4,7 +4,7 @@
 #include <sys/types.h>
 
 #include <qstring.h>
-#include <qlist.h>
+#include <qptrlist.h>
 
 #include "globals.h"
 
@@ -192,8 +192,8 @@ protected:
   uid_t sdw_uid;
   gid_t sdw_gid;
 
-  QList<KUser> u;
-  QList<KUser> du;
+  QPtrList<KUser> u;
+  QPtrList<KUser> du;
 
   bool doCreate();
   bool doDelete();

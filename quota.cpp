@@ -147,7 +147,7 @@ static int doQuotaCtl(int ACmd, uint AUID, const MntEnt *m, struct dqblk *dq) {
   qctl.uid = AUID;
   qctl.addr = (caddr_t)dq;
     
-  fd = open(m->getquotafilename(), (ACmd == _KU_GETQUOTA) ? O_RDONLY : O_WRONLY);
+  fd = open(QFile::encodeName(m->getquotafilename()), (ACmd == _KU_GETQUOTA) ? O_RDONLY : O_WRONLY);
   int res = ioctl(fd, Q_QUOTACTL, &qctl);
   close(fd);
   return res;

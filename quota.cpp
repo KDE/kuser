@@ -2,6 +2,7 @@
 
 #include <kmsgbox.h>
 
+#include "misc.h"
 #include "maindlg.h"
 #include "mnt.h"
 #include "quota.h"
@@ -229,12 +230,12 @@ void Quota::save() {
   int dd = 0;
   int qcmd = QCMD(Q_SETQUOTA, USRQUOTA);
   for (uint i=0; i<mounts->getMountsNumber(); i++) {
-    dq.dqb_curblocks  = btodb(q->at(i)->fcur*1024);
-    dq.dqb_bsoftlimit = btodb(q->at(i)->fsoft*1024);
-    dq.dqb_bhardlimit = btodb(q->at(i)->fhard*1024);
-    dq.dqb_curinodes  = q->at(i)->icur;
-    dq.dqb_isoftlimit = q->at(i)->isoft;
-    dq.dqb_ihardlimit = q->at(i)->ihard;
+    dq.dqb_curblocks  = btodb(q.at(i)->fcur*1024);
+    dq.dqb_bsoftlimit = btodb(q.at(i)->fsoft*1024);
+    dq.dqb_bhardlimit = btodb(q.at(i)->fhard*1024);
+    dq.dqb_curinodes  = q.at(i)->icur;
+    dq.dqb_isoftlimit = q.at(i)->isoft;
+    dq.dqb_ihardlimit = q.at(i)->ihard;
     dq.dqb_btime = MAX_DQ_TIME;
     dq.dqb_itime = MAX_IQ_TIME;
 

@@ -8,8 +8,6 @@
 #include "misc.h"
 #include "maindlg.h"
 
-QFont rufont("-*-times-medium-r-*-*-*-120-*-*-*-*-*-*");
-
 char tmp[1024];
 KConfig *config;
 bool changed = false;
@@ -28,10 +26,6 @@ int is_shadow = 0;
 
 void initmain() {
   config = kapp->getConfig();
-
-  rufont.setRawMode(TRUE);
-  if (!rufont.exactMatch())
-    puts(_("Doesn't found a font!\n"));
 }
 
 void donemain() {

@@ -29,43 +29,31 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
   setCancelButton();
   QObject::connect(this, SIGNAL(cancelButtonPressed()), this, SLOT(cancel()));
 
-  setFont(rufont);
   w1 = new QWidget(this, "wd_Password");
-  w1->setFont(rufont);
 
   leuser = addLabel(w1, "leuser", 10, 27, 150, 27, user->p_name);
-  leuser->setFont(rufont);
   QToolTip::add(leuser, _("User name"));
   l1 = addLabel(w1, "ml1", 10, 10, 50, 20, _("User login"));
-  l1->setFont(rufont);
   leid = addLineEdit(w1, "leid", 200, 30, 70, 22, "");
-  leid->setFont(rufont);
   QObject::connect(leid, SIGNAL(textChanged(const char *)), this, SLOT(charchanged(const char *)));
   QToolTip::add(leid, _("User identificator"));
   l2 = addLabel(w1, "ml2", 200, 10, 50, 20, _("User id"));
-  l2->setFont(rufont);
   legid = addLineEdit(w1, "legid", 200, 85, 70, 22, "");
-  legid->setFont(rufont);
   QObject::connect(legid, SIGNAL(textChanged(const char *)), this, SLOT(charchanged(const char *)));
   QToolTip::add(legid, _("Group identificator"));
   ld3 = addLabel(w1, "mld3", 200, 60, 50, 20, _("Primary group id"));
-  ld3->setFont(rufont);
 
   pbsetpwd = new QPushButton(w1, "pbsetpwd");
-  pbsetpwd->setFont(rufont);
   pbsetpwd->setGeometry(240, 180, 80, 20);
   pbsetpwd->setText(_("Set password"));
   QObject::connect(pbsetpwd, SIGNAL(clicked()), this, SLOT(setpwd()));
 
   lefname = addLineEdit(w1, "lefname", 10, 80, 160, 22, "");
-  lefname->setFont(rufont);
   QObject::connect(lefname, SIGNAL(textChanged(const char *)), this, SLOT(charchanged(const char *)));
   QToolTip::add(lefname, _("Full name"));
   l4 = addLabel(w1, "ml4", 10, 60, 50, 20, _("Full name"));
-  l4->setFont(rufont);
 
   leshell = new QComboBox(TRUE, w1, "leshell");
-  leshell->setFont(rufont);
   QToolTip::add(leshell, _("Login shell"));
   leshell->clear();
   leshell->insertItem(_("<Empty>"));
@@ -90,88 +78,68 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
   QObject::connect(leshell, SIGNAL(activated(const char *)), this, SLOT(shactivated(const char *)));
 
   l5 = addLabel(w1, "ml5", 10, 105, 50, 20, _("Login shell"));
-  l5->setFont(rufont);
 
   lehome = addLineEdit(w1, "lehome", 10, 175, 160, 22, "");
-  lehome->setFont(rufont);
   QObject::connect(lehome, SIGNAL(textChanged(const char *)), this, SLOT(charchanged(const char *)));
 
   QToolTip::add(lehome, _("Home directory"));
   l6 = addLabel(w1, "ml6", 10, 155, 50, 20, _("Home directory"));
-  l6->setFont(rufont);
 
   leoffice1 = addLineEdit(w1, "leoffice1", 10, 220, 160, 22, "");
-  leoffice1->setFont(rufont);
   QObject::connect(leoffice1, SIGNAL(textChanged(const char *)), this, SLOT(charchanged(const char *)));
   QToolTip::add(leoffice1, _("The first office"));
   l7 = addLabel(w1, "ml7", 10, 200, 50, 20, _("Office1"));
-  l7->setFont(rufont);
 
   ld7 = addLabel(w1, "mld7", 190, 225, 50, 20, _("First office description"));
-  ld7->setFont(rufont);
 
   leoffice2 = addLineEdit(w1, "leoffice2", 10, 265, 160, 22, "");
-  leoffice2->setFont(rufont);
   QObject::connect(leoffice2, SIGNAL(textChanged(const char *)), this, SLOT(charchanged(const char *)));
   QToolTip::add(leoffice2, _("The second office"));
   l8 = addLabel(w1, "ml8", 10, 245, 50, 20, _("Office2"));
-  l8->setFont(rufont);
 
   ld8 = addLabel(w1, "mld8", 190, 270, 50, 20, _("Second office description"));
-  ld8->setFont(rufont);
   leaddress = addLineEdit(w1, "leaddress", 10, 310, 160, 22, "");
-  leaddress->setFont(rufont);
   QObject::connect(leaddress, SIGNAL(textChanged(const char *)), this, SLOT(charchanged(const char *)));
   QToolTip::add(leaddress, _("Postal address"));
   l9 = addLabel(w1, "ml9", 10, 290, 50, 20, _("Address"));
-  l9->setFont(rufont);
   ld9 = addLabel(w1, "mld9", 190, 315, 50, 20, _("Full postal address"));
-  ld9->setFont(rufont);
 
   addTab(w1, _("User info"));
 
 #ifdef _KU_SHADOW
   if (is_shadow != 0) {
     w2 = new QWidget(this, "wd_Shadow");
-    w2->setFont(rufont);
 
     leslstchg = addLabel(w2, "leslstchg", 10, 30, 70, 20, "");
-    leslstchg->setFont(rufont);
 //    QToolTip::add(leslstchg, _("Last password change"));
     l16 = addLabel(w2, "ml16", 95, 30, 50, 20, _("Last password change"));
-    l16->setFont(rufont);
     lesmin = new KDateCtl(w2, "lesmin", _("Change never allowed"),
                _("Date until change allowed"),
                   user->s_lstchg+user->s_min, 10, 70);
-    lesmin->setFont(rufont);
     QObject::connect(lesmin, SIGNAL(textChanged()), this, SLOT(changed()));
 //    QToolTip::add(lesmin, _("Date until change allowed"));
 
     lesmax = new KDateCtl(w2, "lesmax", _("Change required after first login"),
                           _("Date before change required"),
                           user->s_lstchg+user->s_max, 10, 130);
-    lesmax->setFont(rufont);
     QObject::connect(lesmax, SIGNAL(textChanged()), this, SLOT(changed()));
 //    QToolTip::add(lesmax, _("Date before change required"));
 
     leswarn = new KDateCtl(w2, "leswarn", _("User will never be warned"),
                            _("Date user will be warned about\nexpiration"),
                            user->s_lstchg+user->s_warn, 10, 190);
-    leswarn->setFont(rufont);
     QObject::connect(leswarn, SIGNAL(textChanged()), this, SLOT(changed()));
 //    QToolTip::add(leswarn, _("Date user will be warned about expiration"));
 
     lesinact = new KDateCtl(w2, "lesinact", _("Account is active from the day of creation"),
                             _("Date before account inactive"),
                             user->s_lstchg+user->s_inact, 10, 250);
-    lesinact->setFont(rufont);
     QObject::connect(lesinact, SIGNAL(textChanged()), this, SLOT(changed()));
 //    QToolTip::add(lesinact, _("Date before account inactive"));
 
     lesexpire = new KDateCtl(w2, "lesexpire", _("Account never expires"),
                              _("Date when account expires"),
                              user->s_lstchg+user->s_expire, 10, 310);
-    lesexpire->setFont(rufont);
     QObject::connect(lesexpire, SIGNAL(textChanged()), this, SLOT(changed()));
 //    QToolTip::add(lesexpire, _("Date when account expires"));
 
@@ -182,10 +150,8 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
 #ifdef _KU_QUOTA
   if (is_quota != 0) {
     w3 = new QWidget(this, "wd_Quota");
-    w3->setFont(rufont);
 
     leqmnt = new QComboBox(TRUE, w3, "leqmnt");
-    leqmnt->setFont(rufont);
     QToolTip::add(leqmnt, _("Quota filesystem"));
     leqmnt->clear();
 
@@ -198,46 +164,34 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
     l10a = addLabel(w3, "ml10a", 20, 28, 50, 20, _("Quota filesystem"));
 
     leqfs = addLineEdit(w3, "leqfs", 10, 80, 70, 22, "");
-    leqfs->setFont(rufont);
     leqfs->setValidator(new QIntValidator(w3, "vaqfs"));
     QObject::connect(leqfs, SIGNAL(textChanged(const char *)), this, SLOT(qcharchanged(const char *)));
     QToolTip::add(leqfs, _("File soft quota"));
     l10 = addLabel(w3, "ml10", 95, 80, 50, 20, _("File soft quota"));
-    l10->setFont(rufont);
 
     leqfh = addLineEdit(w3, "leqfh", 10, 125, 70, 22, "");
-    leqfh->setFont(rufont);
     leqfh->setValidator(new QIntValidator(w3, "vaqfh"));
     QObject::connect(leqfh, SIGNAL(textChanged(const char *)), this, SLOT(qcharchanged(const char *)));
     QToolTip::add(leqfh, _("File hard quota"));
     l11 = addLabel(w3, "ml11", 95, 125, 50, 20, _("File hard quota"));
-    l11->setFont(rufont);
     leqfcur = addLabel(w3, "leqfcur", 10, 185, 70, 20, "");
-    leqfcur->setFont(rufont);
     QToolTip::add(leqfcur, _("File usage"));
     l14 = addLabel(w3, "ml14", 95, 185, 50, 20, _("File usage"));
-    l14->setFont(rufont);
 
     leqis = addLineEdit(w3, "leqis", 10, 225, 70, 22, "");
-    leqis->setFont(rufont);
     leqis->setValidator(new QIntValidator(w3, "vaqis"));
     QObject::connect(leqis, SIGNAL(textChanged(const char *)), this, SLOT(qcharchanged(const char *)));
     QToolTip::add(leqis, _("iNode soft quota"));
     l12 = addLabel(w3, "ml12", 95, 225, 50, 20, _("iNode soft quota"));
-    l12->setFont(rufont);
 
     leqih = addLineEdit(w3, "leqih", 10, 270, 70, 22, "");
-    leqih->setFont(rufont);
     leqih->setValidator(new QIntValidator(w3, "vaqih"));
     QObject::connect(leqih, SIGNAL(textChanged(const char *)), this, SLOT(qcharchanged(const char *)));
     QToolTip::add(leqih, _("iNode hard quota"));
     l13 = addLabel(w3, "ml13", 95, 270, 50, 20, _("iNode hard quota"));
-    l13->setFont(rufont);
     leqicur = addLabel(w3, "leqicur", 10, 320, 70, 20, "");
-    leqicur->setFont(rufont);
     QToolTip::add(leqicur, _("iNode usage"));
     l15 = addLabel(w3, "ml15", 95, 320, 50, 20, _("iNode usage"));
-    l15->setFont(rufont);
     addTab(w3, _("Quota"));
   }
 #endif

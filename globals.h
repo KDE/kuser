@@ -27,8 +27,6 @@ extern KConfig *config;
 #define SHADOW_FILE_MASK S_IRUSR | S_IWUSR
 #endif
 
-extern QFont rufont;
-
 #ifdef AIX
 extern "C" int getuid(void);
 extern "C" int unlink(const char *);

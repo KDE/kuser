@@ -51,7 +51,6 @@ printf("mainDlg::init()\n");
   reload(0);
 
   pbquit = new QPushButton( this, "pbquit" );
-  pbquit->setFont(rufont);
   QToolTip::add(pbquit, _("Quit KUser"));
 
   pbquit->setGeometry( 50, 350, 100, 30 );
@@ -59,21 +58,18 @@ printf("mainDlg::init()\n");
   QObject::connect(pbquit, SIGNAL(clicked()), this, SLOT(quit()));
 
   pbedit = new QPushButton( this, "pbedit" );
-  pbedit->setFont(rufont);
   QToolTip::add(pbedit, _("Edit user profile"));
   pbedit->setGeometry( 250, 350, 100, 30 );
   pbedit->setText(_("Edit"));
   QObject::connect(pbedit, SIGNAL(clicked()), this, SLOT(edit()));
 
   pbdel = new QPushButton( this, "pbdel" );
-  pbdel->setFont(rufont);
   QToolTip::add(pbdel, _("Delete user"));
   pbdel->setGeometry( 50, 300, 100, 30 );
   pbdel->setText(_("Delete"));
   QObject::connect(pbdel, SIGNAL(clicked()), this, SLOT(del()));
 
   pbadd = new QPushButton(this, "pbadd");
-  pbadd->setFont(rufont);
   QToolTip::add(pbadd, _("Add user"));
   pbadd->setGeometry(250, 300, 100, 30);
   pbadd->setText(_("Add"));
@@ -81,14 +77,12 @@ printf("mainDlg::init()\n");
 
   QPopupMenu *file = new QPopupMenu;
   CHECK_PTR( file );
-  file->setFont(rufont);
   file->insertItem(_("Properties..."),  this, SLOT(properties()) );
   file->insertSeparator();
   file->insertItem(_("Quit"),  this, SLOT(quit()) );
 
   QPopupMenu *user = new QPopupMenu;
   CHECK_PTR(user);
-  user->setFont(rufont);
   user->insertItem(_("Edit..."), this, SLOT(edit()) );
   user->insertItem(_("Delete..."), this, SLOT(del()) );
   user->insertItem(_("Add..."), this, SLOT(add()) );
@@ -96,14 +90,12 @@ printf("mainDlg::init()\n");
 
   QPopupMenu *help = new QPopupMenu;
   CHECK_PTR( help );
-  help->setFont(rufont);
   help->insertItem(_("Help"), this, SLOT(help()));
   help->insertSeparator();
   help->insertItem(_("About..."), this, SLOT(about()));
 
   menubar = new KMenuBar( this );
   CHECK_PTR( menubar );
-  menubar->setFont(rufont);
   menubar->insertItem(_("File"), file );
   menubar->insertItem(_("User"), user );
   menubar->insertSeparator();

@@ -1,4 +1,5 @@
 #include <qvalidator.h>
+#include <kmsgbox.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,10 +17,11 @@ propdlg::propdlg(KUser *auser, Quota *aquota, QWidget *parent, const char *name,
 #else
 propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
 #endif
-       :QTabDialog(parent, name, FALSE,
+       :QDialog(parent, name, FALSE,
        WStyle_Customize | WStyle_DialogBorder | WStyle_SysMenu |
        WStyle_MinMax | WType_Modal) {
   user = auser;
+  olduid = user->getp_uid();
 #ifdef _KU_QUOTA
   if (aquota == NULL)
     is_quota = 0;
@@ -27,9 +29,16 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
   chquota = 0;
 #endif
 
-  QObject::connect(this, SIGNAL(applyButtonPressed()), this, SLOT(ok()));
-  setCancelButton();
-  QObject::connect(this, SIGNAL(cancelButtonPressed()), this, SLOT(cancel()));
+  tw = new KTabCtl(this, "tw");
+  tw->setGeometry(10, 10, 430, 410);
+
+  pbok = new QPushButton(_("Ok"), this, "pbok");
+  pbok->setGeometry(180, 430, 100, 30);
+  pbok->setDefault(TRUE);
+  QObject::connect(pbok, SIGNAL(pressed()), this, SLOT(ok()));
+  pbcancel = new QPushButton(_("Cancel"), this, "pbcancel");
+  pbcancel->setGeometry(300, 430, 100, 30);
+  QObject::connect(pbcancel, SIGNAL(pressed()), this, SLOT(cancel()));
 
   w1 = new QWidget(this, "wd_Password");
 
@@ -40,10 +49,11 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
   QObject::connect(leid, SIGNAL(textChanged(const char *)), this, SLOT(charchanged(const char *)));
   QToolTip::add(leid, _("User identificator"));
   l2 = addLabel(w1, "ml2", 200, 10, 50, 20, _("User id"));
-  legid = addLineEdit(w1, "legid", 200, 85, 70, 22, "");
-  QObject::connect(legid, SIGNAL(textChanged(const char *)), this, SLOT(charchanged(const char *)));
-  QToolTip::add(legid, _("Group identificator"));
-  ld3 = addLabel(w1, "mld3", 200, 60, 50, 20, _("Primary group id"));
+
+//  legid = addLineEdit(w1, "legid", 200, 85, 70, 22, "");
+//  QObject::connect(legid, SIGNAL(textChanged(const char *)), this, SLOT(charchanged(const char *)));
+//  QToolTip::add(legid, _("Group identificator"));
+//  ld3 = addLabel(w1, "mld3", 200, 60, 50, 20, _("Primary group id"));
 
   pbsetpwd = new QPushButton(w1, "pbsetpwd");
   pbsetpwd->setGeometry(240, 180, 80, 20);
@@ -106,7 +116,7 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
   l9 = addLabel(w1, "ml9", 10, 290, 50, 20, _("Address"));
   ld9 = addLabel(w1, "mld9", 190, 315, 50, 20, _("Full postal address"));
 
-  addTab(w1, _("User info"));
+  tw->addTab(w1, _("User info"));
 
 #ifdef _KU_SHADOW
   if (is_shadow != 0) {
@@ -150,7 +160,7 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
     QObject::connect(lesexpire, SIGNAL(textChanged()), this, SLOT(changed()));
 //    QToolTip::add(lesexpire, _("Date when account expires"));
 
-    addTab(w2, _("Extended"));
+    tw->addTab(w2, _("Extended"));
   }
 #endif
 
@@ -214,7 +224,7 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
     QToolTip::add(leqit, _("iNode time limit"));
     l17 = addLabel(w3, "ml17", 95, 350, 50, 20, _("iNode time limit"));
 
-    addTab(w3, _("Quota"));
+    tw->addTab(w3, _("Quota"));
   }
 #endif
 
@@ -267,7 +277,7 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
   tmpQLabel->setAlignment(289);
   tmpQLabel->setMargin(-1);
 
-  addTab(w4, _("Groups"));
+  tw->addTab(w4, _("Groups"));
 
   loadgroups();
   selectuser();
@@ -370,6 +380,13 @@ void propdlg::charchanged(const char *) {
 }
 
 void propdlg::save() {
+  QString tmp;
+  uint newuid;
+  tmp.setStr(leid->text());
+  newuid = tmp.toInt();
+  
+  user->setp_uid(newuid);
+
   user->setp_fname(lefname->text());
   user->setp_office1(leoffice1->text());
   user->setp_office2(leoffice2->text());
@@ -469,8 +486,8 @@ void propdlg::selectuser() {
   sprintf(uname,"%i",user->getp_uid());
   leid->setText(uname);
 
-  sprintf(uname,"%i",user->getp_gid());
-  legid->setText(uname);
+//  sprintf(uname,"%i",user->getp_gid());
+//  legid->setText(uname);
 
   lefname->setText(user->getp_fname());
 
@@ -535,6 +552,18 @@ void propdlg::setpwd() {
 }
 
 void propdlg::ok() {
+  QString tmp;
+  uint newuid;
+  tmp.setStr(leid->text());
+  newuid = tmp.toInt();
+  
+  if (olduid != newuid)
+    if (users->user_lookup(newuid) != NULL) {
+      tmp.sprintf(_("User with UID %u already exists"), newuid);
+      KMsgBox::message(0, _("Message"), tmp, KMsgBox::STOP, _("Ok"));
+      return;
+    }
+    
   if (check() == TRUE)
     accept();
   else

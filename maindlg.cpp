@@ -410,11 +410,15 @@ void mainDlg::userSelected(int i) {
 #ifdef _KU_QUOTA
   Quota *tmpQ;
 
-  tmpQ = q->getQuota(tmpKU->getp_uid());
-  if (tmpQ == NULL) {
-    printf(_("Null pointer tmpQ in mainDlg::selected(%d)\n"), i);
-    return;
+  if (is_quota != 0) {
+    tmpQ = q->getQuota(tmpKU->getp_uid());
+    if (tmpQ == NULL) {
+      printf(_("Null pointer tmpQ in mainDlg::selected(%d)\n"), i);
+      return;
+    }
   }
+  
+  tmpQ = NULL;
 
   editUser = new propdlg(tmpKU, tmpQ, this, "userin");
 #else

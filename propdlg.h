@@ -8,13 +8,14 @@
 #include <qwidget.h>
 #include <qlistbox.h>
 #include <qtooltip.h>
-#include <qtabdlg.h>
+#include <qdialog.h>
 
+#include <ktabctl.h>
 #include "kdatectl.h"
 #include "kuser.h"
 #include "quota.h"
 
-class propdlg : public QTabDialog
+class propdlg : public QDialog
 {
   Q_OBJECT
 
@@ -57,7 +58,10 @@ protected:
   Quota *quota;
 #endif
   bool ischanged;
+  uint olduid;
 
+  KTabCtl *tw;
+  
   QWidget *w1;
   QWidget *w2;
   QWidget *w3;
@@ -70,7 +74,7 @@ protected:
 
   QLabel *l1;
   QLabel *l2;
-  QLabel *ld3;
+//  QLabel *ld3;
   QLabel *l4;
   QLabel *l5;
   QLabel *l6;
@@ -92,10 +96,12 @@ protected:
   QLabel *l18;
 
   QPushButton *pbsetpwd;
+  QPushButton *pbok;
+  QPushButton *pbcancel;
 
   QLabel      *leuser;
   QLineEdit   *leid;
-  QLineEdit   *legid;
+//  QLineEdit   *legid;
   QLineEdit   *lefname;
   QComboBox   *leshell;
   QLineEdit   *lehome;
@@ -116,12 +122,14 @@ protected:
   QLabel      *leqicur;
 #endif
 
+#ifdef _KU_SHADOW
   QLabel      *leslstchg;
   KDateCtl    *lesmin;
   KDateCtl    *lesmax;
   KDateCtl    *leswarn;
   KDateCtl    *lesinact;
   KDateCtl    *lesexpire;
+#endif
 };
 
 #endif // _KU_PROPDLG_H_

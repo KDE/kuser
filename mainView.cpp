@@ -137,9 +137,9 @@ void mainView::userdel() {
   if (i == kug->getUsers().count()-1)
     islast = TRUE;
 
+#ifdef _KU_QUOTA
   uint uid = user->getUID();
 
-#ifdef _KU_QUOTA
   if (kug->getUsers().lookup(uid) == NULL)
     kug->getQuotas().delQuota(uid);
 #endif
@@ -211,7 +211,7 @@ void mainView::useradd() {
 
   config->setGroup("template");
   tk->setShell(readentry("shell"));
-  tk->setHomeDir(readentry("homeprefix", KU_HOMEPREFIX)+"/"+tk->getName());
+  tk->setHomeDir(readentry("homeBase", KU_HOMEPREFIX)+"/"+tk->getName());
   tk->setGID(readnumentry("gid"));
   tk->setFullName(readentry("p_fname"));
 #ifdef __FreeBSD__
@@ -248,10 +248,12 @@ void mainView::useradd() {
     tk->setFlag(readnumentry("s_flag"));
 #endif
 
+#ifdef _KU_QUOTA
   if (is_quota == 0) {
     delete tq;
     tq = NULL;
   }
+#endif // _KU_QUOTA
   
 #ifdef _KU_QUOTA
   addUser au(*tk, *tq, this, "userin");

@@ -25,7 +25,7 @@
 addUser::addUser(KUser &AUser, Quota &AQuota, QWidget *parent, const char *name, int isprep) :
   propdlg(AUser, AQuota, parent, name, isprep) {
 #else
-addUser::addUser(KUser &AUser, QWidget *parent = 0, const char *name = 0, int isprep = false) :
+addUser::addUser(KUser &AUser, QWidget *parent, const char *name, int isprep) :
   propdlg(AUser, parent, name, isprep) {
 #endif
 

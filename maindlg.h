@@ -10,6 +10,7 @@ public:
   maindlg(const char *name = 0);
 
   QListBox* list;
+  QPixmap pic_user;
   
 public slots:
   void properties();

@@ -16,6 +16,9 @@ KTopLevelWidget(name)
 {
   changed = FALSE;
 
+  QString pixdir = kapp->kdedir() + QString("/share/apps/kfax/pics/");
+  pic_user.load((pixdir + "user.xpm").data());
+
   setCaption(name);
   QLabel *lb1 = addLabel(this, "lb1", 55, 40, 50, 20,_("User name"));
   lb1->setFont(rufont);

@@ -64,10 +64,10 @@ void getquota(long int id, QList<Quota> *q)
   if (is_quota == 0)
     return;
 
-  int fd;
   static int warned = 0;
   struct dqblk dq;
 #ifdef _KU_UFS_QUOTA
+  int fd;
   struct quotctl qctl;
   int dd = 0;
 #endif
@@ -144,10 +144,10 @@ void setquota(long int id, QList<Quota> *q)
   if (is_quota == 0)
     return;
 
-  int fd;
   struct dqblk dq;
 
 #ifdef _KU_UFS_QUOTA
+  int fd;
   struct quotctl qctl;
   int dd = 0;
 

@@ -7,7 +7,7 @@ data_DATA = index.html index-1.html index-2.html index-3.html \
 # you have given the datas in data_DATA
 datadir = $(kde_htmldir)/en/kuser
 
-EXTRA_DIST = $(data_DATA)
+EXTRA_DIST = $(data_DATA) index.sgml index.nif
 
 doc: index.sgml index.nif
 	ksgml2html index.sgml en

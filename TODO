@@ -1,22 +1,17 @@
-- Use exceptions for error reporting in first_free.
-  (Maybe use them later everywhere).
-- Replace listbox with something standard.
-- Replace all UID with type uid_t. The same with GID.
+- Add Kerberos support - Native kerberos protocols or LDAP backed?
+  I prefer to add it to the LDAP backend, but first I need to find an 
+  LDAP-backed KDC. I heard that Heimdal can do this.
+- Filtering users and groups, and implement it in backends, so it would
+  be possible to use server-side filtering (mainly in LDAP)
+- Find next available UID and RID using LDAP sorting control - need an
+  ldap server which implements this control
+- Update docs
+
+And some TODOs from the past which are still unsolved:
+- Add 'Help' button to user and group properties dialogs.
+- Add right mouse popup
 - Replace call of rm with own procedure.
 - Use QFile for file operations.
-- Add right mouse popup
-- Add 'Help' button to user and group properties dialogs.
-- Home dir permission configuration in Preferences dialog.
-- Mailbox permission configuration in Preferences dialog.
-- Mailbox group in Preferences dialog.
-- Allow to edit GID in group properties.
-- Allow to edit Group name in group properties.
-- First available UID and GID in preferences dialog.
-- Group quotas.
-- Update last change field when changed
-- After performing File/Save, and Quiting right after that requires confirming
-  Save twice.  After File/Save, if one is Quiting it should be without any
-  message.
 - How about having group name(s) next to the Full name of a user in the upper
   panel, and similarly user names for a group in the lower pannel -- in a
   separate column?

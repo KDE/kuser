@@ -53,7 +53,9 @@ AC_ARG_WITH(mailbox-gid, [  --with-mailbox-gid      mailbox gid [default=0] ], k
 AC_DEFINE_UNQUOTED(KU_MAILBOX_GID, $ku_mailbox_gid, [mailbox gid])
 AC_SUBST(KU_MAILBOX_GID)
 
-AC_CHECK_DECLS([fgetpwent, fgetgrent, fgetspent], [], [], [#include <pwd.h>])
+KDE_CHECK_FUNC_EXT(fgetpwent, [#include <pwd.h>], [(void) fgetpwent(0)], [], FGETPWENT)
+KDE_CHECK_FUNC_EXT(fgetgrent, [#include <grp.h>], [(void) fgetgrent(0)], [], FGETGRENT)
+KDE_CHECK_FUNC_EXT(fgetspent, [#include <shadow.h>], [(void) fgetspent(0)], [], FGETSPENT)
 
 AC_LANG_SAVE
 dnl AC_C_BIGENDIAN has a bug (one of its tests uses "main()" instead of

@@ -5,7 +5,6 @@
 #include <qlist.h>
 #include <qpushbutton.h>
 #include <qpixmap.h>
-#include <knewpanner.h>
 #include <stdlib.h>
 
 #ifdef _KU_QUOTA
@@ -17,6 +16,8 @@
 #include "kuservw.h"
 #include "kgroupvw.h"
 #include "kheader.h"
+
+class QSplitter;
 
 class mainDlg : public QWidget {
 Q_OBJECT
@@ -69,7 +70,7 @@ protected:
   KUserView *lbusers;
   KGroupView *lbgroups;
   int prev;
-  KNewPanner *kp;
+  QSplitter *kp;
 private:
   int usort;
   int gsort;

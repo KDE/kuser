@@ -1,4 +1,3 @@
-#include <kmsgbox.h>
 #include <kiconloader.h>
 #include <kapp.h>
 #include "kerror.h"

@@ -15,13 +15,12 @@
 
 #include <qdir.h>
 
-#include <kmsgbox.h>
-
 #include "globals.h"
 #include "maindlg.h"
 #include "misc.h"
 
 #include "addUser.h"
+#include <qmessagebox.h>
 
 #ifdef _KU_QUOTA
 addUser::addUser(KUser *auser, Quota *aquota, QWidget *parent, const char *name, int isprep) :
@@ -98,7 +97,8 @@ void addUser::ok() {
   
   if (users->lookup(newuid) != NULL) {
     tmp = i18n("User with UID %1 already exists").arg(newuid);
-    KMsgBox::message(0, i18n("Message"), tmp, KMsgBox::STOP, i18n("OK"));
+    QMessageBox::information(0, i18n("Message"), tmp, 
+			     i18n("OK"));
     return;
   }
 

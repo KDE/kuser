@@ -2,7 +2,6 @@
 
 #include "globals.h"
 #include <qtooltip.h>
-#include <kmsgbox.h>
 #include <ktoolbar.h>
 #include <kglobal.h>
 #include <kiconloader.h>

@@ -1,7 +1,5 @@
 #ifdef _KU_QUOTA
 
-#include <kmsgbox.h>
-
 #include "misc.h"
 #include "maindlg.h"
 #include "mnt.h"

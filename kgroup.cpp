@@ -11,8 +11,6 @@
 
 #include <qstring.h>
 
-#include <kmsgbox.h>
-
 #include "maindlg.h"
 #include "globals.h"
 #include "kgroup.h"

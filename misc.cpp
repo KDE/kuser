@@ -26,10 +26,10 @@
 #include <sys/mnttab.h>
 #endif
 
-#include <kmsgbox.h>
 #include "misc.h"
 #include "globals.h"
 #include "maindlg.h"
+#include <qmessagebox.h>
 
 QString readentry(const QString &name, const QString def) {
   if (config->hasKey(name))
@@ -56,7 +56,7 @@ void backup(char const *name)
   {
     QString str;
     str = i18n("Can't create backup file for %1").arg(name);
-    KMsgBox::message(0, i18n("Error"), tmp, KMsgBox::STOP);
+    QMessageBox::critical(0, i18n("Error"), tmp, i18n("OK"));
     exit (1);
   }
 }
@@ -116,7 +116,7 @@ int getValue(long int &data, const char *text, const char *msg) {
   char *check;
   long int value = strtol(text, &check, 0);
   if (check[0]) {
-    KMsgBox::message(0, i18n("Error"), msg, KMsgBox::STOP);
+    QMessageBox::warning(0, i18n("Error"), msg, i18n("OK"));
     return (-1);
   }
   data = value;
@@ -128,7 +128,7 @@ int getValue(int &data, const char *text, const char *msg) {
   char *check;
   long int value = strtol(text, &check, 0);
   if (check[0]) {
-    KMsgBox::message(0, i18n("Error"), msg, KMsgBox::STOP);
+    QMessageBox::warning(0, i18n("Error"), msg, i18n("OK"));
     return (-1);
   }
   data = (int)value;
@@ -140,7 +140,7 @@ int getValue(unsigned int &data, const char *text, const char *msg) {
   char *check;
   long int value = strtol(text, &check, 0);
   if (check[0]) {
-    KMsgBox::message(0, i18n("Error"), msg, KMsgBox::STOP);
+    QMessageBox::warning(0, i18n("Error"), msg, i18n("OK"));
     return (-1);
   }
   data = (unsigned int)value;

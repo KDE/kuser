@@ -1,5 +1,4 @@
 #include <qvalidator.h>
-#include <kmsgbox.h>
 
 #include <stdio.h>
 #include <stdlib.h>

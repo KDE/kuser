@@ -1,6 +1,6 @@
-#include <kmsgbox.h>
 #include "misc.h"
 #include "kerror.h"
+#include <qmessagebox.h>
 
 KErrorMsg::KErrorMsg(QString amsg, KErrorType aerr) {
   msg = amsg;
@@ -32,7 +32,10 @@ void KError::addMsg(QString amsg, KErrorType aerr) {
 
 void KError::display() {
   for (uint i=0;i<msgs.count();i++)
-    KMsgBox::message(0, i18n("Message"), msgs.at(i)->getMsg(), msgs.at(i)->getErr());
+#warning TODO add support for KErrorType
+    QMessageBox::information(0, i18n("Message"), 
+			     msgs.at(i)->getMsg(), 
+			     i18n("OK"));
     
   msgs.clear();
 }

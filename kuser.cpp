@@ -26,8 +26,6 @@
 #include <qstring.h>
 #include <qdir.h>
 
-#include <kmsgbox.h>
-
 #include "maindlg.h"
 #include "kuser.h"
 #include "misc.h"

@@ -5,10 +5,8 @@
 
 #include <qtooltip.h>
 
-#include <kmsgbox.h>
 #include <ktoolbar.h>
 #include <kiconloader.h>
-#include <knewpanner.h>
 
 #include <unistd.h>
 #include <signal.h>
@@ -28,6 +26,8 @@
 #include "editGroup.h"
 
 #include "editDefaults.h"
+#include <qmessagebox.h>
+#include <qsplitter.h>
 
 mainDlg::mainDlg(QWidget *parent) : QWidget(parent) {
   changed = FALSE;
@@ -46,7 +46,7 @@ void mainDlg::init() {
   u = new KUsers();
   g = new KGroups();
 
-  kp = new KNewPanner(this, "panner", KNewPanner::Horizontal);
+  kp = new QSplitter(QSplitter::Horizontal, this, "splitter");
   kp->setGeometry(10, 80, 380, 416);
   
   lbusers = new KUserView(kp, "lbusers");
@@ -147,10 +147,9 @@ void mainDlg::userdel() {
   uint i = 0;
   bool islast = FALSE;
 
-  if (KMsgBox::yesNo(0, i18n("WARNING"),
+  if (QMessageBox::warning(0, i18n("WARNING"),
                      i18n("Do you really want to delete user ?"),
-                     KMsgBox::STOP,
-                     i18n("Cancel"), i18n("Delete")) == 2) {
+			   i18n("Cancel"), i18n("Delete")) == 1) {
 
     i = lbusers->currentItem();
     if (i == u->count()-1)
@@ -185,10 +184,10 @@ void mainDlg::userdel() {
         }
 
       if (!found)
-        if (KMsgBox::yesNo(0, i18n("WARNING"),
-                           i18n("You are using private groups.\nDo you want delete user's private group ?"),
-                           KMsgBox::STOP,
-                           i18n("Cancel"), i18n("Delete")) == 2) {
+        if (QMessageBox::information(0, i18n("WARNING"),
+				     i18n("You are using private groups.\n"
+					  "Do you want delete user's private group ?"),
+				     i18n("Cancel"), i18n("Delete")) == 1) {
           uint oldc = lbgroups->currentItem();
           g->del(g->lookup(gid));
           if (oldc == g->count())
@@ -316,10 +315,9 @@ void mainDlg::useradd() {
 
 void mainDlg::save() {
   if (changed == TRUE)
-    if (KMsgBox::yesNo(0, i18n("Data was modified"),
-                       i18n("Would you like to save changes ?"),
-    		       KMsgBox::INFORMATION,
-		       i18n("Save"), i18n("Discard changes")) == 1) {
+    if (QMessageBox::information(0, i18n("Data was modified"),
+				 i18n("Would you like to save changes ?"),
+				 i18n("Save"), i18n("Discard changes")) == 0) {
       if (!u->save())
         err->display();
 
@@ -490,10 +488,9 @@ void mainDlg::grpdel() {
   uint i = 0;
   bool islast = FALSE;
 
-  if (KMsgBox::yesNo(0, i18n("WARNING"),
+  if (QMessageBox::information(0, i18n("WARNING"),
                      i18n("Do you really want to delete group ?"),
-                     KMsgBox::STOP,
-                     i18n("Cancel"), i18n("Delete")) == 2) {
+                     i18n("Cancel"), i18n("Delete")) == 1) {
 
     i = lbgroups->currentItem();
     if (i == g->count()-1)

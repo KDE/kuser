@@ -8,7 +8,6 @@
 #include <crypt.h>
 #endif
 
-#include <kmsgbox.h>
 #include <kbuttonbox.h>
 
 #include "pwddlg.h"

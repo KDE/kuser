@@ -63,7 +63,8 @@ public:
   uint count() const;
 
 protected:
-  int g_saved;
+  int gr_backuped;
+  int gn_backuped;
   QList<KGroup> g;
 
   int mode;

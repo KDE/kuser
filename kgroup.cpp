@@ -137,6 +137,7 @@ bool KGroups::load() {
   uid = st.st_uid;
   gid = st.st_gid;
 
+#ifdef HAVE_FGETGRENT
   FILE *fgrp = fopen(GROUP_FILE, "r");
   QString tmp;
   if (fgrp == 0) {
@@ -146,6 +147,9 @@ bool KGroups::load() {
   }
 
   while ((p = fgetgrent(fgrp)) != NULL) {
+#else
+  while ((p = getgrent()) != NULL) {
+#endif
     tmpKG = new KGroup();
     tmpKG->setGID(p->gr_gid);
     tmpKG->setName(p->gr_name);
@@ -161,7 +165,9 @@ bool KGroups::load() {
     g.append(tmpKG);
   }
 
+#ifdef HAVE_FGETGRENT
   fclose(fgrp);
+#endif
 
   return TRUE;
 }

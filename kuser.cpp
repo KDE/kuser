@@ -449,6 +449,7 @@ bool KUsers::loadpwd() {
 
   // We are reading our PASSWORD_FILE
   QString tmp;
+#ifdef HAVE_FGETPWENT
   FILE *fpwd = fopen(PASSWORD_FILE, "r");
   if(fpwd == NULL) {
      ksprintf(&tmp, i18n("Error opening %s for reading"), PASSWORD_FILE);
@@ -457,6 +458,10 @@ bool KUsers::loadpwd() {
   }
 
   while ((p = fgetpwent(fpwd)) != NULL) {
+#else
+  while ((p = getpwent()) != NULL) {
+#endif
+
 #ifdef _KU_QUOTA
     quotas->addQuota(p->pw_uid);
 #endif
@@ -481,7 +486,9 @@ bool KUsers::loadpwd() {
 
   // End reading passwd file
 
+#ifdef HAVE_FGETPWENT
   fclose(fpwd);
+#endif
 
   return (TRUE);
 }

@@ -1,21 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE kcfg SYSTEM "http://www.kde.org/standards/kcfg/1.0/kcfg.dtd">
 <kcfg>
-  <kcfgfile name="kuserrc"/>
 
   <include>qfile.h</include>
   <include>kapplication.h</include>
   <include>config.h</include>
+
   <kcfgfile arg="true">
     <parameter name="connection"/>
   </kcfgfile>
+
   <group name="general">
     <entry name="connection" type="String">
-    <default>default</default>
-    <label>Default connection</label>
+      <label>Default connection</label>
+      <default>default</default>
     </entry>
     <entry name="showsys" type="Bool">
-    <default>true</default>
+      <label>Show system users</label>
+      <default>true</default>
     </entry>
   </group>
   <group name="connection-$(connection)">
@@ -87,8 +89,8 @@
     </entry>
     <entry name="sexpire" type="DateTime">
       <label>sexpire</label>
-      <default>QDateTime(QDate(1970,1,1))</default>
       <whatsthis>This setting is for specifying a date when user accounts will expire.</whatsthis>
+      <default code="true">QDateTime(QDate(1970,1,1))</default>
     </entry>
     <entry name="sneverexpire" type="Bool">
       <label>sneverexpire</label>

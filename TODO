@@ -4,7 +4,14 @@
 - Filtering users and groups, and implement it in backends, so it would
   be possible to use server-side filtering (mainly in LDAP)
 - Find next available UID and RID using LDAP sorting control - need an
-  ldap server which implements this control
+  ldap server which implements this control. Also I don't know is this a 
+  good idea or not.
+- Proper cross-check between user and group SIDs.
+- Issue a warning if Unix/Samba account settings are not consistent with
+  each other (e.g the group of primary group ID != group of primary group SID).
+- Other consistency checks (unique user/group IDs, unique SIDs, etc...).
+- Copy data between backends.
+- Seperate LDAP filters for users/groups.
 - Update docs
 
 And some TODOs from the past which are still unsolved:

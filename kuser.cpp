@@ -614,7 +614,7 @@ bool KUsers::savesdw() {
   KUser *up;
 
   if (!is_shadow)
-    return FALSE;
+    return TRUE;
 
   if (!s_backuped) {
     backup(SHADOW_FILE);

@@ -53,10 +53,9 @@ AC_ARG_WITH(mailbox-gid, [  --with-mailbox-gid      mailbox gid [default=0] ], k
 AC_DEFINE_UNQUOTED(KU_MAILBOX_GID, $ku_mailbox_gid, [mailbox gid])
 AC_SUBST(KU_MAILBOX_GID)
 
-AC_CHECK_FUNCS(fgetpwent fgetgrent fgetspent)
+AC_CHECK_DECLS([fgetpwent, fgetgrent, fgetspent])
 
 AC_LANG_SAVE
-AC_LANG_C
 dnl AC_C_BIGENDIAN has a bug (one of its tests uses "main()" instead of
 dnl "int main()") so C++ compilers would break. Thats why we switch languages
 AC_C_BIGENDIAN

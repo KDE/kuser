@@ -63,6 +63,10 @@ public:
 protected:
   int g_saved;
   QList<KGroup> g;
+
+  int mode;
+  int uid;
+  int gid;
 };
 
 #endif // _KGROUP_H_

@@ -170,6 +170,15 @@ protected:
   int p_backuped;
   int s_backuped;
   QList<KUser> u;
+
+  int pwd_mode;
+  int sdw_mode;
+
+  uid_t pwd_uid;
+  gid_t pwd_gid;
+
+  uid_t sdw_uid;
+  gid_t sdw_gid;
 };
 
 #endif // _KUSER_H_

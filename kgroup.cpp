@@ -117,6 +117,10 @@ void KGroup::clearUsers() {
 KGroups::KGroups() {
   g_saved = 0;
 
+  mode = 0644;
+  uid = 0;
+  gid = 0;
+
   g.setAutoDelete(TRUE);
 
   if (!load())
@@ -126,8 +130,13 @@ KGroups::KGroups() {
 bool KGroups::load() {
   group *p;
   KGroup *tmpKG = 0;
+  struct stat st;
 
-#ifdef _KU_NIS
+  stat(GROUP_FILE, &st);
+  mode = st.st_mode;
+  uid = st.st_uid;
+  gid = st.st_gid;
+
   FILE *fgrp = fopen(GROUP_FILE, "r");
   QString tmp;
   if (fgrp == 0) {
@@ -137,11 +146,6 @@ bool KGroups::load() {
   }
 
   while ((p = fgetgrent(fgrp)) != NULL) {
-#else
-  setgrent();
-  
-  while ((p = getgrent()) != NULL) {
-#endif
     tmpKG = new KGroup();
     tmpKG->setgid(p->gr_gid);
     tmpKG->setname(p->gr_name);
@@ -157,11 +161,7 @@ bool KGroups::load() {
     g.append(tmpKG);
   }
 
-#ifdef _KU_NIS
   fclose(fgrp);
-#else
-  endgrent();
-#endif
 
   return TRUE;
 }
@@ -177,7 +177,9 @@ bool KGroups::save() {
     g_saved = TRUE;
   }
 
-  if ((grp = fopen(GROUP_FILE,"w")) == NULL) {
+  umask(0077);
+
+  if ((grp = fopen(GROUP_FILE, "w")) == NULL) {
     ksprintf(&tmp, i18n("Error opening %s for writing"), GROUP_FILE);
     err->addMsg(tmp, STOP);
     return (FALSE);
@@ -197,7 +199,9 @@ bool KGroups::save() {
   }
   fclose(grp);
 
-  chmod(GROUP_FILE, GROUP_FILE_MASK);
+  chmod(GROUP_FILE, mode);
+  chown(GROUP_FILE, uid, gid);
+
 #ifdef GRMKDB
   if (system(GRMKDB) != 0) {
     err->addMsg("Unable to build group database", STOP);

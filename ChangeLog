@@ -1,4 +1,6 @@
-19980328: added #ifdef's to kuser.cpp and kgroup.cpp so that if
+01/04/1999: Bug #895 'Kuser doesn't restore the permissions on /etc/shadow.'
+
+19990328: added #ifdef's to kuser.cpp and kgroup.cpp so that if
 	  _KU_FIRST_USER is defined to be, say, 500, then UID's and GID's
 	  for regular users start at 500.  If _KU_FIRST_USER is not defined,
 	  they start at 1001, the default, as before.   _KU_FIRST_USER can

@@ -333,6 +333,14 @@ KUsers::KUsers() {
   p_backuped = 0;
   s_backuped = 0;
 
+  pwd_mode = 0644;
+  pwd_uid = 0;
+  pwd_gid = 0;
+
+  sdw_mode = 0600;
+  sdw_uid = 0;
+  sdw_gid = 0;
+
   u.setAutoDelete(TRUE);
 
   if (!load())
@@ -390,10 +398,16 @@ bool KUsers::loadpwd() {
 
   // Start reading passwd file
 
-#ifdef _KU_NIS
+  struct stat st;
+
+  stat(PASSWORD_FILE, &st);
+  pwd_mode = st.st_mode;
+  pwd_uid = st.st_uid;
+  pwd_gid = st.st_gid;
+
   // We are reading our PASSWORD_FILE
   QString tmp;
-  FILE *fpwd = fopen(PASSWORD_FILE,"r");
+  FILE *fpwd = fopen(PASSWORD_FILE, "r");
   if(fpwd == NULL) {
      ksprintf(&tmp, i18n("Error opening %s for reading"), PASSWORD_FILE);
      err->addMsg(tmp, STOP);
@@ -401,11 +415,6 @@ bool KUsers::loadpwd() {
   }
 
   while ((p = fgetpwent(fpwd)) != NULL) {
-#else
-   setpwent();
-
-   while ((p = getpwent()) != NULL) {
-#endif
 #ifdef _KU_QUOTA
     quotas->addQuota(p->pw_uid);
 #endif
@@ -430,11 +439,7 @@ bool KUsers::loadpwd() {
 
   // End reading passwd file
 
-#ifdef _KU_NIS
   fclose(fpwd);
-#else
-  endpwent();
-#endif
 
   return (TRUE);
 }
@@ -448,8 +453,15 @@ bool KUsers::loadsdw() {
   KUser *up = NULL;
   FILE *f;
 
+  struct stat st;
+
   if (!is_shadow)
     return FALSE;
+
+  stat(SHADOW_FILE, &st);
+  sdw_mode = st.st_mode;
+  sdw_uid = st.st_uid;
+  sdw_gid = st.st_gid;
 
   if ((f = fopen(SHADOW_FILE, "r")) == NULL) {
     is_shadow = 0;
@@ -511,6 +523,8 @@ bool KUsers::savepwd() {
     p_backuped = TRUE;
   }
 
+  umask(0077);
+
   if ((passwd = fopen(PASSWORD_FILE,"w")) == NULL) {
     ksprintf(&tmp, i18n("Error opening %s for writing"), PASSWORD_FILE);
     err->addMsg(tmp, STOP);
@@ -566,7 +580,9 @@ bool KUsers::savepwd() {
   }
   fclose(passwd);
 
-  chmod(PASSWORD_FILE, PASSWORD_FILE_MASK);
+  chmod(PASSWORD_FILE, pwd_mode);
+  chown(PASSWORD_FILE, pwd_uid, pwd_gid);
+
 #ifdef PWMKDB
   // need to run a utility program to build /etc/passwd, /etc/pwd.db
   // and /etc/spwd.db from /etc/master.passwd
@@ -596,6 +612,8 @@ bool KUsers::savesdw() {
     backup(SHADOW_FILE);
     s_backuped = TRUE;
   }
+
+  umask(0077);
 
   if ((f = fopen(SHADOW_FILE, "w")) == NULL) {
     ksprintf(&tmp, i18n("Error opening %s for writing"), SHADOW_FILE);
@@ -630,7 +648,9 @@ bool KUsers::savesdw() {
   }
   fclose(f);
 
-  chmod(SHADOW_FILE, SHADOW_FILE_MASK);
+  chmod(SHADOW_FILE, sdw_mode);
+  chown(SHADOW_FILE, sdw_uid, sdw_gid);
+
   free(s.sp_namp);
   free(s.sp_pwdp);
 #endif // _KU_SHADOW

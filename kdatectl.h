@@ -41,9 +41,9 @@ protected:
 
 protected slots:
   void isEmptyToggled(bool);
-  void dayChanged(const char *text);
+  void dayChanged(const QString &text);
   void monthChanged(int);
-  void yearChanged(const char *);
+  void yearChanged(const QString &);
 
 signals:
   void textChanged();

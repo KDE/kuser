@@ -43,10 +43,10 @@ KDateCtl::KDateCtl(QWidget *parent, const char *name,
 
   QObject::connect(isempty, SIGNAL(toggled(bool)), this,
                             SLOT(isEmptyToggled(bool)));
-  QObject::connect(day, SIGNAL(textChanged(const char *)), this,
-                            SLOT(dayChanged(const char *)));
-  QObject::connect(year, SIGNAL(textChanged(const char *)), this,
-                            SLOT(yearChanged(const char *)));
+  QObject::connect(day, SIGNAL(textChanged(const QString &)), this,
+                            SLOT(dayChanged(const QString &)));
+  QObject::connect(year, SIGNAL(textChanged(const QString &)), this,
+                            SLOT(yearChanged(const QString &)));
   QObject::connect(month, SIGNAL(activated(int)), this,
                             SLOT(monthChanged(int)));
 
@@ -137,8 +137,8 @@ void KDateCtl::isEmptyToggled(bool) {
   emit textChanged();
 }
 
-void KDateCtl::dayChanged(const char *text) {
-  iday = atoi(text);
+void KDateCtl::dayChanged(const QString &text) {
+  iday = text.toInt();
   emit textChanged();
 }
 
@@ -147,8 +147,8 @@ void KDateCtl::monthChanged(int) {
   emit textChanged();
 }
 
-void KDateCtl::yearChanged(const char *text) {
-  iyear = atoi(text);
+void KDateCtl::yearChanged(const QString &text) {
+  iyear = text.toInt();
   emit textChanged();
 }
 

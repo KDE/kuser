@@ -9,10 +9,10 @@ typedef enum KErrorType {INFORMATION = 1, EXCLAMATION = 2, STOP = 4, QUESTION = 
 
 class KErrorMsg {
 public:
-  KErrorMsg(const char *amsg, KErrorType aerr);
+  KErrorMsg(QString amsg, KErrorType aerr);
   ~KErrorMsg();
   
-  const char *getMsg();
+  QString getMsg();
   KErrorType getErr();
   
 private:
@@ -26,7 +26,7 @@ public:
   KError();
   ~KError();
   
-  void addMsg(const char *amsg, KErrorType aerr);
+  void addMsg(QString amsg, KErrorType aerr);
   void display();
  
 private:

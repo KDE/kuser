@@ -1,4 +1,5 @@
-#include <kapp.h>
+#include <kglobal.h>
+#include <kiconloader.h>
 
 #include "kusertbl.h"
 
@@ -35,8 +36,7 @@ KUser *KUserRow::getData() {
 }
 
 KUserTable::KUserTable(QWidget *parent, const char *name) : KRowTable(SelectRow, parent, name) {
-  QString pixdir = kapp->kde_datadir() + QString("/kuser/pics/");
-  pmUser = new QPixmap(pixdir + "user.xpm");
+  pmUser = new QPixmap(Icon("user.xpm"));
 
   setCellHeight( max( fontMetrics().lineSpacing(), pmUser->height()) );
 

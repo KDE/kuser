@@ -2,7 +2,7 @@
 #include "misc.h"
 #include "kerror.h"
 
-KErrorMsg::KErrorMsg(const char *amsg, KErrorType aerr) {
+KErrorMsg::KErrorMsg(QString amsg, KErrorType aerr) {
   msg = amsg;
   err = aerr;
 }
@@ -10,7 +10,7 @@ KErrorMsg::KErrorMsg(const char *amsg, KErrorType aerr) {
 KErrorMsg::~KErrorMsg() {
 }
 
-const char *KErrorMsg::getMsg() {
+QString KErrorMsg::getMsg() {
   return (msg);
 }
 
@@ -26,7 +26,7 @@ KError::~KError() {
   display();
 }
 
-void KError::addMsg(const char *amsg, KErrorType aerr) {
+void KError::addMsg(QString amsg, KErrorType aerr) {
   msgs.append(new KErrorMsg(amsg, aerr));
 }
 

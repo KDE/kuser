@@ -36,7 +36,5 @@ protected slots:
 
 protected:
   KGroup *kg;
-
-  QListBox *m_Users, *m_Group;
 };
 #endif // editGroup_included

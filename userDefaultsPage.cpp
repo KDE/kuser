@@ -14,6 +14,7 @@
 #include "globals.h"
 #include "userDefaultsPage.h"
 #include <klocale.h>
+#include <stdio.h>
 
 userDefaultsPage::userDefaultsPage(
 	QWidget* parent,

@@ -1,4 +1,5 @@
-#include <kapp.h>
+#include <kglobal.h>
+#include <kiconloader.h>
 
 #include "kgrouptbl.h"
 
@@ -41,8 +42,7 @@ KGroup *KGroupRow::getData() {
 
 KGroupTable::KGroupTable(QWidget *parent, const char *name) : KRowTable(SelectRow, parent, name)
 {
-  QString pixdir = kapp->kde_datadir() + QString("/kuser/pics/");
-  pmGroup = new QPixmap(pixdir + "group.xpm");
+  pmGroup = new QPixmap(Icon("group.xpm"));
 
   setCellHeight(max( fontMetrics().lineSpacing(), pmGroup->height()));
 

@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include "mnt.h"
 #include "quota.h"
+#include <qfile.h>
 
 MntEnt::MntEnt(const char *afsname, const char *adir,
                const char *atype, const char *aopts,

@@ -4,6 +4,7 @@
 #include <qtooltip.h>
 #include <kmsgbox.h>
 #include <ktoolbar.h>
+#include <kglobal.h>
 #include <kiconloader.h>
 
 #include "misc.h"
@@ -55,23 +56,16 @@ mainWidget::mainWidget(const char *name) : KTMainWindow(name) {
   setMenu(menubar);
 
   toolbar = new KToolBar(this, "toolbar");
-  QPixmap pix;
 
-  pix = kapp->getIconLoader()->loadIcon("useradd.xpm");
-  toolbar->insertButton(pix, 0, SIGNAL(clicked()), md, SLOT(useradd()), TRUE, i18n("Add user"));
-  pix = kapp->getIconLoader()->loadIcon("userdel.xpm");
-  toolbar->insertButton(pix, 0, SIGNAL(clicked()), md, SLOT(userdel()), TRUE, i18n("Delete user"));
-  pix = kapp->getIconLoader()->loadIcon("useredit.xpm");
-  toolbar->insertButton(pix, 0, SIGNAL(clicked()), md, SLOT(useredit()), TRUE, i18n("Edit user"));
+  toolbar->insertButton(Icon("useradd.xpm"), 0, SIGNAL(clicked()), md, SLOT(useradd()), TRUE, i18n("Add user"));
+  toolbar->insertButton(Icon("userdel.xpm"), 0, SIGNAL(clicked()), md, SLOT(userdel()), TRUE, i18n("Delete user"));
+  toolbar->insertButton(Icon("useredit.xpm"), 0, SIGNAL(clicked()), md, SLOT(useredit()), TRUE, i18n("Edit user"));
   
   toolbar->insertSeparator();
   
-  pix = kapp->getIconLoader()->loadIcon("grpadd.xpm");
-  toolbar->insertButton(pix, 0, SIGNAL(clicked()), md, SLOT(grpadd()), TRUE, i18n("Add group"));
-  pix = kapp->getIconLoader()->loadIcon("grpdel.xpm");
-  toolbar->insertButton(pix, 0, SIGNAL(clicked()), md, SLOT(grpdel()), TRUE, i18n("Delete group"));
-  pix = kapp->getIconLoader()->loadIcon("grpedit.xpm");
-  toolbar->insertButton(pix, 0, SIGNAL(clicked()), md, SLOT(grpedit()), TRUE, i18n("Edit group"));
+  toolbar->insertButton(Icon("grpadd.xpm"), 0, SIGNAL(clicked()), md, SLOT(grpadd()), TRUE, i18n("Add group"));
+  toolbar->insertButton(Icon("grpdel.xpm"), 0, SIGNAL(clicked()), md, SLOT(grpdel()), TRUE, i18n("Delete group"));
+  toolbar->insertButton(Icon("grpedit.xpm"), 0, SIGNAL(clicked()), md, SLOT(grpedit()), TRUE, i18n("Edit group"));
   toolbar->setBarPos(KToolBar::Top);
 
   addToolBar(toolbar);
@@ -86,7 +80,7 @@ mainWidget::mainWidget(const char *name) : KTMainWindow(name) {
   resize(500, 400);
 
   // restore geometry settings
-  KConfig *config = KApplication::getKApplication()->getConfig();
+  KConfig *config = kapp->getConfig();
   config->setGroup( "Appearance" );
   QString geom = config->readEntry( "Geometry" );
   if (!geom.isEmpty()) {
@@ -113,7 +107,7 @@ mainWidget::~mainWidget() {
 
 void mainWidget::resizeEvent (QResizeEvent *) {
   // save size of the application window
-  KConfig *config = KApplication::getKApplication()->getConfig();
+  KConfig *config = kapp->getConfig();
   config->setGroup( "Appearance" );
   QString geom;
   geom = QString( "%1x%2").arg(geometry().width()).arg(geometry().height());

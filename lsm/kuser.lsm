@@ -1,7 +1,7 @@
 Begin
 Title:          kuser
-Version:        0.1.1
-Entered-date:   24/11/97
+Version:        0.2
+Entered-date:   27/11/97
 Description:    User management tool for the K Desktop Environment
 Keywords:       kde admin user management X11 Qt
 Author:         Denis Y. Pershin <dyp@inetlab.com>

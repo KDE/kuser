@@ -2,7 +2,7 @@
 #include <kapp.h>
 #include "kerror.h"
 #include <kconfig.h>
-#include <ktopwidget.h>
+#include <ktmainwindow.h>
 #include <qfont.h>
 #include <unistd.h>
 #include "globals.h"

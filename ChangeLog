@@ -1,3 +1,6 @@
+24/04/1999: Bug 'Group properties did show nothing in 'Other Users' listbox.'
+            fixed, documentation in SGML created.
+23/04/1999: User create and delete postpone logic implemented.
 04/04/1999: Bug #1133 'new fixes dont create new user home directory anymore'
 01/04/1999: Bug #895 'Kuser doesn't restore the permissions on /etc/shadow.'
 

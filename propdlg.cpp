@@ -388,7 +388,7 @@ void propdlg::loadgroups() {
   uint i;
 
   for (i = 0; i<groups->count(); i++) {
-    if (groups->group(i)->lookup_user(user->getName())!=0)
+    if (groups->group(i)->lookup_user(user->getName()))
       m_Group->insertItem(groups->group(i)->getName());
     else
       m_Other->insertItem(groups->group(i)->getName());
@@ -519,11 +519,11 @@ void propdlg::saveg() {
   uint i;
 
   for (i=0;i<m_Group->count();i++)
-    if (groups->lookup(m_Group->text(i))->lookup_user(user->getName()) == NULL)
+    if (groups->lookup(m_Group->text(i))->lookup_user(user->getName()))
       groups->lookup(m_Group->text(i))->addUser(user->getName());
   
   for (i=0;i<m_Other->count();i++)
-    if (groups->lookup(m_Other->text(i))->lookup_user(user->getName()) != NULL)
+    if (groups->lookup(m_Other->text(i))->lookup_user(user->getName()))
       groups->lookup(m_Other->text(i))->removeUser(user->getName());
 
   user->setGID(groups->lookup(cbpgrp->text(cbpgrp->currentItem()))->getGID());

@@ -38,7 +38,7 @@ mainWidget::mainWidget(const char *name) : KTMainWindow(name) {
   tmp.sprintf(i18n("KUser version %s\n"
 		"KDE project\n"
 		"This program was created by\n"
-		"Denis Y. Pershin\n"
+		"Denis Pershin\n"
 		"dyp@inetlab.com\n"
 		"Copyright 1997(c)"), _KU_VERSION);
   QPopupMenu *help = kapp->getHelpMenu(true, tmp);

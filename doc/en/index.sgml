@@ -1,0 +1,129 @@
+<!doctype linuxdoc system>
+
+<!-- The Kuser Handbook. -->
+
+<article>
+
+<!-- Title information -->
+
+<title>The Kuser Handbook
+<author>Denis Pershin
+<date>April 12, 1999
+<abstract>This documentation was last updated for Kuser version 1.0
+Please make any comments and additions to the authors.
+</abstract>
+
+<!-- Table of contents -->
+<toc>
+
+<!-- Begin the document -->
+
+
+<sect>Introduction<label id="sec-Intro">
+
+<p>
+Some times ago I had downloaded xusermgr written with XForms. This program has a
+great interface but on my 800x600 display it seems very ugly. Some text labels
+on the buttons get out of bounds. And so on. Of cause there was a lot of flame
+about it. My friend heard it and said : "Why do you flaming? If you don't
+like something make better!" I thought that he was right and wrote this
+primitive user manager.
+
+<sect>Getting Started<label id="sec-Start">
+
+<p>
+This is a short introduction to KUser. For more detailed info see
+<ref id="sec-Using" name="Using KUser">.
+
+<p>
+Actually you are should not do anything to start using KUser. You may do this
+immediately after starting it. All that you want to do is configuration.
+
+<sect>Usage Kuser<label id="sec-Using">
+
+<sect1>Main Window<label id="sec1-MainWindow">
+
+<p>
+KUser is a very simple application. On the main window you can see two lists:
+the list of the users and the list of the groups. To edit user or group you
+should simple double click on the it. The user/group properties dialog will
+appear.
+
+<sect1>User properties dialog<label id="sec1-UserProps">
+
+<p>
+User properties dialog consists of two, three or four tabs.
+
+<p>
+It depends on the type of your user storage system and quota presence.
+Additional tab will appear if you have shadow passwords, or any other similar
+things such as /etc/master.passwd in BSD flavour Unices.
+
+<sect2>User info tab<label id="sec2-userinfo">
+<p>
+In 'User Info' tab you may modify: Full name, Login shell (the list of login
+shells is taken from /etc/shells file), Home directory, extra info, User ID,
+Password.
+
+<sect2>Extended info tab<label id="sec2-extended">
+<p>
+'Extended' tab will appear if you have shadow passwords, or any other similar
+things such as /etc/master.passwd in BSD flavour Unices.
+There you may modify parameters related to extended account control: Date until
+change allowed, Date before change required, Date user will be warned about
+expiration, Date before account inactive, Date when account expires, and
+Class (on BSD systems).
+
+<sect2>Quota tab<label id="sec2-quota">
+<p>
+You may see 'Quota' tab only when you have at least one mounted volume with
+quota enabled and quota file present. There you may modify all quota related
+parameters: File Soft Quota, File Hard Quota, File Time Limit (Grace Period),
+iNode Soft Quota, iNode Hard Quota, iNode Time Limit (Grace Period). All
+this parameters may be changed for each filesystem, which has user quota
+enabled. Filesystems may be changed using 'Quota filesystem' combobox.
+
+<sect2>Groups tab<label id="sec2-group">
+<p>
+'Groups' tab contains all information about user participation in groups.
+First of all it is his primary group. Also you may assign as many as you
+like secondary groups using arrow buttons.
+
+<sect1>Group properties<label id="sec1-GroupProps">
+<p>
+Group properties dialog has two listboxes. The right one contains users,
+who is included in the group, and the left one contains the list of
+all other users in the system.
+
+<sect1>Adding Users/Groups<label id="sec1-add">
+<p>
+Also you may add and delete users using either buttons or menu.
+
+<sect>Customizing Kuser<label id="sec-Cust">
+
+<sect1>Edit user creation defaults<label id="sec1-defaults">
+
+<p>
+To edit user creation defaults you may use 'Edit defaults' dialog, which
+is accessible via menu as File->Preferences. There you may change defaults
+used to create new user: Shell, Base of Home Directory (or home directories
+volume), either create home directory on create or not, either copy skeleton
+to home directory, and use User Private Group mechanism (when creating user,
+his own group is created, also when removing user corresponding group removed
+also).
+
+<sect>Epilogue<label id="sec-Epilogue">
+
+<sect1>Developers<label id="sec1-devel">
+
+<p>
+Denis Pershin <htmlurl url="mailto:dyp@inetlab.com"
+name="&lt;dyp@inetlab.com&gt;"> 
+
+<sect1>Documentation<label id="sec-Doc">
+
+<p>
+Denis Pershin <htmlurl url="mailto:dyp@inetlab.com"
+name="&lt;dyp@inetlab.com&gt;"> 
+
+</article>

@@ -24,7 +24,7 @@ public:
 
   void addUser(const QString &name);
   bool removeUser(const QString &name);
-  QString lookup_user(const QString &name);
+  bool lookup_user(const QString &name);
   uint count() const;
   QString user(uint i);
   void clear();

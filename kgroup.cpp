@@ -80,11 +80,11 @@ void KGroup::setGID(unsigned int data) {
   gid = data;
 }
 
-QString KGroup::lookup_user(const QString &name) {
+bool KGroup::lookup_user(const QString &name) {
   for (uint i = 0; i<u.count(); i++)
     if (name == (*u.at(i)))
-      return (*u.at(i));
-  return "";
+      return true;
+  return false;
 }
 
 void KGroup::addUser(const QString &name) {

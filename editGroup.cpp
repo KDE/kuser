@@ -25,11 +25,12 @@ editGroup::editGroup(KGroup *akg, QWidget* parent, const char* name)
     m_Group->insertItem(kg->user(i));
 
   for (i = 0; i<users->count(); i++)
-    if (kg->lookup_user(users->user(i)->getName()) == 0)
+    if (!kg->lookup_user(users->user(i)->getName()))
       m_Users->insertItem(users->user(i)->getName());
-
+  
   if (m_Users->count() != 0)
     m_Users->setCurrentItem(0);
+
   if (m_Group->count() != 0)
     m_Group->setCurrentItem(0);
 

@@ -15,10 +15,11 @@ class KDateCtl: public QObject
   Q_OBJECT
 public:
   KDateCtl(QWidget *parent, const char *name, const char *checkTitle,
-	   const char *title, long int adate, int ax, int ay);
+	   const char *title, long adate, long abase, int ax, int ay);
   ~KDateCtl();
-  void setDate(long int adate);
-  long int getDate();	
+  void setDate(long adate, long abase);
+  long getDate();	
+  long getBase();	
   void setFont(const QFont &f);
 
 protected:
@@ -28,6 +29,7 @@ protected:
   int iday;
   int imonth;
   int iyear;
+  long base;
   
   QLineEdit *day;
   KCombo *month;
@@ -48,4 +50,3 @@ signals:
 };
 
 #endif // K_DATECTL_H
-

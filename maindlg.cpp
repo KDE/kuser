@@ -208,12 +208,23 @@ void mainDlg::useradd() {
 
 #ifdef _KU_SHADOW
   tk->sets_lstchg(today());
-  tk->sets_min(readnumentry("s_min"));
-  tk->sets_max(readnumentry("s_max"));
-  tk->sets_warn(readnumentry("s_warn"));
-  tk->sets_inact(readnumentry("s_inact"));
-  tk->sets_expire(readnumentry("s_expire"));
-  tk->sets_flag(readnumentry("s_flag"));
+  if (config->hasKey("s_min"))
+    tk->sets_min(readnumentry("s_min"));
+
+  if (config->hasKey("s_max"))
+    tk->sets_max(readnumentry("s_max"));
+
+  if (config->hasKey("s_warn"))
+    tk->sets_warn(readnumentry("s_warn"));
+
+  if (config->hasKey("s_inact"))
+    tk->sets_inact(readnumentry("s_inact"));
+
+  if (config->hasKey("s_expire"))
+    tk->sets_expire(readnumentry("s_expire"));
+
+  if (config->hasKey("s_flag"))
+    tk->sets_flag(readnumentry("s_flag"));
 #endif
 
 #ifdef _KU_QUOTA

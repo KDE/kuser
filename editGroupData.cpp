@@ -10,6 +10,8 @@
 
  *********************************************************************/
 
+#include "globals.h"
+#include "misc.h"
 #include "editGroupData.h"
 
 #define Inherited QDialog
@@ -32,7 +34,7 @@ editGroupData::editGroupData
 	QLabel* tmpQLabel;
 	tmpQLabel = new QLabel( this, "Label_1" );
 	tmpQLabel->setGeometry( 20, 10, 100, 20 );
-	tmpQLabel->setText( "Users" );
+	tmpQLabel->setText(_("Users"));
 	tmpQLabel->setAlignment( 289 );
 	tmpQLabel->setMargin( -1 );
 
@@ -58,20 +60,20 @@ editGroupData::editGroupData
 	pbok = new QPushButton( this, "PushButton_3" );
 	pbok->setGeometry( 70, 190, 100, 30 );
 	connect( pbok, SIGNAL(clicked()), SLOT(ok()) );
-	pbok->setText( "Ok" );
+	pbok->setText(_("Ok"));
 	pbok->setAutoRepeat( FALSE );
 	pbok->setAutoResize( FALSE );
 
 	pbcancel = new QPushButton( this, "pbcancel" );
 	pbcancel->setGeometry( 200, 190, 100, 30 );
 	connect( pbcancel, SIGNAL(clicked()), SLOT(cancel()) );
-	pbcancel->setText( "Cancel" );
+	pbcancel->setText(_("Cancel"));
 	pbcancel->setAutoRepeat( FALSE );
 	pbcancel->setAutoResize( FALSE );
 
 	tmpQLabel = new QLabel( this, "Label_2" );
 	tmpQLabel->setGeometry( 300, 10, 100, 20 );
-	tmpQLabel->setText( "Groups" );
+	tmpQLabel->setText(_("Groups"));
 	tmpQLabel->setAlignment( 289 );
 	tmpQLabel->setMargin( -1 );
 

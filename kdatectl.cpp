@@ -9,8 +9,8 @@
 #include "misc.h"
 
 KDateCtl::KDateCtl(QWidget *parent, const char *name,
-const char *checktitle, const char *title,
-long int adate, int ax, int ay) {
+                   const char *checktitle, const char *title,
+                   long adate, long abase, int ax, int ay) {
   char tmp[200];
 
   x = ax; y = ay;
@@ -59,7 +59,7 @@ long int adate, int ax, int ay) {
   QObject::connect(month, SIGNAL(activated(int)), this,
                             SLOT(monthChanged(int)));
 
-  setDate(adate);
+  setDate(adate, abase);
 }
 
 KDateCtl::~KDateCtl() {
@@ -70,10 +70,15 @@ KDateCtl::~KDateCtl() {
   delete label;
 }
 
-void KDateCtl::setDate(long int adate) {
+void KDateCtl::setDate(long int adate, long int abase) {
   QDate *qd = NULL;
 
-  if (adate>24855) {
+  base = abase;
+
+  if ((adate>24855) || (adate<abase)) {
+    iday = 0;
+    imonth = 0;
+    iyear = 0;
     isempty->setChecked(TRUE);
     return;
   }
@@ -89,21 +94,29 @@ void KDateCtl::setDate(long int adate) {
   delete qd;
 }
 
-long int KDateCtl::getDate() {
+long KDateCtl::getDate() {
   long int r = 0;
 
   QDate *qd = NULL;
-  QDate *base = NULL;
+  QDate *b = NULL;
   
-  base = new QDate(1970, 1, 1);
+  if (isempty->isChecked() == TRUE)
+    return (base-1);
+  
+  b = new QDate(1970, 1, 1);
   qd = new QDate(iyear, imonth, iday);
 
-  r = base->daysTo(*qd);
+  r = b->daysTo(*qd);
+  printf("r = %il\n", r);
 
-  delete base;
+  delete b;
   delete qd;
   
-  return (r+1);
+  return (r);
+}
+
+long KDateCtl::getBase() {
+  return (base);
 }
 
 void KDateCtl::updateControls() {
@@ -111,7 +124,7 @@ void KDateCtl::updateControls() {
 
   if (isempty->isChecked() == TRUE) {
     day->setText("");
-    month->setCurrentItem(1);
+    month->setCurrentItem(0);
     year->setText("");
     day->setEnabled(FALSE);
     month->setEnabled(FALSE);
@@ -162,4 +175,3 @@ void KDateCtl::setFont(const QFont &f) {
   label->setFont(f);
   isempty->setFont(f);
 }
-

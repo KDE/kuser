@@ -44,10 +44,10 @@ KUser::KUser() {
   s_pwd.setStr("");
   s_lstchg  = 0;
   s_min     = 0;
-  s_max     = 99999;
-  s_warn    = 0;
-  s_inact   = 99999;
-  s_expire  = 99999;
+  s_max     = -1;
+  s_warn    = 7;
+  s_inact   = -1;
+  s_expire  = -1;
   s_flag    = 0;
 #endif
 }

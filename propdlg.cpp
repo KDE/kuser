@@ -117,31 +117,36 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
     l16 = addLabel(w2, "ml16", 95, 30, 50, 20, _("Last password change"));
     lesmin = new KDateCtl(w2, "lesmin", _("Change never allowed"),
                _("Date until change allowed"),
-                  user->gets_lstchg()+user->gets_min(), 10, 70);
+                  user->gets_lstchg()+user->gets_min(), 
+                  user->gets_lstchg(), 10, 70);
     QObject::connect(lesmin, SIGNAL(textChanged()), this, SLOT(changed()));
 //    QToolTip::add(lesmin, _("Date until change allowed"));
 
-    lesmax = new KDateCtl(w2, "lesmax", _("Change required after first login"),
+    lesmax = new KDateCtl(w2, "lesmax", _("Change does not required"),
                           _("Date before change required"),
-                          user->gets_lstchg()+user->gets_max(), 10, 130);
+                          user->gets_lstchg()+user->gets_max(),
+                          user->gets_lstchg(), 10, 130);
     QObject::connect(lesmax, SIGNAL(textChanged()), this, SLOT(changed()));
 //    QToolTip::add(lesmax, _("Date before change required"));
 
     leswarn = new KDateCtl(w2, "leswarn", _("User will never be warned"),
                            _("Date user will be warned about\nexpiration"),
-                           user->gets_lstchg()+user->gets_warn(), 10, 190);
+                           user->gets_lstchg()+user->gets_warn(),
+                           user->gets_lstchg(), 10, 190);
     QObject::connect(leswarn, SIGNAL(textChanged()), this, SLOT(changed()));
 //    QToolTip::add(leswarn, _("Date user will be warned about expiration"));
 
     lesinact = new KDateCtl(w2, "lesinact", _("Account is active from the day of creation"),
                             _("Date before account inactive"),
-                            user->gets_lstchg()+user->gets_inact(), 10, 250);
+                            user->gets_lstchg()+user->gets_inact(),
+                            user->gets_lstchg(), 10, 250);
     QObject::connect(lesinact, SIGNAL(textChanged()), this, SLOT(changed()));
 //    QToolTip::add(lesinact, _("Date before account inactive"));
 
     lesexpire = new KDateCtl(w2, "lesexpire", _("Account never expires"),
                              _("Date when account expires"),
-                             user->gets_lstchg()+user->gets_expire(), 10, 310);
+                             user->gets_lstchg()+user->gets_expire(),
+                             user->gets_lstchg(), 10, 310);
     QObject::connect(lesexpire, SIGNAL(textChanged()), this, SLOT(changed()));
 //    QToolTip::add(lesexpire, _("Date when account expires"));
 
@@ -221,46 +226,46 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
   m_Other->setLineWidth( 2 );
 
   QLabel* tmpQLabel;
-  tmpQLabel = new QLabel( w4, "Label_1" );
-  tmpQLabel->setGeometry( 20, 60, 100, 20 );
-  tmpQLabel->setText( "Users" );
-  tmpQLabel->setAlignment( 289 );
-  tmpQLabel->setMargin( -1 );
+  tmpQLabel = new QLabel(w4, "Label_1");
+  tmpQLabel->setGeometry(20, 60, 100, 20);
+  tmpQLabel->setText(_("Users"));
+  tmpQLabel->setAlignment(289);
+  tmpQLabel->setMargin(-1);
 
-  m_Group = new QListBox( w4, "m_Group" );
-  m_Group->setGeometry( 250, 80, 160, 130 );
-  m_Group->setFrameStyle( 51 );
-  m_Group->setLineWidth( 2 );
+  m_Group = new QListBox(w4, "m_Group");
+  m_Group->setGeometry(250, 80, 160, 130);
+  m_Group->setFrameStyle(51);
+  m_Group->setLineWidth(2);
 
-  pbadd = new QPushButton( w4, "pbadd" );
-  pbadd->setGeometry( 195, 100, 40, 30 );
+  pbadd = new QPushButton(w4, "pbadd");
+  pbadd->setGeometry(195, 100, 40, 30);
   connect( pbadd, SIGNAL(clicked()), SLOT(add()) );
-  pbadd->setText( "->" );
+  pbadd->setText("->");
   pbadd->setAutoRepeat( FALSE );
   pbadd->setAutoResize( FALSE );
 
   pbdel = new QPushButton( w4, "pbdel" );
   pbdel->setGeometry( 195, 150, 40, 30 );
   connect( pbdel, SIGNAL(clicked()), SLOT(del()) );
-  pbdel->setText( "<-" );
+  pbdel->setText("<-");
   pbdel->setAutoRepeat( FALSE );
   pbdel->setAutoResize( FALSE );
 
-  tmpQLabel = new QLabel( w4, "Label_2" );
-  tmpQLabel->setGeometry( 300, 60, 100, 20 );
-  tmpQLabel->setText( "Groups" );
-  tmpQLabel->setAlignment( 289 );
-  tmpQLabel->setMargin( -1 );
+  tmpQLabel = new QLabel(w4, "Label_2");
+  tmpQLabel->setGeometry(300, 60, 100, 20);
+  tmpQLabel->setText(_("Groups"));
+  tmpQLabel->setAlignment(289);
+  tmpQLabel->setMargin(-1);
 
   cbpgrp = new QComboBox(FALSE, w4, "cbpgrp");
   cbpgrp->setGeometry(250, 30, 160, 30);
   QObject::connect(cbpgrp, SIGNAL(activated(const char *)), this, SLOT(setpgroup(const char *)));
 
-  tmpQLabel = new QLabel( w4, "Label_3" );
-  tmpQLabel->setGeometry( 150, 35, 100, 20 );
-  tmpQLabel->setText( "Primary group" );
-  tmpQLabel->setAlignment( 289 );
-  tmpQLabel->setMargin( -1 );
+  tmpQLabel = new QLabel(w4, "Label_3");
+  tmpQLabel->setGeometry(150, 35, 100, 20);
+  tmpQLabel->setText(_("Primary group"));
+  tmpQLabel->setAlignment(289);
+  tmpQLabel->setMargin(-1);
 
   addTab(w4, _("Groups"));
 
@@ -273,7 +278,7 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
   isqchanged = FALSE;
 #endif
 
-  setCaption("Edit User");
+  setCaption(_("Edit User"));
 }
 
 propdlg::~propdlg() {

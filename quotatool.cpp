@@ -4,9 +4,26 @@
 #include <sys/param.h>
 #include <sys/stat.h>
 #include <sys/file.h>
+#include "config.h"
+
+#ifdef HAVE_LINUX_QUOTA_H
 #include <linux/quota.h>
+#endif
+
+#ifdef HAVE_FCNTL_H
+#include <fcntl.h>
+#endif
+
 #include <errno.h>
+
+#ifdef HAVE_MNTENT_H
 #include <mntent.h>
+#endif
+
+#ifdef HAVE_SYS_MNTENT_H
+#include <sys/mntent.h>
+#endif
+
 #include <pwd.h>
 #include <grp.h>
 #include <ctype.h>
@@ -14,7 +31,11 @@
 #include <string.h>
 #include <signal.h>
 #include <limits.h>
+
+#ifdef HAVE_PATH_H
 #include <paths.h>
+#endif
+
 #include "includes.h"
 #include "misc.h"
 
@@ -29,133 +50,99 @@ int quotactl(int cmd, const char * special, int id, caddr_t addr)
 #else
 #include <sys/types.h>
 #define __LIBRARY__
+
+#ifdef HAVE_LINUX_UNISTD_H
 #include <linux/unistd.h>
-
-_syscall4(int, quotactl, int, cmd, const char *, special, int, id, caddr_t, addr);
 #endif
 
-#ifdef __cplusplus
-extern "C" {
-unsigned int sleep __P ((unsigned int __seconds));
-int fchown __P ((int __fd, __uid_t __owner, __gid_t __group));
-__off_t lseek __P ((int __fd, __off_t __offset, int __whence));
-ssize_t read __P ((int __fd, __ptr_t __buf, size_t __nbytes));
-ssize_t write __P ((int __fd, __const __ptr_t __buf, size_t __n));
-int close __P ((int __fd));
-}
+//_syscall4(int, quotactl, int, cmd, const char *, special, int, id, caddr_t, addr);
 #endif
 
-#define CORRECT_FSTYPE(type) \
-(!strcmp(type,MNTTYPE_EXT2))
-
-char *qfextension[] = INITQFNAMES;
-static char *qfname = QUOTAFILENAME;
-static char qfullname[PATH_MAX];
-
-char *quotagroup = QUOTAGROUP;
+#ifdef HAVE_SYS_FS_UFS_QUOTA_H
+#include <sys/fs/ufs_quota.h>
+#define CORRECT_FSTYPE(type) (!strcmp(type,MNTTYPE_UFS))
+#define QUOTAFILENAME "quotas"
+#else
+#define CORRECT_FSTYPE(type) (!strcmp(type,MNTTYPE_EXT2))
+#define QUOTAFILENAME "quota.user"
+#endif
 
 char s[120];
 
 #define   FOUND   0x01
 
 // all procedures
-int hasquota(MntEnt *mnt, int type, char **qfnamep);
 void getquota(const char *uname, QList<Quota> *q);
-void getmntprivs(long id, QList<Quota> *q);
 void setquota(const char *uname, QList<Quota> *q);
-void setmntprivs(long id, QList<Quota> *q);
-int getentry(const char *name, int quotatype);
+int getentry(const char *name);
 int alldigits(const char *s);
-
-int hasquota(struct MntEnt *mnt, int type, char **qfnamep)
-{
-  char *buf, *option, *pathname;
-
-  if (is_quota != 0) {
-    if (!CORRECT_FSTYPE((const char *)mnt->type))
-      return (0);
-    if ((type == USRQUOTA) 
-//    && (option = hasmntopt(mnt, MNTOPT_USRQUOTA)) != (char *)0
-    ) {
-//      if ((pathname = strchr(option, '=')) == (char *)0) {
-        (void) sprintf(qfullname, "%s%s%s.%s", (const char *)mnt->dir,
-                       (mnt->dir[mnt->dir.length() - 1] == '/') ? "" : "/",
-                        qfname, qfextension[type]);
-//      } else {
-         /*
-          * Splice this option on the start of any following option.
-          */
-//         if ((option = strchr(++pathname, ',')) != (char *)NULL)
-//           *option = '\0';
-//         strncpy(qfullname, pathname, sizeof(qfullname));
-//      }
-      *qfnamep = strdup(qfullname);
-      return (1);
-    } else
-      return (0);
-  }
-  return (0);
-}
 
 void getquota(const char *uname, QList<Quota> *q)
 {
   long id;
 
-  if (is_quota != 0)
-    if ((id = getentry(uname, USRQUOTA)) != -1) {
-      getmntprivs(id, q);
-  }
-}
+  if (is_quota == 0)
+    return;
 
-void setquota(const char *uname, QList<Quota> *q) 
-{
-  long id;
-
-  if (is_quota != 0)
-    if (id = getentry(uname, USRQUOTA) != -1) {
-      setmntprivs(id, q);
-  }
-}
-
-/*
- * This routine converts a name for a particular quota type to an identifier.
- */
-int getentry(const char *name, int quotatype)
-{
-  if (is_quota != 0) {
-    struct passwd  *pw;
-    struct group   *gr;
-
-    if (alldigits(name))
-      return (atoi(name));
-    if (pw = getpwnam(name))
-      return (pw->pw_uid);
-
-    sprintf(s, _("%s: no such user"), name);
-    QMessageBox::message(_("Error") ,s ,"Ok");  
-
-    sleep(1);
-  }
-  return (-1);
-}
-
-void getmntprivs(long id, QList<Quota> *q)
-{
+  if ((id = getentry(uname)) == -1)
+    return;
+      
   int qcmd, fd;
-  char *qfpathname = NULL;
   static int warned = 0;
-  extern int errno;
+  //  extern int errno;
+int dd = 0;
   struct dqblk dq;
+#ifdef HAVE_SYS_FS_UFS_QUOTA_H
+  struct quotctl qctl;
+#endif
 
   if (is_quota == 0)
     return;
-printf("User: %li\n", id);
+
+#ifdef _KU_DEBUG
+printf("getquota\n");
+#endif
+
+#ifdef HAVE_SYS_FS_UFS_QUOTA_H
+  for (uint i=0; i<mounts.count(); i++) {
+    qctl.op = Q_GETQUOTA;
+    qctl.uid = id;
+    qctl.addr = (caddr_t) &dq;
+
+    fd = open((const char *)mounts.at(i)->quotafilename, O_RDONLY);
+
+    if ((dd = ioctl(fd, Q_QUOTACTL, &qctl)) != 0)
+      if (errno == ESRCH) {
+        printf("user %s-%d has no quota with errno: %i\n", uname, id, errno);
+	if (id == 404) {
+printf("quotafilename: %s\n", (const char*)mounts.at(i)->quotafilename);
+	}
+
+        q->append(new Quota(0,0,0,0,0,0));
+      }
+      else
+      {
+/*
+        if ((errno == EOPNOTSUPP || errno == ENOSYS) && !warned) {
+*/
+          warned++;
+	  //          QMessageBox::message(_("Error"), _("Quotas are not compiled into this kernel."), "Ok");
+          printf("errno: %i, ioctl: %i\n", errno, dd);
+          sleep(3);
+          is_quota = 0;
+	  break;
+      }
+      q->append(new Quota(dq.dqb_curblocks,
+                          dq.dqb_bsoftlimit,
+                          dq.dqb_bhardlimit,
+                          dq.dqb_curfiles,
+                          dq.dqb_fsoftlimit,
+                          dq.dqb_fhardlimit));
+    }
+#else
   qcmd = QCMD(Q_GETQUOTA, USRQUOTA);
 
   for (uint i=0; i<mounts.count(); i++) {
-      if (!hasquota(mounts.at(i), USRQUOTA, &qfpathname))
-        continue;
-
       if (quotactl(qcmd, (const char *)mounts.at(i)->fsname, id, (caddr_t) &dq) != 0) {
 /*
         if ((errno == EOPNOTSUPP || errno == ENOSYS) && !warned) {
@@ -176,27 +163,29 @@ printf("User: %li\n", id);
 			  dq.dqb_isoftlimit,
 			  dq.dqb_ihardlimit));
     }
+#endif
 }
 
-void setmntprivs(long id, QList<Quota> *q) {
+void setquota(const char *uname, QList<Quota> *q) 
+{
+  long id;
+
+  if (is_quota == 0)
+    return;
+
+  if (id = getentry(uname) == -1)
+    return;
+
   int qcmd, fd;
   struct dqblk dq;
-  char *qfpathname;
 
 #ifdef _KU_DEBUG
-printf("setmntprivs\n");
+printf("setquota\n");
 #endif
-
+/*
   qcmd = QCMD(Q_SETQUOTA, USRQUOTA);
   if (is_quota != 0) {
     for (uint i=0; i<mounts.count(); i++) {
-      if (!hasquota(mounts.at(i), USRQUOTA, &qfpathname))
-        continue;
-
-#ifdef _KU_DEBUG
-printf("%s has quota for %li\n", (const char *)mounts.at(i)->fsname, id);
-#endif
-
       dq.dqb_curblocks  = btodb(q->at(i)->fcur);
       dq.dqb_bsoftlimit = btodb(q->at(i)->fsoft);
       dq.dqb_bhardlimit = btodb(q->at(i)->fhard);
@@ -224,6 +213,29 @@ printf("%d %d %d %d %d %d\n", dq.dqb_curblocks,dq.dqb_bsoftlimit,dq.dqb_bhardlim
       }
     }
   }
+  */
+}
+
+/*
+ * This routine converts a name for a particular quota type to an identifier.
+ */
+int getentry(const char *name)
+{
+  if (is_quota != 0) {
+    struct passwd  *pw;
+    struct group   *gr;
+
+    if (alldigits(name))
+      return (atoi(name));
+    if (pw = getpwnam(name))
+      return (pw->pw_uid);
+
+    sprintf(s, _("%s: no such user"), name);
+    QMessageBox::message(_("Error") ,s ,"Ok");  
+
+    sleep(1);
+  }
+  return (-1);
 }
 
 /*
@@ -265,7 +277,7 @@ printf("quota_write\n");
 #ifdef _KU_DEBUG
 printf("setquota %s -- %li\n", (const char *)users.at(i)->p_name, users.at(i)->p_uid);
 #endif
-    setmntprivs(users.at(i)->p_uid, &users.at(i)->quota);
+    setquota(users.at(i)->p_name, &users.at(i)->quota);
   }
 }
 

@@ -9,10 +9,10 @@ long int adate, int ax, int ay) {
 
   x = ax; y = ay;
 
-  snprintf(tmp, 200, "%s_day", name);
+  sprintf(tmp, "%s_day", name);
   day = addLineEdit(parent, tmp, x, y+25, 30, 27, "");
 
-  snprintf(tmp, 200, "%s_month", name);
+  sprintf(tmp, "%s_month", name);
   month = new QComboBox(FALSE, parent, tmp);
   month->clear();
   month->insertItem(_("January"));
@@ -30,14 +30,14 @@ long int adate, int ax, int ay) {
 
   month->setGeometry(x+40, y+25, 100, 27);
 
-  snprintf(tmp, 200, "%s_year", name);
+  sprintf(tmp,  "%s_year", name);
   year = addLineEdit(parent, tmp, x+150, y+25, 50, 27, "");
 
-  snprintf(tmp, 200, "%s_isempty", name);
+  sprintf(tmp, "%s_isempty", name);
   isempty = new QCheckBox(checktitle, parent, tmp);
   isempty->setGeometry(x, y, 200, 20); 
 
-  snprintf(tmp, 200, "%s_title", name);
+  sprintf(tmp, "%s_title", name);
   label = addLabel(parent, tmp, x+210, y+25, 50, 27, title);
 
   QObject::connect(isempty, SIGNAL(toggled(bool)), this,

@@ -24,10 +24,6 @@ void pwd_read() {
     tmpKU->p_dir.setStr(p->pw_dir);
     tmpKU->p_shell.setStr(p->pw_shell);
 
-#ifdef _KU_DEBUG
-printf("Reading user: %s\n", (const char *)tmpKU->p_name);
-#endif
-
     if ((!p->pw_gecos) || (!p->pw_gecos[0]))
     {
       tmpKU->p_fname.setStr("");

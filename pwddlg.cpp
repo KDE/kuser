@@ -1,3 +1,9 @@
+#include "config.h"
+
+#ifdef HAVE_CRYPT_H
+#include <crypt.h>
+#endif
+
 #include "pwddlg.h"
 #include "pwddlg.moc"
 #include "misc.h"

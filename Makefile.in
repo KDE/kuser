@@ -1,12 +1,12 @@
 INCLUDE	=	@all_includes@
 
 # May be -DLINUX -D_XU_QUOTA -DAIX -D_XU_SHADOW
-SYSFLAGS = 	-DLINUX -D_XU_QUOTA -D_XU_SHADOW -D_KU_DEBUG # -g
+SYSFLAGS = 	-D_XU_QUOTA -D_XU_SHADOW -D_KU_DEBUG # -g
 
 # For Linux
-OFLAGS =	-O2 -W -DLOCDIR=\"$(LOCALEDIR)\" -DSTDC_HEADERS -DHAVE_UNISTD_H
+OFLAGS =	-O2 -W -DLOCDIR=\"$(LOCALEDIR)\"
 CFLAGS	=	$(OFLAGS) $(SYSFLAGS) # -g
-LFLAGS	=	@all_libraries@  -lqt -L./ -lX11 -lXext -lintl -lkdecore -lkdeui
+LFLAGS	=	@all_libraries@  -lkdecore -lkdeui -lqt -L./ -lX11 -lXext -lintl @LIBSOCKET@
 MOC	=	@MOC@
 MSGFMT	=	msgfmt
 
@@ -19,14 +19,16 @@ INSTALL_SCRIPT = @INSTALL_SCRIPT@
 
 POFILES =	po/kuser.po
 MOFILES =	po/kuser.mo
-DOCFILES=	doc/index.html doc/bugnet-member.gif
+HTMLFILES =	doc/index.html
+GIFFILES  =	doc/bugnet-member.gif
+DOCFILES=	$(HTMLFILES) $(GIFFILES)
 PICFILES=	pic/user.bmp
 SOURCES =	kdatectl.cpp kuser.cpp main.cpp maindlg.cpp mnt.cpp propdlg.cpp quotatool.cpp pwdtool.cpp sdwtool.cpp misc.cpp usernamedlg.cpp pwddlg.cpp mrqpasswdlined.cpp
 SRCMETA =       kdatectl.moc maindlg.moc propdlg.moc usernamedlg.moc pwddlg.moc mrqpasswdlined.moc
-HEADERS =       kdatectl.h kuser.h maindlg.h   propdlg.h  nmt.h quotatool.h sdwtool.h pwdtool.h includes.h misc.h usernamedlg.h pwddlg.h mrqpasswdlined.h
+HEADERS =       kdatectl.h kuser.h maindlg.h   propdlg.h  mnt.h quotatool.h sdwtool.h pwdtool.h includes.h misc.h usernamedlg.h pwddlg.h mrqpasswdlined.h
 OBJECTS =	kdatectl.o kuser.o main.o maindlg.o mnt.o propdlg.o   quotatool.o pwdtool.o sdwtool.o misc.o usernamedlg.o pwddlg.o mrqpasswdlined.o
 TARGET	=	kuser
-EDITABLE =	$(POFILES) $(DOCFILES) $(SOURCES) $(HEADERS)
+EDITABLE =	$(POFILES) $(HTMLFILES) $(SOURCES) $(HEADERS) Makefile.in
 
 # Where to install binaries
 PREFIX	=	@prefix@

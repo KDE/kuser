@@ -1,10 +1,32 @@
 #include "includes.h"
+#include "config.h"
+
+#ifdef HAVE_MNTENT_H
+#include <mntent.h>
+#endif
+
+#ifdef HAVE_SYS_MNTENT_H
+#include <sys/mntent.h>
+#define BAD_GETMNTENT
+#endif
+
+#ifdef HAVE_SYS_MNTTAB_H
+#include <sys/mnttab.h>
+#endif
+
+#ifdef HAVE_SYS_FS_UFS_QUOTA_H
+#include <sys/fs/ufs_quota.h>
+#define CORRECT_FSTYPE(type) (!strcmp(type,MNTTYPE_UFS))
+#define QUOTAFILENAME "quotas"
+#else
+#define CORRECT_FSTYPE(type) (!strcmp(type,MNTTYPE_EXT2))
+#define QUOTAFILENAME "quota.user"
+#endif
+
 #include "misc.h"
 #include "pwdtool.h"
 #include "sdwtool.h"
 #include "quotatool.h"
-
-extern "C" int unlink __P ((__const char *__name));
 
 KUser *user_lookup(const char *name) {                                               
   for (uint i = 0; i<users.count(); i++)                                       
@@ -142,26 +164,82 @@ int getValue(unsigned int &data, const char *text, const char *msg) {
 
 void getmounts() {
 #ifdef _XU_QUOTA
-  struct mntent *m;
+
+#ifdef _KU_DEBUG
+printf("getmounts\n");
+#endif
+
+#ifdef BAD_GETMNTENT
+  struct mnttab *m = NULL;
+#else
+  struct mntent *m = NULL;
+#endif
   FILE *fp;
   MntEnt *mnt = NULL;
+  QString quotafilename;
 
   if (is_quota == 0)
     return;
 
+  is_quota = 0;
+
+#ifdef BAD_GETMNTENT
+  fp = fopen(MNTTAB, "r");
+puts("fp opened");
+  m = (struct mnttab *)malloc(sizeof(mnttab));
+
+  while ((getmntent(fp, m)) == 0) {
+printf("getmntent %p\n", m);
+    if (strstr(m->mnt_mntopts, "quota") == NULL)
+      continue;
+
+    if (!CORRECT_FSTYPE((const char *)m->mnt_fstype))
+      continue;
+
+    quotafilename.sprintf("%s%s%s", m->mnt_mountp,
+                          (m->mnt_mountp[strlen(m->mnt_mountp) - 1] == '/') ? "" : "/",
+                          QUOTAFILENAME);
+#else
   fp = setmntent(MNTTAB, "r");
-  while ((m = getmntent(fp)) != (struct mntent *)0)
-    if (hasmntopt(m, MNTOPT_USRQUOTA) != (char *)0) {
-      mnt = new MntEnt(m->mnt_fsname, m->mnt_dir, m->mnt_type,
-                       m->mnt_opts, m->mnt_freq, m->mnt_passno);
-      mounts.append(mnt);
-     is_quota = 1;
-    }
+  while ((m = getmntent(fp)) != (struct mntent *)0) {
+    if (strstr(m->mnt_opts, "quota") == NULL)
+      continue;
+
+    if (!CORRECT_FSTYPE((const char *)m->mnt_type))
+      continue;
+
+    quotafilename.sprintf("%s%s%s", m->mnt_dir,
+                          (m->mnt_dir[strlen(m->mnt_dir) - 1] == '/') ? "" : "/",
+                          QUOTAFILENAME);
+#endif
+
+    QFile *f = new QFile(quotafilename);
+    if (f->exists() == FALSE)
+      continue;
+
+#ifdef BAD_GETMNTENT
+    mnt = new MntEnt(m->mnt_special, m->mnt_mountp, m->mnt_fstype,
+                     m->mnt_mntopts, quotafilename);
+#else
+    mnt = new MntEnt(m->mnt_fsname, m->mnt_dir, m->mnt_type,
+                     m->mnt_opts, quotafilename);
+#endif
+    mounts.append(mnt);
+    is_quota = 1;
+  }
+#ifdef BAD_GETMNTENT
+  fclose(fp);
+#else
   endmntent(fp);
+#endif
 #endif
 }
 
 void init() {
+#ifdef _KU_DEBUG
+printf("init\n");
+#endif
+
   getmounts();
 
   pwd_read();
@@ -173,8 +251,15 @@ void init() {
 
 #ifdef _XU_QUOTA
   if (is_quota != 0)
+
+#ifdef _KU_DEBUG
 puts("quota_read");
+#endif
+
     quota_read();
+
+#ifdef _KU_DEBUG
 puts("quota_read done");
+#endif
 #endif
 }

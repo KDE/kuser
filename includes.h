@@ -39,15 +39,6 @@
 #include <pwd.h>
 #include <sys/types.h>
 #include <sys/stat.h>                                                          
-
-#ifdef HAVE_MNTENT_H
-#include <mntent.h>
-#endif
-
-#ifdef HAVE_SYS_MNTENT_H
-#include <sys/mntent.h>
-#endif
-
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>

@@ -178,6 +178,7 @@ printf("propdlg::propdlg begin\n");
     QToolTip::add(leqmnt, _("Quota filesystem"));
     leqmnt->clear();
 
+    /*
     struct mntent *mnt;
     FILE *fp;
 
@@ -186,6 +187,10 @@ printf("propdlg::propdlg begin\n");
       if (hasmntopt(mnt, MNTOPT_USRQUOTA) != (char *)0)
         leqmnt->insertItem(mnt->mnt_dir);
     endmntent(fp);
+    */
+
+    for (uint i = 0; i<mounts.count(); i++)
+       leqmnt->insertItem(mounts.at(i)->dir);
 
     leqmnt->setGeometry(200, 20, 160, 27);
     QObject::connect(leqmnt, SIGNAL(highlighted(int)), this, SLOT(mntsel(int)));

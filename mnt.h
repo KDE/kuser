@@ -8,15 +8,18 @@
 
 class MntEnt {
 public:
-  QString fsname, dir, type, opts;
-  int freq, passno;
+  QString fsname;
+  QString dir;
+  QString type;
+  QString opts;
+  QString quotafilename;
   
   MntEnt() {
   }
   
   MntEnt(const char *afsname, const char *adir,
          const char *atype, const char *aopts,
-	 int afreq, int apassno);
+         const char *aquotafilename);
 };
 
 #endif // _XU_MNT_H_

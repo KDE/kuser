@@ -31,11 +31,20 @@
 /* Define to 1 if NLS is requested.  */
 #undef ENABLE_NLS
 
+/* Define if you have the <crypt.h> header file.  */
+#undef HAVE_CRYPT_H
+
 /* Define if you have the <dirent.h> header file.  */
 #undef HAVE_DIRENT_H
 
 /* Define if you have the <fcntl.h> header file.  */
 #undef HAVE_FCNTL_H
+
+/* Define if you have the <linux/quota.h> header file.  */
+#undef HAVE_LINUX_QUOTA_H
+
+/* Define if you have the <linux/unistd.h> header file.  */
+#undef HAVE_LINUX_UNISTD_H
 
 /* Define if you have the <mntent.h> header file.  */
 #undef HAVE_MNTENT_H
@@ -43,11 +52,20 @@
 /* Define if you have the <ndir.h> header file.  */
 #undef HAVE_NDIR_H
 
+/* Define if you have the <paths.h> header file.  */
+#undef HAVE_PATHS_H
+
 /* Define if you have the <sys/dir.h> header file.  */
 #undef HAVE_SYS_DIR_H
 
+/* Define if you have the <sys/fs/ufs_quota.h> header file.  */
+#undef HAVE_SYS_FS_UFS_QUOTA_H
+
 /* Define if you have the <sys/mntent.h> header file.  */
 #undef HAVE_SYS_MNTENT_H
+
+/* Define if you have the <sys/mnttab.h> header file.  */
+#undef HAVE_SYS_MNTTAB_H
 
 /* Define if you have the <sys/ndir.h> header file.  */
 #undef HAVE_SYS_NDIR_H

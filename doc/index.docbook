@@ -40,7 +40,7 @@
 <releaseinfo>1.3.00</releaseinfo>
 
 <abstract><para>This documentation describes &kuser; version 1.0. This program
-allows you to manage users and groups on your system.</para> </abstract> 
+allows you to manage users and groups on your system.</para> </abstract>
 
 <keywordset>
 <keyword>kuser</keyword>
@@ -53,7 +53,7 @@ allows you to manage users and groups on your system.</para> </abstract>
 </keywordset>
 </bookinfo>
 
-<chapter id="Start">
+<chapter id="start">
 <title>Getting Started</title>
 <para>This is a short introduction to &kuser;. For more detailed information see
 <link linkend="Using">Usage</link>.</para>
@@ -62,18 +62,18 @@ allows you to manage users and groups on your system.</para> </abstract>
 <link linkend="customizing">configuration</link>.</para>
 
 <para>When you have made the changes you want, you must
-<guimenuitem>Save</guimenuitem>save> them for them to take effect. Either choose
+<guimenuitem>Save</guimenuitem> them for them to take effect. Either choose
 the Toolbar icon, or use the <guimenu>File</guimenu> menu.</para>
 
 </chapter>
 
-<chapter id="Using">
+<chapter id="using">
 <title>Usage</title>
 
-<sect1 id="sec1MainWindow">
+<sect1 id="sec1mainwindow">
 <title>Main Window</title>
 
-<para>&kuser; is a very simple application. In the main window you can see two 
+<para>&kuser; is a very simple application. In the main window you can see two
 lists: the list of users and the list of groups. To edit a user or a group you
 just double click on it. The user/group properties dialog will
 appear.</para>

@@ -21,17 +21,6 @@
 
 #include "globals.h"
 
-#ifdef HAVE_LINUX_QUOTA_H
-#  ifndef QUOTACTL_IN_LIBC
-#    include <syscall.h>
-
-int quotactl(int cmd, const char * special, int id, caddr_t addr) {
-  return syscall(SYS_quotactl, cmd, special, id, addr);
-}
-
-#  endif
-#endif
-
 #ifdef _AIX
 #include <jfs/quota.h>
 extern "C" int quotactl (const char* path, int cmd, int id, const char* addr);

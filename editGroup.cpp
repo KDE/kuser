@@ -11,13 +11,12 @@
 
 #include "maindlg.h"
 #include "editGroup.h"
-#include "editGroupData.h"
 
 #include <klocale.h>
 
 #define Inherited editGroupData
 
-editGroup::editGroup(KGroup *akg, QWidget* parent, const char* name) 
+editGroup::editGroup(KGroup *akg, QWidget* parent, const char* name)
 : Inherited(parent, name) {
   uint i;
 
@@ -29,7 +28,7 @@ editGroup::editGroup(KGroup *akg, QWidget* parent, const char* name)
   for (i = 0; i<users->count(); i++)
     if (!kg->lookup_user(users->user(i)->getName()))
       m_Users->insertItem(users->user(i)->getName());
-  
+
   if (m_Users->count() != 0)
     m_Users->setCurrentItem(0);
 
@@ -86,7 +85,7 @@ void editGroup::del() {
     m_Group->setCurrentItem(cur-1);
   else
     m_Group->setCurrentItem(cur);
-  
+
   m_Users->setCurrentItem(m_Users->count()-1);
   m_Users->centerCurrentItem();
 }

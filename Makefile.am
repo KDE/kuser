@@ -28,7 +28,7 @@ noinst_HEADERS	=	\
 
 EDITABLE	=	$(DISTFILES) $(noinst_HEADERS) $(kuser_SOURCES) Makefile.am
 
-EXTRA_DIST = README AUTHORS THANKS kuser.kdelnk
+EXTRA_DIST = README AUTHORS THANKS kuser.desktop
 
 # the programs get installed in $(prefix)/bin
 bin_PROGRAMS = kuser
@@ -39,7 +39,7 @@ SUBDIRS = pic toolbar icon mini-icon lsm
 # only install in your own directories
 install-data-local:
 	$(mkinstalldirs) $(kde_appsdir)/System
-	$(INSTALL_DATA) $(srcdir)/kuser.kdelnk $(kde_appsdir)/System/
+	$(INSTALL_DATA) $(srcdir)/kuser.desktop $(kde_appsdir)/System/
 
 edit::
 	xemacs -fn "-edict-fixed-medium-r-*-*-*-120-*-*-*-*-koi8-r" -geometry 142x41+0+0 $(EDITABLE)&

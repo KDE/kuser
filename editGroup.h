@@ -13,9 +13,8 @@
 #include <qdialog.h>
 #include <qlistbox.h>
 
-#include "editGroupData.h"
-
 #include "kgroup.h"
+#include "editGroupData.h"
 
 class editGroup : public editGroupData
 {
@@ -30,7 +29,7 @@ public:
 
 protected slots:
   virtual void ok();
-  virtual void cancel(); 
+  virtual void cancel();
 
   virtual void add();
   virtual void del();

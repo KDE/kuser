@@ -1,3 +1,8 @@
+This version of KUser is based on the work of:
+Denis Perchine <dyp@perchine.com>
+
+Original README:
+----------------------
 KUser is rewritten XUser which was written in XForms.
 It supports:
 Solaris
@@ -8,6 +13,7 @@ HPUX
 
 ATTENTION: BACKUP ALL OF YOUR DATA. THIS PROGRAM MAY DESTROY
 IT. BE CAREFUL.
+----------------------
 
 If you found a bug please contact
-Denis Perchine <dyp@perchine.com>
+György Szombathelyi <gyurco@freemail.hu>

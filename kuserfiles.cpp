@@ -100,8 +100,8 @@ bool KUserFiles::loadpwd()
   int passwd_errno = 0;
   int nispasswd_errno = 0;
   char processing_file = '\0';
-  #define PASSWD    0x01
-  #define NISPASSWD 0x02
+  #define P_PASSWD    0x01
+  #define P_NISPASSWD 0x02
   #define MAXFILES 2
 
   // Read KUser configuration
@@ -119,7 +119,7 @@ bool KUserFiles::loadpwd()
   }
 
   if(!passwd_filename.isEmpty()) {
-    processing_file = processing_file | PASSWD;
+    processing_file = processing_file | P_PASSWD;
     filename.append(passwd_filename);
   }
 
@@ -129,11 +129,11 @@ bool KUserFiles::loadpwd()
     rc = stat(QFile::encodeName(filename), &st);
     if(rc != 0) {
       KMessageBox::error( 0, i18n("Stat call on file %1 failed: %2\nCheck KUser settings.").arg(filename).arg(QString::fromLocal8Bit(strerror(errno))) );
-      if( (processing_file & PASSWD) != 0 ) {
+      if( (processing_file & P_PASSWD) != 0 ) {
         passwd_errno = errno;
         if(!nispasswd_filename.isEmpty()) {
-          processing_file = processing_file & ~PASSWD;
-          processing_file = processing_file | NISPASSWD;
+          processing_file = processing_file & ~P_PASSWD;
+          processing_file = processing_file | P_NISPASSWD;
           filename.truncate(0);
           filename.append(nispasswd_filename);
         }
@@ -196,8 +196,8 @@ bool KUserFiles::loadpwd()
     endpwent();
 #endif
     if((!nispasswd_filename.isEmpty()) && (nispasswd_filename != passwd_filename)) {
-      processing_file = processing_file & ~PASSWD;
-      processing_file = processing_file | NISPASSWD;
+      processing_file = processing_file & ~P_PASSWD;
+      processing_file = processing_file | P_NISPASSWD;
       filename.truncate(0);
       filename.append(nispasswd_filename);
     }

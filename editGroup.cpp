@@ -37,13 +37,17 @@
 editGroup::editGroup(KGroup *akg, bool samba, bool add,
    QWidget* parent, const char* name)
   : KDialogBase(parent, name, true, i18n("Group Properties"), Ok | Cancel, Ok, true)
-
 {
   kg = akg;
   mAdd = add;
   mSamba = samba;
   mOldName = kg->getName();
   SID sid = kg->getSID();
+  
+  RID rid;
+  rid.rid = 512; rid.name = i18n("Domain Admins"); rid.desc = i18n("Admins"); mRids.append( rid );
+  rid.rid = 513; rid.name = i18n("Domain Users"); rid.desc = i18n("Users");  mRids.append( rid );
+  rid.rid = 514; rid.name = i18n("Domain Guests"); rid.desc = i18n("Guests"); mRids.append( rid );
   
   QFrame *page = makeMainWidget();
   QGridLayout *layout = new QGridLayout( page, 10, 3, marginHint(), spacingHint() );
@@ -64,10 +68,17 @@ editGroup::editGroup(KGroup *akg, bool samba, bool add,
   if ( mSamba ) {
     lb = new QLabel( page );
     lb->setText(i18n("Group rid:"));
-    lerid = new KLineEdit(page);
-    lerid->setText( QString::number( sid.getRID() ) );
+    lerid = new KComboBox( page );
+    lerid->setEditable( true );
+    QValueList<RID>::Iterator it;
+    for ( it = mRids.begin(); it != mRids.end(); ++it ) {
+      lerid->insertItem( QString::number( (*it).rid ) + " - " + (*it).name );
+    }
+    
+    lerid->setCurrentText( QString::number( sid.getRID() ) );
     lerid->setValidator (new QIntValidator(this) );
     lerid->setEnabled( mAdd );
+    connect( lerid, SIGNAL(activated(int)), SLOT(ridSelected(int)) );
     lb->setBuddy( lerid );
     layout->addWidget( lb, 1, 0 );
     layout->addMultiCellWidget( lerid, 1, 1, 1, 2 );
@@ -174,6 +185,14 @@ editGroup::~editGroup()
 {
 }
 
+void editGroup::ridSelected( int index )
+{
+  lerid->setCurrentText( QString::number( mRids[ index ].rid ) );
+  legrpname->setText( mRids[ index ].name );
+  ledesc->setText( mRids[ index ].desc );
+  ledispname->setText( mRids[ index ].name );
+}
+
 void editGroup::addClicked()
 {
   QListViewItem *item, *next;
@@ -217,7 +236,7 @@ void editGroup::slotOk()
 
   if ( mSamba ) {
     sid.setDOM( ledomsid->text() );
-    sid.setRID( lerid->text() );
+    sid.setRID( lerid->currentText() );
   }
   
   if ( legrpname->text().isEmpty() ) {

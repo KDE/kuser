@@ -43,6 +43,7 @@ protected slots:
   virtual void slotOk();
   void addClicked();
   void delClicked();
+  void ridSelected( int index );
   
 private:
   bool mSamba, mAdd;
@@ -50,12 +51,17 @@ private:
   KListView *m_list_in,*m_list_notin;
   KLineEdit   *legrpname;
   KLineEdit   *legid;
-  KLineEdit   *lerid;
+  KComboBox   *lerid;
   KLineEdit   *ledom;
   KLineEdit   *ledispname;
   KLineEdit   *ledesc;
   KLineEdit   *ledomsid;
   KComboBox   *letype;  
   QString mOldName;
+  typedef struct _RID {
+    uint rid;
+    QString name,desc;
+  } RID;
+  QValueList<RID> mRids;
 };
 #endif // _EDITGROUP_H_

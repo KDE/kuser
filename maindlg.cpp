@@ -278,6 +278,8 @@ void mainDlg::useradd() {
   au = new addUser(tk, this, "userin");
 #endif
 
+  au->setCreateHomeDir(config->readBoolEntry("createHomeDir", true));
+  au->setCopySkel(config->readBoolEntry("copySkel", true));
   au->setUsePrivateGroup(config->readBoolEntry("usePrivateGroup", KU_USEPRIVATEGROUP));
 
   if (au->exec() != 0) {

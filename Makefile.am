@@ -3,7 +3,7 @@ INCLUDES	=	$(all_includes)
 # May be -D_XU_QUOTA -D_XU_SHADOW
 DEFS	+= 	-D_KU_QUOTA -D_KU_SHADOW -D_KU_DEBUG # -g
 
-kuser_LDFLAGS	=	$(all_libraries)
+kuser_LDFLAGS	=	$(all_libraries) $(KDE_RPATH)
 kuser_LDADD	=	-lkdecore -lkdeui -lqt -L./ -lX11 -lXext -lintl $(LIBSOCKET)
 
 ####### Files

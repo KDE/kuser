@@ -22,6 +22,7 @@
 #ifndef _EDITGROUP_H_
 #define _EDITGROUP_H_
 
+#include <qcheckbox.h>
 #include <kdialogbase.h>
 #include <klistview.h>
 #include <kcombobox.h>
@@ -44,7 +45,7 @@ protected slots:
   void addClicked();
   void delClicked();
   void ridSelected( int index );
-  
+
 private:
   bool mSamba, mAdd;
   bool ro;
@@ -57,7 +58,8 @@ private:
   KLineEdit   *ledispname;
   KLineEdit   *ledesc;
   KLineEdit   *ledomsid;
-  KComboBox   *letype;  
+  KComboBox   *letype;
+  QCheckBox   *cbsamba;
   QString mOldName;
   typedef struct _RID {
     uint rid;

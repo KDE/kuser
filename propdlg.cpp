@@ -99,7 +99,7 @@ KIntSpinBox *propdlg::addDaysGroup(QWidget *parent, QGridLayout *layout, int row
 void propdlg::initDlg()
 {
   ro = kug->getUsers().getCaps() & KUsers::Cap_ReadOnly;
-  
+
   QString whatstr;
 
   // Tab 1: User Info
@@ -110,12 +110,11 @@ void propdlg::initDlg()
 
     frontpage = frame;
     frontlayout = layout;
-    
+
     lbuser = new QLabel(frame);
 //    whatstr = i18n("WHAT IS THIS: User login");
     addRow(frame, layout, row++, lbuser, i18n("User login:"), whatstr, false, false);
-    
-    
+
     leid = new KLineEdit(frame);
 //    whatstr = i18n("WHAT IS THIS: User Id");
     leid->setValidator(new QIntValidator(frame));
@@ -206,6 +205,12 @@ void propdlg::initDlg()
     connect(cbdisabled, SIGNAL(stateChanged(int)), this, SLOT(changed()));
     addRow(frame, layout, row++, cbdisabled, i18n("Account &disabled"), whatstr);
 
+    if ( kug->getUsers().getCaps() & KUsers::Cap_Disable_POSIX ) {
+      cbposix = new QCheckBox(frame);
+      connect(cbposix, SIGNAL(stateChanged(int)), this, SLOT(changed()));
+      connect(cbposix, SIGNAL(stateChanged(int)), this, SLOT(cbposixChanged()));
+      addRow(frame, layout, row++, cbposix, i18n("Disable &POSIX account information"), whatstr);
+    }
     frontrow = row;
   }
 
@@ -284,6 +289,11 @@ void propdlg::initDlg()
 //  whatstr = i18n("WHAT IS THIS: Login script");
     addRow(frame, layout, row++, ledomsid, i18n("Domain SID:"), whatstr);
     connect(ledomsid, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
+
+    cbsamba = new QCheckBox(frame);
+    connect(cbsamba, SIGNAL(stateChanged(int)), this, SLOT(changed()));
+    connect(cbsamba, SIGNAL(stateChanged(int)), this, SLOT(cbsambaChanged()));
+    addRow(frame, layout, row++, cbsamba, i18n("Disable &Samba account information"), whatstr);
   }
 
   // Tab 4: Groups
@@ -340,6 +350,25 @@ propdlg::propdlg( KUser *AUser, bool fixedprivgroup,
 
 propdlg::~propdlg()
 {
+}
+
+void propdlg::cbposixChanged()
+{
+  bool posix = !( cbposix->state() == QButton::On );
+  leid->setEnabled( posix  & ( mUsers.getFirst() == mUsers.getLast() ) );
+  leshell->setEnabled( posix );
+  lehome->setEnabled( posix );
+}
+
+void propdlg::cbsambaChanged()
+{
+  bool samba = !( cbsamba->state() == QButton::On );
+  lerid->setEnabled( samba & ( mUsers.getFirst() == mUsers.getLast() ) );
+  leliscript->setEnabled( samba );
+  leprofile->setEnabled( samba );
+  lehomedrive->setEnabled( samba );
+  lehomepath->setEnabled( samba );
+  ledomsid->setEnabled( samba );
 }
 
 void propdlg::setLE( KLineEdit *le, const QString &val, bool first )
@@ -404,7 +433,7 @@ void propdlg::selectuser()
   if ( kug->getUsers().getCaps() & KUsers::Cap_Shadow ||
        kug->getUsers().getCaps() & KUsers::Cap_Samba ||
        kug->getUsers().getCaps() & KUsers::Cap_BSD ) {
-    
+
     leslstchg->setText( KGlobal::locale()->formatDateTime( datetime, false ) );
   }
 
@@ -459,6 +488,9 @@ void propdlg::selectuser()
     }
 
     setCB( cbdisabled, user->getDisabled(), first );
+    if ( kug->getUsers().getCaps() & KUsers::Cap_Disable_POSIX ) {
+      setCB( cbposix, !(user->getCaps() & KUser::Cap_POSIX), first );
+    }
 
     if ( kug->getUsers().getCaps() & KUsers::Cap_Samba ) {
       setLE( leliscript, user->getLoginScript(), first );
@@ -471,6 +503,7 @@ void propdlg::selectuser()
       if ( !one ) home.replace( user->getName(), "%U" );
       setLE( lehomepath, home, first );
       setLE( ledomsid, user->getSID().getDOM(), first );
+      setCB( cbsamba, !(user->getCaps() & KUser::Cap_Samba), first );
     }
 
     if ( kug->getUsers().getCaps() & KUsers::Cap_Shadow ||
@@ -643,12 +676,20 @@ void propdlg::mergeUser( KUser *user, KUser *newuser )
   QDateTime epoch ;
   epoch.setTime_t(0);
   bool one = ( mUsers.getFirst() == mUsers.getLast() );
+  bool posix, samba = false;
 
   newuser->copy( user );
-
+  if ( cbposix->state() != QButton::NoChange ) {
+    if ( cbposix->isChecked() )
+      newuser->setCaps( newuser->getCaps() & ~KUser::Cap_POSIX );
+    else
+      newuser->setCaps( newuser->getCaps() | KUser::Cap_POSIX );
+  }
+  posix = newuser->getCaps() & KUser::Cap_POSIX;
+  kdDebug() << "posix: " << posix << endl;
   if ( one ) {
 //    newuser->setName( leuser->text() );
-    newuser->setUID( leid->text().toInt() );
+    newuser->setUID( posix ? leid->text().toInt() : 0 );
   }
   if ( !newpass.isNull() ) {
     kug->getUsers().createPassword( newuser, newpass );
@@ -656,14 +697,29 @@ void propdlg::mergeUser( KUser *user, KUser *newuser )
   }
   newuser->setFullName( mergeLE( lefname, user->getFullName(), one ) );
   if ( kug->getUsers().getCaps() & KUsers::Cap_Samba ) {
+    if ( cbsamba->state() != QButton::NoChange ) {
+      if ( cbsamba->isChecked() )
+        newuser->setCaps( newuser->getCaps() & ~KUser::Cap_Samba );
+      else
+        newuser->setCaps( newuser->getCaps() | KUser::Cap_Samba );
+    }
+    samba = newuser->getCaps() & KUser::Cap_Samba;
+    kdDebug() << "user : " << newuser->getName() << " caps: " << newuser->getCaps() << " samba: " << samba << endl;
+
     SID sid;
-    sid.setRID( one ? lerid->text().toUInt() : user->getSID().getRID() );
-    sid.setDOM( mergeLE( ledomsid, user->getSID().getDOM(), one ) );
+    if ( samba ) {
+      sid.setRID( one ? lerid->text().toUInt() : user->getSID().getRID() );
+      sid.setDOM( mergeLE( ledomsid, user->getSID().getDOM(), one ) );
+    }
     newuser->setSID( sid );
-    newuser->setLoginScript( mergeLE( leliscript, user->getLoginScript(), one ) );
-    newuser->setProfilePath( mergeLE( leprofile, user->getProfilePath(), one ).replace( "%U", newuser->getName() ) );
-    newuser->setHomeDrive( mergeLE( lehomedrive, user->getHomeDrive(), one ) );
-    newuser->setHomePath( mergeLE( lehomepath, user->getHomePath(), one ).replace( "%U", newuser->getName() ) );
+    newuser->setLoginScript( samba ? 
+      mergeLE( leliscript, user->getLoginScript(), one ) : QString::null  );
+    newuser->setProfilePath( samba ? 
+      mergeLE( leprofile, user->getProfilePath(), one ).replace( "%U", newuser->getName() ) : QString::null );
+    newuser->setHomeDrive( samba ? 
+      mergeLE( lehomedrive, user->getHomeDrive(), one ) : QString::null );
+    newuser->setHomePath( samba ? 
+      mergeLE( lehomepath, user->getHomePath(), one ).replace( "%U", newuser->getName() ) : QString::null );
   }
 
   if ( kug->getUsers().getCaps() & KUsers::Cap_BSD ) {
@@ -677,18 +733,23 @@ void propdlg::mergeUser( KUser *user, KUser *newuser )
     newuser->setAddress( mergeLE( leaddress, user->getAddress(), one ) );
   }
 
-  newuser->setHomeDir( mergeLE( lehome, user->getHomeDir(), one ).replace( "%U", newuser->getName() ) );
-  if ( leshell->currentItem() == 0 && ismoreshells ) {
-    newuser->setShell( user->getShell() );
-  } else if  (
-    ( leshell->currentItem() == 0 && !ismoreshells ) ||
-    ( leshell->currentItem() == 1 && ismoreshells ) ) {
+  newuser->setHomeDir( posix ? 
+    mergeLE( lehome, user->getHomeDir(), one ).replace( "%U", newuser->getName() ) : 
+    QString::null );
+  if ( posix ) {
+    if ( leshell->currentItem() == 0 && ismoreshells ) {
+      newuser->setShell( user->getShell() );
+    } else if  (
+      ( leshell->currentItem() == 0 && !ismoreshells ) ||
+      ( leshell->currentItem() == 1 && ismoreshells ) ) {
 
-    newuser->setShell( QString::null );
-  } else {
+      newuser->setShell( QString::null );
+    } else {
   // TODO: Check shell.
-    newuser->setShell( leshell->currentText() );
-  }
+      newuser->setShell( leshell->currentText() );
+    }
+  } else
+    newuser->setShell( QString::null );
 
   newuser->setDisabled( (cbdisabled->state() == QButton::NoChange) ? user->getDisabled() : cbdisabled->isChecked() );
 
@@ -698,15 +759,15 @@ void propdlg::mergeUser( KUser *user, KUser *newuser )
   }
 
   if ( kug->getUsers().getCaps() & KUsers::Cap_Shadow ) {
-    newuser->setMin( mergeSB( lesmin, user->getMin(), one ) );
-    newuser->setMax( mergeSB( lesmax, user->getMax(), one ) );
-    newuser->setWarn( mergeSB( leswarn, user->getWarn(), one ) );
-    newuser->setInactive( mergeSB( lesinact, user->getInactive(), one ) );
+    newuser->setMin( posix ? mergeSB( lesmin, user->getMin(), one ) : 0 );
+    newuser->setMax( posix ? mergeSB( lesmax, user->getMax(), one ) : 0 );
+    newuser->setWarn( posix ? mergeSB( leswarn, user->getWarn(), one ) : 0 );
+    newuser->setInactive( posix ? mergeSB( lesinact, user->getInactive(), one ) : 0 );
   }
 
-  if ( kug->getUsers().getCaps() & KUsers::Cap_Shadow ||
-       kug->getUsers().getCaps() & KUsers::Cap_Samba ||
-       kug->getUsers().getCaps() & KUsers::Cap_BSD ) {
+  if ( ( (kug->getUsers().getCaps() & KUsers::Cap_Shadow) && posix ) ||
+       ( (kug->getUsers().getCaps() & KUsers::Cap_Samba) && samba ) ||
+       ( (kug->getUsers().getCaps() & KUsers::Cap_BSD) && posix ) ) {
 
     switch ( cbexpire->state() ) {
       case QButton::NoChange:
@@ -720,6 +781,8 @@ void propdlg::mergeUser( KUser *user, KUser *newuser )
           user->getExpire() : lesexpire->dateTime().toTime_t() );
         break;
     }
+  } else {
+    newuser->setExpire( -1 );
   }
 
   if ( !primaryGroup.isEmpty() ) {
@@ -779,13 +842,14 @@ bool propdlg::checkShell(const QString &shell)
 bool propdlg::check()
 {
   bool one = ( mUsers.getFirst() == mUsers.getLast() );
-  
-  if ( one && leid->text().isEmpty() ) {
+  bool posix = !( cbposix->isChecked() );
+
+  if ( one && posix && leid->text().isEmpty() ) {
     KMessageBox::sorry( 0, i18n("You need to specify an UID.") );
     return false;
   }
 
-  if ( one && lehome->text().isEmpty() ) {
+  if ( one && posix && lehome->text().isEmpty() ) {
     KMessageBox::sorry( 0, i18n("You must specify a home directory.") );
     return false;
   }
@@ -798,7 +862,7 @@ bool propdlg::check()
   }
 
   if ( kug->getUsers().getCaps() & KUsers::Cap_Samba ) {
-    if ( one && lerid->text().isEmpty() ) {
+    if ( one && lerid->text().isEmpty() && !( cbsamba->isChecked() ) ) {
       KMessageBox::sorry( 0, i18n("You need to specify a samba RID.") );
       return false;
     }
@@ -818,6 +882,7 @@ void propdlg::setpwd()
     QDateTime datetime;
     datetime.setTime_t( lstchg );
     leslstchg->setText( KGlobal::locale()->formatDateTime( datetime, false ) );
+    cbdisabled->setChecked( false );
   }
 }
 
@@ -827,12 +892,12 @@ void propdlg::slotOk()
     reject();
     return;
   }
-  
+
   bool one = ( mUsers.getFirst() == mUsers.getLast() );
 
   uid_t newuid = leid->text().toULong();
 
-  if ( one && olduid != newuid )
+  if ( one && !cbposix->isChecked() && olduid != newuid )
   {
     if (kug->getUsers().lookup(newuid)) {
       KMessageBox::sorry( 0,
@@ -841,9 +906,9 @@ void propdlg::slotOk()
     }
   }
 
-  if ( kug->getUsers().getCaps() & KUsers::Cap_Samba ) {
+  if ( one && ( kug->getUsers().getCaps() & KUsers::Cap_Samba ) && !cbsamba->isChecked() ) {
     uint newrid = lerid->text().toInt();
-    if ( one && oldrid != newrid ) {
+    if ( oldrid != newrid ) {
       if (kug->getUsers().lookup_sam(newrid)) {
         KMessageBox::sorry( 0,
           i18n("User with RID %1 already exists").arg(newrid) );

@@ -165,6 +165,7 @@ bool KUserFiles::loadpwd()
     while ((p = getpwent()) != NULL) {
 #endif
       tmpKU = new KUser();
+      tmpKU->setCaps( KUser::Cap_POSIX );
       tmpKU->setUID(p->pw_uid);
       tmpKU->setGID(p->pw_gid);
       tmpKU->setName(QString::fromLocal8Bit(p->pw_name));

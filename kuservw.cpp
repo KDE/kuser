@@ -62,16 +62,19 @@ QString KUserViewItem::text(int num) const
 {
   switch(num)
   {
-     case 0: return QString::fromLatin1("%1 ").arg(mUser->getUID(),6);
+     case 0: return mUser->getCaps() & KUser::Cap_POSIX ? 
+      QString::fromLatin1("%1 ").arg(mUser->getUID(),6) : QString::null;
      case 1: return mUser->getName();
      case 2: return mUser->getFullName();
      case 3: return mUser->getHomeDir();
      case 4: return mUser->getShell();
-     case 5: return QString::number( mUser->getSID().getRID() );
-     case 6: return mUser->getLoginScript();
-     case 7: return mUser->getProfilePath();
-     case 8: return mUser->getHomeDrive();
-     case 9: return mUser->getHomePath();
+     case 5: return mUser->getSID().getDOM();
+     case 6: return mUser->getCaps() & KUser::Cap_Samba ? 
+      QString::number( mUser->getSID().getRID() ) : QString::null;
+     case 7: return mUser->getLoginScript();
+     case 8: return mUser->getProfilePath();
+     case 9: return mUser->getHomeDrive();
+     case 10: return mUser->getHomePath();
   }
 
   return QString::null;
@@ -123,6 +126,7 @@ void KUserView::init()
   }
 
   if ( kug->getUsers().getCaps() & KUsers::Cap_Samba ) {
+    addColumn(i18n("Domain SID"));
     addColumn(i18n("RID"));
     addColumn(i18n("Samba Login Script"));
     addColumn(i18n("Samba Profile Path"));

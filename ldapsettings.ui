@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>LdapSettings</class>
 <widget class="QWidget">
     <property name="name">
@@ -8,153 +8,218 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>426</width>
-            <height>322</height>
+            <width>394</width>
+            <height>227</height>
         </rect>
     </property>
-    <grid>
+    <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QLabel" row="0" column="0">
+        <widget class="QLayoutWidget">
             <property name="name">
-                <cstring>textLabel1</cstring>
+                <cstring>layout9</cstring>
             </property>
-            <property name="text">
-                <string>User base:</string>
-            </property>
-        </widget>
-        <widget class="QLabel" row="0" column="2">
-            <property name="name">
-                <cstring>textLabel2</cstring>
-            </property>
-            <property name="text">
-                <string>User RDN prefix:</string>
-            </property>
-        </widget>
-        <widget class="KComboBox" row="0" column="3">
-            <item>
-                <property name="text">
-                    <string>uid</string>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
                 </property>
-            </item>
-            <item>
-                <property name="text">
-                    <string>uidNumber</string>
-                </property>
-            </item>
-            <property name="name">
-                <cstring>kcfg_ldapuserrdn</cstring>
-            </property>
+                <widget class="QLineEdit" row="1" column="1" rowspan="1" colspan="3">
+                    <property name="name">
+                        <cstring>kcfg_ldapuserfilter</cstring>
+                    </property>
+                </widget>
+                <widget class="KComboBox" row="2" column="3">
+                    <item>
+                        <property name="text">
+                            <string>cn</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>gidNumber</string>
+                        </property>
+                    </item>
+                    <property name="name">
+                        <cstring>kcfg_ldapgrouprdn</cstring>
+                    </property>
+                </widget>
+                <widget class="KLineEdit" row="2" column="1">
+                    <property name="name">
+                        <cstring>kcfg_ldapgroupbase</cstring>
+                    </property>
+                </widget>
+                <widget class="KComboBox" row="4" column="1">
+                    <item>
+                        <property name="text">
+                            <string>Plain Text</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>CRYPT</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>MD5</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>SMD5</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>SHA</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>SSHA</string>
+                        </property>
+                    </item>
+                    <property name="name">
+                        <cstring>kcfg_ldappasswordhash</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="0" column="0">
+                    <property name="name">
+                        <cstring>textLabel1</cstring>
+                    </property>
+                    <property name="text">
+                        <string>User base:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>kcfg_ldapuserbase</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="3" column="0">
+                    <property name="name">
+                        <cstring>textLabel1_4_2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Group filter:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>kcfg_ldapgroupfilter</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="4" column="2">
+                    <property name="name">
+                        <cstring>textLabel5</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Structural objectclass:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>kcfg_ldapstructural</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="1" column="0">
+                    <property name="name">
+                        <cstring>textLabel1_4</cstring>
+                    </property>
+                    <property name="text">
+                        <string>User filter:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>kcfg_ldapuserfilter</cstring>
+                    </property>
+                </widget>
+                <widget class="KLineEdit" row="0" column="1">
+                    <property name="name">
+                        <cstring>kcfg_ldapuserbase</cstring>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="3" column="1" rowspan="1" colspan="3">
+                    <property name="name">
+                        <cstring>kcfg_ldapgroupfilter</cstring>
+                    </property>
+                </widget>
+                <widget class="KComboBox" row="4" column="3">
+                    <item>
+                        <property name="text">
+                            <string>account</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>inetOrgPerson</string>
+                        </property>
+                    </item>
+                    <property name="name">
+                        <cstring>kcfg_ldapstructural</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="2" column="2">
+                    <property name="name">
+                        <cstring>textLabel3</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Group RDN prefix:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>kcfg_ldapgrouprdn</cstring>
+                    </property>
+                </widget>
+                <widget class="KComboBox" row="0" column="3">
+                    <item>
+                        <property name="text">
+                            <string>uid</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>uidNumber</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>cn</string>
+                        </property>
+                    </item>
+                    <property name="name">
+                        <cstring>kcfg_ldapuserrdn</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="2" column="0">
+                    <property name="name">
+                        <cstring>textLabel1_2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Group base:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>kcfg_ldapgroupbase</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="0" column="2">
+                    <property name="name">
+                        <cstring>textLabel2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>User RDN prefix:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>kcfg_ldapuserrdn</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="4" column="0">
+                    <property name="name">
+                        <cstring>textLabel4</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Password hash:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>kcfg_ldappasswordhash</cstring>
+                    </property>
+                </widget>
+            </grid>
         </widget>
-        <widget class="KLineEdit" row="0" column="1">
-            <property name="name">
-                <cstring>kcfg_ldapuserbase</cstring>
-            </property>
-        </widget>
-        <widget class="QLabel" row="1" column="2">
-            <property name="name">
-                <cstring>textLabel3</cstring>
-            </property>
-            <property name="text">
-                <string>Group RDN prefix:</string>
-            </property>
-        </widget>
-        <widget class="KComboBox" row="1" column="3">
-            <item>
-                <property name="text">
-                    <string>cn</string>
-                </property>
-            </item>
-            <item>
-                <property name="text">
-                    <string>gidNumber</string>
-                </property>
-            </item>
-            <property name="name">
-                <cstring>kcfg_ldapgrouprdn</cstring>
-            </property>
-        </widget>
-        <widget class="QLabel" row="1" column="0">
-            <property name="name">
-                <cstring>textLabel1_2</cstring>
-            </property>
-            <property name="text">
-                <string>Group base:</string>
-            </property>
-        </widget>
-        <widget class="KLineEdit" row="1" column="1">
-            <property name="name">
-                <cstring>kcfg_ldapgroupbase</cstring>
-            </property>
-        </widget>
-        <widget class="KComboBox" row="2" column="1">
-            <item>
-                <property name="text">
-                    <string>Plain Text</string>
-                </property>
-            </item>
-            <item>
-                <property name="text">
-                    <string>CRYPT</string>
-                </property>
-            </item>
-            <item>
-                <property name="text">
-                    <string>MD5</string>
-                </property>
-            </item>
-            <item>
-                <property name="text">
-                    <string>SMD5</string>
-                </property>
-            </item>
-            <item>
-                <property name="text">
-                    <string>SHA</string>
-                </property>
-            </item>
-            <item>
-                <property name="text">
-                    <string>SSHA</string>
-                </property>
-            </item>
-            <property name="name">
-                <cstring>kcfg_ldappasswordhash</cstring>
-            </property>
-        </widget>
-        <widget class="QLabel" row="2" column="2">
-            <property name="name">
-                <cstring>textLabel5</cstring>
-            </property>
-            <property name="text">
-                <string>Structural objectclass:</string>
-            </property>
-        </widget>
-        <widget class="KComboBox" row="2" column="3">
-            <item>
-                <property name="text">
-                    <string>account</string>
-                </property>
-            </item>
-            <item>
-                <property name="text">
-                    <string>inetOrgPerson</string>
-                </property>
-            </item>
-            <property name="name">
-                <cstring>kcfg_ldapstructural</cstring>
-            </property>
-        </widget>
-        <widget class="QLabel" row="2" column="0">
-            <property name="name">
-                <cstring>textLabel4</cstring>
-            </property>
-            <property name="text">
-                <string>Password hash:</string>
-            </property>
-        </widget>
-        <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="3">
+        <widget class="QCheckBox">
             <property name="name">
                 <cstring>kcfg_ldapshadow</cstring>
             </property>
@@ -162,118 +227,52 @@
                 <string>Manage shadowAccount objectclass</string>
             </property>
         </widget>
-        <widget class="QGroupBox" row="5" column="0" rowspan="1" colspan="4">
+        <widget class="QCheckBox">
             <property name="name">
-                <cstring>kcfg_ldapsam</cstring>
+                <cstring>kcfg_ldapcnfullname</cstring>
             </property>
-            <property name="enabled">
-                <bool>true</bool>
+            <property name="text">
+                <string>Store the user's full name in the cn attribute</string>
             </property>
-            <property name="title">
-                <string>Samba Settings</string>
-            </property>
-            <property name="checkable">
-                <bool>true</bool>
-            </property>
-            <vbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <widget class="QLayoutWidget">
-                    <property name="name">
-                        <cstring>layout1</cstring>
-                    </property>
-                    <grid>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <widget class="QLabel" row="0" column="0">
-                            <property name="name">
-                                <cstring>textLabel2_2</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Default login script:</string>
-                            </property>
-                        </widget>
-                        <widget class="QLabel" row="3" column="0">
-                            <property name="name">
-                                <cstring>textLabel5_2</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Home path template:</string>
-                            </property>
-                        </widget>
-                        <widget class="KLineEdit" row="1" column="1">
-                            <property name="name">
-                                <cstring>kcfg_samprofilepath</cstring>
-                            </property>
-                        </widget>
-                        <widget class="KLineEdit" row="3" column="1">
-                            <property name="name">
-                                <cstring>kcfg_samhomepath</cstring>
-                            </property>
-                        </widget>
-                        <widget class="KLineEdit" row="2" column="1">
-                            <property name="name">
-                                <cstring>kcfg_samhomedrive</cstring>
-                            </property>
-                        </widget>
-                        <widget class="KLineEdit" row="0" column="1">
-                            <property name="name">
-                                <cstring>kcfg_samloginscript</cstring>
-                            </property>
-                        </widget>
-                        <widget class="QLabel" row="1" column="0">
-                            <property name="name">
-                                <cstring>textLabel3_2</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Profile path template:</string>
-                            </property>
-                        </widget>
-                        <widget class="QLabel" row="2" column="0">
-                            <property name="name">
-                                <cstring>textLabel4_2</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Home drive:</string>
-                            </property>
-                        </widget>
-                    </grid>
-                </widget>
-                <widget class="QLabel">
-                    <property name="name">
-                        <cstring>textLabel1_3</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Domain SID (you can obtain with 'net getlocalsid domain_name'):</string>
-                    </property>
-                </widget>
-                <widget class="KLineEdit">
-                    <property name="name">
-                        <cstring>kcfg_samdomsid</cstring>
-                    </property>
-                    <property name="maxLength">
-                        <number>41</number>
-                    </property>
-                </widget>
-            </vbox>
         </widget>
-    </grid>
+        <widget class="QCheckBox">
+            <property name="name">
+                <cstring>kcfg_ldapgecos</cstring>
+            </property>
+            <property name="text">
+                <string>Update the gecos attribute</string>
+            </property>
+        </widget>
+        <spacer>
+            <property name="name">
+                <cstring>spacer6</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>40</height>
+                </size>
+            </property>
+        </spacer>
+    </vbox>
 </widget>
 <tabstops>
     <tabstop>kcfg_ldapuserbase</tabstop>
     <tabstop>kcfg_ldapuserrdn</tabstop>
+    <tabstop>kcfg_ldapuserfilter</tabstop>
     <tabstop>kcfg_ldapgroupbase</tabstop>
     <tabstop>kcfg_ldapgrouprdn</tabstop>
+    <tabstop>kcfg_ldapgroupfilter</tabstop>
     <tabstop>kcfg_ldappasswordhash</tabstop>
     <tabstop>kcfg_ldapstructural</tabstop>
     <tabstop>kcfg_ldapshadow</tabstop>
-    <tabstop>kcfg_samloginscript</tabstop>
-    <tabstop>kcfg_samprofilepath</tabstop>
-    <tabstop>kcfg_samhomedrive</tabstop>
-    <tabstop>kcfg_samhomepath</tabstop>
-    <tabstop>kcfg_samdomsid</tabstop>
+    <tabstop>kcfg_ldapcnfullname</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

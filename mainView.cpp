@@ -205,6 +205,7 @@ void mainView::useradd()
   }
 
   tk = new KUser();
+  tk->setCaps( samba ? KUser::Cap_POSIX | KUser::Cap_Samba : KUser::Cap_POSIX );
   tk->setUID( uid );
   tk->setName( name );
 
@@ -234,6 +235,8 @@ void mainView::useradd()
 
   bool privgroup = kug->kcfg()->userPrivateGroup();
 
+  if ( !privgroup ) tk->setGID( kug->kcfg()->defaultgroup() );
+
   addUser au( tk, privgroup, this );
 
   au.setCreateHomeDir( kug->kcfg()->createHomeDir() );
@@ -257,12 +260,13 @@ void mainView::useradd()
       }
       tg = new KGroup();
       tg->setGID(kug->getGroups().first_free());
-      if ( samba ) {
+      if ( samba && ( tk->getCaps() & KUser::Cap_Samba ) ) {
         SID sid;
         sid.setDOM( kug->getGroups().getDOMSID() );
         sid.setRID( rid );
         tg->setSID( sid );
         tg->setDisplayName( tk->getName() );
+        tg->setCaps( KGroup::Cap_Samba );
       }
       tg->setName( tk->getName() );
       kug->getGroups().add( tg );
@@ -305,6 +309,7 @@ void mainView::setpwd()
       newuser.copy( user );
       kug->getUsers().createPassword( &newuser, d.getPassword() );
       newuser.setLastChange( now() );
+      newuser.setDisabled( false );
       kug->getUsers().mod( user, newuser );
     }
     item = item->nextSibling();
@@ -319,7 +324,8 @@ void mainView::groupSelected()
   if ( !tmpKG ) return;
   KGroup newGroup( tmpKG );
 
-  if ( samba && newGroup.getSID().isEmpty() ) {
+  if ( samba && ( newGroup.getCaps() & KGroup::Cap_Samba ) && 
+      newGroup.getSID().isEmpty() ) {
     SID sid;
     sid.setDOM( kug->getGroups().getDOMSID() );
     sid.setRID( kug->getGroups().first_free_sam() );

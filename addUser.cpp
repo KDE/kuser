@@ -62,13 +62,15 @@ void addUser::slotOk()
   if ( !check() ) return;
 
   mergeUser( user, user );
-  
-  if ( kug->getUsers().lookup( user->getUID() ) ) {
+
+  if ( ( user->getCaps() & KUser::Cap_POSIX ) && 
+    kug->getUsers().lookup( user->getUID() ) ) {
     KMessageBox::sorry( 0, i18n("User with UID %1 already exists.").arg( user->getUID() ) );
     return;
   }
 
-  if ( kug->getUsers().getCaps() & KUsers::Cap_Samba ) {
+  if ( ( kug->getUsers().getCaps() & KUsers::Cap_Samba ) && 
+     ( user->getCaps() & KUser::Cap_Samba ) ) {
     if ( kug->getUsers().lookup_sam( user->getSID().getRID() ) ) {
       KMessageBox::sorry( 0, i18n("User with RID %1 already exists.").arg( user->getSID().getRID() ) );
       return;

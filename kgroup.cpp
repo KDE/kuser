@@ -31,20 +31,22 @@ KGroup::KGroup()
   pwd = QString::fromLatin1("*");
   gid = 0;
   type = 2;
-}
-  
-KGroup::KGroup(KGroup *group) 
-{
-  copy( group );  
+  caps = 0;
 }
 
-KGroup::~KGroup() 
+KGroup::KGroup(KGroup *group) 
+{
+  copy( group );
+}
+
+KGroup::~KGroup()
 {
 }
 
 void KGroup::copy( const KGroup *group )
 {
   if ( group != this ) {
+    caps    = group->caps;
     name    = group->name;
     pwd     = group->pwd;
     gid     = group->gid;
@@ -55,7 +57,17 @@ void KGroup::copy( const KGroup *group )
     u       = group->u;
   }
 }
-  
+
+void KGroup::setCaps( int data )
+{
+  caps = data;
+}
+
+int KGroup::getCaps()
+{
+  return caps;
+}
+
 const QString &KGroup::getName() const 
 {
   return name;
@@ -70,7 +82,7 @@ gid_t KGroup::getGID() const
 {
   return gid;
 }
-  
+
 const SID &KGroup::getSID() const
 {
   return sid;
@@ -105,7 +117,7 @@ void KGroup::setGID(gid_t data)
 {
   gid = data;
 }
-  
+
 void KGroup::setSID(const SID &data)
 {
   sid = data;

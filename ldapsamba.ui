@@ -1,0 +1,194 @@
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<class>LdapSamba</class>
+<widget class="QDialog">
+    <property name="name">
+        <cstring>LdapSamba</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>465</width>
+            <height>198</height>
+        </rect>
+    </property>
+    <property name="sizePolicy">
+        <sizepolicy>
+            <hsizetype>5</hsizetype>
+            <vsizetype>5</vsizetype>
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+        </sizepolicy>
+    </property>
+    <property name="caption">
+        <string>Samba</string>
+    </property>
+    <vbox>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="QCheckBox">
+            <property name="name">
+                <cstring>kcfg_ldapsam</cstring>
+            </property>
+            <property name="text">
+                <string>Manage Samba user accounts/groups</string>
+            </property>
+        </widget>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout12</cstring>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="KLineEdit" row="1" column="1">
+                    <property name="name">
+                        <cstring>kcfg_samprofilepath</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="1" column="0">
+                    <property name="name">
+                        <cstring>textLabel3_2_2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Profile path template:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>kcfg_samprofilepath</cstring>
+                    </property>
+                </widget>
+                <widget class="KLineEdit" row="2" column="1">
+                    <property name="name">
+                        <cstring>kcfg_samhomedrive</cstring>
+                    </property>
+                </widget>
+                <widget class="KLineEdit" row="3" column="1">
+                    <property name="name">
+                        <cstring>kcfg_samhomepath</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="0" column="0">
+                    <property name="name">
+                        <cstring>textLabel2_2_2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Default login script:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>kcfg_samloginscript</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="2" column="0">
+                    <property name="name">
+                        <cstring>textLabel4_2_2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Home drive:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>kcfg_samhomedrive</cstring>
+                    </property>
+                </widget>
+                <widget class="KLineEdit" row="0" column="1">
+                    <property name="name">
+                        <cstring>kcfg_samloginscript</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="3" column="0">
+                    <property name="name">
+                        <cstring>textLabel5_2_2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Home path template:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>kcfg_samhomepath</cstring>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>textLabel1</cstring>
+            </property>
+            <property name="text">
+                <string>Domain SID (you can obtain with 'net getlocalsid domain_name'):</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>kcfg_samdomsid</cstring>
+            </property>
+        </widget>
+        <widget class="KLineEdit">
+            <property name="name">
+                <cstring>kcfg_samdomsid</cstring>
+            </property>
+            <property name="maxLength">
+                <number>41</number>
+            </property>
+        </widget>
+        <spacer>
+            <property name="name">
+                <cstring>spacer2</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>40</height>
+                </size>
+            </property>
+        </spacer>
+    </vbox>
+</widget>
+<connections>
+    <connection>
+        <sender>kcfg_ldapsam</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>kcfg_samloginscript</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>kcfg_ldapsam</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>kcfg_samdomsid</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>kcfg_ldapsam</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>kcfg_samhomedrive</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>kcfg_ldapsam</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>kcfg_samhomepath</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>kcfg_ldapsam</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>kcfg_samprofilepath</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+</connections>
+<tabstops>
+    <tabstop>kcfg_samloginscript</tabstop>
+    <tabstop>kcfg_ldapsam</tabstop>
+    <tabstop>kcfg_samprofilepath</tabstop>
+    <tabstop>kcfg_samhomedrive</tabstop>
+    <tabstop>kcfg_samhomepath</tabstop>
+    <tabstop>kcfg_samdomsid</tabstop>
+</tabstops>
+<slots>
+    <slot>kcfg_ldapsam_toggled( bool )</slot>
+</slots>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

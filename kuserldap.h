@@ -37,7 +37,7 @@ Q_OBJECT
 public:
   KUserLDAP(KUserPrefsBase *cfg);
   virtual ~KUserLDAP();
-  
+
   virtual bool reload();
   virtual bool dbcommit();
 

@@ -44,12 +44,12 @@ editGroup::editGroup(KGroup *akg, bool samba, bool add,
   mOldName = kg->getName();
   SID sid = kg->getSID();
   ro = kug->getGroups().getCaps() & KGroups::Cap_ReadOnly;
-  
+
   RID rid;
   rid.rid = 512; rid.name = i18n("Domain Admins"); rid.desc = i18n("Admins"); mRids.append( rid );
   rid.rid = 513; rid.name = i18n("Domain Users"); rid.desc = i18n("Users");  mRids.append( rid );
   rid.rid = 514; rid.name = i18n("Domain Guests"); rid.desc = i18n("Guests"); mRids.append( rid );
-  
+
   QFrame *page = makeMainWidget();
   QGridLayout *layout = new QGridLayout( page, 10, 3, marginHint(), spacingHint() );
   QLabel *lb;
@@ -76,7 +76,7 @@ editGroup::editGroup(KGroup *akg, bool samba, bool add,
     for ( it = mRids.begin(); it != mRids.end(); ++it ) {
       lerid->insertItem( QString::number( (*it).rid ) + " - " + (*it).name );
     }
-    
+
     lerid->setCurrentText( QString::number( sid.getRID() ) );
     lerid->setValidator (new QIntValidator(this) );
     lerid->setEnabled( mAdd );
@@ -84,8 +84,8 @@ editGroup::editGroup(KGroup *akg, bool samba, bool add,
     lb->setBuddy( lerid );
     layout->addWidget( lb, 1, 0 );
     layout->addMultiCellWidget( lerid, 1, 1, 1, 2 );
-  }  
-      
+  }
+
   lb = new QLabel( page );
   lb->setText(i18n("Group name:"));
 
@@ -117,7 +117,7 @@ editGroup::editGroup(KGroup *akg, bool samba, bool add,
     lb->setBuddy( ledispname );
     layout->addWidget( lb, 4, 0 );
     layout->addMultiCellWidget( ledispname, 4, 4, 1, 2 );
-    
+
     lb = new QLabel( page );
     lb->setText(i18n("Type:"));
     letype = new KComboBox( page );
@@ -135,7 +135,7 @@ editGroup::editGroup(KGroup *akg, bool samba, bool add,
         letype->setCurrentItem( 2 );
         break;
     }
-    lb->setBuddy( letype );    
+    lb->setBuddy( letype );
     layout->addWidget( lb, 5, 0 );
     layout->addMultiCellWidget( letype, 5, 5, 1, 2 );
 
@@ -147,30 +147,39 @@ editGroup::editGroup(KGroup *akg, bool samba, bool add,
     lb->setBuddy( ledomsid );
     layout->addWidget( lb, 6, 0 );
     layout->addMultiCellWidget( ledomsid, 6, 6, 1, 2 );
+
+    cbsamba = new QCheckBox( i18n("Disable Samba group information"), page );
+    layout->addMultiCellWidget( cbsamba, 7, 7, 0, 2 );
+    connect( cbsamba, SIGNAL(toggled(bool)), ledesc, SLOT(setDisabled(bool)) );
+    connect( cbsamba, SIGNAL(toggled(bool)), ledispname, SLOT(setDisabled(bool)) );
+    connect( cbsamba, SIGNAL(toggled(bool)), letype, SLOT(setDisabled(bool)) );
+    connect( cbsamba, SIGNAL(toggled(bool)), ledomsid, SLOT(setDisabled(bool)) );
+    if ( mAdd ) connect( cbsamba, SIGNAL(toggled(bool)), lerid, SLOT(setDisabled(bool)) );
+    if ( !mAdd ) cbsamba->setChecked( !( kg->getCaps() & KGroup::Cap_Samba ) );
   }
-    
+
   m_list_in = new KListView(page);
   m_list_in->setFullWidth(true); // Single column, full widget width.
   m_list_in->addColumn(i18n("Users in Group"));
   m_list_in->setSelectionMode( QListView::Extended );
-  layout->addWidget( m_list_in, 7, 0 );
-  
+  layout->addWidget( m_list_in, 8, 0 );
+
   QVBox *vbox = new QVBox(page);
   QPushButton *btadd = new QPushButton(i18n("Add <-"), vbox);
   QPushButton *btdel = new QPushButton(i18n("Remove ->"), vbox);
-  layout->addWidget( vbox, 7, 1 );
-    
+  layout->addWidget( vbox, 8, 1 );
+
   m_list_notin = new KListView(page);
   m_list_notin->setFullWidth(true); // Single column, full widget width.
   m_list_notin->addColumn(i18n("Users NOT in Group"));
   m_list_notin->setSelectionMode(QListView::Extended);
-  layout->addWidget( m_list_notin, 7, 2 );
+  layout->addWidget( m_list_notin, 8, 2 );
 //  QString whatstr = i18n("Select the users that should be in this kg->");
 //  QWhatsThis::add(m_list, whatstr);
 //  connect(this,SIGNAL(okClicked(void)),
           //this,SLOT(okClicked()));
 
-  
+
   for (unsigned int i = 0; i<kug->getUsers().count(); i++) {
     KUser *user;
     user = kug->getUsers()[i];
@@ -182,10 +191,10 @@ editGroup::editGroup(KGroup *akg, bool samba, bool add,
       new KListViewItem(m_list_notin, userName);
     }
   }
-  
+
   connect(btadd, SIGNAL(clicked()), SLOT(addClicked()));
   connect(btdel, SIGNAL(clicked()), SLOT(delClicked()));
-  
+
   if ( ro ) {
     btadd->setEnabled( false );
     btdel->setEnabled( false );
@@ -208,7 +217,7 @@ void editGroup::addClicked()
 {
   QListViewItem *item, *next;
   QString name;
-  
+
   item = m_list_notin->firstChild();
   while ( item ) {
     next = item->nextSibling();
@@ -225,7 +234,7 @@ void editGroup::delClicked()
 {
   QListViewItem *item, *next;
   QString name;
-  
+
   item = m_list_in->firstChild();
   while ( item ) {
     next = item->nextSibling();
@@ -244,33 +253,33 @@ void editGroup::slotOk()
     reject();
     return;
   }
-  
+
   SID sid;
   kg->clear();
   QString s;
   s = legid->text();
 
-  if ( mSamba ) {
+  if ( mSamba && !cbsamba->isChecked() ) {
     sid.setDOM( ledomsid->text() );
     sid.setRID( lerid->currentText() );
   }
-  
+
   if ( legrpname->text().isEmpty() ) {
     KMessageBox::sorry( 0,
       i18n("You need to type a group name.") );
     return;
   }
-    
+
   if ( legrpname->text() != mOldName && 
     kug->getGroups().lookup( legrpname->text() ) ) {
-    
+
     KMessageBox::sorry( 0,
       i18n("Group with name %1 already exists.").arg(legrpname->text()) );
     return;
   }
-  
+
   if ( mAdd ) {
-    if ( mSamba && kug->getGroups().lookup_sam( sid ) ) {
+    if ( mSamba && !cbsamba->isChecked() && kug->getGroups().lookup_sam( sid ) ) {
       KMessageBox::sorry( 0,
         i18n("Group with SID %1 already exists.").arg( sid.getSID() ) );
       return;
@@ -281,10 +290,11 @@ void editGroup::slotOk()
       return;
     }
   }
-  
+
   kg->setName(legrpname->text());
   kg->setGID(s.toInt());
-  if ( mSamba ) {
+  if ( mSamba && !cbsamba->isChecked() ) {
+    kg->setCaps ( KGroup::Cap_Samba );
     kg->setSID( sid );
     switch ( letype->currentItem() ) {
       case 0:
@@ -299,8 +309,10 @@ void editGroup::slotOk()
     }
     kg->setDesc( ledesc->text() );
     kg->setDisplayName( ledispname->text() );
+  } else {
+    kg->setCaps( 0 );
   }
-  
+
   QListViewItem *item;
   item = m_list_in->firstChild();
   while ( item ) {

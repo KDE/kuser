@@ -56,6 +56,7 @@ KUser::KUser()
   s_warn    = 7;
   s_inact   = -1;
 //  s_flag    = 0;
+  caps = 0;
   isCreateHome = false;
   isCreateMailBox = false;
   isCopySkel = false;
@@ -73,6 +74,7 @@ KUser::KUser(const KUser *user)
 void KUser::copy(const KUser *user)
 {
   if ( user != this ) {
+    caps = user->caps;
     p_name = user->p_name;
     p_surname = user->p_surname;
     p_email = user->p_email;
@@ -120,6 +122,16 @@ void KUser::copy(const KUser *user)
 
 KUser::~KUser()
 {
+}
+
+void KUser::setCaps( int data )
+{
+  caps = data;
+}
+
+int KUser::getCaps()
+{
+  return caps;
 }
 
 bool KUser::getDeleteHome()
@@ -629,7 +641,7 @@ void KUser::copyDir(const QString &srcPath, const QString &dstPath)
       continue;
 
     QString filename(s.filePath(name));
-    
+
     QFileInfo info(filename);
     mode = 0;
     if ( info.permission(QFileInfo::ReadOwner) ) mode |=  S_IRUSR;
@@ -641,10 +653,10 @@ void KUser::copyDir(const QString &srcPath, const QString &dstPath)
     if ( info.permission(QFileInfo::ReadOther) ) mode |=  S_IROTH;
     if ( info.permission(QFileInfo::WriteOther) ) mode |=  S_IWOTH;
     if ( info.permission(QFileInfo::ExeOther) ) mode |=  S_IXOTH;
-    
+
     if ( info.isSymLink() ) {
       QString link = info.readLink();
-      
+
       if (symlink(QFile::encodeName(link),QFile::encodeName(d.filePath(name))) != 0) {
         KMessageBox::error( 0, i18n("Error creating symlink %1.\nError: %2")
                   .arg(d.filePath(s[i])).arg(QString::fromLocal8Bit(strerror(errno))) );
@@ -805,7 +817,8 @@ const QString &KUsers::getDOMSID() const
   return domsid;
 }
 
-void KUsers::fillGecos(KUser *user, const char *gecos)
+void KUsers::parseGecos( const char *gecos, QString &name, 
+  QString &field1, QString &field2, QString &field3 )
 {
   int no = 0;
   const char *s = gecos;
@@ -820,15 +833,25 @@ void KUsers::fillGecos(KUser *user, const char *gecos)
       val = QString::fromLocal8Bit(s, (int)(pos-s));
 
     switch(no) {
-      case 0: user->setFullName(val); break;
-      case 1: caps & Cap_BSD ? user->setOffice(val) : user->setOffice1(val); break;
-      case 2: caps & Cap_BSD ? user->setWorkPhone(val) : user->setOffice2(val); break;
-      case 3: caps & Cap_BSD ? user->setHomePhone(val) : user->setAddress(val); break;
+      case 0: name = val; break;
+      case 1: field1 = val; break;
+      case 2: field2 = val; break;
+      case 3: field3 = val; break;
     }
     if(pos == NULL) break;
     s = pos+1;
     no++;
   }
+}  
+
+void KUsers::fillGecos(KUser *user, const char *gecos)
+{
+  QString name,field1,field2,field3;
+  parseGecos( gecos, name, field1, field2, field3 );
+  user->setFullName( name );
+  caps & Cap_BSD ? user->setOffice( field1 ) : user->setOffice1( field1 );
+  caps & Cap_BSD ? user->setWorkPhone( field2 ) : user->setOffice2( field2 );
+  caps & Cap_BSD ? user->setHomePhone( field3 ) : user->setAddress( field3 );
 }
 
 bool KUsers::doCreate(KUser *user)

@@ -49,13 +49,15 @@ public:
   propdlg( KUser *AUser, bool fixedprivgroup, 
     QWidget *parent = 0, const char *name = 0 );
   ~propdlg();
-  
+
   void mergeUser( KUser *user, KUser *newuser );
 
 protected slots:
   virtual void slotOk();
   void setpwd();
   void changed(); // Change to misc settings
+  void cbposixChanged(); // Change to diaable POSIX account info
+  void cbsambaChanged(); // Change to diaable POSIX account info
   void gchanged(); // Change to group settings
   void setpgroup(); // Change in primary group
 
@@ -94,7 +96,7 @@ protected:
   QString  primaryGroup;
   bool  primaryGroupWasOn;
   bool ro;
-  
+
   QString newpass;
   time_t lstchg;
 
@@ -107,7 +109,7 @@ protected:
   KLineEdit   *lefname;
   KLineEdit   *lesurname;
   KLineEdit   *lemail;
-  
+
   KComboBox   *leshell;
   KLineEdit   *lehome;
 
@@ -115,15 +117,17 @@ protected:
   KLineEdit   *leophone;
   KLineEdit   *lehphone;
   KLineEdit   *leclass;
-  
+
   KLineEdit   *leoffice1;
   KLineEdit   *leoffice2;
   KLineEdit   *leaddress;
-  
+
   QCheckBox   *cbdisabled;
+  QCheckBox   *cbposix;
+  QCheckBox   *cbsamba;
   QLabel      *leprigr;
   QPushButton *pbprigr;
-  
+
   QLabel *leslstchg;
   KIntSpinBox *lesmin;
   KIntSpinBox *lesmax;

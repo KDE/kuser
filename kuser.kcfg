@@ -21,7 +21,7 @@
   <group name="connection-$(connection)">
     <entry name="source" type="Enum">
     <label>The source of the user and group database</label>
-    <whatsthis>This option allows you to select where the user/group data stored. Currently three storage backends are supported. &lt;BR&gt;&lt;B&gt;Files&lt;/B&gt; stores user/group data in traditional /etc/passwd and /etc/group flat files. &lt;BR&gt;&lt;B&gt;LDAP&lt;/B&gt; stores data in a directory server using the posixAccount and posixGroup object classes; this backend allows allows the management of Samba users/groups via the sambaSamAccount object class.&lt;BR&gt;&lt;B&gt;System&lt;/B&gt; provides a read-only access to all users and groups which your installation knows about.</whatsthis>
+    <whatsthis>This option allows you to select where the user/group data stored. Currently three storage backends are supported. &lt;BR&gt;&lt;B&gt;Files&lt;/B&gt; stores user/group data in traditional /etc/passwd and /etc/group flat files. &lt;BR&gt;&lt;B&gt;LDAP&lt;/B&gt; stores data in a directory server using the posixAccount and posixGroup object classes; this backend allows the management of Samba users/groups via the sambaSamAccount object class.&lt;BR&gt;&lt;B&gt;System&lt;/B&gt; provides a read-only access to all users and groups which your installation knows about.</whatsthis>
     <choices>
       <choice name="Files"/>
       <choice name="LDAP"/>
@@ -62,6 +62,11 @@
       <label>User private groups</label>
       <whatsthis>If this option is enabled, new user creation will create a private group named as the user, and the primary group of the user will assigned to this private group.</whatsthis>
       <default code="true">KU_USERPRIVATEGROUP</default>
+    </entry>
+    <entry name="defaultgroup" type="Int">
+      <label>Default primary group</label>
+      <whatsthis>This is the default primary group which will assigned to a newly created user.</whatsthis>
+      <default>100</default>
     </entry>
     
     <entry name="smin" type="Int">
@@ -127,6 +132,7 @@
     <entry name="nismingid" type="Int">
       <label>NIS minimum GID</label>
     </entry>
+
     <entry name="ldapuser" type="String">
       <label>LDAP User</label>
     </entry>
@@ -197,10 +203,18 @@
       <whatsthis>This specifies where to store users' entries relative to the LDAP base DN.</whatsthis>
       <default>ou=People</default>
     </entry>
+    <entry name="ldapuserfilter" type="String">
+      <label>LDAP User filter</label>
+      <whatsthis>This specifies the filter used for user entries.</whatsthis>
+    </entry>
     <entry name="ldapgroupbase" type="String">
       <label>LDAP Group container</label>
       <whatsthis>This specifies where to store groups' entries relative to the LDAP base DN.</whatsthis>
       <default>ou=Group</default>
+    </entry>
+    <entry name="ldapgroupfilter" type="String">
+      <label>LDAP Group filter</label>
+      <whatsthis>This specifies the filter used for group entries.</whatsthis>
     </entry>
     <entry name="ldapuserrdn" type="Enum">
       <label>LDAP User RDN prefix</label>
@@ -208,8 +222,19 @@
       <choices>
         <choice name="uid"/>
         <choice name="uidNumber"/>
+        <choice name="cn"/>
       </choices>
       <default>uid</default>
+    </entry>
+    <entry name="ldapcnfullname" type="Bool">
+      <label>Store the user's full name in the cn attribute</label>
+      <whatsthis>Check this if the user's full name should be stored in the cn (Canonical Name) attribute.</whatsthis>
+      <default>false</default>
+    </entry>
+    <entry name="ldapgecos" type="Bool">
+      <label>Update the gecos field</label>
+      <whatsthis>Check this if the gecos attribute should be updated.</whatsthis>
+      <default>false</default>
     </entry>
     <entry name="ldapshadow" type="Bool">
       <label>Manage LDAP shadowAccount objectclass</label>

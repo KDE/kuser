@@ -33,11 +33,17 @@ class KUsers;
 
 class KUser {
 public:
+  enum Cap {
+    Cap_POSIX = 1,
+    Cap_Samba = 2
+  };
   KUser();
   KUser(const KUser *user);
   ~KUser();
 
   void copy(const KUser *user);
+  void setCaps( int data );
+  int getCaps();
 
   const QString &getName() const;
   const QString &getSurname() const;
@@ -60,7 +66,7 @@ public:
   const QString &getOffice2() const;
   const QString &getAddress() const;
 
-//shadow  
+//shadow
   const QString &getSPwd() const;
   time_t getExpire() const;
   time_t getLastChange() const;
@@ -70,7 +76,7 @@ public:
   int getInactive() const;
   int getFlag() const;
 
-//samba  
+//samba
   const QString &getLMPwd() const; //  sam_lmpwd,
   const QString &getNTPwd() const; //sam_ntpwd,
   const QString &getLoginScript() const; //sam_loginscript,
@@ -134,7 +140,7 @@ public:
 
 protected:
   friend class KUsers;
-  
+
   int createHome();
   int tryCreate(const QString &dir);
   int createMailBox();
@@ -147,6 +153,7 @@ protected:
 
   void copyDir(const QString &srcPath, const QString &dstPath);
 
+  int caps;
   QString
     p_name,                        // parsed pw information
     p_surname,
@@ -204,7 +211,8 @@ public:
     Cap_Shadow = 4,
     Cap_InetOrg = 8,
     Cap_Samba = 16,
-    Cap_BSD = 32
+    Cap_Disable_POSIX = 32,
+    Cap_BSD = 64
   };
   typedef QPtrListIterator<KUser> DelIt;
   typedef QPtrListIterator<KUser> AddIt;
@@ -237,7 +245,7 @@ public:
   void cancelMods();
   
   enum {
-	NO_FREE = (uid_t) -1
+    NO_FREE = (uid_t) -1
   };
 
   /**
@@ -278,6 +286,8 @@ protected:
   
   bool doCreate( KUser *user );
   bool doDelete( KUser *user );
+  void parseGecos( const char *gecos, QString &name,
+    QString &field1, QString &field2, QString &field3 );
   void fillGecos( KUser *user, const char *gecos );
   
 };

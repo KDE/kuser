@@ -36,7 +36,13 @@ public:
   KGroup(KGroup *group);
   ~KGroup();
 
+  enum Cap {
+    Cap_Samba = 1
+  };
+
   void copy(const KGroup *group);
+  void setCaps( int data );
+  int getCaps();
 
   const QString &getName() const;
   const QString &getPwd() const;
@@ -45,7 +51,7 @@ public:
   int getType() const;
   const QString &getDisplayName() const;
   const QString &getDesc() const;
-  
+
   void setName(const QString &data);
   void setPwd(const QString &data);
   void setGID(gid_t data);
@@ -53,7 +59,7 @@ public:
   void setType(int data);
   void setDisplayName(const QString &data);
   void setDesc(const QString &data);
-  
+
   bool addUser(const QString &name);
   bool removeUser(const QString &name);
   bool lookup_user(const QString &name);
@@ -70,6 +76,7 @@ protected:
 //samba attributes  
   SID sid;
   int type;
+  int caps;
   QString displayname;
   QString desc;
   

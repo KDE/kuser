@@ -26,6 +26,7 @@
 #include "generalsettings.h"
 #include "filessettings.h"
 #include "ldapsettings.h"
+#include "ldapsamba.h"
 #include "passwordpolicy.h"
 #include "misc.h"
 
@@ -35,7 +36,7 @@ editDefaults::editDefaults( KConfigSkeleton *config, QWidget *parent, const char
 {
   KTabWidget *page1 = new KTabWidget( this );
   page1->setMargin( KDialog::marginHint() );
-  
+
   GeneralSettings *page1a = new GeneralSettings( this );
   page1a->kcfg_shell->insertItem( i18n("<Empty>" ) );
   page1a->kcfg_shell->insertStringList( readShells() );
@@ -43,19 +44,32 @@ editDefaults::editDefaults( KConfigSkeleton *config, QWidget *parent, const char
   PasswordPolicy *page1b = new PasswordPolicy( this );
   page1->addTab( page1b, i18n("Password Policy") );
   addPage( page1, i18n("General"), "", i18n("General Settings") );
-  
+
   FilesSettings *page2 = new FilesSettings( this );
   addPage( page2, i18n("Files"), "", i18n("File Source Settings") );
 
   KTabWidget *page3 = new KTabWidget( this );
   page3->setMargin( KDialog::marginHint() );
   KABC::LdapConfigWidget *ldconf =
-    new KABC::LdapConfigWidget( KABC::LdapConfigWidget::W_ALL &
-    ~(KABC::LdapConfigWidget::W_FILTER), page3 );
+    new KABC::LdapConfigWidget(
+       KABC::LdapConfigWidget::W_USER |
+       KABC::LdapConfigWidget::W_PASS |
+       KABC::LdapConfigWidget::W_BINDDN |
+       KABC::LdapConfigWidget::W_REALM |
+       KABC::LdapConfigWidget::W_HOST |
+       KABC::LdapConfigWidget::W_PORT |
+       KABC::LdapConfigWidget::W_VER |
+       KABC::LdapConfigWidget::W_DN |
+       KABC::LdapConfigWidget::W_SECBOX |
+       KABC::LdapConfigWidget::W_AUTHBOX,
+        page3 );
   page3->addTab( ldconf, i18n("Connection") );
 
   LdapSettings *page3b = new LdapSettings( this );
   page3->addTab( page3b, i18n("Settings") );
+
+  LdapSamba *page3c = new LdapSamba( this );
+  page3->addTab( page3c, i18n("Samba") );
   addPage( page3, i18n("LDAP"), "", i18n("LDAP Source Settings") );
 }
 #include "editDefaults.moc"

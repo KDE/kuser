@@ -48,7 +48,7 @@ int KGroupViewItem::compare( QListViewItem *i, int col, bool ascending ) const
       if ( rid1 == rid2 ) return 0;
       return ( rid1 < rid2) ? -1: 1;
     }
-    default:  
+    default:
       return QListViewItem::compare( i, col, ascending );
   }
 }
@@ -59,17 +59,23 @@ QString KGroupViewItem::text(int num) const
   {
      case 0: return QString::fromLatin1("%1 ").arg(mGroup->getGID(),6);
      case 1: return mGroup->getName();
-     case 2: return QString::number(mGroup->getSID().getRID());
-     case 3: {
-       switch ( mGroup->getType() ) {
-         case 2: return i18n("Domain");
-         case 4: return i18n("Local");
-         case 5: return i18n("Builtin");
-         default: return i18n("Unknown");
+     case 2: return mGroup->getSID().getDOM();
+     case 3: return ( mGroup->getCaps() & KGroup::Cap_Samba ) ?
+      QString::number( mGroup->getSID().getRID() ) : QString::null;
+     case 4: {
+       if ( mGroup->getCaps() & KGroup::Cap_Samba ) {
+         switch ( mGroup->getType() ) {
+           case 2: return i18n("Domain");
+           case 4: return i18n("Local");
+           case 5: return i18n("Builtin");
+           default: return i18n("Unknown");
+         }
+       } else {
+         return QString::null;
        }
      }
-     case 4: return mGroup->getDisplayName();
-     case 5: return mGroup->getDesc();
+     case 5: return mGroup->getDisplayName();
+     case 6: return mGroup->getDesc();
   }
   return QString::null;
 }
@@ -94,7 +100,7 @@ void KGroupView::insertItem(KGroup *aku)
 void KGroupView::removeItem(KGroup *aku) 
 {
   KGroupViewItem *groupItem = (KGroupViewItem *)firstChild();
-  
+
   while(groupItem)
   {
      if (groupItem->group() == aku)
@@ -112,13 +118,14 @@ void KGroupView::init()
     removeColumn( 2 );
   }
   setAllColumnsShowFocus(true);
-  
+
   if ( columns() < 2 ) {
     addColumn(i18n("GID"));
     setColumnAlignment(0, AlignRight);
     addColumn(i18n("Group Name"));
   }
   if ( kug->getGroups().getCaps() & KGroups::Cap_Samba ) {
+    addColumn(i18n("Domain SID"));
     addColumn(i18n("RID"));
     addColumn(i18n("Type"));
     addColumn(i18n("Display Name"));

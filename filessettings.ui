@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>FilesSettings</class>
 <widget class="QWidget">
     <property name="name">
@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>405</width>
-            <height>298</height>
+            <height>315</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -50,6 +50,9 @@
                     <property name="text">
                         <string>Group file:</string>
                     </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>kcfg_groupsrc</cstring>
+                    </property>
                 </widget>
                 <widget class="QLabel" row="0" column="0">
                     <property name="name">
@@ -57,6 +60,9 @@
                     </property>
                     <property name="text">
                         <string>Password file:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>kcfg_passwdsrc</cstring>
                     </property>
                 </widget>
                 <widget class="KLineEdit" row="0" column="1" rowspan="1" colspan="2">
@@ -76,6 +82,9 @@
                     <property name="text">
                         <string>Shadow password file:</string>
                     </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>kcfg_shadowsrc</cstring>
+                    </property>
                 </widget>
                 <widget class="KLineEdit" row="2" column="2">
                     <property name="name">
@@ -93,6 +102,9 @@
                     </property>
                     <property name="text">
                         <string>Shadow group file:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>kcfg_gshadowsrc</cstring>
                     </property>
                 </widget>
                 <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="3">
@@ -131,6 +143,9 @@
                     <property name="text">
                         <string>NIS password source:</string>
                     </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>kcfg_nispasswdsrc</cstring>
+                    </property>
                 </widget>
                 <widget class="QLabel" row="1" column="0">
                     <property name="name">
@@ -138,6 +153,9 @@
                     </property>
                     <property name="text">
                         <string>NIS group source:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>kcfg_nisgroupsrc</cstring>
                     </property>
                 </widget>
                 <widget class="QLabel" row="2" column="0">
@@ -147,6 +165,9 @@
                     <property name="text">
                         <string>NIS minimum UID:</string>
                     </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>kcfg_nisminuid</cstring>
+                    </property>
                 </widget>
                 <widget class="QLabel" row="3" column="0">
                     <property name="name">
@@ -154,6 +175,9 @@
                     </property>
                     <property name="text">
                         <string>NIS minimum GID:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>kcfg_nismingid</cstring>
                     </property>
                 </widget>
                 <widget class="KLineEdit" row="0" column="1">
@@ -178,17 +202,24 @@
                 </widget>
             </grid>
         </widget>
+        <spacer>
+            <property name="name">
+                <cstring>spacer3</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>40</height>
+                </size>
+            </property>
+        </spacer>
     </vbox>
 </widget>
 <layoutdefaults spacing="6" margin="11"/>
-<includehints>
-    <includehint>klineedit.h</includehint>
-    <includehint>klineedit.h</includehint>
-    <includehint>klineedit.h</includehint>
-    <includehint>klineedit.h</includehint>
-    <includehint>klineedit.h</includehint>
-    <includehint>klineedit.h</includehint>
-    <includehint>klineedit.h</includehint>
-    <includehint>klineedit.h</includehint>
-</includehints>
 </UI>

@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>GeneralSettings</class>
 <widget class="QWidget">
     <property name="name">
@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>279</width>
-            <height>338</height>
+            <width>311</width>
+            <height>233</height>
         </rect>
     </property>
     <vbox>
@@ -30,6 +30,9 @@
                     </property>
                     <property name="text">
                         <string>Source of user/group database:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>kcfg_source</cstring>
                     </property>
                 </widget>
                 <widget class="KComboBox">
@@ -74,6 +77,9 @@
                     <property name="text">
                         <string>First normal GID:</string>
                     </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>kcfg_firstGID</cstring>
+                    </property>
                 </widget>
                 <widget class="QLabel" row="1" column="0">
                     <property name="name">
@@ -82,6 +88,9 @@
                     <property name="text">
                         <string>Home path template:</string>
                     </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>kcfg_homepath</cstring>
+                    </property>
                 </widget>
                 <widget class="QLabel" row="0" column="0">
                     <property name="name">
@@ -89,6 +98,9 @@
                     </property>
                     <property name="text">
                         <string>Shell:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>kcfg_shell</cstring>
                     </property>
                 </widget>
                 <widget class="KComboBox" row="0" column="1">
@@ -105,6 +117,9 @@
                     </property>
                     <property name="text">
                         <string>First normal UID:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>kcfg_firstUID</cstring>
                     </property>
                 </widget>
                 <widget class="KLineEdit" row="3" column="1">
@@ -138,22 +153,68 @@
                 <string>Copy skeleton to home folder</string>
             </property>
         </widget>
-        <widget class="QCheckBox">
+        <widget class="QLayoutWidget">
             <property name="name">
-                <cstring>kcfg_userPrivateGroup</cstring>
+                <cstring>layout5</cstring>
             </property>
-            <property name="text">
-                <string>User private groups</string>
-            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>kcfg_userPrivateGroup</cstring>
+                    </property>
+                    <property name="text">
+                        <string>User private groups</string>
+                    </property>
+                </widget>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>textLabel1_4</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Default group:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>kcfg_defaultgroup</cstring>
+                    </property>
+                </widget>
+                <widget class="QSpinBox">
+                    <property name="name">
+                        <cstring>kcfg_defaultgroup</cstring>
+                    </property>
+                    <property name="maxValue">
+                        <number>65536</number>
+                    </property>
+                </widget>
+            </hbox>
         </widget>
+        <spacer>
+            <property name="name">
+                <cstring>spacer5</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>16</height>
+                </size>
+            </property>
+        </spacer>
     </vbox>
 </widget>
 <connections>
     <connection>
-        <sender>kcfg_createHomeDir</sender>
+        <sender>kcfg_userPrivateGroup</sender>
         <signal>toggled(bool)</signal>
-        <receiver>kcfg_copySkel</receiver>
-        <slot>setEnabled(bool)</slot>
+        <receiver>kcfg_defaultgroup</receiver>
+        <slot>setDisabled(bool)</slot>
     </connection>
 </connections>
 <tabstops>

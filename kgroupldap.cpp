@@ -43,7 +43,7 @@ KGroupLDAP::KGroupLDAP( KUserPrefsBase *cfg ) : KGroups( cfg )
   mUrl.setDn( mCfg->ldapgroupbase() + "," + mCfg->ldapdn() );
   mUrl.setUser( mCfg->ldapuser() );
   mUrl.setPass( mCfg->ldappassword() );
-  mUrl.setFilter( mCfg->ldapfilter() );
+  mUrl.setFilter( mCfg->ldapgroupfilter() );
 
   if ( mCfg->ldaptls() ) mUrl.setExtension("x-tls","");
   if ( mCfg->ldapsasl() ) {
@@ -107,7 +107,7 @@ void KGroupLDAP::data( KIO::Job*, const QByteArray& data )
   }
 
   KABC::LDIF::ParseVal ret;
-  QString name;
+  QString name, val;
   QByteArray value;
   do {
     ret = mParser.nextItem();
@@ -115,22 +115,26 @@ void KGroupLDAP::data( KIO::Job*, const QByteArray& data )
       case KABC::LDIF::Item:
         name = mParser.attr().lower();
         value = mParser.val();
-        if ( name == QString::fromLatin1("gidnumber") )
-          mGroup->setGID( QString::fromUtf8( value, value.size() ).toLong() );
+        val = QString::fromUtf8( value, value.size() );
+        if ( name == QString::fromLatin1("objectclass") ) {
+          if ( val.lower() == "sambagroupmapping" ) 
+            mGroup->setCaps( KGroup::Cap_Samba );
+        } else if ( name == QString::fromLatin1("gidnumber") )
+          mGroup->setGID( val.toLong() );
         else if ( name == QString::fromLatin1("cn") )
-          mGroup->setName(QString::fromUtf8( value, value.size() ));
+          mGroup->setName( val );
         else if ( name == QString::fromLatin1("userpassword") )
-          mGroup->setPwd(QString::fromUtf8( value, value.size() ));
+          mGroup->setPwd( val );
         else if ( name == QString::fromLatin1("memberuid") )
-          mGroup->addUser(QString::fromUtf8( value, value.size() ));
+          mGroup->addUser( val );
         else if ( name == QString::fromLatin1("sambasid") )
-          mGroup->setSID(QString::fromUtf8( value, value.size() ));
+          mGroup->setSID( val );
         else if ( name == QString::fromLatin1("sambagrouptype") )
-          mGroup->setType(QString::fromUtf8( value, value.size() ).toInt());
+          mGroup->setType( val.toInt() );
         else if ( name == QString::fromLatin1("displayname") )
-          mGroup->setDisplayName(QString::fromUtf8( value, value.size() ));
+          mGroup->setDisplayName( val );
         else if ( name == QString::fromLatin1("description") )
-          mGroup->setDesc(QString::fromUtf8( value, value.size() ));
+          mGroup->setDesc( val );
         break;
       case KABC::LDIF::EndEntry: {
         KGroup newGroup;
@@ -241,7 +245,7 @@ void KGroupLDAP::addData( KGroup *group )
   for ( uint i=0; i < group->count(); i++ ) {
     ldif += KABC::LDIF::assembleLine( "memberuid", group->user(i) ) + "\n";
   }
-  if ( getCaps() & Cap_Samba ) {
+  if ( ( getCaps() & Cap_Samba ) && ( group->getCaps() & KGroup::Cap_Samba ) ) {
     ldif += "objectclass: sambagroupmapping\n" +
       KABC::LDIF::assembleLine( "sambasid", group->getSID().getSID() ) + "\n" +
       KABC::LDIF::assembleLine( "displayname", group->getDisplayName() ) + "\n" +
@@ -262,7 +266,7 @@ void KGroupLDAP::modData( KGroup *group )
 {
   QString oldrdn = getRDN( mGroup );
   QString newrdn = getRDN( group );
-  
+
   ldif = "";
   if ( oldrdn != newrdn ) {
     ldif = "dn: " + oldrdn.utf8() + "," + mUrl.dn().utf8() + "\n" +
@@ -270,12 +274,12 @@ void KGroupLDAP::modData( KGroup *group )
       "newrdn: " + newrdn.utf8() + "\n" +
       "deleteoldrdn: 1\n\n";      
   }
-  
+
   ldif += "dn: " + newrdn.utf8() + "," + mUrl.dn().utf8() + "\n" +
     "changetype: modify\n" +
     "replace: objectclass\n" +
     "objectclass: posixgroup\n";
-  if ( getCaps() & Cap_Samba ) {
+  if ( ( getCaps() & Cap_Samba ) && ( group->getCaps() & KGroup::Cap_Samba ) ) {
     ldif += "objectclass: sambagroupmapping\n";
   }
   ldif +=
@@ -291,15 +295,23 @@ void KGroupLDAP::modData( KGroup *group )
       group->user(i)) + "\n";
   }
   if ( getCaps() & Cap_Samba ) {
-    ldif +=
-      "-\nreplace: sambasid\n" +
-      KABC::LDIF::assembleLine( "sambasid", group->getSID().getSID() ) +
-      "\n-\nreplace: displayname\n" +
-      KABC::LDIF::assembleLine( "displayname", group->getDisplayName() ) +
-      "\n-\nreplace: description\n" +
-      KABC::LDIF::assembleLine( "description", group->getDesc() ) +
-      "\n-\nreplace: sambagrouptype\n" +
-      KABC::LDIF::assembleLine( "sambagrouptype", QString::number( group->getType() ) ) + "\n";
+    if ( group->getCaps() & KGroup::Cap_Samba ) {
+      ldif +=
+        "-\nreplace: sambasid\n" +
+        KABC::LDIF::assembleLine( "sambasid", group->getSID().getSID() ) +
+        "\n-\nreplace: displayname\n" +
+        KABC::LDIF::assembleLine( "displayname", group->getDisplayName() ) +
+        "\n-\nreplace: description\n" +
+        KABC::LDIF::assembleLine( "description", group->getDesc() ) +
+        "\n-\nreplace: sambagrouptype\n" +
+        KABC::LDIF::assembleLine( "sambagrouptype", QString::number( group->getType() ) ) + "\n";
+    } else {
+      ldif += "-\nreplace: sambasid\n";
+      ldif += "-\nreplace: displayname\n";
+      ldif += "-\nreplace: description\n";
+      ldif += "-\nreplace: sambagrouptype\n";
+      ldif += "-\nreplace: sambasidlist\n";
+    }
   }
 
   ldif += "-\n\n";

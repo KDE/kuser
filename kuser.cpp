@@ -58,7 +58,7 @@
 #include <kstandarddirs.h>
 #include <kmessagebox.h>
 #include <kprocess.h>
-#include "editDefaults.h"	
+#include "editDefaults.h"
 
 #ifdef _KU_QUOTA
 #include "mnt.h"
@@ -69,8 +69,8 @@
 // uid's for regular users start at 500 <duncan@kde.org>
 #ifdef KU_FIRST_USER
 #define _KU_FIRST_UID KU_FIRST_USER
-#else 
-#define _KU_FIRST_UID 1001 
+#else
+#define _KU_FIRST_UID 1001
 #endif
 
 // class KUser
@@ -83,7 +83,7 @@ KUser::KUser() : p_pwd(QString::fromLatin1("*")) {
   p_uid     = 0;
   p_gid     = 100;
 
-#ifdef HAVE_SHADOW   
+#ifdef HAVE_SHADOW
   s_lstchg  = 0;
   s_min     = 0;
   s_max     = 99999;
@@ -99,7 +99,7 @@ KUser::KUser() : p_pwd(QString::fromLatin1("*")) {
   isDeleteHome = false;
   isDeleteMailBox = false;
 }
-  
+
 KUser::KUser(const KUser *user) {
   copy(user);
 }
@@ -125,7 +125,7 @@ void KUser::copy(const KUser *user) {
   p_uid     = user->p_uid;
   p_gid     = user->p_gid;
 
-#ifdef HAVE_SHADOW   
+#ifdef HAVE_SHADOW
   s_pwd = user->s_pwd;
   s_lstchg  = user->s_lstchg;
   s_min     = user->s_min;
@@ -140,7 +140,7 @@ void KUser::copy(const KUser *user) {
   isCreateMailBox = user->isCreateMailBox;
   isCopySkel = user->isCopySkel;
 }
-  
+
 KUser::~KUser() {
 }
 
@@ -259,17 +259,17 @@ int KUser::getFlag() const {
 * Return the number of days from the epoch until the
 * password expires.
 */
-int KUser::getExpire() const 
+int KUser::getExpire() const
 {
 #if defined(__FreeBSD__) || defined(__bsdi__)
   time_t secondsToExpiry = p_expire;
   QDate epoch(1970,1,1);
   QDateTime expiryDate;
-  
+
   expiryDate.setTime_t(secondsToExpiry);
 
   return epoch.daysTo(expiryDate.date());
-#elif defined(HAVE_SHADOW) 
+#elif defined(HAVE_SHADOW)
   return s_expire;
 #else
   return 0;
@@ -399,8 +399,8 @@ void KUser::setCopySkel(bool data) {
 }
 
 KUsers::KUsers() {
-  pw_backuped = FALSE;		
-  pn_backuped = FALSE;		
+  pw_backuped = FALSE;
+  pn_backuped = FALSE;
   s_backuped = FALSE;
 
   pwd_mode = 0644;
@@ -465,36 +465,36 @@ bool KUsers::loadpwd() {
   passwd *p;
   KUser *tmpKU = 0;
   struct stat st;
-  QString filename;				
-  QString passwd_filename;			
-  QString nispasswd_filename;			
-  int rc = 0;					
-  int passwd_errno = 0;				
-  int nispasswd_errno = 0;			
-  char processing_file = '\0';			
-  #define PASSWD    0x01			
-  #define NISPASSWD 0x02			
+  QString filename;
+  QString passwd_filename;
+  QString nispasswd_filename;
+  int rc = 0;
+  int passwd_errno = 0;
+  int nispasswd_errno = 0;
+  char processing_file = '\0';
+  #define PASSWD    0x01
+  #define NISPASSWD 0x02
   #define MAXFILES 2
 
-  // Read KUser configuration	
+  // Read KUser configuration
 
-  config->setGroup("sources");		
-  passwd_filename = config->readEntry("passwdsrc");	
-  nispasswd_filename = config->readEntry("nispasswdsrc");	
+  config->setGroup("sources");
+  passwd_filename = config->readEntry("passwdsrc");
+  nispasswd_filename = config->readEntry("nispasswdsrc");
 
   // Handle unconfigured environments
 
   if(passwd_filename.isEmpty() && nispasswd_filename.isEmpty()) {
     config->writeEntry("passwdsrc", PASSWORD_FILE);
     config->writeEntry("groupsrc", GROUP_FILE);
-    passwd_filename = config->readEntry("passwdsrc");	
+    passwd_filename = config->readEntry("passwdsrc");
     err->addMsg(i18n("KUser Sources were not configured.\nLocal passwd source set to %1\nLocal group source set to %2\n").arg(config->readEntry("passwdsrc")).arg(config->readEntry("groupsrc")));
     err->display();
   }
 
-  if(!passwd_filename.isEmpty()) {			
-    processing_file = processing_file | PASSWD;		
-    filename.append(passwd_filename);			
+  if(!passwd_filename.isEmpty()) {
+    processing_file = processing_file | PASSWD;
+    filename.append(passwd_filename);
   }
 
   // Start reading passwd file(s)
@@ -508,25 +508,25 @@ bool KUsers::loadpwd() {
 #endif
 
   for(int i = 0; i < MAXFILES; i++) {
-    rc = stat(QFile::encodeName(filename), &st);		
-    if(rc != 0) {						
-      err->addMsg(i18n("stat call on file %1 failed: %2\nCheck KUser Settings (Sources)\n").arg(filename).arg(QString::fromLocal8Bit(strerror(errno))));	
-      err->display();						
-      if( (processing_file & PASSWD) != 0 ) {			
-        passwd_errno = errno;					
-        if(!nispasswd_filename.isEmpty()) {			
-          processing_file = processing_file & ~PASSWD;		
-          processing_file = processing_file | NISPASSWD;	
-          filename.truncate(0);					
-          filename.append(nispasswd_filename);	
-        } 
-        continue;				
-      }						
-      else{					
-        nispasswd_errno = errno;					
-        break;					
+    rc = stat(QFile::encodeName(filename), &st);
+    if(rc != 0) {
+      err->addMsg(i18n("stat call on file %1 failed: %2\nCheck KUser Settings (Sources)\n").arg(filename).arg(QString::fromLocal8Bit(strerror(errno))));
+      err->display();
+      if( (processing_file & PASSWD) != 0 ) {
+        passwd_errno = errno;
+        if(!nispasswd_filename.isEmpty()) {
+          processing_file = processing_file & ~PASSWD;
+          processing_file = processing_file | NISPASSWD;
+          filename.truncate(0);
+          filename.append(nispasswd_filename);
+        }
+        continue;
       }
-    }						
+      else{
+        nispasswd_errno = errno;
+        break;
+      }
+    }
 
     pwd_mode = st.st_mode & 0666;
     pwd_uid = st.st_uid;
@@ -535,9 +535,9 @@ bool KUsers::loadpwd() {
     // We are reading our configuration specified passwd file
     QString tmp;
 #ifdef HAVE_FGETPWENT
-    FILE *fpwd = fopen(QFile::encodeName(filename), "r");		
+    FILE *fpwd = fopen(QFile::encodeName(filename), "r");
     if(fpwd == NULL) {
-      err->addMsg(i18n("Error opening %1 for reading").arg(filename));	
+      err->addMsg(i18n("Error opening %1 for reading").arg(filename));
       return FALSE;
     }
 
@@ -561,33 +561,33 @@ bool KUsers::loadpwd() {
       tmpKU->setExpire(p->pw_expire);
 #endif
 
-      if ((p->pw_gecos != 0) && (p->pw_gecos[0] != 0)) 
+      if ((p->pw_gecos != 0) && (p->pw_gecos[0] != 0))
         fillGecos(tmpKU, p->pw_gecos);
       allUsers.append(tmpKU);
     }
 
-    // End reading passwd_filename				
+    // End reading passwd_filename
 
 #ifdef HAVE_FGETPWENT
     fclose(fpwd);
 #endif
     if((!nispasswd_filename.isEmpty()) && (nispasswd_filename != passwd_filename)) {
       processing_file = processing_file & ~PASSWD;
-      processing_file = processing_file | NISPASSWD;		
-      filename.truncate(0);				
-      filename.append(nispasswd_filename);		
-    } 
-    else						
-      break;						
+      processing_file = processing_file | NISPASSWD;
+      filename.truncate(0);
+      filename.append(nispasswd_filename);
+    }
+    else
+      break;
 
-  }	// end of processing files, for loop			
+  }	// end of processing files, for loop
 
-  if( (passwd_errno == 0) && (nispasswd_errno == 0) )	
+  if( (passwd_errno == 0) && (nispasswd_errno == 0) )
     return (TRUE);
-  if( (passwd_errno != 0) && (nispasswd_errno != 0) )	
+  if( (passwd_errno != 0) && (nispasswd_errno != 0) )
     return (FALSE);
   else
-    return(TRUE);						
+    return(TRUE);
 }
 
 // Load shadow passwords
@@ -717,70 +717,70 @@ bool KUsers::doDelete() {
 // Save password file
 
 bool KUsers::savepwd() {
-  FILE *passwd_fd = NULL;			
-  FILE *nispasswd_fd = NULL;			
-  int minuid = 0;			
-  int nis_users_written = 0;		
-  uid_t tmp_uid = 0;			
+  FILE *passwd_fd = NULL;
+  FILE *nispasswd_fd = NULL;
+  int minuid = 0;
+  int nis_users_written = 0;
+  uid_t tmp_uid = 0;
   QString s;
   QString s1;
   QString tmp;
-  QString passwd_filename;		
+  QString passwd_filename;
   QString nispasswd_filename;
-  QString qs_minuid;			
+  QString qs_minuid;
 
 
-  char errors_found = '\0';		
-    #define NOMINUID    0x01		
-    #define NONISPASSWD 0x02		
+  char errors_found = '\0';
+    #define NOMINUID    0x01
+    #define NONISPASSWD 0x02
 
-  // Read KUser configuration info	
+  // Read KUser configuration info
 
-  config->setGroup("sources");		
-  passwd_filename = config->readEntry("passwdsrc");		
-  nispasswd_filename = config->readEntry("nispasswdsrc");	
+  config->setGroup("sources");
+  passwd_filename = config->readEntry("passwdsrc");
+  nispasswd_filename = config->readEntry("nispasswdsrc");
   qs_minuid = config->readEntry("nisminuid");
   QCString tmp1 = QFile::encodeName(passwd_filename);
-  const char *pw_filename = tmp1.data();   
+  const char *pw_filename = tmp1.data();
   QCString tmp2 = QFile::encodeName(nispasswd_filename);
   const char *pn_filename = tmp2.data();
 
   if( (!qs_minuid.isEmpty()) && (nispasswd_filename != passwd_filename) ) {
-    minuid = atoi(qs_minuid.latin1());		
+    minuid = atoi(qs_minuid.latin1());
   }
 
-  // Backup file(s)			
+  // Backup file(s)
 
-  if(!passwd_filename.isEmpty()) {	
-    if (!pw_backuped) {			
+  if(!passwd_filename.isEmpty()) {
+    if (!pw_backuped) {
       backup(passwd_filename);
-      pw_backuped = TRUE;		
+      pw_backuped = TRUE;
     }
   }
-  if(!nispasswd_filename.isEmpty() && (nispasswd_filename != passwd_filename)){	
-    if (!pn_backuped) {			
+  if(!nispasswd_filename.isEmpty() && (nispasswd_filename != passwd_filename)){
+    if (!pn_backuped) {
       backup(nispasswd_filename);
-      pn_backuped = TRUE;		
+      pn_backuped = TRUE;
     }
   }
 
-  // Open file(s)			
+  // Open file(s)
 
-  if(!passwd_filename.isEmpty()) {	
-    if ((passwd_fd = fopen(pw_filename,"w")) == NULL) 
+  if(!passwd_filename.isEmpty()) {
+    if ((passwd_fd = fopen(pw_filename,"w")) == NULL)
       err->addMsg(i18n("Error opening %1 for writing").arg(passwd_filename));
-  }					
+  }
 
-  if(!nispasswd_filename.isEmpty() && (nispasswd_filename != passwd_filename)){	
-    if ((nispasswd_fd = fopen(pn_filename,"w")) == NULL) 
+  if(!nispasswd_filename.isEmpty() && (nispasswd_filename != passwd_filename)){
+    if ((nispasswd_fd = fopen(pn_filename,"w")) == NULL)
       err->addMsg(i18n("Error opening %1 for writing").arg(nispasswd_filename));
-  }					
+  }
 
     umask(0077);
 
     for (unsigned int i=0; i<allUsers.count(); i++) {
       KUser *user = allUsers.at(i);
-      tmp_uid = user->getUID();	 	
+      tmp_uid = user->getUID();
 
 #if defined(__FreeBSD__) || defined(__bsdi__)
       s = QString::fromLatin1("%1:%2:%3:%4:%5:%6:%7:")
@@ -826,53 +826,53 @@ bool KUsers::savepwd() {
 
       if( (nispasswd_fd != 0) && (minuid != 0) ) {
         if (minuid <= tmp_uid) {
-      	  fputs(s.local8Bit().data(), nispasswd_fd);	
-          nis_users_written++;		
-          continue;				
+      	  fputs(s.local8Bit().data(), nispasswd_fd);
+          nis_users_written++;
+          continue;
         }
         else{
-      	  fputs(s.local8Bit().data(), passwd_fd);	
-          continue;				
+      	  fputs(s.local8Bit().data(), passwd_fd);
+          continue;
         }
       }
 
       if( (nispasswd_fd != 0) && (minuid == 0) ) {
-	errors_found = errors_found | NOMINUID;  
-      	fputs(s.local8Bit().data(), passwd_fd);	
+	errors_found = errors_found | NOMINUID;
+      	fputs(s.local8Bit().data(), passwd_fd);
         continue;
       }
 
       if( (nispasswd_fd == 0) && (minuid != 0) ) {
-	errors_found = errors_found | NONISPASSWD;	
-      	fputs(s.local8Bit().data(), passwd_fd);	
+	errors_found = errors_found | NONISPASSWD;
+      	fputs(s.local8Bit().data(), passwd_fd);
         continue;
       }
 
-      fputs(s.local8Bit().data(), passwd_fd);	
+      fputs(s.local8Bit().data(), passwd_fd);
 
     }		/* end for i loop */
 
-    if(passwd_fd) {					
+    if(passwd_fd) {
       fclose(passwd_fd);
-      chmod(pw_filename, pwd_mode);	
-      chown(pw_filename, pwd_uid, pwd_gid);	
-    }							
+      chmod(pw_filename, pwd_mode);
+      chown(pw_filename, pwd_uid, pwd_gid);
+    }
 
-    if(nispasswd_fd) {					
-      fclose(nispasswd_fd);				
-      chmod(pn_filename, pwd_mode);	
-      chown(pn_filename, pwd_uid, pwd_gid);	
-    }							
+    if(nispasswd_fd) {
+      fclose(nispasswd_fd);
+      chmod(pn_filename, pwd_mode);
+      chown(pn_filename, pwd_uid, pwd_gid);
+    }
 
-    if( (errors_found & NOMINUID) != 0 ) {	
-      err->addMsg(i18n("Unable to process NIS passwd file without a minimum UID specified.\nPlease update KUser Settings (Sources)"));	
-      err->display();				
-    }						
+    if( (errors_found & NOMINUID) != 0 ) {
+      err->addMsg(i18n("Unable to process NIS passwd file without a minimum UID specified.\nPlease update KUser Settings (Sources)"));
+      err->display();
+    }
 
     if( (errors_found & NONISPASSWD) != 0 ) {
-      err->addMsg(i18n("Specifying NIS minimum UID requires NIS file(s).\nPlease update KUser Settings (Sources)"));	
-      err->display();				
-    }						
+      err->addMsg(i18n("Specifying NIS minimum UID requires NIS file(s).\nPlease update KUser Settings (Sources)"));
+      err->display();
+    }
 
   // need to run a utility program to build /etc/passwd, /etc/pwd.db
   // and /etc/spwd.db from /etc/master.passwd
@@ -887,7 +887,7 @@ bool KUsers::savepwd() {
       err->addMsg(i18n("Unable to build password databases"));
       return FALSE;
     }
-  }					
+  }
 #endif
 
   return TRUE;
@@ -921,7 +921,7 @@ bool KUsers::savesdw() {
 
   s.sp_namp = (char *)malloc(200);
   s.sp_pwdp = (char *)malloc(200);
-    
+
   for (uint index = 0; index < allUsers.count(); index++) {
     up = allUsers.at(index);
     if (up->getSPwd().isNull()) {
@@ -1044,8 +1044,8 @@ int KUser::createHome() {
 
 int KUser::createKDE() {
 
-	QStringList levels;	
-	QStringList types;		
+	QStringList levels;
+	QStringList types;
 	QString k_dir = p_dir;
 	KStandardDirs kstddirs;
 	const char *KDEHOME = "KDEHOME";
@@ -1074,7 +1074,7 @@ int KUser::createKDE() {
 	}
 
 	for (uint level=0; level<levels.count(); level++) {
-		k_dir.append(levels[level]);	
+		k_dir.append(levels[level]);
 		if (tryCreate(k_dir))
 			return(-1);
  	}
@@ -1106,7 +1106,7 @@ int	rc = 0;
    	if (S_ISDIR(sb.st_mode)) {
 	    if (KMessageBox::
 		warningContinueCancel(0, i18n("Folder %1 already exists!\nWill make %2 owner and change permissions.\nDo you want to continue?")
-.arg(dir).arg(p_name), QString::null, i18n("&Continue")) ==
+.arg(dir).arg(p_name), QString::null, KStdGuiItem::cont()) ==
 KMessageBox::Continue) {
  		if (chown(QFile::encodeName(dir), p_uid, p_gid) != 0) {
    		    err->addMsg(i18n("Cannot change owner of %1 folder\nError: %2")

@@ -69,7 +69,7 @@ void addUser::slotOk() {
   uint newuid;
   tmp = leid->text();
   newuid = tmp.toInt();
-  
+
   if (kug->getUsers().lookup(newuid) != 0) {
     err->addMsg(i18n("User with UID %1 already exists").arg(newuid));
     err->display();
@@ -87,7 +87,7 @@ void addUser::slotOk() {
   }
 
   check();
-  
+
   if (user->getCreateHome() && !checkHome())
      return;
 
@@ -110,7 +110,7 @@ bool addUser::checkHome() {
   if (r == 0) {
     if (S_ISDIR(s.st_mode)) {
        if (KMessageBox::
-         warningContinueCancel (0, i18n("Folder %1 already exists!\n%2 may become owner and permissions may change.\nDo you really want to use %3?").arg(h_dir).arg(user->getName()).arg(h_dir), QString::null, i18n("&Continue")) == KMessageBox::Cancel)
+         warningContinueCancel (0, i18n("Folder %1 already exists!\n%2 may become owner and permissions may change.\nDo you really want to use %3?").arg(h_dir).arg(user->getName()).arg(h_dir), QString::null, KStdGuiItem::cont()) == KMessageBox::Cancel)
                   return false;
             else
                   return true;
@@ -118,7 +118,7 @@ bool addUser::checkHome() {
 	  err->addMsg(i18n("%1 is not a folder").arg(h_dir));
   } else
     err->addMsg(QString::fromLatin1("checkHome: stat: %1 ").arg(QString::fromLocal8Bit(strerror(errno))));
-  
+
   err->display();
 
   return false;
@@ -132,7 +132,7 @@ bool addUser::checkMailBox() {
 
   mailboxpath = QString::fromLatin1("%1/%2").arg(QFile::decodeName(MAIL_SPOOL_DIR)).arg(user->getName());
   r = stat(QFile::encodeName(mailboxpath), &s);
-  
+
   if ((r == -1) && (errno == ENOENT))
     return true;
 
@@ -146,7 +146,7 @@ bool addUser::checkMailBox() {
                  .arg(mailboxpath));
   else
     err->addMsg(QString::fromLatin1("checkMail: stat: %1 ").arg(QString::fromLocal8Bit(strerror(errno))));
-  
+
   err->display();
 
   return false;

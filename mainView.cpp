@@ -260,7 +260,7 @@ void mainView::useradd() {
     tq = 0;
   }
 #endif // _KU_QUOTA
-  
+
 #ifdef _KU_QUOTA
   addUser au(tk, tq, this, "userin");
 #else
@@ -306,7 +306,7 @@ void mainView::useradd() {
 void mainView::save() {
   if (!changed)
     return;
-    
+
   kug->getUsers().save();
   kug->getGroups().save();
 #ifdef _KU_QUOTA
@@ -322,17 +322,17 @@ bool mainView::queryClose()
 {
   if (!changed)
     return true;
-    
+
   int result = KMessageBox::warningYesNoCancel(0, i18n("Would you like to save your changes?"),
                                i18n("Data Was Modified"),
-                               i18n("&Save"), i18n("&Discard Changes"));
+                               KStdGuiItem::save(), KStdGuiItem::discard());
 
   if (result == KMessageBox::Cancel)
     return false;
-    
+
   if (result == KMessageBox::Yes)
     save();
-    
+
   return true;
 }
 
@@ -349,7 +349,7 @@ void mainView::properties() {
 
   config->setGroup("template");
   eddlg.setShell(config->readEntry("shell", QString::fromLatin1("/bin/sh")));
-  eddlg.setHomeBase(config->readEntry("homeBase", QString::fromLatin1("/home")));	
+  eddlg.setHomeBase(config->readEntry("homeBase", QString::fromLatin1("/home")));
   eddlg.setCreateHomeDir(config->readBoolEntry("createHomeDir", true));
   eddlg.setCopySkel(config->readBoolEntry("copySkel", true));
   eddlg.setUserPrivateGroup(config->readBoolEntry("userPrivateGroup", KU_USERPRIVATEGROUP));
@@ -401,7 +401,7 @@ void mainView::userSelected() {
   KUser *tmpKU;
 
   tmpKU =  lbusers->getCurrentUser();
-  if (!tmpKU) 
+  if (!tmpKU)
     return;
 
 #ifdef _KU_QUOTA
@@ -414,7 +414,7 @@ void mainView::userSelected() {
       return;
     }
   }
-  
+
   propdlg editUser(tmpKU, tmpQ, this, "userin");
 #else
   propdlg editUser(tmpKU, this, "userin");
@@ -437,7 +437,7 @@ void mainView::grpadd() {
 
   KGroup *tk = new KGroup();
   tk->setGID(gid);
-  
+
   grpnamedlg gd(*tk, this);
   if (gd.exec() == 0) {
     delete tk;

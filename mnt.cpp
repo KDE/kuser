@@ -117,9 +117,11 @@ Mounts::Mounts() {
     if (!CORRECT_FSTYPE((const char *)mt->mnt_fstype))
       continue;
 
-    quotafilename = QString("%1%2%3")
+    QString sep = (mt->mnt_mountp[strlen(mt->mnt_mountp) - 1] == '/')  ? 
+	QString::null : QString::fromLatin1("/");
+    quotafilename = QString::fromLatin1("%1%2%3")
                           .arg(QString::fromLatin1(mt->mnt_mountp))
-                          .arg(QString::fromLatin1((mt->mnt_mountp[strlen(mt->mnt_mountp) - 1] == '/') ? "" : "/"))
+                          .arg(sep)
                           .arg(QString::fromLatin1(_KU_QUOTAFILENAME));
 #elif defined(BSD)
   while ((mt=getfsent()) != NULL) {

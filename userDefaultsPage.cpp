@@ -51,11 +51,11 @@ userDefaultsPage::userDefaultsPage(
 
   tl->addStretch(2);
 
-  createHomeDir = new QCheckBox(i18n("Create home dir"), this);
+  createHomeDir = new QCheckBox(i18n("Create home folder"), this);
   createHomeDir->setFixedSize(createHomeDir->sizeHint());
   tl->addWidget(createHomeDir, 0, AlignLeft);
 
-  copySkel = new QCheckBox(i18n("Copy skeleton to home dir"), this);
+  copySkel = new QCheckBox(i18n("Copy skeleton to home folder"), this);
   copySkel->setFixedSize(copySkel->sizeHint());
   tl->addWidget(copySkel, 0, AlignLeft);
 

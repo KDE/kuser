@@ -480,6 +480,14 @@ bool KUsers::loadpwd() {
 
   // Start reading passwd file(s)
 
+#ifdef Q_OS_FREEBSD
+  // For FreeBSD, some weird effect in the C++ libraries
+  // eats the first entry of the passwd file on -CURRENT,
+  // which renders KUser a system-destroyer instead of
+  // just a useless tool.
+  setpwent();
+#endif
+
   for(int i = 0; i < MAXFILES; i++) {
     rc = stat(QFile::encodeName(filename), &st);		
     if(rc != 0) {						

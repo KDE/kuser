@@ -60,9 +60,6 @@ void mainView::init() {
   connect(lbgroups, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(groupSelected()));
   connect(lbgroups, SIGNAL(returnPressed(QListViewItem *)), this, SLOT(groupSelected()));
 
-  reloadUsers();
-  reloadGroups();
-
   connect(this, SIGNAL(currentChanged(QWidget *)), this, SLOT(slotTabChanged()));
 }
 
@@ -90,10 +87,11 @@ void mainView::reloadUsers()
 
   lbusers->clear();
   lbusers->init();
+  int uid = kug->kcfg()->firstUID();
   
   ku = kug->getUsers().first();
   while ( ku ) {
-    lbusers->insertItem( ku );
+    if ( ku->getUID() >= uid || mShowSys ) lbusers->insertItem( ku );
     ku = kug->getUsers().next();
   }
   if (lbusers->firstChild())
@@ -106,10 +104,11 @@ void mainView::reloadGroups()
 
   lbgroups->clear();
   lbgroups->init();
+  int gid = kug->kcfg()->firstGID();
 
   kg = kug->getGroups().first();
   while ( kg ) {
-    lbgroups->insertItem(kg);
+    if ( kg->getGID() >= gid || mShowSys ) lbgroups->insertItem(kg);
     kg = kug->getGroups().next();
   }
 }

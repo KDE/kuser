@@ -46,6 +46,7 @@ protected:
 protected slots:
   void toggleToolBar();
   void toggleStatusBar();
+  void showSys();
 
 private:
 //  KMenuBar   *menubar;
@@ -53,6 +54,7 @@ private:
   KStatusBar *sbar;
   KToggleAction *mActionToolbar;
   KToggleAction *mActionStatusbar;
+  KToggleAction *mShowSys;
   mainView *md;
 };
 

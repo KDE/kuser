@@ -40,10 +40,14 @@ public:
   ~mainView();
 
   void init();
+  void setShowSys( bool b ) { mShowSys = b; }
 
   bool queryClose();
 
-  QPixmap pic_user;
+  void reloadUsers();
+  void reloadGroups();
+
+//  QPixmap pic_user;
 
 public slots:
   void slotTabChanged();
@@ -71,14 +75,13 @@ signals:
   void groupSelected(bool);
 
 protected:
-  void reloadUsers();
-  void reloadGroups();
   bool updateUsers();  
   bool updateGroups();  
 
   KUserView *lbusers;
   KGroupView *lbgroups;
   SelectConn *sc;  
+  bool mShowSys;
 };
 
 #endif // _KU_MAINDLG_H

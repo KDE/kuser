@@ -36,6 +36,7 @@ mainWidget::mainWidget(const char *name) : KMainWindow(0,name)
   md = new mainView(this);
 
   setupActions();
+  showSys();
   md->slotTabChanged();
 
   sbar = new KStatusBar(this);
@@ -62,7 +63,6 @@ bool mainWidget::queryClose()
 
 void mainWidget::setupActions() 
 {
-//  KStdAction::save(md, SLOT(save()), actionCollection());
   KStdAction::quit(this, SLOT(close()), actionCollection());
 
   KStdAction::preferences(md, SLOT(properties()), actionCollection());
@@ -102,6 +102,10 @@ void mainWidget::setupActions()
   action = new KAction(i18n("&Select connection"), 
     QIconSet(BarIconC("select_conn")), 0, md,
     SLOT(selectconn()), actionCollection(), "select_conn");
+  
+  mShowSys = new KToggleAction(i18n("Show system users/groups"), 
+    0, 0, this,
+    SLOT(showSys()), actionCollection(), "show_sys");
 
   createGUI(QString::fromLatin1("kuserui.rc"));
 }
@@ -139,6 +143,13 @@ void mainWidget::toggleStatusBar()
     statusBar()->show();
   else
     statusBar()->hide();
+}
+
+void mainWidget::showSys()
+{
+  md->setShowSys( mShowSys->isChecked() );
+  md->reloadUsers();
+  md->reloadGroups();
 }
 
 #include "mainWidget.moc"

@@ -44,13 +44,13 @@ int main(int argc, char **argv) {
 
   KApplication a(argc, argv, "kuser");
 
+  initmain();
+
   if (getuid()) {
     err->addMsg(i18n("Only root is allowed to manage users."), STOP);
     err->display();
     exit(1);
   }
-
-  initmain();
 
   mw = new mainWidget("kuser");
   

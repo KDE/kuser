@@ -90,10 +90,10 @@ void getquota(const char *uname, QList<Quota> *q)
   int qcmd, fd;
   static int warned = 0;
   //  extern int errno;
-int dd = 0;
   struct dqblk dq;
 #ifdef HAVE_SYS_FS_UFS_QUOTA_H
   struct quotctl qctl;
+  int dd = 0;
 #endif
 
   if (is_quota == 0)
@@ -113,12 +113,9 @@ printf("getquota\n");
 
     if ((dd = ioctl(fd, Q_QUOTACTL, &qctl)) != 0)
       if (errno == ESRCH) {
-        printf("user %s-%d has no quota with errno: %i\n", uname, id, errno);
-	if (id == 404) {
-printf("quotafilename: %s\n", (const char*)mounts.at(i)->quotafilename);
-	}
-
         q->append(new Quota(0,0,0,0,0,0));
+        close(fd);
+        continue;
       }
       else
       {
@@ -130,15 +127,17 @@ printf("quotafilename: %s\n", (const char*)mounts.at(i)->quotafilename);
           printf("errno: %i, ioctl: %i\n", errno, dd);
           sleep(3);
           is_quota = 0;
+          close(fd);
 	  break;
       }
-      q->append(new Quota(dq.dqb_curblocks,
-                          dq.dqb_bsoftlimit,
-                          dq.dqb_bhardlimit,
-                          dq.dqb_curfiles,
-                          dq.dqb_fsoftlimit,
-                          dq.dqb_fhardlimit));
-    }
+    q->append(new Quota(dq.dqb_curblocks,
+                        dq.dqb_bsoftlimit,
+                        dq.dqb_bhardlimit,
+                        dq.dqb_curfiles,
+                        dq.dqb_fsoftlimit,
+                        dq.dqb_fhardlimit));
+    close(fd);
+  }
 #else
   qcmd = QCMD(Q_GETQUOTA, USRQUOTA);
 
@@ -179,41 +178,70 @@ void setquota(const char *uname, QList<Quota> *q)
   int qcmd, fd;
   struct dqblk dq;
 
+#ifdef HAVE_SYS_FS_UFS_QUOTA_H
+  struct quotctl qctl;
+  int dd = 0;
+#endif
+
 #ifdef _KU_DEBUG
 printf("setquota\n");
 #endif
-/*
-  qcmd = QCMD(Q_SETQUOTA, USRQUOTA);
-  if (is_quota != 0) {
-    for (uint i=0; i<mounts.count(); i++) {
-      dq.dqb_curblocks  = btodb(q->at(i)->fcur);
-      dq.dqb_bsoftlimit = btodb(q->at(i)->fsoft);
-      dq.dqb_bhardlimit = btodb(q->at(i)->fhard);
-      dq.dqb_curinodes  = q->at(i)->icur;
-      dq.dqb_isoftlimit = q->at(i)->isoft;
-      dq.dqb_ihardlimit = q->at(i)->ihard;
 
-printf("%d %d %d %d %d %d\n", dq.dqb_curblocks,dq.dqb_bsoftlimit,dq.dqb_bhardlimit,
-                              dq.dqb_curinodes,dq.dqb_isoftlimit,dq.dqb_ihardlimit);
+#ifdef HAVE_SYS_FS_UFS_QUOTA_H
+    qctl.op = Q_SETQUOTA;
+    qctl.uid = id;
+    qctl.addr = (caddr_t) &dq;
 
-      if (quotactl(qcmd, (const char *)mounts.at(i)->fsname, id, (caddr_t) &dq) != 0) {
-        continue;
-        if ((fd = open(qfpathname, O_WRONLY)) < 0) {
-          sprintf(s, _("Error opening %s"), qfpathname);
-          QMessageBox::message(_("Error"), s, "Ok");
-        }
-        else {
-          lseek(fd, (long) id * (long) sizeof(struct dqblk), 0);
-          if (write(fd, &dq, sizeof(struct dqblk)) != sizeof(struct dqblk)) {
-            sprintf(s, _("Error writing %s"), qfpathname);
-            QMessageBox::message(_("Error"), s ,"Ok");
-          }
-          close(fd);
-        }
+  for (uint i=0; i<mounts.count(); i++) {
+    dq.dqb_curblocks  = q->at(i)->fcur;
+    dq.dqb_bsoftlimit = q->at(i)->fsoft;
+    dq.dqb_bhardlimit = q->at(i)->fhard;
+    dq.dqb_curfiles  = q->at(i)->icur;
+    dq.dqb_fsoftlimit = q->at(i)->isoft;
+    dq.dqb_fhardlimit = q->at(i)->ihard;
+
+    fd = open((const char *)mounts.at(i)->quotafilename, O_WRONLY);
+
+    if ((dd = ioctl(fd, Q_QUOTACTL, &qctl)) != 0)
+      if (errno == ESRCH) {
       }
+      else
+      {
+        printf("errno: %i, ioctl: %i\n", errno, dd);
+        sleep(3);
+        is_quota = 0;
+        close(fd);
+        break;
+      }
+    close(fd);
+  }
+#else
+  qcmd = QCMD(Q_SETQUOTA, USRQUOTA);
+  for (uint i=0; i<mounts.count(); i++) {
+    dq.dqb_curblocks  = btodb(q->at(i)->fcur);
+    dq.dqb_bsoftlimit = btodb(q->at(i)->fsoft);
+    dq.dqb_bhardlimit = btodb(q->at(i)->fhard);
+    dq.dqb_curinodes  = q->at(i)->icur;
+    dq.dqb_isoftlimit = q->at(i)->isoft;
+    dq.dqb_ihardlimit = q->at(i)->ihard;
+
+    if (quotactl(qcmd, (const char *)mounts.at(i)->fsname, id, (caddr_t) &dq) != 0)
+      continue;
+
+    if ((fd = open((const char *)mounts.at(i)->quotafilename, O_WRONLY)) < 0) {
+      sprintf(s, _("Error opening %s"), (const char *)mounts.at(i)->quotafilename);
+      QMessageBox::message(_("Error"), s, "Ok");
+    }
+    else {
+      lseek(fd, (long) id * (long) sizeof(struct dqblk), 0);
+      if (write(fd, &dq, sizeof(struct dqblk)) != sizeof(struct dqblk)) {
+        sprintf(s, _("Error writing %s"), (const char *)mounts.at(i)->quotafilename);
+        QMessageBox::message(_("Error"), s ,"Ok");
+      }
+      close(fd);
     }
   }
-  */
+#endif
 }
 
 /*

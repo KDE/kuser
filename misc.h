@@ -23,5 +23,6 @@ int getValue(long int &data, const char *text, const char *msg);
 int getValue(int &data, const char *text, const char *msg);
 int getValue(unsigned int &data, const char *text, const char *msg);
 long today();
+int copyFile(QString from, QString to);
 
 #endif // _KU_MISC_H

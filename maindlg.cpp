@@ -66,16 +66,20 @@ void mainDlg::init() {
 }
 
 mainDlg::~mainDlg() {
+  lbusers->setAutoUpdate(FALSE);
+  lbgroups->setAutoUpdate(FALSE);
+
+  delete lbusers;
+  delete lbgroups;
+
   delete u;
- delete g;
+  delete g;
 
 #ifdef _KU_QUOTA
   delete q;
   delete m;
 #endif
 
-  delete lbusers;
-  delete lbgroups;
   delete kp;
 }
 

@@ -1,3 +1,5 @@
+#include <qdir.h>
+
 #include <kmsgbox.h>
 
 #include "globals.h"
@@ -23,11 +25,11 @@ addUser::addUser(KUser *auser, QWidget *parent = 0, const char *name = 0, int is
 
   createhome = new QCheckBox(w1, "createHome");
   createhome->setText(_("Create home directory"));
-  createhome->setGeometry(260, 200, 120, 30);
+  createhome->setGeometry(200, 70, 200, 30);
 
   copyskel = new QCheckBox(w1, "copySkel");
   copyskel->setText(_("Copy skeleton"));
-  copyskel->setGeometry(260, 250, 120, 30);
+  copyskel->setGeometry(200, 110, 200, 30);
 }
 #endif
 
@@ -55,7 +57,17 @@ void addUser::ok() {
 }
 
 void addUser::createHome() {
+  QDir d = QDir::root();
+
   printf("createHome\n");
+
+  if (d.cd(user->getp_dir())) {
+    QString tmp;
+    tmp.sprintf(_("Directory %s already exist"), (const char *)user->getp_dir());
+    err->addMsg(tmp, STOP);
+    err->display();
+  }
+  
   if (mkdir(user->getp_dir(), 0700) != 0) {
 printf("Cannot create home directory\nError: %s", strerror(errno));
     QString tmp;
@@ -82,5 +94,29 @@ printf("Cannot change permissions on home directory\nError: %s", strerror(errno)
 }
 
 void addUser::copySkel() {
+  QDir s("/etc/skel");
+  QDir d(user->getp_dir());
+  QString tmp;
+
+  s.setFilter(QDir::Files | QDir::Hidden);
+
+  for (uint i=0; i<s.count(); i++) {
+    copyFile(s.filePath(s[i]), d.filePath(s[i]));
+
+    if (chown(d.filePath(s[i]), user->getp_uid(), user->getp_gid()) != 0) {
+      QString tmp;
+      tmp.sprintf(_("Cannot change owner of file %s\nError: %s"), (const char *)d.filePath(s[i]), strerror(errno));
+      err->addMsg(tmp, STOP);
+      err->display();
+    }
+
+    if (chmod(d.filePath(s[i]), 0644) != 0) {
+      QString tmp;
+      tmp.sprintf(_("Cannot change permissions on file %s\nError: %s"), (const char *)d.filePath(s[i]), strerror(errno));
+      err->addMsg(tmp, STOP);
+      err->display();
+    }
+  }
+  
   printf("copySkel\n");
 }

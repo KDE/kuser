@@ -144,3 +144,48 @@ int getValue(unsigned int &data, const char *text, const char *msg) {
 
   return (0);
 }
+
+int copyFile(QString from, QString to) {
+  QFile fi;
+  QFile fo;
+  char buf[4096];
+
+  printf("%s -> %s\n", (const char *)from, (const char *)to);
+  
+  fi.setName(from);
+  fo.setName(to);
+  
+  if (!fi.exists()) {
+    QString tmp;
+    
+    tmp.sprintf(_("File %s does not exist."), (const char *)from);
+    err->addMsg(tmp, STOP);
+    return (-1);
+  }
+
+  if (!fi.open(IO_ReadOnly)) {
+    QString tmp;
+    
+    tmp.sprintf(_("Can not open file %s for reading."), (const char *)from);
+    err->addMsg(tmp, STOP);
+    return (-1);
+  }
+    
+  if (!fo.open(IO_Raw | IO_WriteOnly | IO_Truncate)) {
+    QString tmp;
+    
+    tmp.sprintf(_("Can not open file %s for writing."), (const char *)to);
+    err->addMsg(tmp, STOP);
+    return (-1);
+  }
+  
+  while (!fi.atEnd()) {
+    int len = fi.readBlock(buf, 4096);
+    fo.writeBlock(buf, len);
+  }
+  
+  fi.close();
+  fo.close();
+    
+  return (0);
+}

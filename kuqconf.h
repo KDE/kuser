@@ -101,4 +101,10 @@
 #        error "Your platform is not supported"
 #endif // HAVE_SYS_FS_UFS_QUOTA_H
 
+#ifdef HAVE_IF_DQBLK
+#  define STRUCT_DQBLK struct if_dqblk
+#else
+#  define STRUCT_DQBLK struct dqblk
+#endif
+
 #endif

@@ -23,7 +23,7 @@ pwddlg::pwddlg(KUser *auser, QWidget* parent, const char* name)
   setCaption(_("Enter password"));
   pbOk = new QPushButton( this, "PushButton_1" );
   pbOk->setGeometry( 20, 140, 100, 30 );
-  pbOk->setText( "Ok" );
+  pbOk->setText(_("Ok"));
   pbOk->setDefault(TRUE);
   QObject::connect(pbOk, SIGNAL(clicked()), this, SLOT(ok()));
 
@@ -57,7 +57,7 @@ void pwddlg::ok()
   const char * set = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./";
 
   if (strcmp(leusername1->text(), leusername2->text())) {
-    KMsgBox::message(0, _("Error"), ("Passwords are not identical.\nTry again"), KMsgBox::STOP);
+    KMsgBox::message(0, _("Error"), _("Passwords are not identical.\nTry again"), KMsgBox::STOP);
     leusername1->setText("");
     leusername2->setText("");
     leusername1->setFocus();

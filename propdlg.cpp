@@ -19,6 +19,8 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
        WStyle_MinMax | WType_Modal) {
   user = auser;
 #ifdef _KU_QUOTA
+  if (aquota == NULL)
+    is_quota = 0;
   quota = aquota;
   chquota = 0;
 #endif
@@ -52,7 +54,7 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
   pbsetpwd = new QPushButton(w1, "pbsetpwd");
   pbsetpwd->setFont(rufont);
   pbsetpwd->setGeometry(240, 180, 80, 20);
-  pbsetpwd->setText("Set password");
+  pbsetpwd->setText(_("Set password"));
   QObject::connect(pbsetpwd, SIGNAL(clicked()), this, SLOT(setpwd()));
 
   lefname = addLineEdit(w1, "lefname", 10, 80, 160, 20, "");
@@ -66,7 +68,7 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
   leshell->setFont(rufont);
   QToolTip::add(leshell, _("Login shell"));
   leshell->clear();
-  leshell->insertItem("<Empty>");
+  leshell->insertItem(_("<Empty>"));
 
   FILE *f = fopen("/etc/shells","r");
   if (f) {

@@ -3,7 +3,9 @@
 
 #include <ktablistbox.h>
 #include <ktopwidget.h>
+#include <qevent.h>
 #include <qlist.h>
+#include <qpushbt.h>
 #include <qpixmap.h>
 
 #ifdef _KU_QUOTA
@@ -53,8 +55,13 @@ protected:
   Quotas *q;
 #endif
   void reload(int id);
+  virtual void resizeEvent (QResizeEvent *rse);
 
 private:
+  QPushButton *pbquit;
+  QPushButton *pbedit;
+  QPushButton *pbdel;
+  QPushButton *pbadd;
   int sort;
   bool changed;
 };

@@ -50,7 +50,6 @@ printf("mainDlg::init()\n");
 
   reload(0);
 
-  QPushButton* pbquit;
   pbquit = new QPushButton( this, "pbquit" );
   pbquit->setFont(rufont);
   QToolTip::add(pbquit, _("Quit KUser"));
@@ -59,7 +58,6 @@ printf("mainDlg::init()\n");
   pbquit->setText(_("Quit"));
   QObject::connect(pbquit, SIGNAL(clicked()), this, SLOT(quit()));
 
-  QPushButton* pbedit;
   pbedit = new QPushButton( this, "pbedit" );
   pbedit->setFont(rufont);
   QToolTip::add(pbedit, _("Edit user profile"));
@@ -67,7 +65,6 @@ printf("mainDlg::init()\n");
   pbedit->setText(_("Edit"));
   QObject::connect(pbedit, SIGNAL(clicked()), this, SLOT(edit()));
 
-  QPushButton* pbdel;
   pbdel = new QPushButton( this, "pbdel" );
   pbdel->setFont(rufont);
   QToolTip::add(pbdel, _("Delete user"));
@@ -75,7 +72,6 @@ printf("mainDlg::init()\n");
   pbdel->setText(_("Delete"));
   QObject::connect(pbdel, SIGNAL(clicked()), this, SLOT(del()));
 
-  QPushButton* pbadd;
   pbadd = new QPushButton(this, "pbadd");
   pbadd->setFont(rufont);
   QToolTip::add(pbadd, _("Add user"));
@@ -125,7 +121,7 @@ printf("mainDlg::init()\n");
 
   addToolBar(toolbar);
 
-  setFixedSize(400, 400);
+  resize(400, 400);
 }
 
 mainDlg::~mainDlg() {
@@ -204,12 +200,17 @@ void mainDlg::add() {
   propdlg *editUser;
 
   KUser *tk;
+#ifdef _KU_QUOTA
   Quota *tq;
+#endif // _KU_QUOTA
 
   tk = new KUser();
 
   tk->p_uid = u->first_free();
+
+#ifdef _KU_QUOTA
   tq = new Quota(tk->p_uid, FALSE);
+#endif // _KU_QUOTA
 
   ud = new usernamedlg(tk, this);
   if (ud->exec() == 0)
@@ -240,19 +241,23 @@ void mainDlg::add() {
   if (is_quota)
     editUser = new propdlg(tk, tq, this, "userin");
   else
-    editUser = new propdlg(tk, tq, this, "userin");
+    editUser = new propdlg(tk, NULL, this, "userin");
 #else
   editUser = new propdlg(tk, this, "userin");
 #endif
 
   if (editUser->exec() != 0) {
     u->addUser(tk);
+#ifdef _KU_QUOTA
     q->addQuota(tq);
+#endif
     changed = TRUE;
   }
   else {
     delete tk;
+#ifdef _KU_QUOTA
     delete tq;
+#endif
   }
 
   reload(u->getUsersNumber()-1);
@@ -278,7 +283,7 @@ void mainDlg::quit() {
 
 void mainDlg::about() {
     QString tmp;
-    tmp.sprintf(_("KUser version %s\nKDE project\nThis program was created by\nDenis Y. Pershin\ndyp@isis.nsu.ru\nCopyright 1997(c)"), _KU_VERSION);
+    tmp.sprintf(_("KUser version %s\nKDE project\nThis program was created by\nDenis Y. Pershin\ndyp@inetlab.com\nCopyright 1997(c)"), _KU_VERSION);
     KMsgBox::message(0, _("Message"), tmp, KMsgBox::INFORMATION);
 }
 
@@ -382,7 +387,7 @@ void mainDlg::selected(int i) {
 
   tmpKU =  list->getCurrentUser();
   if (tmpKU == NULL) {
-    printf("Null pointer tmpKU in mainDlg::selected(%d)\n", i);
+    printf(_("Null pointer tmpKU in mainDlg::selected(%d)\n"), i);
     return;
   }
 
@@ -391,7 +396,7 @@ void mainDlg::selected(int i) {
 
   tmpQ = q->getQuota(tmpKU->p_uid);
   if (tmpQ == NULL) {
-    printf("Null pointer tmpQ in mainDlg::selected(%d)\n", i);
+    printf(_("Null pointer tmpQ in mainDlg::selected(%d)\n"), i);
     return;
   }
 
@@ -421,3 +426,19 @@ Quotas *mainDlg::getQuotas() {
   return (q);
 }
 #endif
+
+void mainDlg::resizeEvent (QResizeEvent *rse) {
+  QSize sz;
+
+  sz = rse->size();
+printf("width = %d, height = %d\n", sz.width(), sz.height());
+  list->setGeometry(10,80,sz.width()-20,sz.height()-192);
+
+  pbquit->move(sz.width()/8, sz.height()-50);
+  pbedit->move(sz.width()*7/8-100, sz.height()-50);
+  pbdel->move(sz.width()/8, sz.height()-100);
+  pbadd->move(sz.width()*7/8-100, sz.height()-100);
+
+  updateRects();
+}
+

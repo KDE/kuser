@@ -1,4 +1,5 @@
 #include "kuservw.moc"
+#include "misc.h"
 
 KUserView::KUserView(QWidget *parent, const char *name) : QWidget( parent, name )
 {
@@ -45,8 +46,8 @@ void KUserView::init()
   m_Users = new KUserTable(this, "_table" );
   m_Users->setGeometry(0, m_Header->height(), width(), height()-m_Header->height() );
 
-  m_Header->setHeaderLabel(0, "Login");
-  m_Header->setHeaderLabel(1, "Full Name");
+  m_Header->setHeaderLabel(0, _("User login"));
+  m_Header->setHeaderLabel(1, _("Full Name"));
 
   connect(m_Users, SIGNAL(highlighted(int,int)), SLOT(onHighlight(int,int)));
   connect(m_Users, SIGNAL(selected(int,int)), SLOT(onSelect(int,int)));
@@ -58,8 +59,8 @@ void KUserView::init()
 
   connect(m_Users, SIGNAL(hSliderMoved(int)), m_Header, SLOT(setOrigin(int)));
 
-  m_Header->setHeaderSize(0, 80);
-  m_Header->setHeaderSize(1, 280);
+  m_Header->setHeaderSize(0, 100);
+  m_Header->setHeaderSize(1, 260);
 }
 
 void KUserView::repaint() {
@@ -90,5 +91,8 @@ void KUserView::onHeaderClicked(int num) {
 void KUserView::resizeEvent(QResizeEvent *rev)
 {
   m_Header->resize(rev->size().width(), 0);
+  m_Header->setHeaderSize(0, (rev->size().width()-20)*5/18);
+  m_Header->setHeaderSize(1, (rev->size().width()-20)*13/18);
+
   m_Users->setGeometry(0, m_Header->height(), rev->size().width(), rev->size().height()-m_Header->height());
 }

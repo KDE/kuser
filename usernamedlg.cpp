@@ -12,7 +12,7 @@ usernamedlg::usernamedlg(KUser *auser, QWidget* parent, const char* name)
   setCaption(_("Enter username"));
   pbOk = new QPushButton( this, "PushButton_1" );            
   pbOk->setGeometry( 20, 90, 100, 30 );                       
-  pbOk->setText( "Ok" );                                       
+  pbOk->setText(_("Ok"));
   pbOk->setDefault(TRUE);
   QObject::connect(pbOk, SIGNAL(clicked()), this, SLOT(ok()));
                                                                                
@@ -39,7 +39,7 @@ void usernamedlg::ok()
   QString tmp;
 
   if (users->user_lookup(leusername->text()) != NULL) {
-    tmp.sprintf(_("User with name %s is already exist."), leusername->text());
+    tmp.sprintf(_("User with name %s already exists."), leusername->text());
     KMsgBox::message(0, _("Error"), tmp, KMsgBox::STOP);
   }
   else {

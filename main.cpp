@@ -31,7 +31,7 @@ void initmain() {
 
   rufont.setRawMode(TRUE);
   if (!rufont.exactMatch())
-    puts("Doesn't found a font!\n");
+    puts(_("Doesn't found a font!\n"));
 }
 
 void donemain() {

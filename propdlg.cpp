@@ -30,14 +30,14 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
 #endif
 
   tw = new KTabCtl(this, "tw");
-  tw->setGeometry(10, 10, 430, 410);
+  tw->setGeometry(0, 0, 450, 410);
 
   pbok = new QPushButton(_("Ok"), this, "pbok");
-  pbok->setGeometry(180, 430, 100, 30);
+  pbok->setGeometry(200, 425, 100, 30);
   pbok->setDefault(TRUE);
   QObject::connect(pbok, SIGNAL(pressed()), this, SLOT(ok()));
   pbcancel = new QPushButton(_("Cancel"), this, "pbcancel");
-  pbcancel->setGeometry(300, 430, 100, 30);
+  pbcancel->setGeometry(320, 425, 100, 30);
   QObject::connect(pbcancel, SIGNAL(pressed()), this, SLOT(cancel()));
 
   w1 = new QWidget(this, "wd_Password");
@@ -56,7 +56,7 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
 //  ld3 = addLabel(w1, "mld3", 200, 60, 50, 20, _("Primary group id"));
 
   pbsetpwd = new QPushButton(w1, "pbsetpwd");
-  pbsetpwd->setGeometry(240, 180, 80, 20);
+  pbsetpwd->setGeometry(260, 150, 120, 30);
   pbsetpwd->setText(_("Set password"));
   QObject::connect(pbsetpwd, SIGNAL(clicked()), this, SLOT(setpwd()));
 

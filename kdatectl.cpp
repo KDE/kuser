@@ -107,7 +107,6 @@ long KDateCtl::getDate() {
   qd = new QDate(iyear, imonth, iday);
 
   r = b->daysTo(*qd);
-  printf("r = %il\n", r);
 
   delete b;
   delete qd;

@@ -45,9 +45,8 @@ install-data-local:
 edit::
 	xemacs -fn "-edict-fixed-medium-r-*-*-*-120-*-*-*-*-koi8-r" -geometry 142x41+0+0 $(EDITABLE)&
 
-# I don't care, what Denis does in his free time ;)
 messages:
-	@XGETTEXT@ -k_ -ki18n -o ../po/kuser.pot -x ../../kdelibs/po/kde.pot -d kuser -C -n *.cpp
+	$(XGETTEXT) -C -k_ -ki18n -x $(includedir)/kde.pot $(kuser_SOURCES) && mv messages.po ../po/kwm.pot
 
 pot::
 	/usr/local/bin/xgettext -k_ -o kuser.pot -p ../po -d kuser -C -n *.cpp

@@ -381,7 +381,7 @@ void mainDlg::groupSelected(int i) {
   tmpKG = g->group(i);
 
   if (tmpKG == NULL) {
-    printf(i18n("Null pointer tmpKG in mainDlg::groupSelected(%d)\n"), i);
+    printf("Null pointer tmpKG in mainDlg::groupSelected(%d)\n", i);
     return;
   }
 
@@ -399,7 +399,7 @@ void mainDlg::userSelected(int i) {
 
   tmpKU =  lbusers->getCurrentUser();
   if (tmpKU == NULL) {
-    printf(i18n("Null pointer tmpKU in mainDlg::userSelected(%d)\n"), i);
+    printf("Null pointer tmpKU in mainDlg::userSelected(%d)\n", i);
     return;
   }
 
@@ -409,7 +409,7 @@ void mainDlg::userSelected(int i) {
   if (is_quota != 0) {
     tmpQ = q->getQuota(tmpKU->getUID());
     if (tmpQ == NULL) {
-      printf(i18n("Null pointer tmpQ in mainDlg::selected(%d)\n"), i);
+      printf("Null pointer tmpQ in mainDlg::selected(%d)\n", i);
       return;
     }
   }

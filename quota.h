@@ -51,9 +51,6 @@
 #  define _KU_UFS_QUOTA
 #elif HAVE_LINUX
 #    if defined __GLIBC__ && __GLIBC__ >= 2
-#      if !defined HAVE_PAM
-#      error "GLIBC has an error regarding to shadow handling. Possibly you should run configure with --with-pam option and then recompile kuser. Otherwise, please, contact Denis Pershin <dyp@inetlab.com>"
-#      endif
        typedef unsigned int __u32;
 #      define MNTTYPE_EXT2 "ext2"
 #    endif

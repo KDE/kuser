@@ -5,14 +5,13 @@
 #include <qlayout.h>
 #include <qvalidator.h>
 #include "grpnamedlg.h"
-#include "grpnamedlg.moc"
 #include "misc.h"
 #include "maindlg.h"
 
 grpnamedlg::grpnamedlg(KGroup *agroup, QWidget* parent, const char* name)
            :QDialog(parent, name, TRUE) {
   group = agroup;
-  group->setgid(groups->first_free());
+  group->setGID(groups->first_free());
 
   setCaption(i18n("Add group"));
 
@@ -49,11 +48,8 @@ grpnamedlg::grpnamedlg(KGroup *agroup, QWidget* parent, const char* name)
   legid->setText( "XXXXXXXXXXXXXXXXXXX" );
   legid->setMinimumSize( legid->sizeHint() );
   
-  QString s;
-  s.setNum(group->getgid());
-  
   // clear text
-  legid->setText(s);
+  legid->setText(QString("%1").arg(group->getGID()));
   legid->setValidator(new QIntValidator(this, "val1"));
 
   grid->addWidget(legid, 1, 1);
@@ -106,8 +102,8 @@ void grpnamedlg::ok()
     return;
   }
   
-  group->setname(legrpname->text());
-  group->setgid(s.toInt());
+  group->setName(legrpname->text());
+  group->setGID(s.toInt());
   accept();
 }
 

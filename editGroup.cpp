@@ -7,93 +7,43 @@
 
  *********************************************************************/
 
-#include "maindlg.h"
-#include "editGroup.moc"
 #include <kapp.h>
-#include <kbuttonbox.h>
-#include <qlayout.h>
+
+#include "maindlg.h"
+#include "editGroup.h"
+#include "editGroupData.h"
+
 #include <klocale.h>
 
 #define Inherited editGroupData
 
-editGroup::editGroup(KGroup *akg,
-		       QWidget* parent,
-		       const char* name)
-  : QDialog( parent, name, true)
-{
+editGroup::editGroup(KGroup *akg, QWidget* parent, const char* name) 
+: Inherited(parent, name) {
   uint i;
 
   kg = akg;
 
-  QVBoxLayout *tl = new QVBoxLayout(this, 10, 10);
-  QGridLayout *l1 = new QGridLayout(2, 3);
-  tl->addLayout(l1);
+  for (i = 0; i<kg->count(); i++)
+    m_Group->insertItem(kg->user(i));
 
-  QLabel *l = new QLabel(i18n("Users"), this);
-  l->setFixedSize(l->sizeHint());
-  l1->addWidget(l, 0, 0, AlignLeft);
-
-  l = new QLabel(i18n("Groups"), this);
-  l->setFixedSize(l->sizeHint());
-  l1->addWidget(l, 0, 2, AlignLeft);
-
-  QPushButton *pb_add = new QPushButton("->", this);
-  QPushButton *pb_del = new QPushButton("<-", this);
-  pb_del->setFixedSize(pb_del->sizeHint());
-  pb_add->setFixedSize(pb_add->sizeHint());
-  QVBoxLayout *l2 = new QVBoxLayout;
-  l1->addLayout(l2, 1, 1);
-  l2->addStretch(1);
-  l2->addWidget(pb_add);
-  l2->addWidget(pb_del);
-  l2->addStretch(1);
-
-  m_Users = new QListBox(this);
-  m_Users->setMinimumSize(160, 120);
-  m_Group = new QListBox(this);
-  m_Group->setMinimumSize(160, 120);
-
-  l1->addWidget(m_Users, 1, 0);
-  l1->addWidget(m_Group, 1, 2);
-
-  KButtonBox *bbox = new KButtonBox(this);
-  bbox->addStretch(1);
-  QPushButton *pbok = bbox->addButton(i18n("OK"));
-  QPushButton *pbcancel = bbox->addButton(i18n("Cancel"));
-  bbox->layout();
-  tl->addWidget(bbox);
-  tl->activate();
-
-  for (i = 0; i<kg->getUsersNumber(); i++)
-    m_Group->insertItem(kg->getUserName(i));
-
-  for (i = 0; i<users->getNumber(); i++)
-    if (kg->lookup_user(users->get(i)->getp_name()) == 0)
-      m_Users->insertItem(users->get(i)->getp_name());
-
+  for (i = 0; i<users->count(); i++)
+    if (!kg->lookup_user(users->user(i)->getName()))
+      m_Users->insertItem(users->user(i)->getName());
+  
   if (m_Users->count() != 0)
     m_Users->setCurrentItem(0);
+
   if (m_Group->count() != 0)
     m_Group->setCurrentItem(0);
 
-  connect(pbok, SIGNAL(clicked()),
-	  this, SLOT(ok()));
-  connect(pbcancel, SIGNAL(clicked()),
-	  this, SLOT(cancel()));
-  connect(pb_add, SIGNAL(clicked()),
-	  this, SLOT(add()));
-  connect(pb_del, SIGNAL(clicked()),
-	  this, SLOT(del()));
+  setCaption(i18n("Group properties"));
 }
 
-
-
-editGroup::~editGroup()
-{
+editGroup::~editGroup() {
 }
 
 void editGroup::ok() {
-  kg->clearUsers();
+  kg->clear();
 
   for (uint i=0; i<m_Group->count(); i++)
     kg->addUser(m_Group->text(i));

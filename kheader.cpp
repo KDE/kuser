@@ -1,6 +1,7 @@
-#include "kheader.moc"
 #include "qpainter.h"
 #include "qdrawutil.h"
+
+#include "kheader.h"
 
 //=======================================================================
 // KHeaderItem internal class
@@ -57,23 +58,19 @@ void KHeaderItem::setText( QString label, int alignment )
 	m_labelAlignment = alignment;
 }
 
-QString KHeaderItem::text()
-{
+QString KHeaderItem::text() {
 	return m_label;
 }
 
-void KHeaderItem::setFlags( int aflags )
-{
+void KHeaderItem::setFlags( int aflags ) {
 	m_flags = ( m_flags & KHeader::Vertical ) | ( aflags & ~KHeader::Vertical );
 }
 
-int KHeaderItem::flags()
-{
+int KHeaderItem::flags() {
 	return m_flags;
 }
 
-void KHeaderItem::paint(QPainter *paint, QColorGroup *g, int style, int pos, int width, int height, int state)
-{
+void KHeaderItem::paint(QPainter *paint, QColorGroup *g, int style, int pos, int width, int height, int state) {
 	if( m_flags & KHeader::Vertical )
 	{
 		if( pos>height || pos+m_size<0 )

@@ -14,20 +14,20 @@ public:
   KGroup(KGroup *copy);
   ~KGroup();
 
-  QString getname();
-  QString getpwd();
-  unsigned int getgid();
+  const QString &getName() const;
+  const QString &getPwd() const;
+  unsigned int getGID() const;
 
-  void setname(const char *data);
-  void setpwd(const char *data);
-  void setgid(unsigned int data);
+  void setName(const QString &data);
+  void setPwd(const QString &data);
+  void setGID(unsigned int data);
 
-  void addUser(const char *aname);
-  bool removeUser(const char *aname);
-  QString *lookup_user(const char *aname);
-  uint getUsersNumber();
-  QString getUserName(uint i);
-  void clearUsers();
+  void addUser(const QString &name);
+  bool removeUser(const QString &name);
+  bool lookup_user(const QString &name);
+  uint count() const;
+  QString user(uint i);
+  void clear();
 
 protected:
   QString
@@ -43,7 +43,8 @@ class KGroups {
 public:
   KGroups();
   ~KGroups();
-  KGroup *lookup(const char *name);
+
+  KGroup *lookup(const QString &name);
   KGroup *lookup(unsigned int gid);
   int first_free();
 
@@ -52,17 +53,20 @@ public:
 
   KGroup *first();
   KGroup *next();
-  uint getNumber();
-  KGroup *get(uint num);
+  KGroup *group(uint num);
 
   void add(KGroup *ku);
   void del(KGroup *au);
 
-	uint count();
+	uint count() const;
 
 protected:
   int g_saved;
   QList<KGroup> g;
+
+  int mode;
+  int uid;
+  int gid;
 };
 
 #endif // _KGROUP_H_

@@ -2,27 +2,20 @@
 #include <stdio.h>
 
 #include <qvalidator.h>
-#include <qdatetime.h>
-#include <qstring.h>
+#include <qdatetm.h>
 
 #include "kdatectl.h"
-#include "kdatectl.moc"
 #include "misc.h"
 
 KDateCtl::KDateCtl(QWidget *parent, const char *name,
                    const char *checktitle, const char *title,
                    long adate, long abase, int ax, int ay) {
-  QString tmp;
-
   x = ax; y = ay;
 
-  tmp = QString("%1_day").arg(name);
-  day = addLineEdit(parent, tmp, x, y+25, 30, 27, "");
-  tmp = QString("va_%1_day").arg(name);
-  day->setValidator(new QIntValidator(1, 31, parent, name));
+  day = addLineEdit(parent, QString("%1_day").arg(name), x, y+25, 30, 27, "");
+  day->setValidator(new QIntValidator(1, 31, parent, QString("va_%1_day").arg(name)));
 
-  tmp = QString("%1_month").arg(name);
-  month = new KCombo(FALSE, parent, tmp);
+  month = new KCombo(FALSE, parent, QString("%1_month").arg(name));
   month->clear();
   month->insertItem(i18n("January"));
   month->insertItem(i18n("February"));
@@ -39,17 +32,14 @@ KDateCtl::KDateCtl(QWidget *parent, const char *name,
 
   month->setGeometry(x+40, y+25, 100, 27);
 
-  tmp = QString("%1_year").arg(name);
-  year = addLineEdit(parent, tmp, x+150, y+25, 50, 27, "");
-  tmp = QString("va_%1_year").arg(name);
-  year->setValidator(new QIntValidator(1970, 2023, parent, name));
+  year = addLineEdit(parent, QString("%1_year").arg(name), x+150, y+25, 50, 27, "");
+  year->setValidator(new QIntValidator(1970, 2023, parent, QString("va_%1_year").arg(name)));
 
-  tmp = QString("%1_isempty").arg(name);
-  isempty = new QCheckBox(checktitle, parent, tmp);
+  isempty = new QCheckBox(checktitle, parent, QString("%1_isempty").arg(name));
   isempty->setGeometry(x, y, 200, 20); 
+  isempty->setAutoResize(true);
 
-  tmp = QString("%1_title").arg(name);
-  label = addLabel(parent, tmp, x+210, y+25, 50, 27, title);
+  label = addLabel(parent, QString("%1_title").arg(name), x+210, y+25, 50, 27, title);
 
   QObject::connect(isempty, SIGNAL(toggled(bool)), this,
                             SLOT(isEmptyToggled(bool)));

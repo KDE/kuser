@@ -1,9 +1,9 @@
 #ifndef _KU_GLOBALS_H_
 #define _KU_GLOBALS_H_
 
-#define _KU_VERSION "1.1"
+#define _KU_VERSION "1.0"
 
-#include <config.h>
+#include "../config.h"
 #include <kconfig.h>
 #include "kerror.h"
 
@@ -17,7 +17,6 @@ extern int is_shadow;
 #define KU_BACKUP_EXT ".bak"
 
 #define MAIL_SPOOL_DIR "/var/spool/mail"
-#define COPYSKEL_SCRIPT "/opt/kde/share/apps/kuser/copyskel"
 
 #ifdef _KU_NIS
   #define SHELL_FILE "/etc/shells"
@@ -54,7 +53,6 @@ extern int is_shadow;
   #endif
 #endif
 
-extern char picspath[200];
 extern KConfig *config;
 extern KError *err;
 
@@ -67,5 +65,12 @@ extern KError *err;
 extern "C" int getuid(void);
 extern "C" int unlink(const char *);
 #endif
+
+#define KU_HOMEDIR_PERM 0755
+#define KU_MAILBOX_PERM 0660
+
+#define KU_MAILBOX_GID 0
+
+#define KU_FIRST_USER 1001
 
 #endif // _KU_GLOBALS_H_

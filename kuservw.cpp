@@ -1,5 +1,6 @@
-#include "kuservw.moc"
 #include "misc.h"
+
+#include "kuservw.h"
 
 KUserView::KUserView(QWidget *parent, const char *name) : QWidget( parent, name )
 {

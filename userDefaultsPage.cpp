@@ -15,14 +15,12 @@
 #include "userDefaultsPage.h"
 #include <klocale.h>
 
-userDefaultsPage::userDefaultsPage
-(
+userDefaultsPage::userDefaultsPage(
 	QWidget* parent,
 	const char* name
 )
 	:
-	QWidget( parent, name)
-{
+	QWidget( parent, name) {
   QVBoxLayout *tl = new QVBoxLayout(this, 10, 10);
 
   QLabel *l;
@@ -71,15 +69,14 @@ userDefaultsPage::userDefaultsPage
   copySkel->setFixedSize(copySkel->sizeHint());
   tl->addWidget(copySkel, 0, AlignLeft);
 
-  usePrivateGroup = new QCheckBox(i18n("Use Private Group"), this);
-  usePrivateGroup->setFixedSize(usePrivateGroup->sizeHint());
-  tl->addWidget(usePrivateGroup, 0, AlignLeft);
+  userPrivateGroup = new QCheckBox(i18n("User Private Group"), this);
+  userPrivateGroup->setFixedSize(userPrivateGroup->sizeHint());
+  tl->addWidget(userPrivateGroup, 0, AlignLeft);
   tl->activate();
 }
 
 
-userDefaultsPage::~userDefaultsPage()
-{
+userDefaultsPage::~userDefaultsPage() {
 }
 
 const char *userDefaultsPage::getShell() const {
@@ -98,8 +95,8 @@ bool userDefaultsPage::getCopySkel() const {
   return copySkel->isChecked();
 }
 
-bool userDefaultsPage::getUsePrivateGroup() const {
-  return usePrivateGroup->isChecked();
+bool userDefaultsPage::getUserPrivateGroup() const {
+  return userPrivateGroup->isChecked();
 }
 
 void userDefaultsPage::setShell(const char *data) {
@@ -125,8 +122,6 @@ void userDefaultsPage::setCopySkel(bool data) {
   copySkel->setChecked(data);
 }
 
-void userDefaultsPage::setUsePrivateGroup(bool data) {
-  usePrivateGroup->setChecked(data);
+void userDefaultsPage::setUserPrivateGroup(bool data) {
+  userPrivateGroup->setChecked(data);
 }
-
-#include "userDefaultsPage.moc"

@@ -1,9 +1,9 @@
-#include "krowtable.moc"
 #include "qkeycode.h"
 
+#include "krowtable.h"
+
 KRowTable::KRowTable( Flags aflags, QWidget *parent, const char *name )
-	: QTableView( parent, name )
-{
+	: QTableView( parent, name ) {
 	init(aflags);
 }
 

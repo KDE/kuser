@@ -14,14 +14,11 @@
 #include <qcombobox.h>
 #include <qcheckbox.h>
 
-class userDefaultsPage : public QWidget
-{
+class userDefaultsPage : public QWidget {
     Q_OBJECT
 
 public:
-
-    userDefaultsPage
-    (
+    userDefaultsPage(
         QWidget* parent = NULL,
         const char* name = NULL
     );
@@ -32,19 +29,20 @@ public:
   const char *getHomeBase() const;
   bool getCreateHomeDir() const;
   bool getCopySkel() const;
-  bool getUsePrivateGroup() const;
+  bool getUserPrivateGroup() const;
 
   void setShell(const char *data);
   void setHomeBase(const char *data);
   void setCreateHomeDir(bool data);
   void setCopySkel(bool data);
-  void setUsePrivateGroup(bool data);
+  void setUserPrivateGroup(bool data);
 
 private:
   QComboBox *shell;
   QLineEdit *home;
   QCheckBox* createHomeDir;
   QCheckBox* copySkel;
-  QCheckBox* usePrivateGroup;
+  QCheckBox* userPrivateGroup;
 };
 #endif // userDefaultsPage_included
+

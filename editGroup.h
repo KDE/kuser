@@ -13,9 +13,11 @@
 #include <qdialog.h>
 #include <qlistbox.h>
 
+#include "editGroupData.h"
+
 #include "kgroup.h"
 
-class editGroup : public QDialog 
+class editGroup : public editGroupData
 {
   Q_OBJECT
 public:

@@ -9,23 +9,18 @@ kuser_LDADD	=	$(LIB_KDEUI) $(LIBCRYPT) $(PAMLIBS) $(LIBPWDB) $(LIBGEN)
 ####### Files
 
 kuser_SOURCES	=	\
-	mainWidget.cpp editGroup.cpp kuservw.cpp \
+	mainWidget.cpp editGroup.cpp editGroupData.cpp kuservw.cpp \
 	kheader.cpp krowtable.cpp kusertbl.cpp kgrouptbl.cpp kgroupvw.cpp \
 	kdatectl.cpp kuser.cpp kgroup.cpp main.cpp maindlg.cpp mnt.cpp \
 	propdlg.cpp quota.cpp misc.cpp usernamedlg.cpp pwddlg.cpp \
 	grpnamedlg.cpp kerror.cpp addUser.cpp editDefaults.cpp \
 	userDefaultsPage.cpp 
 
-METASOURCES =	\
-	mainWidget.moc editGroup.moc kuservw.moc kheader.moc \
-	krowtable.moc kusertbl.moc kgrouptbl.moc kgroupvw.moc kdatectl.moc \
-	maindlg.moc propdlg.moc usernamedlg.moc pwddlg.moc grpnamedlg.moc \
-	addUser.moc userDefaultsPage.moc \
-	editDefaults.moc
+kuser_METASOURCES =	USE_AUTOMOC
 
 # the following are only useful, if you want to use "make dist"
 noinst_HEADERS	=	\
-	mainWidget.h editGroup.h kuservw.h kheader.h \
+	mainWidget.h editGroup.h editGroupData.h kuservw.h kheader.h \
 	krowtable.h kusertbl.h kdatectl.h kuser.h maindlg.h kgroup.h \
 	kgrouptbl.h kgroupvw.h propdlg.h mnt.h quota.h globals.h misc.h \
 	usernamedlg.h pwddlg.h grpnamedlg.h kerror.h addUser.h \

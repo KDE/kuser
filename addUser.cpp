@@ -20,7 +20,8 @@
 #include "globals.h"
 #include "maindlg.h"
 #include "misc.h"
-#include "addUser.moc"
+
+#include "addUser.h"
 
 #ifdef _KU_QUOTA
 addUser::addUser(KUser *auser, Quota *aquota, QWidget *parent, const char *name, int isprep) :
@@ -37,10 +38,10 @@ addUser::addUser(KUser *auser, Quota *aquota, QWidget *parent, const char *name,
   copyskel->setGeometry(200, 110, 200, 30);
   copyskel->setEnabled(FALSE);
 
-  usePrivateGroup = new QCheckBox(w1, "usePrivateGroup");
-  usePrivateGroup->setText(i18n("Use Private Group"));
-  usePrivateGroup->setGeometry(200, 150, 200, 30);
-  connect(usePrivateGroup, SIGNAL(toggled(bool)), this, SLOT(usePrivateGroupChecked(bool)));
+  userPrivateGroup = new QCheckBox(w1, "userPrivateGroup");
+  userPrivateGroup->setText(i18n("User Private Group"));
+  userPrivateGroup->setGeometry(200, 150, 200, 30);
+  connect(userPrivateGroup, SIGNAL(toggled(bool)), this, SLOT(userPrivateGroupChecked(bool)));
 }
 #else
 addUser::addUser(KUser *auser, QWidget *parent = 0, const char *name = 0, int isprep = false) :
@@ -64,8 +65,8 @@ addUser::addUser(KUser *auser, QWidget *parent = 0, const char *name = 0, int is
 }
 #endif
 
-void addUser::setUsePrivateGroup(bool data) {
-  usePrivateGroup->setChecked(data);
+void addUser::setUserPrivateGroup(bool data) {
+  userPrivateGroup->setChecked(data);
 }
 
 void addUser::setCreateHomeDir(bool data) {
@@ -75,6 +76,18 @@ void addUser::setCreateHomeDir(bool data) {
 
 void addUser::setCopySkel(bool data) {
   copyskel->setChecked(data);
+}
+
+bool addUser::getUserPrivateGroup() {
+  return userPrivateGroup->isChecked();
+}
+
+bool addUser::getCreateHomeDir() {
+  return createhome->isChecked();
+}
+
+bool addUser::getCopySkel() {
+  return copyskel->isChecked();
 }
 
 void addUser::ok() {
@@ -103,7 +116,7 @@ void addUser::ok() {
   accept();
 }
 
-void addUser::usePrivateGroupChecked(bool data) {
+void addUser::userPrivateGroupChecked(bool data) {
   cbpgrp->setEnabled(!data);
 }
 
@@ -116,7 +129,7 @@ bool addUser::checkHome() {
   int r;
   QString tmp;
 
-  r = stat(user->getp_dir(), &s);
+  r = stat(user->getHomeDir(), &s);
 
   if ((r == -1) && (errno = ENOENT))
     return true;
@@ -124,11 +137,11 @@ bool addUser::checkHome() {
   if (r == 0)
     if (S_ISDIR(s.st_mode))
       tmp = i18n("Directory %1 already exists (uid = %2, gid = %3)") 
-                 .arg(user->getp_dir())
+                 .arg(user->getHomeDir())
                  .arg(s.st_uid)
                  .arg(s.st_gid);
     else
-      tmp = i18n("%1 is not a directory").arg(user->getp_dir());
+      tmp = i18n("%1 is not a directory").arg(user->getHomeDir());
   else
     tmp = QString("checkHome: stat: %1 ").arg(strerror(errno));
   
@@ -147,7 +160,7 @@ bool addUser::checkMailBox() {
 
   mailboxpath = QString("%s/%s")
 	.arg(MAIL_SPOOL_DIR)
-	.arg(user->getp_name());
+	.arg(user->getFullName());
   r = stat(mailboxpath, &s);
   
   if ((r == -1) && (errno == ENOENT))

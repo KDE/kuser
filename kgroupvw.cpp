@@ -1,14 +1,13 @@
-#include "kgroupvw.moc"
 #include "misc.h"
 
-KGroupView::KGroupView(QWidget *parent, const char *name) : QWidget( parent, name )
-{
+#include "kgroupvw.h"
+
+KGroupView::KGroupView(QWidget *parent, const char *name) : QWidget( parent, name ) {
   init();
   current = -1;
 }
 
-KGroupView::~KGroupView()
-{
+KGroupView::~KGroupView() {
   delete m_Header;
   delete m_Groups;
 }
@@ -38,8 +37,7 @@ void KGroupView::sortBy(int num) {
   m_Groups->sortBy(num);
 }
 
-void KGroupView::init()
-{
+void KGroupView::init() {
   m_Header = new KHeader(this, "_gheader", 2, KHeader::Resizable|KHeader::Buttons );
   m_Header->setGeometry(2, 0, width(), 0 );
 
@@ -72,14 +70,12 @@ KGroup *KGroupView::getCurrentGroup() {
   return (((KGroupRow *)m_Groups->getRow(current))->getData());
 }
 
-void KGroupView::onSelect(int row, int)
-{
+void KGroupView::onSelect(int row, int) {
   current = row;
   emit selected(row);
 }
 
-void KGroupView::onHighlight(int row, int)
-{
+void KGroupView::onHighlight(int row, int) {
   current = row;
   emit highlighted(row);
 }
@@ -88,11 +84,11 @@ void KGroupView::onHeaderClicked(int num) {
   emit headerClicked(num);
 }
 
-void KGroupView::resizeEvent(QResizeEvent *rev)
-{
+void KGroupView::resizeEvent(QResizeEvent *rev) {
   m_Header->resize(rev->size().width(), 0);
   m_Header->setHeaderSize(0, (rev->size().width()-20)*3/18);
   m_Header->setHeaderSize(1, (rev->size().width()-20)*15/18);
 
   m_Groups->setGeometry(0, m_Header->height(), rev->size().width(), rev->size().height()-m_Header->height());
 }
+

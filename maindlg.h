@@ -18,8 +18,7 @@
 #include "kgroupvw.h"
 #include "kheader.h"
 
-class mainDlg:public QWidget
-{
+class mainDlg : public QWidget {
 Q_OBJECT
 public:
   mainDlg(QWidget *parent = 0);

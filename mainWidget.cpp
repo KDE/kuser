@@ -1,5 +1,4 @@
 #include "maindlg.h"
-#include "mainWidget.moc"
 
 #include "globals.h"
 #include <qtooltip.h>
@@ -9,9 +8,9 @@
 
 #include "misc.h"
 
-mainWidget::mainWidget(const char *name) :
-KTopLevelWidget(name)
-{
+#include "mainWidget.h"
+
+mainWidget::mainWidget(const char *name) : KTMainWindow(name) {
   md = new mainDlg(this);
   md->init();
 
@@ -40,9 +39,9 @@ KTopLevelWidget(name)
   tmp = i18n("KUser version %1\n"
 		"KDE project\n"
 		"This program was created by\n"
-		"Denis Y. Pershin\n"
+		"Denis Pershin\n"
 		"dyp@inetlab.com\n"
-		"Copyright 1997(c)").arg(_KU_VERSION);
+		"Copyright 1997, 1998, 1999 (c)").arg(_KU_VERSION);
   QPopupMenu *help = kapp->getHelpMenu(true, tmp);
 
   menubar = new KMenuBar( this );

@@ -12,8 +12,7 @@
 #include <klocale.h>
 
 editDefaults::editDefaults(QWidget* parent, const char* name)
-  : QTabDialog(parent, name, TRUE, 184320) 
-{
+  : QTabDialog(parent, name, TRUE, 184320) {
   page1 = new userDefaultsPage(this, "user_page");
   addTab(page1, i18n("User"));
   resize(330, 300);
@@ -40,8 +39,8 @@ bool editDefaults::getCopySkel() const {
   return page1->getCopySkel();
 }
 
-bool editDefaults::getUsePrivateGroup() const {
-  return page1->getUsePrivateGroup();
+bool editDefaults::getUserPrivateGroup() const {
+  return page1->getUserPrivateGroup();
 }
 
 void editDefaults::setShell(const char *data) {
@@ -60,8 +59,6 @@ void editDefaults::setCopySkel(bool data) {
   page1->setCopySkel(data);
 }
 
-void editDefaults::setUsePrivateGroup(bool data) {
-  page1->setUsePrivateGroup(data);
+void editDefaults::setUserPrivateGroup(bool data) {
+  page1->setUserPrivateGroup(data);
 }
-
-#include "editDefaults.moc"

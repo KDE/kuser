@@ -12,7 +12,6 @@
 #include <kbuttonbox.h>
 
 #include "pwddlg.h"
-#include "pwddlg.moc"
 #include "misc.h"
 #include "globals.h"
 
@@ -102,7 +101,8 @@ void pwddlg::ok()
   const char * set = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./";
 
   if (strcmp(leusername1->text(), leusername2->text())) {
-    KMsgBox::message(0, i18n("Error"), i18n("Passwords are not identical.\nTry again"), KMsgBox::STOP);
+    err->addMsg(i18n("Passwords are not identical.\nTry again"), STOP);
+    err->display();
     leusername1->setText("");
     leusername2->setText("");
     leusername1->setFocus();
@@ -117,12 +117,12 @@ void pwddlg::ok()
 
 #ifdef _KU_SHADOW
     if (is_shadow != 0) {
-      user->sets_pwd(tmp);
-      user->setp_pwd("x");
+      user->setSPwd(tmp);
+      user->setPwd("x");
     }
     else
 #endif
-      user->setp_pwd(tmp);
+      user->setPwd(tmp);
     accept();
   }
 }

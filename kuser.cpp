@@ -43,37 +43,23 @@
 
 // This is to simplify compilation for Red Hat Linux systems, where
 // uid's for regular users start at 500 <duncan@kde.org>
-#ifdef _KU_FIRST_USER
-#define _KU_FIRST_UID _KU_FIRST_USER
+#ifdef KU_FIRST_USER
+#define _KU_FIRST_UID KU_FIRST_USER
 #else 
 #define _KU_FIRST_UID 1001 
 #endif
 
 // class KUser
 
-KUser::KUser() {
-  p_name  = "";
-  p_pwd   = "*";
-  p_dir   = "";
-  p_shell = "";
-  p_fname = "";
+KUser::KUser() : p_pwd("*") {
 #ifdef __FreeBSD__
-  p_office = "";
-  p_ophone = "";
-  p_hphone = "";
-  p_class  = "";
   p_change = 0;
   p_expire = 0;
-#else
-  p_office1 = "";
-  p_office2 = "";
-  p_address = "";
 #endif
   p_uid     = 0;
   p_gid     = 100;
 
 #ifdef _KU_SHADOW   
-  s_pwd     = "";
   s_lstchg  = 0;
   s_min     = 0;
   s_max     = -1;
@@ -86,6 +72,47 @@ KUser::KUser() {
   isCreateHome = 0;
   isCreateMailBox = 0;
   isCopySkel = 0;
+}
+  
+KUser::KUser(const KUser *user) {
+  copy(user);
+}
+
+void KUser::copy(const KUser *user) {
+  p_name = user->p_name;
+  p_pwd = user->p_pwd;
+  p_dir = user->p_dir;
+  p_shell = user->p_shell;
+  p_fname = user->p_fname;
+#ifdef __FreeBSD__
+  p_office = user->p_office;
+  p_ophone = user->p_ophone;
+  p_hphone = user->p_hphone;
+  p_class = user->p_class;
+  p_change = user->p_change;
+  p_expire = user->p_expire;
+#else
+  p_office1 = user->p_office1;
+  p_office2 = user->p_office2;
+  p_address = user->p_address;
+#endif
+  p_uid     = user->p_uid;
+  p_gid     = user->p_gid;
+
+#ifdef _KU_SHADOW   
+  s_pwd = user->s_pwd;
+  s_lstchg  = user->s_lstchg;
+  s_min     = user->s_min;
+  s_max     = user->s_max;
+  s_warn    = user->s_warn;
+  s_inact   = user->s_inact;
+  s_expire  = user->s_expire;
+  s_flag    = user->s_flag;
+#endif
+
+  isCreateHome = user->isCreateHome;
+  isCreateMailBox = user->isCreateMailBox;
+  isCopySkel = user->isCopySkel;
 }
   
 KUser::~KUser() {
@@ -103,214 +130,214 @@ int KUser::getCopySkel() {
   return isCopySkel;
 }
 
-QString KUser::getp_name() {
+const QString &KUser::getName() const {
   return (p_name);
 }
 
-QString KUser::getp_pwd() {
+const QString &KUser::getPwd() const {
   return (p_pwd);
 }
 
-QString KUser::getp_dir() {
+const QString &KUser::getHomeDir() const {
   return (p_dir);
 }
 
-QString KUser::getp_shell() {
+const QString &KUser::getShell() const {
   return (p_shell);
 }
 
-QString KUser::getp_fname() {
+const QString &KUser::getFullName() const {
   return (p_fname);
 }
 
 #ifdef __FreeBSD__
 // FreeBSD apparently uses the GECOS fields differently than other Unices.
 // Create some better named functions to make the FreeBSD code clear
-QString KUser::getp_office() {
+const QString &KUser::getOffice() const {
   return (p_office);
 }
 
-QString KUser::getp_ophone() {
+const QString &KUser::getWorkPphone() const {
   return (p_ophone);
 }
 
-QString KUser::getp_hphone() {
+const QString &KUser::getHomePhone() const {
   return (p_hphone);
 }
 
 // New fields needed for the FreeBSD /etc/master.passwd file
-QString KUser::getp_class() {
+const QString &KUser::getClass() const {
   return (p_class);
 }
 
-time_t KUser::getp_change() {
+time_t KUser::getLastChange() const {
   return (p_change);
 }
 
-time_t KUser::getp_expire() {
+time_t KUser::getExpire() const {
   return (p_expire);
 }
 
 #else
 
-QString KUser::getp_office1() {
+const QString &KUser::getOffice1() const {
   return (p_office1);
 }
 
-QString KUser::getp_office2() {
+const QString &KUser::getOffice2() const {
   return (p_office2);
 }
 
-QString KUser::getp_address() {
+const QString &KUser::getAddress() const {
   return (p_address);
 }
 
 #endif
 
-unsigned int KUser::getp_uid() {
+unsigned int KUser::getUID() const {
   return (p_uid);
 }
 
-unsigned int KUser::getp_gid() {
+unsigned int KUser::getGID() const {
   return (p_gid);
 }
 
 #ifdef _KU_SHADOW
-QString KUser::gets_pwd() {
+const QString &KUser::getSPwd() const {
   return (s_pwd);
 }
 
-long KUser::gets_lstchg() {
+long KUser::getLastChange() const {
   return(s_lstchg);
 }
 
-int KUser::gets_min() {
+int KUser::getMin() const {
   return (s_min);
 }
 
-int KUser::gets_max() {
+int KUser::getMax() const {
   return (s_max);
 }
 
-int KUser::gets_warn() {
+int KUser::getWarn() const {
   return (s_warn);
 }
 
-int KUser::gets_inact() {
+int KUser::getInactive() const {
   return (s_inact);
 }
 
-int KUser::gets_expire() {
+int KUser::getExpire() const {
   return (s_expire);
 }
 
-int KUser::gets_flag() {
+int KUser::getFlag() const {
   return (s_flag);
 }
 #endif
 
-void KUser::setp_name(const char *data) {
+void KUser::setName(const QString &data) {
   p_name = data;
 }
 
-void KUser::setp_pwd(const char *data) {
+void KUser::setPwd(const QString &data) {
   p_pwd = data;
 }
 
-void KUser::setp_dir(const char *data) {
+void KUser::setHomeDir(const QString &data) {
   p_dir = data;
 }
 
-void KUser::setp_shell(const char *data) {
+void KUser::setShell(const QString &data) {
   p_shell = data;
 }
 
-void KUser::setp_fname(const char *data) {
+void KUser::setFullName(const QString &data) {
   p_fname = data;
 }
 
 #ifdef __FreeBSD__
 // FreeBSD apparently uses the GECOS fields differently than other Unices.
 // Create some better named functions to make the FreeBSD code clear
-void KUser::setp_office(const char *data) {
+void KUser::setOffice(const QString &data) {
   p_office = data;
 }
 
-void KUser::setp_ophone(const char *data) {
+void KUser::setWorkPhone(const QString &data) {
   p_ophone = data;
 }
 
-void KUser::setp_hphone(const char *data) {
+void KUser::setHomePhone(const QString &data) {
   p_hphone = data;
 }
 
 // New fields needed for the FreeBSD /etc/master.passwd file
-void KUser::setp_class(const char *data) {
+void KUser::setClass(const QString &data) {
   p_class = data;
 }
 
-void KUser::setp_change(time_t data) {
+void KUser::setLastChange(time_t data) {
   p_change = data;
 }
 
-void KUser::setp_expire(time_t data) {
+void KUser::setExpire(time_t data) {
   p_expire = data;
 }
 
 #else
 
-void KUser::setp_office1(const char *data) {
+void KUser::setOffice1(const QString &data) {
   p_office1 = data;
 }
 
-void KUser::setp_office2(const char *data) {
+void KUser::setOffice2(const QString &data) {
   p_office2 = data;
 }
 
-void KUser::setp_address(const char *data) {
+void KUser::setAddress(const QString &data) {
   p_address = data;
 }
 
 #endif
 
-void KUser::setp_uid(unsigned int data) {
+void KUser::setUID(unsigned int data) {
   p_uid = data;
 }
 
-void KUser::setp_gid(unsigned int data) {
+void KUser::setGID(unsigned int data) {
   p_gid = data;
 }
 
 #ifdef _KU_SHADOW
-void KUser::sets_pwd(const char *data) {
+void KUser::setSPwd(const QString &data) {
   s_pwd = data;
 }
 
-void KUser::sets_lstchg(long data) {
+void KUser::setLastChange(long data) {
   s_lstchg = data;
 }
 
-void KUser::sets_min(int data) {
+void KUser::setMin(int data) {
   s_min = data;
 }
 
-void KUser::sets_max(int data) {
+void KUser::setMax(int data) {
   s_max = data;
 }
 
-void KUser::sets_warn(int data) {
+void KUser::setWarn(int data) {
   s_warn = data;
 }
 
-void KUser::sets_inact(int data) {
+void KUser::setInactive(int data) {
   s_inact = data;
 }
 
-void KUser::sets_expire(int data) {
+void KUser::setExpire(int data) {
   s_expire = data;
 }
 
-void KUser::sets_flag(int data) {
+void KUser::setFlag(int data) {
   s_flag = data;
 }
 
@@ -332,7 +359,16 @@ KUsers::KUsers() {
   p_backuped = 0;
   s_backuped = 0;
 
+  pwd_mode = 0644;
+  pwd_uid = 0;
+  pwd_gid = 0;
+
+  sdw_mode = 0600;
+  sdw_uid = 0;
+  sdw_gid = 0;
+
   u.setAutoDelete(TRUE);
+  du.setAutoDelete(TRUE);
 
   if (!load())
     err->display();
@@ -354,15 +390,15 @@ void KUsers::fillGecos(KUser *user, const char *gecos) {
     }
 
     switch(no) {
-      case 0: user->setp_fname(val); break;
+      case 0: user->setFullName(val); break;
 #ifdef __FreeBSD__
-      case 1: user->setp_office(val); break;
-      case 2: user->setp_ophone(val); break;
-      case 3: user->setp_hphone(val); break;
+      case 1: user->setOffice(val); break;
+      case 2: user->setWorkPhone(val); break;
+      case 3: user->setHomePhone(val); break;
 #else
-      case 1: user->setp_office1(val); break;
-      case 2: user->setp_office2(val); break;
-      case 3: user->setp_address(val); break;
+      case 1: user->setOffice1(val); break;
+      case 2: user->setOffice2(val); break;
+      case 3: user->setAddress(val); break;
 #endif
     }
     if(pos == NULL) break;
@@ -389,36 +425,36 @@ bool KUsers::loadpwd() {
 
   // Start reading passwd file
 
-#ifdef _KU_NIS
+  struct stat st;
+
+  stat(PASSWORD_FILE, &st);
+  pwd_mode = st.st_mode & 0666;
+  pwd_uid = st.st_uid;
+  pwd_gid = st.st_gid;
+
   // We are reading our PASSWORD_FILE
   QString tmp;
-  FILE *fpwd = fopen(PASSWORD_FILE,"r");
+  FILE *fpwd = fopen(PASSWORD_FILE, "r");
   if(fpwd == NULL) {
-     tmp = i18n("Error opening %1 for reading").arg(PASSWORD_FILE);
-     err->addMsg(tmp, STOP);
+     err->addMsg(QString(i18n("Error opening %1 for reading")).arg(PASSWORD_FILE), STOP);
      return FALSE;
   }
 
   while ((p = fgetpwent(fpwd)) != NULL) {
-#else
-   setpwent();
-
-   while ((p = getpwent()) != NULL) {
-#endif
 #ifdef _KU_QUOTA
     quotas->addQuota(p->pw_uid);
 #endif
     tmpKU = new KUser();
-    tmpKU->setp_uid(p->pw_uid);
-    tmpKU->setp_gid(p->pw_gid);
-    tmpKU->setp_name(p->pw_name);
-    tmpKU->setp_pwd(p->pw_passwd);
-    tmpKU->setp_dir(p->pw_dir);
-    tmpKU->setp_shell(p->pw_shell);
+    tmpKU->setUID(p->pw_uid);
+    tmpKU->setGID(p->pw_gid);
+    tmpKU->setName(p->pw_name);
+    tmpKU->setPwd(p->pw_passwd);
+    tmpKU->setHomeDir(p->pw_dir);
+    tmpKU->setShell(p->pw_shell);
 #ifdef __FreeBSD__
-    tmpKU->setp_class(p->pw_class);
-    tmpKU->setp_change(p->pw_change);
-    tmpKU->setp_expire(p->pw_expire);
+    tmpKU->setClass(p->pw_class);
+    tmpKU->setLastChange(p->pw_change);
+    tmpKU->setExpire(p->pw_expire);
 #endif
 
     if ((p->pw_gecos != 0) && (p->pw_gecos[0] != 0))
@@ -429,11 +465,7 @@ bool KUsers::loadpwd() {
 
   // End reading passwd file
 
-#ifdef _KU_NIS
   fclose(fpwd);
-#else
-  endpwent();
-#endif
 
   return (TRUE);
 }
@@ -447,8 +479,15 @@ bool KUsers::loadsdw() {
   KUser *up = NULL;
   FILE *f;
 
+  struct stat st;
+
   if (!is_shadow)
-    return FALSE;
+    return TRUE;
+
+  stat(SHADOW_FILE, &st);
+  sdw_mode = st.st_mode & 0666;
+  sdw_uid = st.st_uid;
+  sdw_gid = st.st_gid;
 
   if ((f = fopen(SHADOW_FILE, "r")) == NULL) {
     is_shadow = 0;
@@ -462,38 +501,82 @@ bool KUsers::loadsdw() {
 
   while ((spw = getspent())) {     // read a shadow password structure
     if ((up = lookup(spw->sp_namp)) == NULL) {
-      tmp = i18n("No /etc/passwd entry for %1.\nEntry will be removed at the next `Save'-operation.")
-                  .arg(spw->sp_namp);
-      KMsgBox::message(0, i18n("Error"), tmp, KMsgBox::STOP);
+      err->addMsg(QString(
+                  i18n("No /etc/passwd entry for %s.\nEntry will be removed at the next `Save'-operation."))
+		  .arg(spw->sp_namp), STOP);
+      err->display();
       continue;
     }
 
-    up->sets_pwd(spw->sp_pwdp);        // cp the encrypted pwd
-    up->sets_lstchg(spw->sp_lstchg);
-    up->sets_min(spw->sp_min);
-    up->sets_max(spw->sp_max);
+    up->setSPwd(spw->sp_pwdp);        // cp the encrypted pwd
+    up->setLastChange(spw->sp_lstchg);
+    up->setMin(spw->sp_min);
+    up->setMax(spw->sp_max);
 #ifndef _SCO_DS
-    up->sets_warn(spw->sp_warn);
-    up->sets_inact(spw->sp_inact);
-    up->sets_expire(spw->sp_expire);
-    up->sets_flag(spw->sp_flag);
+    up->setWarn(spw->sp_warn);
+    up->setInactive(spw->sp_inact);
+    up->setExpire(spw->sp_expire);
+    up->setFlag(spw->sp_flag);
 #endif
   }
 
   endspent();
-
-  return (TRUE);
 #endif // _KU_SHADOW
-  return (FALSE);
+  return TRUE;
 }
 
 bool KUsers::save() {
   if (!savepwd())
-    return (FALSE);
-  if (!savesdw())
-    return (FALSE);
+    return FALSE;
 
-  return (TRUE);
+  if (!savesdw())
+    return FALSE;
+
+  if (!doDelete())
+    return FALSE;
+
+  if (!doCreate())
+    return FALSE;
+
+  return TRUE;
+}
+
+bool KUsers::doCreate() {
+  for (unsigned int i=0; i<u.count(); i++) {
+    KUser *user = u.at(i);
+
+    if(user->getCreateMailBox()) {
+      user->createMailBox();
+      user->setCreateMailBox(0);
+    }
+
+    if(user->getCreateHome()) {
+       user->createHome();
+       user->setCreateHome(0);
+    }
+
+    if(user->getCopySkel()) {
+       user->copySkel();
+       user->setCopySkel(0);
+    }
+  }
+
+  return TRUE;
+}
+
+bool KUsers::doDelete() {
+  for (unsigned int i=0; i<du.count(); i++) {
+    KUser *user = du.at(i);
+
+    user->removeHome();
+    user->removeCrontabs();
+    user->removeMailBox();
+    user->removeProcesses();
+
+    du.remove(i);
+  }
+
+  return TRUE;
 }
 
 // Save password file
@@ -510,10 +593,12 @@ bool KUsers::savepwd() {
     p_backuped = TRUE;
   }
 
+  umask(0077);
+
   if ((passwd = fopen(PASSWORD_FILE,"w")) == NULL) {
-    tmp = i18n("Error opening %1 for writing").arg(PASSWORD_FILE);
-    err->addMsg(tmp, STOP);
-    return (FALSE);
+    err->addMsg(QString(i18n("Error opening %s for writing"))
+                .arg(PASSWORD_FILE), STOP);
+    return FALSE;
   }
 
   for (unsigned int i=0; i<u.count(); i++) {
@@ -521,31 +606,32 @@ bool KUsers::savepwd() {
 
 #ifdef __FreeBSD__
     s = QString("%1:%2:%3:%4:%5:%6:%7:")
-             .arg(user->getp_name())
-             .arg(user->getp_pwd())
-             .arg(user->getp_uid())
-             .arg(user->getp_gid())
-             .arg(user->getp_class())
-             .arg(user->getp_change())
-             .arg(user->getp_expire());
+        .arg(user->getName())
+        .arg(user->getPwd())
+	.arg(user->getUID())
+        .arg(user->getGID())
+	.arg(user->getClass())
+        .arg(user->getLastChange())
+	.arg(user->getExpire());
 
     s1 = QString("%1,%2,%3,%4")
-              .arg(user->getp_fname())
-              .arg(user->getp_office())
-              .arg(user->getp_ophone())
-              .arg(user->getp_hphone());
+         .arg(user->getFullName())
+         .arg(user->getOffice())
+         .arg(user->getWorkPhone())
+         .arg(user->getHomePhone());
 #else
+
     s = QString("%1:%2:%3:%4:")
-             .arg(user->getp_name())
-             .arg(user->getp_pwd())
-             .arg(user->getp_uid())
-             .arg(user->getp_gid());
+        .arg(user->getName())
+        .arg(user->getPwd())
+	.arg(user->getUID())
+        .arg(user->getGID());
 
     s1 = QString("%1,%2,%3,%4")
-             .arg(user->getp_fname())
-             .arg(user->getp_office1())
-             .arg(user->getp_office2())
-             .arg(user->getp_address());
+         .arg(user->getFullName())
+	 .arg(user->getOffice1())
+	 .arg(user->getOffice2())
+	 .arg(user->getAddress());
 
 #endif
 
@@ -556,35 +642,24 @@ bool KUsers::savepwd() {
       s1.truncate(j);
     }
 
-    s+=s1+":"+user->getp_dir()+":"+user->getp_shell()+"\n";
+    s += s1+":"+user->getHomeDir()+":"+user->getShell()+"\n";
     fputs((const char *)s, passwd);
-
-    if(user->getCreateMailBox()) {
-      user->createMailBox();
-      user->setCreateMailBox(0);
-    }
-    if(user->getCreateHome()) {
-       user->createHome();
-       user->setCreateHome(0);
-    }
-    if(user->getCopySkel()) {
-       user->copySkel();
-       user->setCopySkel(0);
-    }
   }
   fclose(passwd);
 
-  chmod(PASSWORD_FILE, PASSWORD_FILE_MASK);
+  chmod(PASSWORD_FILE, pwd_mode);
+  chown(PASSWORD_FILE, pwd_uid, pwd_gid);
+
 #ifdef PWMKDB
   // need to run a utility program to build /etc/passwd, /etc/pwd.db
   // and /etc/spwd.db from /etc/master.passwd
   if (system(PWMKDB) != 0) {
-     tmp = i18n("Unable to build password database");
-     err->addMsg(tmp, STOP);
-     return (FALSE);
+     err->addMsg(i18n("Unable to build password database"), STOP);
+     return FALSE;
   }
 #endif
-  return (TRUE);
+
+  return TRUE;
 }
 
 // Save shadow passwords file
@@ -598,17 +673,18 @@ bool KUsers::savesdw() {
   KUser *up;
 
   if (!is_shadow)
-    return FALSE;
+    return TRUE;
 
   if (!s_backuped) {
     backup(SHADOW_FILE);
     s_backuped = TRUE;
   }
 
+  umask(0077);
+
   if ((f = fopen(SHADOW_FILE, "w")) == NULL) {
-    tmp = i18n("Error opening %1 for writing").arg(SHADOW_FILE);
-    err->addMsg(tmp, STOP);
-    return (FALSE);
+    err->addMsg(QString(i18n("Error opening %1 for writing")).arg(SHADOW_FILE), STOP);
+    return FALSE;
   }
 
   s.sp_namp = (char *)malloc(200);
@@ -616,47 +692,48 @@ bool KUsers::savesdw() {
     
   for (uint index = 0; index < u.count(); index++) {
     up = u.at(index);
-    if (!(const char *)up->gets_pwd()) {
-      tmp = i18n("No shadow entry for %1.").arg(up->getp_name());
-      err->addMsg(tmp, STOP);
+    if (!(const char *)up->getSPwd()) {
+      err->addMsg(QString(i18n("No shadow entry for %1.")).arg(up->getName()), STOP);
       continue;
     }
 
-    strncpy(s.sp_namp, (const char *)up->getp_name(), 200);
-    strncpy(s.sp_pwdp, (const char *)up->gets_pwd(), 200);
-    s.sp_lstchg = up->gets_lstchg();
-    s.sp_min    = up->gets_min();
-    s.sp_max    = up->gets_max();
+    strncpy(s.sp_namp, (const char *)up->getName(), 200);
+    strncpy(s.sp_pwdp, (const char *)up->getSPwd(), 200);
+    s.sp_lstchg = up->getLastChange();
+    s.sp_min    = up->getMin();
+    s.sp_max    = up->getMax();
 #ifndef _SCO_DS
-    s.sp_warn   = up->gets_warn();
-    s.sp_inact  = up->gets_inact();
-    s.sp_expire = up->gets_expire();
-    s.sp_flag   = up->gets_flag();
+    s.sp_warn   = up->getWarn();
+    s.sp_inact  = up->getInactive();
+    s.sp_expire = up->getExpire();
+    s.sp_flag   = up->getFlag();
 #endif
     spwp = &s;
     putspent(spwp, f);
   }
   fclose(f);
 
-  chmod(SHADOW_FILE, SHADOW_FILE_MASK);
+  chmod(SHADOW_FILE, sdw_mode);
+  chown(SHADOW_FILE, sdw_uid, sdw_gid);
+
   free(s.sp_namp);
   free(s.sp_pwdp);
 #endif // _KU_SHADOW
-  return (TRUE);
+  return TRUE;
 }
 
 KUser *KUsers::lookup(const char *name) {
   for (uint i = 0; i<u.count(); i++)
-    if (u.at(i)->getp_name() == name)
+    if (u.at(i)->getName() == name)
       return (u.at(i));
-  return (NULL);
+  return NULL;
 }
 
 KUser *KUsers::lookup(unsigned int uid) {
   for (uint i = 0; i<u.count(); i++)
-    if (u.at(i)->getp_uid() == uid)
+    if (u.at(i)->getUID() == uid)
       return (u.at(i));
-  return (NULL);
+  return NULL;
 }
 
 int KUsers::first_free() {
@@ -664,7 +741,7 @@ int KUsers::first_free() {
   uint t = _KU_FIRST_UID ;
 
   for (t = _KU_FIRST_UID ; t<65534; t++) {
-    while ((i<u.count()) && (u.at(i)->getp_uid() != t))
+    while ((i<u.count()) && (u.at(i)->getUID() != t))
       i++;
 
     if (i == u.count())
@@ -678,13 +755,14 @@ int KUsers::first_free() {
 
 KUsers::~KUsers() {
   u.clear();
+  du.clear();
 }
 
-uint KUsers::getNumber() {
+uint KUsers::count() const {
   return (u.count());
 }
 
-KUser *KUsers::get(uint num) {
+KUser *KUsers::user(uint num) {
   return (u.at(num));
 }
 
@@ -701,37 +779,35 @@ void KUsers::add(KUser *ku) {
 }
 
 void KUsers::del(KUser *au) {
+  KUser *nu = new KUser(au);
+  du.append(nu);
   u.remove(au);
 }
 
 void KUser::createHome() {
   QDir d = QDir::root();
 
-  if (d.cd(getp_dir())) {
+  if (d.cd(p_dir)) {
     QString tmp;
-    tmp = i18n("Directory %1 already exists").arg(getp_dir());
-    err->addMsg(tmp, STOP);
+    err->addMsg(QString(i18n("Directory %1 already exists")).arg(p_dir), STOP);
     err->display();
   }
 
-  if (mkdir((const char *)getp_dir(), 0700) != 0) {
+  if (mkdir((const char *)p_dir, 0700) != 0) {
     QString tmp;
-    tmp = i18n("Cannot create home directory\nError: %1").arg(strerror(errno));
-    err->addMsg(tmp, STOP);
+    err->addMsg(QString(i18n("Cannot create home directory\nError: %1")).arg(strerror(errno)), STOP);
     err->display();
   }
 
-  if (chown((const char *)getp_dir(), getp_uid(), getp_gid()) != 0) {
+  if (chown((const char *)p_dir, p_uid, p_gid) != 0) {
     QString tmp;
-    tmp = i18n("Cannot change owner of home directory\nError: %1").arg(strerror(errno));
-    err->addMsg(tmp, STOP);
+    err->addMsg(QString(i18n("Cannot change owner of home directory\nError: %1")).arg(strerror(errno)), STOP);
     err->display();
   }
 
-  if (chmod(getp_dir(), 0755) != 0) {
+  if (chmod((const char *)p_dir, KU_HOMEDIR_PERM) != 0) {
     QString tmp;
-    tmp = i18n("Cannot change permissions on home directory\nError: %1").arg(strerror(errno));
-    err->addMsg(tmp, STOP);
+    err->addMsg(QString(i18n("Cannot change permissions on home directory\nError: %1")).arg(strerror(errno)), STOP);
     err->display();
   }
 }
@@ -742,77 +818,124 @@ int KUser::createMailBox() {
   mailboxpath = QString("%1/%2").arg(MAIL_SPOOL_DIR).arg(p_name);
   if((fd = open((const char *)mailboxpath, O_CREAT|O_EXCL|O_WRONLY,
                 S_IRUSR|S_IWUSR)) < 0) {
-    QString tmp;
-    tmp = i18n("Cannot create %1: %2").arg(mailboxpath)
-             .arg(strerror(errno));
-    err->addMsg(tmp, STOP);
+    err->addMsg(QString(i18n("Cannot create %1: %2"))
+                .arg(mailboxpath)
+                .arg(strerror(errno)), STOP);
     err->display();
     return -1;
   }
-  if(fchown(fd, getp_uid(), 0) < 0) {
-    QString tmp;
-    tmp = i18n("Cannot chown %1: %2").arg(mailboxpath)
-             .arg(strerror(errno));
-    err->addMsg(tmp, STOP);
+
+  close(fd);
+
+  if (chown((const char *)mailboxpath, p_uid, KU_MAILBOX_GID) != 0) {
+    err->addMsg(QString(i18n("Cannot change owner on mailbox: %1\nError: %2"))
+                .arg(mailboxpath).arg(strerror(errno)), STOP);
     err->display();
     return -1;
   }
+
+  if (chmod((const char *)mailboxpath, KU_MAILBOX_PERM) != 0) {
+    err->addMsg(QString(i18n("Cannot change permissions on mailbox: %1\nError: %2"))
+                .arg(mailboxpath).arg(strerror(errno)), STOP);
+    err->display();
+  }
+
   return 0;
+}
+
+void KUser::copyDir(const QString &srcPath, const QString &dstPath) {
+  struct stat st;
+  QDir s(srcPath);
+  QDir d(dstPath);
+  QString prefix(SKEL_FILE_PREFIX);
+  int len = prefix.length();
+
+  s.setFilter(QDir::Dirs);
+
+  for (uint i=0; i<s.count(); i++) {
+    QString name(s[i]);
+
+    if (name == ".")
+      continue;
+    if (name == "..")
+      continue;
+
+    QString filename(s.filePath(name));
+    QDir dir(filename);
+
+    if (stat(filename, &st) != 0)
+      printf("errno = %d, '%s'\n", errno, strerror(errno));
+
+    if (name.left(len) == prefix)
+      name = name.remove(0, len);
+
+    d.mkdir(name, FALSE);
+    if (chown(d.filePath(name), p_uid, p_gid) != 0) {
+      err->addMsg(QString(i18n("Cannot change owner of directory %1\nError: %2"))
+                  .arg(d.filePath(s[i])).arg(strerror(errno)), STOP);
+      err->display();
+    }
+
+    if (chmod(d.filePath(name), st.st_mode & 07777) != 0) {
+      err->addMsg(QString(i18n("Cannot change permissions on directory %1\nError: %2"))
+                  .arg(d.filePath(s[i])).arg(strerror(errno)), STOP);
+      err->display();
+    }
+
+    copyDir(s.filePath(name), d.filePath(name));
+  }
+
+  s.setFilter(QDir::Files | QDir::Hidden);
+
+  for (uint i=0; i<s.count(); i++) {
+    QString name(s[i]);
+
+    QString filename(s.filePath(name));
+
+    stat(filename, &st);
+
+    if (name.left(len) == prefix)
+      name = name.remove(0, len);
+
+    if (copyFile(filename, d.filePath(name)) == -1) {
+      err->display();
+      continue;
+    }
+
+    if (chown(d.filePath(name), p_uid, p_gid) != 0) {
+      err->addMsg(QString(i18n("Cannot change owner of file %1\nError: %2"))
+                  .arg(d.filePath(s[i])).arg(strerror(errno)), STOP);
+      err->display();
+    }
+
+    if (chmod(d.filePath(name), st.st_mode & 07777) != 0) {
+      err->addMsg(QString(i18n("Cannot change permissions on file %1\nError: %2"))
+                  .arg(d.filePath(s[i])).arg(strerror(errno)), STOP);
+      err->display();
+    }
+  }
 }
 
 int KUser::copySkel() {
   QDir s(SKELDIR);
-  QDir d(getp_dir());
-  QString tmp;
-  QString prefix(SKEL_FILE_PREFIX);
-  int len = prefix.length();
+  QDir d(p_dir);
 
-  s.setFilter(QDir::Files | QDir::Hidden);
+  umask(0777);
 
   if (!s.exists()) {
-    QString tmp;
-    tmp = i18n("Directory %1 does not exist").arg(s.dirName());
-    err->addMsg(tmp, STOP);
+    err->addMsg(QString(i18n("Directory %1 does not exist")).arg(s.dirName()), STOP);
     err->display();
     return (-1);
   }
 
   if (!d.exists()) {
     QString tmp;
-    tmp = i18n("Directory %1 does not exist").arg(d.dirName());
-    err->addMsg(tmp, STOP);
+    err->addMsg(QString(i18n("Directory %1 does not exist")).arg(d.dirName()), STOP);
     err->display();
     return (-1);
   }
 
-  for (uint i=0; i<s.count(); i++) {
-    QString filename(s[i]);
-    if (filename.left(len) == prefix) {
-      filename = filename.remove(0, len);
-    }
-    if (copyFile(s.filePath(s[i]), d.filePath(filename)) == -1) {
-      err->display();
-      continue;
-    }
-
-    if (chown(d.filePath(filename), p_uid, p_gid) != 0) {
-      QString tmp;
-      tmp = i18n("Cannot change owner of file %1\nError: %2")
-                 .arg(d.filePath(s[i]))
-                 .arg(strerror(errno));
-      err->addMsg(tmp, STOP);
-      err->display();
-    }
-
-    if (chmod(d.filePath(filename), 0644) != 0) {
-      QString tmp;
-      tmp = i18n("Cannot change permissions on file %1\nError: %2") 
-                 .arg(d.filePath(s[i]))
-                 .arg(strerror(errno));
-      err->addMsg(tmp, STOP);
-      err->display();
-    }
-  }
+  copyDir(s.absPath(), d.absPath());
 
   return 0;
 }
@@ -833,11 +956,8 @@ int KUser::removeHome() {
       command = QString("/bin/rm -rf -- %1").arg(p_dir);
 #endif
     if (system((const char *)command) != 0) {
-      QString tmp;
-      tmp = i18n("Cannot remove home directory %1\nError: %2")
-                 .arg(command)
-                 .arg(strerror(errno));
-      err->addMsg(tmp, STOP);
+      err->addMsg(QString(i18n("Cannot remove home directory %1\nError: %2"))
+                  .arg(command).arg(strerror(errno)), STOP);
       err->display();
      }
    }
@@ -851,17 +971,12 @@ int KUser::removeCrontabs() {
   QString file;
   QString command;
 
-  file = QString("/var/cron/tabs/%1")
-           .arg(p_name);
+  file = QString("/var/cron/tabs/%1").arg(p_name);
   if (access((const char *)file, F_OK) == 0) {
-  	command = QString("crontab -u %1 -r")
-             .arg(p_name);
+    command = QString("crontab -u %1 -r").arg(p_name);
     if (system((const char *)command) != 0) {
-      QString tmp;
-      tmp = i18n("Cannot remove crontab %1\nError: %2")
-                 .arg(command)
-                 .arg(strerror(errno));
-      err->addMsg(tmp, STOP);
+      err->addMsg(QString(i18n("Cannot remove crontab %1\nError: %2"))
+                  .arg(command).arg(strerror(errno)), STOP);
       err->display();
      }
   }
@@ -872,15 +987,10 @@ int KUser::removeCrontabs() {
 int KUser::removeMailBox() {
   QString file;
 
-  file = QString("%1/%2")
-	.arg(MAIL_SPOOL_DIR)
-	.arg(p_name);
+  file = QString("%1/%2").arg(MAIL_SPOOL_DIR).arg(p_name);
   if (remove((const char *)file) != 0) {
-    QString tmp;
-    tmp = i18n("Cannot remove mailbox %1\nError: %2")
-               .arg(file)
-               .arg(strerror(errno));
-    err->addMsg(tmp, STOP);
+    err->addMsg(QString(i18n("Cannot remove mailbox %1\nError: %2"))
+                .arg(file).arg(strerror(errno)), STOP);
     err->display();
   }
 
@@ -889,11 +999,13 @@ int KUser::removeMailBox() {
 
 int KUser::removeProcesses() {
   // be paranoid -- kill all processes owned by that user, if not root.
-  if (p_uid)
+
+  if (p_uid != 0)
     switch (fork()) {
       case 0:
         setuid(p_uid);
         kill(-1, 9);
+        _exit(0);
         break;
       case -1:
         err->addMsg(i18n("Cannot fork()"), STOP);
@@ -904,3 +1016,4 @@ int KUser::removeProcesses() {
 
   return 0;
 }
+

@@ -3,13 +3,11 @@
 #include <kbuttonbox.h>
 #include <qlayout.h>
 #include "usernamedlg.h"
-#include "usernamedlg.moc"
 #include "misc.h"
 #include "maindlg.h"
 
 usernamedlg::usernamedlg(KUser *auser, QWidget* parent, const char* name)
-           :QDialog(parent, name, TRUE)
-{
+           :QDialog(parent, name, TRUE) {
   user = auser;
 
   setCaption(i18n("Enter username"));
@@ -65,13 +63,10 @@ usernamedlg::~usernamedlg() {
   delete pbCancel;
 }
 
-void usernamedlg::ok()
-{
-  QString tmp;
-
+void usernamedlg::ok() {
   if (users->lookup(leusername->text()) != NULL) {
-    tmp = i18n("User with name %1 already exists.").arg(leusername->text());
-    KMsgBox::message(0, i18n("Error"), tmp, KMsgBox::STOP);
+    KMsgBox::message(0, i18n("Error"), i18n("User with name %1 already exists.")
+                                       .arg(leusername->text()), KMsgBox::STOP);
     return;
   }
 
@@ -80,11 +75,10 @@ void usernamedlg::ok()
     return;
   }
   
-  user->setp_name(leusername->text());
+  user->setFullName(leusername->text());
   accept();
 }
 
-void usernamedlg::cancel()
-{
+void usernamedlg::cancel() {
   reject();
 }

@@ -1,4 +1,4 @@
-INCLUDES	=	$(all_includes)
+INCLUDES	=	$(all_includes) -I.. -I$(topdir)/kuser
 
 # May be -D_XU_QUOTA -D_XU_SHADOW
 DEFS		+= 	$(KU_NIS) $(KU_SHADOW) $(KU_QUOTA) $(QUOTACTL) -D_KU_DEBUG

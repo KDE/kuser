@@ -22,7 +22,7 @@ case "$host" in
        ;;
 esac
 
-AC_ARG_WITH(hometemplate, [  --with-hometemplate     use specified prefix for homedir [default=/home/%U] ], ku_hometemplate="$withval", ku_hometemplate="/home/%U")
+AC_ARG_WITH(hometemplate, [  --with-hometemplate     use specified template for homedir [default=/home/%U] ], ku_hometemplate="$withval", ku_hometemplate="/home/%U")
 AC_DEFINE_UNQUOTED(KU_HOMETEMPLATE, "$ku_hometemplate",[default template for homedir])
 
 AC_ARG_WITH(first-uid, [  --with-first-uid        first normal user ID [default=500] ], ku_firstuid="$withval", ku_firstuid="500")
@@ -41,8 +41,19 @@ else
 fi
 AC_DEFINE_UNQUOTED(KU_USERPRIVATEGROUP, $ku_userprivategroup, [private groups])
 
-AC_CHECK_FUNCS(fgetpwent fgetgrent fgetspent)
+AC_ARG_WITH(home-perm, [  --with-home-perm        home directory permissions [default=0700] ], ku_homedir_perm="$withval", ku_homedir_perm="0700")
+AC_DEFINE_UNQUOTED(KU_HOMEDIR_PERM, $ku_homedir_perm, [home directory permissions])
+AC_SUBST(KU_HOMEDIR_PERM)
 
+AC_ARG_WITH(mailbox-perm, [  --with-mailbox-perm     mailbox permissions [default=0660] ], ku_mailbox_perm="$withval", ku_mailbox_perm="0660")
+AC_DEFINE_UNQUOTED(KU_MAILBOX_PERM, $ku_mailbox_perm, [mailbox permissions])
+AC_SUBST(KU_MAILBOX_PERM)
+
+AC_ARG_WITH(mailbox-gid, [  --with-mailbox-gid      mailbox gid [default=0] ], ku_mailbox_gid="$withval", ku_mailbox_gid="0")
+AC_DEFINE_UNQUOTED(KU_MAILBOX_GID, $ku_mailbox_gid, [mailbox gid])
+AC_SUBST(KU_MAILBOX_GID)
+
+AC_CHECK_FUNCS(fgetpwent fgetgrent fgetspent)
 
 AC_LANG_SAVE
 AC_LANG_C

@@ -185,22 +185,35 @@ void mainView::useradd()
     return;
   }
 
+  bool ok;
+  QString name = KInputDialog::getText( QString::null, 
+    i18n("Please type the name of the new user."), 
+    QString::null, &ok );
+    
+  if ( !ok ) return;
+  
+  if ( kug->getUsers().lookup( name ) ) {
+    KMessageBox::sorry( 0, i18n("User with name %1 already exists.").arg( name ) );
+    return;
+  }
+    
   tk = new KUser();
   tk->setUID( uid );
+  tk->setName( name );
   
   if ( samba ) {
     SID sid;
     sid.setDOM( kug->getUsers().getDOMSID() );
     sid.setRID( rid );
     tk->setSID( sid );
-    tk->setProfilePath( kug->kcfg()->samprofilepath() );
-    tk->setHomePath( kug->kcfg()->samhomepath() );
+    tk->setProfilePath( kug->kcfg()->samprofilepath().replace( "%U",name ) );
+    tk->setHomePath( kug->kcfg()->samhomepath().replace( "%U", name ) );
     tk->setHomeDrive( kug->kcfg()->samhomedrive() );
     tk->setLoginScript( kug->kcfg()->samloginscript() );
   }
   
   tk->setShell( kug->kcfg()->shell() );
-  tk->setHomeDir( kug->kcfg()->homepath() );
+  tk->setHomeDir( kug->kcfg()->homepath().replace( "%U", name ) );
   if ( kug->getUsers().getCaps() & KUsers::Cap_Shadow || samba ) {
     tk->setLastChange( now() );
   }

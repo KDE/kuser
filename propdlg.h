@@ -69,16 +69,13 @@ protected:
   bool checkShell(const QString &shell);
   void addRow( QWidget *parent, QGridLayout *layout, int row, 
   QWidget *widget, const QString &label, const QString &what, 
-  bool two_column=true );
+  bool two_column=true, bool nochange=true );
   void setLE( KLineEdit *le, const QString &val, bool first );
   void setCB( QCheckBox *cb, bool val, bool first );
   void setSB( KIntSpinBox *sb, int val, bool first );
   QString mergeLE( KLineEdit *le, const QString &val, bool one );
   int mergeSB( KIntSpinBox *sb, int val, bool one );
-  
 
-//  KDateTimeWidget *addDateGroup( QWidget *parent, QGridLayout *layout,
-//    int row, const QString &title );
   KIntSpinBox *addDaysGroup( QWidget  *parent, QGridLayout *layout, int row, 
     const QString &title, const QString &title2, bool never=true );
 
@@ -104,7 +101,7 @@ protected:
 
   QPushButton *pbsetpwd;
 
-  KLineEdit   *leuser;
+  QLabel      *lbuser;
   KLineEdit   *leid;
   KLineEdit   *lefname;
   KLineEdit   *lesurname;

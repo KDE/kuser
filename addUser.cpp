@@ -53,8 +53,6 @@ addUser::addUser( KUser *AUser, bool useprivategroup,
   frontlayout->addMultiCellWidget(group, frontrow, frontrow, 0, 2);
 
   if ( useprivategroup ) pbprigr->setEnabled( false );
-  leuser->setEnabled( true );
-  leuser->setFocus();
 }
 
 void addUser::slotOk()
@@ -64,12 +62,7 @@ void addUser::slotOk()
   if ( !check() ) return;
 
   mergeUser( user, user );
-
-  if (kug->getUsers().lookup( user->getName() )) {
-    KMessageBox::sorry( 0, i18n("User with name %1 already exists.").arg( user->getName() ) );
-    return;
-  }
-
+  
   if ( kug->getUsers().lookup( user->getUID() ) ) {
     KMessageBox::sorry( 0, i18n("User with UID %1 already exists.").arg( user->getUID() ) );
     return;

@@ -21,7 +21,7 @@
 #ifndef _KU_GLOBALS_H_
 #define _KU_GLOBALS_H_
 
-#define _KU_VERSION "1.0"
+#define _KU_VERSION "2.0"
 
 #include <config.h>
 #ifdef HAVE_PATHS_H
@@ -65,11 +65,5 @@
 extern "C" int getuid(void);
 extern "C" int unlink(const char *);
 #endif
-
-#define KU_HOMEDIR_PERM 0755
-#define KU_KDEDIRS_PERM 0700
-#define KU_MAILBOX_PERM 0660
-
-#define KU_MAILBOX_GID 0
 
 #endif // _KU_GLOBALS_H_

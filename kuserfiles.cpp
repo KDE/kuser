@@ -283,6 +283,12 @@ bool KUserFiles::loadsdw()
 
 // Save password file
 
+#define escstr(a,b) tmp2 = user->a(); \
+                    tmp2.replace(':',"_"); \
+                    tmp2.replace(',',"_"); \
+                    user->b( tmp2 );
+
+
 bool KUserFiles::savepwd()
 {
   FILE *passwd_fd = NULL;
@@ -292,7 +298,7 @@ bool KUserFiles::savepwd()
   uid_t tmp_uid = 0;
   QString s;
   QString s1;
-  QString tmp;
+  QString tmp, tmp2;
   QString passwd_filename;
   QString nispasswd_filename;
 
@@ -372,8 +378,16 @@ bool KUserFiles::savepwd()
         tmp = "!" + tmp;
     }
 
-
+    escstr( getName, setName );
+    escstr( getHomeDir, setHomeDir );
+    escstr( getShell, setShell );
+    escstr( getName, setName );
+    escstr( getFullName, setFullName );
 #if defined(__FreeBSD__) || defined(__bsdi__)
+    escstr( getClass, setClass );
+    escstr( getOffice, setOffice );
+    escstr( getWorkPhone, setWorkPhone );
+    escstr( getHomePhone, setHomePhone );
     s =
       user->getName() + ":" +
       tmp + ":" +
@@ -389,6 +403,9 @@ bool KUserFiles::savepwd()
       user->getWorkPhone() + "," +
       user->getHomePhone();
 #else
+    escstr( getOffice1, setOffice1 );
+    escstr( getOffice2, setOffice2 );
+    escstr( getAddress, setAddress );
     s =
       user->getName() + ":" +
       tmp + ":" +
@@ -409,8 +426,8 @@ bool KUserFiles::savepwd()
     }
 
     s += s1 + ":" +
-         user->getHomeDir() + ":" +
-         user->getShell() + "\n";
+      user->getHomeDir() + ":" +
+      user->getShell() + "\n";
 
     if( (nispasswd_fd != 0) && (minuid != 0) ) {
       if (minuid <= tmp_uid) {
@@ -528,11 +545,11 @@ bool KUserFiles::savesdw()
     }
     if ( mMod.contains( up ) ) up = &( mMod[ up ] );
 
-    strncpy( s.sp_namp, QFile::encodeName( up->getName() ), 200 );
+    strncpy( s.sp_namp, up->getName().local8Bit(), 200 );
     if ( up->getDisabled() )
-      strncpy( s.sp_pwdp, QFile::encodeName("!!" + up->getSPwd()), 200 );
+      strncpy( s.sp_pwdp, QString("!!" + up->getSPwd()).local8Bit(), 200 );
     else
-      strncpy( s.sp_pwdp, QFile::encodeName(up->getSPwd()), 200 );
+      strncpy( s.sp_pwdp, up->getSPwd().local8Bit(), 200 );
 
     s.sp_lstchg = timeToDays( up->getLastChange() );
     s.sp_min    = up->getMin();

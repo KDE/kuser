@@ -40,7 +40,7 @@
 
 void propdlg::addRow(QWidget *parent, QGridLayout *layout, int row,
   QWidget *widget, const QString &label, const QString &what,
-  bool two_column)
+  bool two_column, bool nochange)
 {
    QLabel *lab = new QLabel(widget, label, parent);
    lab->setMinimumSize(lab->sizeHint());
@@ -56,6 +56,7 @@ void propdlg::addRow(QWidget *parent, QGridLayout *layout, int row,
    else
       layout->addWidget(widget, row, 1);
 
+   if ( !nochange ) return;
    QCheckBox *nc = new QCheckBox( i18n("Do not change"), parent );
    layout->addWidget( nc, row, 3 );
    nc->hide();
@@ -110,12 +111,12 @@ void propdlg::initDlg()
 
     frontpage = frame;
     frontlayout = layout;
-
-    leuser = new KLineEdit(frame);
+    
+    lbuser = new QLabel(frame);
 //    whatstr = i18n("WHAT IS THIS: User login");
-    addRow(frame, layout, row++, leuser, i18n("User login:"), whatstr, false);
-    leuser->setEnabled( false );
-
+    addRow(frame, layout, row++, lbuser, i18n("User login:"), whatstr, false, false);
+    
+    
     leid = new KLineEdit(frame);
 //    whatstr = i18n("WHAT IS THIS: User Id");
     leid->setValidator(new QIntValidator(frame));
@@ -394,10 +395,15 @@ void propdlg::selectuser()
   lstchg = user->getLastChange();
   QDateTime datetime;
   datetime.setTime_t( lstchg );
-  leslstchg->setText( KGlobal::locale()->formatDateTime( datetime, false ) );
+  if ( kug->getUsers().getCaps() & KUsers::Cap_Shadow ||
+       kug->getUsers().getCaps() & KUsers::Cap_Samba ||
+       kug->getUsers().getCaps() & KUsers::Cap_BSD ) {
+    
+    leslstchg->setText( KGlobal::locale()->formatDateTime( datetime, false ) );
+  }
 
   if ( one ) {
-    leuser->setText( user->getName() );
+    lbuser->setText( user->getName() );
     leid->setText( QString::number( user->getUID() ) );
     if ( kug->getUsers().getCaps() & KUsers::Cap_Samba ) {
       lerid->setText( QString::number( user->getSID().getRID() ) );
@@ -631,7 +637,7 @@ void propdlg::mergeUser( KUser *user, KUser *newuser )
   newuser->copy( user );
 
   if ( one ) {
-    newuser->setName( leuser->text() );
+//    newuser->setName( leuser->text() );
     newuser->setUID( leid->text().toInt() );
   }
   if ( !newpass.isNull() ) {
@@ -763,12 +769,7 @@ bool propdlg::checkShell(const QString &shell)
 bool propdlg::check()
 {
   bool one = ( mUsers.getFirst() == mUsers.getLast() );
-
-  if ( one && leuser->text().isEmpty() ) {
-    KMessageBox::sorry( 0, i18n("You need to specify a name.") );
-    return false;
-  }
-
+  
   if ( one && leid->text().isEmpty() ) {
     KMessageBox::sorry( 0, i18n("You need to specify an UID.") );
     return false;

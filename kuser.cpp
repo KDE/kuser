@@ -534,60 +534,6 @@ int KUser::createHome()
   return(1);
 }
 
-int KUser::createKDE()
-{
-  QStringList levels;
-  QStringList types;
-  QString k_dir = p_dir;
-  KStandardDirs kstddirs;
-  const char *KDEHOME = "KDEHOME";
-  const char *DOT_KDE = "/.kde";
-  const char *kdehome;
-  const char *dot_kde = NULL;
-
-
-  if((kdehome = getenv(KDEHOME)) != NULL) {
-    dot_kde = strstr(kdehome,DOT_KDE);
-    if(dot_kde) {
-      levels.append(QFile::decodeName(dot_kde));
-      levels.append(QFile::decodeName("/share"));
-      levels.append(QFile::decodeName("/doc"));
-    }
-    else {
-      levels.append(QFile::decodeName("/.kde"));
-      levels.append(QFile::decodeName("/share"));
-      levels.append(QFile::decodeName("/doc"));
-    }
-  }
-  else {
-    levels.append(QFile::decodeName("/.kde"));
-    levels.append(QFile::decodeName("/share"));
-    levels.append(QFile::decodeName("/doc"));
-  }
-
-  for (uint level=0; level<levels.count(); level++) {
-    k_dir.append(levels[level]);
-    if (tryCreate(k_dir))
-      return(-1);
-  }
-
-  types = kstddirs.KStandardDirs::allTypes();
-
-  for(uint i=0; i<types.count(); i++) {
-    k_dir = p_dir;
-    k_dir.append(levels[0]);
-    // if(dot_kde)
-    k_dir.append(QString::fromLatin1("/"));
-    const char *ctype = types[i].latin1();
-    QString tpath = KStandardDirs::kde_default(ctype);
-    k_dir.append(tpath);
-    if (tryCreate(k_dir))
-      return(-1);
-  }
-
-  return(0);
-}
-
 int KUser::tryCreate(const QString &dir)
 {
   struct stat sb;
@@ -602,9 +548,6 @@ int KUser::tryCreate(const QString &dir)
 
         if (chown(QFile::encodeName(dir), p_uid, p_gid) != 0) {
           KMessageBox::error( 0, i18n("Cannot change owner of %1 folder.\nError: %2") .arg(dir).arg(QString::fromLocal8Bit(strerror(errno))) );
-        }
-        if (chmod(QFile::encodeName(dir), KU_KDEDIRS_PERM) != 0) {
-          KMessageBox::error( 0, i18n("Cannot change permissions on %1 folder.\nError: %2").arg(dir).arg(QString::fromLocal8Bit(strerror(errno))) );
         }
         return(0);
       } else {
@@ -624,42 +567,12 @@ int KUser::tryCreate(const QString &dir)
       if (chown(QFile::encodeName(dir), p_uid, p_gid) != 0) {
         KMessageBox::error( 0, i18n("Cannot change owner of %1 folder.\nError: %2").arg(dir).arg(QString::fromLocal8Bit(strerror(errno))) );
       }
-      if (chmod(QFile::encodeName(dir), KU_KDEDIRS_PERM) != 0) {
-        KMessageBox::error( 0, i18n("Cannot change permissions on %1 folder.\nError: %2").arg(dir).arg(QString::fromLocal8Bit(strerror(errno))) );
-      }
       return(0);
     } else {
       KMessageBox::error( 0, i18n("stat call on %1 failed.\nError: %2").arg(dir).arg(QString::fromLocal8Bit(strerror(errno))) );
       return(-1);
     }
   }
-}
-
-bool KUser::findKDE(const QString &dir)
-{
-  int  kde_count     = 0;
-  const QFileInfo	*fi   = NULL;
-  const QFileInfoList	*list = NULL;
-  QDir t(dir);
-  QString	dot_KDE = QString::fromLatin1(".kde");
-  bool  foundKDE;
-
-  foundKDE = false;
-  t.setFilter( QDir::Dirs | QDir::Hidden );
-  list = t.entryInfoList();
-  QFileInfoListIterator it( *list );
-
-  while ( (fi = it.current()) != 0 ) {
-    kde_count = fi->fileName().contains(dot_KDE, TRUE);
-    if(kde_count > 0)
-      foundKDE = true;
-    ++it;
-  }
-
-  if(foundKDE)
-    return TRUE;
-  else
-    return FALSE;
 }
 
 int KUser::createMailBox()
@@ -924,8 +837,6 @@ bool KUsers::doCreate(KUser *user)
   if(user->getCreateHome()) {
     if(user->createHome()) {
       user->setCreateHome(false);
-        if(!user->getCopySkel())
-          user->createKDE();
      } else {
        return false; // if createHome fails, copySkel is irrelevant!
      }
@@ -933,9 +844,6 @@ bool KUsers::doCreate(KUser *user)
      if(user->getCopySkel()) {
        if((user->copySkel()) == 0) {
          user->setCopySkel(false);
-         h_dir = user->getHomeDir();
-         if(!user->findKDE(h_dir))
-           user->createKDE();
        }
      }
 

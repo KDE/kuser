@@ -139,18 +139,8 @@ void KUserLDAP::data( KIO::Job *, const QByteArray& data )
           mUser->setFullName(QString::fromUtf8( value, value.size() ));
         else if ( name == "userpassword" ) {
           QString pwd = QString::fromUtf8( value, value.size() );
-          if ( !pwd.isEmpty() ) {
-            /* FIXME!!!!!! this is not in any RFC, but does the job
-             * (password starting with "!" means disabled account)
-             */
-            if ( pwd.startsWith("!") ) {
-              pwd.remove( 0, 1 );
-            } else {
-              mUser->setDisabled( false );
-            }
-            mUser->setPwd( pwd );
-            mUser->setSPwd( pwd );
-          }
+          if ( !pwd.isEmpty() ) mUser->setDisabled( false );
+          mUser->setPwd( pwd );
         } else if ( name == "shadowlastchange" ) {
           if ( mUser->getLastChange() == 0 ) //sambapwdlastset is more precise
             mUser->setLastChange(daysToTime(QString::fromUtf8( value, value.size() ).toLong()));
@@ -190,6 +180,7 @@ void KUserLDAP::data( KIO::Job *, const QByteArray& data )
         break;
       case KABC::LDIF::EndEntry: {
         KUser newUser;
+        kdDebug() << "new user: " << mUser->getName() << endl;
         mUsers.append( new KUser( mUser ) );
         mUser->copy( &newUser );
         mUser->setDisabled( true );
@@ -227,6 +218,7 @@ bool KUserLDAP::reload()
     this, SLOT( data( KIO::Job*, const QByteArray& ) ) );
   connect( job, SIGNAL( result( KIO::Job* ) ),
     this, SLOT( result( KIO::Job* ) ) );
+//  job->addMetaData( "SERVER_CTRL0", "1.2.840.113556.1.4.473 true: uidNumber");
   mProg->exec();
   if ( mCancel ) job->kill();
   delete mUser;
@@ -239,7 +231,7 @@ QString KUserLDAP::getRDN(KUser *user)
     case KUserPrefsBase::EnumLdapuserrdn::uid:
       return "uid=" + user->getName();
     case KUserPrefsBase::EnumLdapuserrdn::uidNumber:
-      return "uidNumber=" + user->getUID();
+      return "uidNumber=" + QString::number( user->getUID() );
   }
   return "";
 }
@@ -330,8 +322,9 @@ void KUserLDAP::getLDIF( KUser *user, bool mod )
   ldif.resize( 0 );
 
   pwd = user->getPwd();
-  if ( !pwd.isEmpty() && user->getDisabled() ) pwd = "!" + pwd;
-
+  if ( user->getDisabled() ) pwd = "";
+  kdDebug() << "pwd: " << pwd << endl;
+  
   cn = user->getFullName();
   if ( cn.isEmpty() ) cn = user->getName();
 
@@ -345,7 +338,21 @@ void KUserLDAP::getLDIF( KUser *user, bool mod )
   samflags += user->getDisabled() ? 'D' : ' ';
   samflags += "         ]";
 
-  ldif = "dn: " + getRDN( user ).utf8() + "," + mUrl.dn().utf8() + "\n";
+  ldif = "";
+  
+  if ( mod ) {
+    QString oldrdn = getRDN( mUser );
+    QString newrdn = getRDN( user );
+  
+    if ( oldrdn != newrdn ) {
+      ldif = "dn: " + oldrdn.utf8() + "," + mUrl.dn().utf8() + "\n" +
+        "changetype: modrdn\n" +
+        "newrdn: " + newrdn.utf8() + "\n" +
+        "deleteoldrdn: 1\n\n";      
+    }
+  }
+  
+  ldif += "dn: " + getRDN( user ).utf8() + "," + mUrl.dn().utf8() + "\n";
   if ( mod ) {
     ldif += "changetype: modify\n";
     ldif += "replace: objectClass\n";

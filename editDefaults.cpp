@@ -43,7 +43,7 @@ editDefaults::editDefaults( KConfigSkeleton *config, QWidget *parent, const char
   addPage( page1, i18n("General"), "", i18n("General Settings") );
   page1->kcfg_shell->insertItem( i18n("<Empty>" ) );
   page1->kcfg_shell->insertStringList( readShells() );
-
+  
   FilesSettings *page2 = new FilesSettings( this );
   addPage( page2, i18n("Files"), "", i18n("File Source Settings") );
 

@@ -181,8 +181,7 @@ bool KGroupFiles::save()
   int mingid = 0;
   int nis_groups_written = 0;
   gid_t tmp_gid = 0;
-  QString tmpGe;
-  QString tmpSe;
+  QString tmpGe, tmpSe, tmp2;
   QString group_filename, new_group_filename;
   QString gshadow_filename, new_gshadow_filename;
   QString nisgroup_filename, new_nisgroup_filename;
@@ -280,8 +279,13 @@ bool KGroupFiles::save()
       gr->setPwd("x");
 #endif
 
+    tmpGe = gr->getName();
+    tmpGe.replace( ',', "_" );
+    tmpGe.replace( ':', "_" );
+    gr->setName( tmpGe );
+
     tmp_gid = gr->getGID();
-    tmpGe = gr->getName() + ":" +
+    tmpGe += ":" +
             gr->getPwd() + ":" +
             QString::number( gr->getGID() ) + ":";
     tmpSe = gr->getName() + ":!::";
@@ -290,7 +294,10 @@ bool KGroupFiles::save()
          tmpGe += ',';
          tmpSe += ',';
        }
-       tmpGe += gr->user(j); tmpSe += gr->user(j);
+       gr->user( j ).replace( ',', "_" );
+       gr->user( j ).replace( ':', "_" );
+       tmpGe += gr->user( j) ;
+       tmpSe += gr->user( j );
     }
     tmpGe += '\n'; tmpSe += '\n';
 

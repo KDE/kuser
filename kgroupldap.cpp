@@ -74,7 +74,7 @@ QString KGroupLDAP::getRDN( KGroup *group )
     case KUserPrefsBase::EnumLdapgrouprdn::cn:
       return "cn=" + group->getName();
     case KUserPrefsBase::EnumLdapgrouprdn::gidNumber:
-      return "gidNumber=" + group->getGID();
+      return "gidNumber=" + QString::number( group->getGID() );
     default:
       return "";
   }
@@ -264,7 +264,18 @@ void KGroupLDAP::delData( KGroup *group )
 
 void KGroupLDAP::modData( KGroup *group )
 {
-  ldif = "dn: " + getRDN( group ).utf8() + "," + mUrl.dn().utf8() + "\n" +
+  QString oldrdn = getRDN( mGroup );
+  QString newrdn = getRDN( group );
+  
+  ldif = "";
+  if ( oldrdn != newrdn ) {
+    ldif = "dn: " + oldrdn.utf8() + "," + mUrl.dn().utf8() + "\n" +
+      "changetype: modrdn\n" +
+      "newrdn: " + newrdn.utf8() + "\n" +
+      "deleteoldrdn: 1\n\n";      
+  }
+  
+  ldif += "dn: " + newrdn.utf8() + "," + mUrl.dn().utf8() + "\n" +
     "changetype: modify\n" +
     "replace: objectclass\n" +
     "objectclass: posixgroup\n";
@@ -296,5 +307,5 @@ void KGroupLDAP::modData( KGroup *group )
   }
 
   ldif += "-\n\n";
-//  kdDebug() << "ldif: " << ldif << endl;
+  kdDebug() << "ldif: " << ldif << endl;
 }

@@ -1,9 +1,12 @@
 #include "globals.h"
 
-#include <sys/file.h>
 #include <errno.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <sys/file.h>
+#ifdef _SCO_DS
+#include <sys/fcntl.h>
+#endif
 #include <sys/stat.h>
 #include <pwd.h>
 #include <grp.h>
@@ -470,10 +473,12 @@ bool KUsers::loadsdw() {
     up->sets_lstchg(spw->sp_lstchg);
     up->sets_min(spw->sp_min);
     up->sets_max(spw->sp_max);
+#ifndef _SCO_DS
     up->sets_warn(spw->sp_warn);
     up->sets_inact(spw->sp_inact);
     up->sets_expire(spw->sp_expire);
     up->sets_flag(spw->sp_flag);
+#endif
   }
 
   endspent();
@@ -614,11 +619,12 @@ bool KUsers::savesdw() {
     s.sp_lstchg = up->gets_lstchg();
     s.sp_min    = up->gets_min();
     s.sp_max    = up->gets_max();
+#ifndef _SCO_DS
     s.sp_warn   = up->gets_warn();
     s.sp_inact  = up->gets_inact();
     s.sp_expire = up->gets_expire();
     s.sp_flag   = up->gets_flag();
-
+#endif
     spwp = &s;
     putspent(spwp, f);
   }

@@ -38,10 +38,10 @@ addUser::addUser(KUser *auser, Quota *aquota, QWidget *parent, const char *name,
   copyskel->setGeometry(200, 110, 200, 30);
   copyskel->setEnabled(FALSE);
 
-  usePrivateGroup = new QCheckBox(w1, "usePrivateGroup");
-  usePrivateGroup->setText(i18n("Use Private Group"));
-  usePrivateGroup->setGeometry(200, 150, 200, 30);
-  connect(usePrivateGroup, SIGNAL(toggled(bool)), this, SLOT(usePrivateGroupChecked(bool)));
+  userPrivateGroup = new QCheckBox(w1, "userPrivateGroup");
+  userPrivateGroup->setText(i18n("User Private Group"));
+  userPrivateGroup->setGeometry(200, 150, 200, 30);
+  connect(userPrivateGroup, SIGNAL(toggled(bool)), this, SLOT(userPrivateGroupChecked(bool)));
 }
 #else
 addUser::addUser(KUser *auser, QWidget *parent = 0, const char *name = 0, int isprep = false) :
@@ -58,15 +58,19 @@ addUser::addUser(KUser *auser, QWidget *parent = 0, const char *name = 0, int is
   copyskel->setGeometry(200, 110, 200, 30);
   copyskel->setEnabled(FALSE);
 
-  usePrivateGroup = new QCheckBox(w1, "usePrivateGroup");
-  usePrivateGroup->setText(i18n("Use Private Group"));
-  usePrivateGroup->setGeometry(200, 150, 200, 30);
-  connect(usePrivateGroup, SIGNAL(toggled(bool)), this, SLOT(usePrivateGroupChecked(bool)));
+  userPrivateGroup = new QCheckBox(w1, "userPrivateGroup");
+  userPrivateGroup->setText(i18n("User Private Group"));
+  userPrivateGroup->setGeometry(200, 150, 200, 30);
+  connect(userPrivateGroup, SIGNAL(toggled(bool)), this, SLOT(userPrivateGroupChecked(bool)));
 }
 #endif
 
-void addUser::setUsePrivateGroup(bool data) {
-  usePrivateGroup->setChecked(data);
+void addUser::setUserPrivateGroup(bool data) {
+  userPrivateGroup->setChecked(data);
+}
+
+bool addUser::getUserPrivateGroup() {
+  return userPrivateGroup->isChecked();
 }
 
 void addUser::setCreateHomeDir(bool data) {
@@ -92,11 +96,13 @@ void addUser::ok() {
 
   check();
   
-  if (createhome->isChecked())
-    if ((checkHome()) && (checkMailBox())) {
+  if (createhome->isChecked()) {
+    if (checkHome()) 
       user->setCreateHome(1);
+
+    if (checkMailBox())
       user->setCreateMailBox(1);
-    }
+  }
 
   if (copyskel->isChecked())
     user->setCopySkel(1);
@@ -104,7 +110,7 @@ void addUser::ok() {
   accept();
 }
 
-void addUser::usePrivateGroupChecked(bool data) {
+void addUser::userPrivateGroupChecked(bool data) {
   cbpgrp->setEnabled(!data);
 }
 
@@ -166,3 +172,4 @@ bool addUser::checkMailBox() {
 
   return false;
 }
+

@@ -1,3 +1,4 @@
+04/04/1999: Bug #1133 'new fixes dont create new user home directory anymore'
 01/04/1999: Bug #895 'Kuser doesn't restore the permissions on /etc/shadow.'
 
 19990328: added #ifdef's to kuser.cpp and kgroup.cpp so that if

@@ -140,12 +140,12 @@ CheckBox {
 }
 CheckBox {
 		Checked {FALSE}
-		Text {Use Private Group}
+		Text {User Private Group}
 		AutoRepeat {FALSE}
 		AutoResize {TRUE}
-		Rect {10 220 126 17}
+		Rect {10 220 130 17}
 		Name {CheckBox_3}
-		Variable {usePrivateGroup}
+		Variable {userPrivateGroup}
 		MinimumSize {0 0}
 		MaximumSize {32767 32767}
 		BackgroundPixmap {}

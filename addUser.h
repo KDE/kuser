@@ -12,14 +12,15 @@ public:
 #else
   addUser(KUser *auser, QWidget *parent = 0, const char *name = 0, int isprep = false);
 #endif
-  void setUsePrivateGroup(bool data);
+  void setUserPrivateGroup(bool data);
   void setCreateHomeDir(bool data);
   void setCopySkel(bool data);
 
+  bool getUserPrivateGroup();
 protected slots:
   virtual void ok();
 
-  virtual void usePrivateGroupChecked(bool data);
+  virtual void userPrivateGroupChecked(bool data);
   virtual void createHomeChecked(bool data);
 
 protected:
@@ -28,7 +29,7 @@ protected:
 
   QCheckBox *createhome;
   QCheckBox *copyskel;
-  QCheckBox *usePrivateGroup;
+  QCheckBox *userPrivateGroup;
 };
 
 #endif // _KU_ADDUSER_H

@@ -161,7 +161,7 @@ void mainDlg::userdel() {
       islast = TRUE;
 
     uint uid = lbusers->getCurrentUser()->getp_uid();
-		uint gid = lbusers->getCurrentUser()->getp_gid();
+    uint gid = lbusers->getCurrentUser()->getp_gid();
 
 #ifdef _KU_QUOTA
     if (u->lookup(uid) == NULL)
@@ -177,28 +177,29 @@ void mainDlg::userdel() {
     else
       reloadUsers(i-1);
     changed = TRUE;
-		if (config->readBoolEntry("usePrivateGroup", KU_USEPRIVATEGROUP)) {
-			bool found = false;
+    if (config->readBoolEntry("userPrivateGroup", KU_USERPRIVATEGROUP)) {
+      bool found = false;
 
-			for (uint i=0; i<u->getNumber(); i++)
-				if (u->get(i)->getp_gid() == gid) {
-					found = true;
-					break;
-				}
-			if (!found)
-				if (KMsgBox::yesNo(0, i18n("WARNING"),
-													 i18n("You are using private groups.\nDo you want delete user's private group ?"),
-													 KMsgBox::STOP,
-													 i18n("Cancel"), i18n("Delete")) == 2) {
-					uint oldc = lbgroups->currentItem();
-					g->del(g->lookup(gid));
-					if (oldc == g->count())
-						reloadGroups(oldc-1);
-					else
-						reloadGroups(oldc);
-				}
-		}
-	}
+      for (uint i=0; i<u->getNumber(); i++)
+        if (u->get(i)->getp_gid() == gid) {
+          found = true;
+          break;
+        }
+
+      if (!found)
+        if (KMsgBox::yesNo(0, i18n("WARNING"),
+                           i18n("You are using private groups.\nDo you want delete user's private group ?"),
+                           KMsgBox::STOP,
+                           i18n("Cancel"), i18n("Delete")) == 2) {
+          uint oldc = lbgroups->currentItem();
+          g->del(g->lookup(gid));
+          if (oldc == g->count())
+            reloadGroups(oldc-1);
+          else
+            reloadGroups(oldc);
+        }
+    }
+  }
 }
 
 void mainDlg::useradd() {
@@ -280,22 +281,22 @@ void mainDlg::useradd() {
 
   au->setCreateHomeDir(config->readBoolEntry("createHomeDir", true));
   au->setCopySkel(config->readBoolEntry("copySkel", true));
-  au->setUsePrivateGroup(config->readBoolEntry("usePrivateGroup", KU_USEPRIVATEGROUP));
+  au->setUserPrivateGroup(config->readBoolEntry("userPrivateGroup", KU_USERPRIVATEGROUP));
 
   if (au->exec() != 0) {
-		if (config->readBoolEntry("usePrivateGroup", KU_USEPRIVATEGROUP)) {
-			KGroup *tg;
+    if (au->getUserPrivateGroup()) {
+      KGroup *tg;
 
-			if ((tg = g->lookup(tk->getp_name())) == NULL) {
-				tg = new KGroup();
-				tg->setgid(g->first_free());
-				tg->setname(tk->getp_name());
-				g->add(tg);
-				reloadGroups(lbgroups->currentItem());
-			}
+      if ((tg = g->lookup(tk->getp_name())) == NULL) {
+        tg = new KGroup();
+        tg->setgid(g->first_free());
+        tg->setname(tk->getp_name());
+        g->add(tg);
+        reloadGroups(lbgroups->currentItem());
+      }
 
-			tk->setp_gid(tg->getgid());
-		}
+      tk->setp_gid(tg->getgid());
+    }
     u->add(tk);
 #ifdef _KU_QUOTA
     q->addQuota(tq);
@@ -365,7 +366,7 @@ void mainDlg::properties() {
   eddlg->setHomeBase(config->readEntry("homeBase", "/home"));
   eddlg->setCreateHomeDir(config->readBoolEntry("createHomeDir", true));
   eddlg->setCopySkel(config->readBoolEntry("copySkel", true));
-  eddlg->setUsePrivateGroup(config->readBoolEntry("usePrivateGroup", KU_USEPRIVATEGROUP));
+  eddlg->setUserPrivateGroup(config->readBoolEntry("userPrivateGroup", KU_USERPRIVATEGROUP));
 
   if (eddlg->exec() != 0) {
     config->setGroup("template");
@@ -373,7 +374,7 @@ void mainDlg::properties() {
     config->writeEntry("homeBase", eddlg->getHomeBase());
     config->writeEntry("createHomeDir", eddlg->getCreateHomeDir());
     config->writeEntry("copySkel", eddlg->getCopySkel());
-    config->writeEntry("usePrivateGroup", eddlg->getUsePrivateGroup());
+    config->writeEntry("userPrivateGroup", eddlg->getUserPrivateGroup());
   }
 
   delete eddlg;

@@ -20,23 +20,23 @@ MntEnt::MntEnt(const QString &afsname, const QString &adir,
 MntEnt::~MntEnt() {
 }
 
-const QString &MntEnt::getfsname() const {
+QString MntEnt::getfsname() const {
   return fsname;
 }
 
-const QString &MntEnt::getdir() const {
+QString MntEnt::getdir() const {
   return dir;
 }
 
-const QString &MntEnt::gettype() const {
+QString MntEnt::gettype() const {
   return type;
 }
 
-const QString &MntEnt::getopts() const {
+QString MntEnt::getopts() const {
   return opts;
 }
 
-const QString &MntEnt::getquotafilename() const {
+QString MntEnt::getquotafilename() const {
   return quotafilename;
 }
 

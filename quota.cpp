@@ -154,10 +154,10 @@ static int doQuotaCtl(int ACmd, uint AUID, const MntEnt *m, struct dqblk *dq) {
          return quotactl(ACmd, m->getfsname(), AUID, (caddr_t) dq);
 #  else
 #    ifdef __osf__
-         return quotactl((const char*) m->getdir(), ACmd, AUID, (caddr_t) dq);
+         return quotactl((char*)m->getdir().latin1(), ACmd, AUID, (caddr_t) dq);
 #    else
 #        ifdef BSD
-             return quotactl(m->getdir(), ACmd, AUID, (caddr_t) dq);
+             return quotactl(m->getdir().latin1(), ACmd, AUID, (caddr_t) dq);
 #        endif
 #    endif
 #    ifdef _KU_HPUX_QUOTA

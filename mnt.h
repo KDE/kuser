@@ -14,11 +14,11 @@ public:
          const QString &aquotafilename);
   ~MntEnt();
 
-  const QString &getfsname() const;
-  const QString &getdir() const;
-  const QString &gettype() const;
-  const QString &getopts() const;
-  const QString &getquotafilename() const;
+  QString getfsname() const;
+  QString getdir() const;
+  QString gettype() const;
+  QString getopts() const;
+  QString getquotafilename() const;
 
   void setfsname(const QString &data);
   void setdir(const QString &data);

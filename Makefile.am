@@ -1,19 +1,13 @@
-INCLUDE	=	@all_includes@
+INCLUDES	=	$(all_includes)
 
 # May be -DLINUX -D_XU_QUOTA -DAIX -D_XU_SHADOW
 SYSFLAGS = 	-D_KU_QUOTA -D_KU_SHADOW -D_KU_DEBUG # -g
 
 # For Linux
 OFLAGS =	-O2 -W -DLOCDIR=\"$(LOCALEDIR)\"
-CFLAGS	=	$(OFLAGS) $(SYSFLAGS) # -g
-LFLAGS	=	@all_libraries@  -lkdecore -lkdeui -lqt -L./ -lX11 -lXext -lintl @LIBSOCKET@
-MOC	=	@MOC@
-MSGFMT	=	msgfmt
-
-INSTALL = @INSTALL@
-INSTALL_PROGRAM = @INSTALL_PROGRAM@
-INSTALL_DATA = @INSTALL_DATA@
-INSTALL_SCRIPT = @INSTALL_SCRIPT@
+DEFS	+=	$(OFLAGS) $(SYSFLAGS) # -g
+kuser_LDFLAGS	=	$(all_libraries)
+kuser_LDADD	=	-lkdecore -lkdeui -lqt -L./ -lX11 -lXext -lintl $(LIBSOCKET)
 
 ####### Files
 
@@ -23,42 +17,28 @@ HTMLFILES =	doc/index.html
 GIFFILES  =	doc/bugnet-member.gif
 DOCFILES=	$(HTMLFILES) $(GIFFILES)
 PICFILES=	pic/user.bmp
-SOURCES =	kdatectl.cpp kuser.cpp main.cpp maindlg.cpp mnt.cpp propdlg.cpp quotatool.cpp pwdtool.cpp sdwtool.cpp misc.cpp usernamedlg.cpp pwddlg.cpp mrqpasswdlined.cpp
+kuser_SOURCES =	kdatectl.cpp kuser.cpp main.cpp maindlg.cpp mnt.cpp propdlg.cpp quotatool.cpp pwdtool.cpp sdwtool.cpp misc.cpp usernamedlg.cpp pwddlg.cpp mrqpasswdlined.cpp
 SRCMETA =       kdatectl.moc maindlg.moc propdlg.moc usernamedlg.moc pwddlg.moc mrqpasswdlined.moc
-HEADERS =       kdatectl.h kuser.h maindlg.h   propdlg.h  mnt.h quotatool.h sdwtool.h pwdtool.h includes.h misc.h usernamedlg.h pwddlg.h mrqpasswdlined.h
-OBJECTS =	kdatectl.o kuser.o main.o maindlg.o mnt.o propdlg.o   quotatool.o pwdtool.o sdwtool.o misc.o usernamedlg.o pwddlg.o mrqpasswdlined.o
-TARGET	=	kuser
-EDITABLE =	$(POFILES) $(HTMLFILES) $(SOURCES) $(HEADERS) README Makefile.in
+ALLHEADERS	=       kdatectl.h kuser.h maindlg.h   propdlg.h  mnt.h quotatool.h sdwtool.h pwdtool.h includes.h misc.h usernamedlg.h pwddlg.h mrqpasswdlined.h
+EDITABLE =	$(POFILES) $(HTMLFILES) $(kuser_SOURCES) $(kuser_HEADERS) README Makefile.am
 
 # Where to install binaries
-PREFIX	=	@prefix@
+PREFIX	=	$(prefix)
 SBINDIR =	$(PREFIX)/bin
 PICDIR  =       $(PREFIX)/lib/pic/kuser
 DOCDIR  =	$(PREFIX)/share/doc/HTML/en/kuser
 LOCALEDIR =	$(PREFIX)/lib/locale
 MODIR   =	$(LOCALEDIR)/ru/LC_MESSAGES
 
+sbin_PROGRAMS = kuser
+
 # Version
 VERSION =	0.1
-
-####### Implicit rules
-
-.SUFFIXES: .cpp
-
-.cpp.o:
-	$(CXX) -c $(CFLAGS) $(INCLUDE) $<
-####### Build rules
-
-all: $(TARGET) $(MOFILES)
-
-$(TARGET): $(SRCMETA) $(OBJECTS)
-	$(CXX) $(OBJECTS) -o $(TARGET) $(LFLAGS)
-#	strip $(TARGET)
 
 srcdist:
 	rm -rf ./kuser-$(VERSION) &>/dev/null
 	mkdir ./kuser-$(VERSION)
-	cp $(SOURCES) $(METASRC) $(HEADERS) config.sub config.guess config.h.in acconfig.h acinclude.m4 Makefile.in configure.in configure install-sh ./kuser-$(VERSION)/
+	cp $(SOURCES) $(METASRC) $(HS) config.sub config.guess config.h.in acconfig.h acinclude.m4 Makefile.in configure.in configure install-sh ./kuser-$(VERSION)/
 	cp -R po ./kuser-$(VERSION)/
 	cp -R doc ./kuser-$(VERSION)/
 	cp -R pic ./kuser-$(VERSION)/
@@ -73,9 +53,11 @@ bindist: all
 	tar czvf ./kuser-$(VERSION).bin.tgz ./kuser-$(VERSION)/
 	rm -rf ./kuser-$(VERSION)
 
-install: all
+install-exec-local:
 	$(INSTALL) -d $(SBINDIR)
 	$(INSTALL) -s -m 750 ./$(TARGET) $(SBINDIR)
+
+install-data-local:
 	$(INSTALL) -d $(DOCDIR)
 	$(INSTALL) -m 755 $(DOCFILES) $(DOCDIR)
 	$(INSTALL) -d $(PICDIR)
@@ -83,25 +65,14 @@ install: all
 	$(INSTALL) -d $(MODIR)
 	$(INSTALL) -m 644 $(MOFILES) $(MODIR)
 
-depend:
-	@echo "Checking dependencies"
-	@makedepend -I$(INCDIR) $(SOURCES) 2> /dev/null
-
 showfiles:
-	@echo $(HEADERS) $(SOURCES) Makefile
+	@echo $(HS) $(SOURCES) Makefile
 
 updatepo:
-	xgettext --default-domain=kuser -a -C -l ./ -n -s --keyword=_ $(SOURCES)
+	$(XGETTEXT) --default-domain=kuser -a -C -l ./ -n -s --keyword=_ $(SOURCES)
 	mv kuser.po po/kuser.pot
 	tupdate po/kuser.pot po/kuser.po>po/kuser.po.n
 	mv po/kuser.po.n po/kuser.po
-
-dopo: $(MOFILES)
-#	msgfmt -o /usr/local/lib/locale/ru/LC_MESSAGES/kuser.mo po/kuser.po
-
-clean:
-	rm -f *.o *.bak *.b *~ *% #*
-	rm -f $(TARGET) $(SRCMETA)
 
 edit::
 	xemacs -fn "-edict-fixed-medium-r-*-*-*-120-*-*-*-*-koi8-r" -geometry 142x41+0+0 $(EDITABLE)&
@@ -111,6 +82,4 @@ edit::
 
 %.mo: %.po
 	$(MSGFMT) $< -o $@
-
-# DO NOT DELETE THIS LINE -- make depend depends on it.
 

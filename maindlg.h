@@ -7,7 +7,7 @@ class maindlg:public KTopLevelWidget
 {
 Q_OBJECT
 public:
-  maindlg( QWidget *parent = 0, const char *name = 0);
+  maindlg(const char *name = 0);
 
   QListBox* list;
   

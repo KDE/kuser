@@ -15,7 +15,7 @@ public:
 	int iyear;
 
 	QLineEdit *day;
-	QComboBox *month;
+	KCombo *month;
 	QLineEdit *year;
 	QCheckBox *isempty;
         QLabel *label;
@@ -28,7 +28,6 @@ public:
 	void setFont(const QFont &f);
 private:
 	void updateControls();
-	int validate(const char *text);
 protected slots:
 	void isEmptyToggled(bool state);
 	void dayChanged(const char *text);

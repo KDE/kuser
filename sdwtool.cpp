@@ -1,3 +1,4 @@
+#include <kmsgbox.h>
 #include "includes.h"
 #include "misc.h"
 #include "sdwtool.h"
@@ -15,7 +16,7 @@ void sdw_read(void)
     if ((f = fopen(SHADOW_FILE, "r")) == NULL) {
       is_shadow = 0; 
       sprintf(tmp, _("Error opening %s"), SHADOW_FILE);
-      QMessageBox::message(_("Error"), tmp, "Ok");
+        KMsgBox::message(0, _("Error"), tmp, KMsgBox::STOP);
       return;
     }
 
@@ -26,7 +27,7 @@ void sdw_read(void)
       else {
         sprintf(tmp, _("No /etc/passwd entry for %s.\n\
 Entry will be removed at the next `Save'-operation."), spw->sp_namp);
-        QMessageBox::message(_("Error"), tmp, "Ok");
+        KMsgBox::message(0, _("Error"), tmp, KMsgBox::STOP);
       }
     }
 
@@ -50,7 +51,7 @@ void sdw_write()
 
     if ((f = fopen(SHADOW_FILE, "w")) == NULL) {
       sprintf(tmp, _("Error opening %s for writing"), SHADOW_FILE);
-      QMessageBox::message(_("Error"), tmp, "Ok");
+      KMsgBox::message(0, _("Error"), tmp, KMsgBox::STOP);
     }
 
     s.sp_namp = (char *)malloc(200);
@@ -62,7 +63,7 @@ void sdw_write()
       if (!(const char *)up->s_pwd)
       {
         sprintf(tmp, _("No shadow entry for %s."), (const char *)up->p_name);
-        QMessageBox::message(_("Error"), tmp, "Ok");
+        KMsgBox::message(0, _("Error"), tmp, KMsgBox::STOP);
       }
       else {
         strcpy(s.sp_namp, (const char *)up->p_name);

@@ -14,10 +14,6 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int isprep)
        WStyle_Customize | WStyle_DialogBorder | WStyle_SysMenu |
        WStyle_MinMax | WType_Modal) {
 
-#ifdef _KU_DEBUG
-printf("propdlg::propdlg begin\n");
-#endif
-
   user = auser;
   chquota = 0;
 
@@ -122,6 +118,7 @@ printf("propdlg::propdlg begin\n");
 
   addTab(w1, _("User info"));
 
+#ifdef _KU_SHADOW
   if (is_shadow != 0) {
     w2 = new QWidget(this, "wd_Shadow");
     w2->setFont(rufont);
@@ -168,7 +165,9 @@ printf("propdlg::propdlg begin\n");
 
     addTab(w2, _("Extended"));
   }
+#endif
 
+#ifdef _KU_QUOTA
   if (is_quota != 0) {
     w3 = new QWidget(this, "wd_Quota");
     w3->setFont(rufont);
@@ -238,45 +237,31 @@ printf("propdlg::propdlg begin\n");
     l15->setFont(rufont);
     addTab(w3, _("Quota"));
   }
+#endif
 
   selectuser();
   resize(450, 470);
 
   ischanged = FALSE;
   isqchanged = FALSE;
-
-#ifdef _KU_DEBUG
-printf("propdlg::propdlg end\n");
-#endif
-
 }
 
 propdlg::~propdlg() {
-#ifdef _KU_DEBUG
-printf("propdlg::~propdlg begin\n");
-#endif
 }
 
 void propdlg::changed() {
-printf("propdlg::changed\n");
   ischanged = TRUE;
 }
 
 void propdlg::charchanged(const char *text) {
-printf("propdlg::charchanged\n");
   ischanged = TRUE;
 }
 
 void propdlg::qcharchanged(const char *text) {
-printf("propdlg::qcharchanged\n");
   isqchanged = TRUE;
 }
 
 void propdlg::save() {
-  FILE *passwd;
-  char uname[200];
-  char *check;
-
   user->p_fname.setStr(lefname->text());
   user->p_office1.setStr(leoffice1->text());
   user->p_office2.setStr(leoffice2->text());
@@ -299,6 +284,7 @@ void propdlg::save() {
 }
 
 void propdlg::mntsel(int index) {
+#ifdef _KU_QUOTA
   Quota *tmpq = user->quota.at(chquota);
 
   tmpq->fhard = atol(leqfh->text());
@@ -308,16 +294,18 @@ void propdlg::mntsel(int index) {
 
   chquota = index;
   selectuser();
+#endif
 }
 
 void propdlg::saveq() {
+#ifdef _KU_QUOTA
   Quota *tmpq = user->quota.at(chquota);
-printf("chquota = %d\n", chquota);
 
   tmpq->fhard = atol(leqfh->text());
   tmpq->fsoft = atol(leqfs->text());
   tmpq->ihard = atol(leqih->text());
   tmpq->isoft = atol(leqis->text());
+#endif
 }
 
 void propdlg::shactivated(const char *text) { 

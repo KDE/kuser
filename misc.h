@@ -4,8 +4,9 @@
 #include "kuser.h"
 #include "includes.h"
 #include "../config.h"
+#include <klocale.h>
 
-#define _(Text) gettext (Text)
+#define _(Text) klocale->translate (Text)
 
 KUser *user_lookup(const char *name);
 uint first_free();

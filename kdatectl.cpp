@@ -1,3 +1,4 @@
+#include <qvalidator.h>
 #include "kdatectl.h"
 #include "kdatectl.moc"
 #include "misc.h"
@@ -11,9 +12,11 @@ long int adate, int ax, int ay) {
 
   sprintf(tmp, "%s_day", name);
   day = addLineEdit(parent, tmp, x, y+25, 30, 27, "");
+  sprintf(tmp,  "va_%s_day", name);
+  day->setValidator(new QIntValidator(1, 31, parent, name));
 
   sprintf(tmp, "%s_month", name);
-  month = new QComboBox(FALSE, parent, tmp);
+  month = new KCombo(FALSE, parent, tmp);
   month->clear();
   month->insertItem(_("January"));
   month->insertItem(_("February"));
@@ -32,6 +35,8 @@ long int adate, int ax, int ay) {
 
   sprintf(tmp,  "%s_year", name);
   year = addLineEdit(parent, tmp, x+150, y+25, 50, 27, "");
+  sprintf(tmp,  "va_%s_year", name);
+  year->setValidator(new QIntValidator(1970, 2023, parent, name));
 
   sprintf(tmp, "%s_isempty", name);
   isempty = new QCheckBox(checktitle, parent, tmp);
@@ -125,35 +130,15 @@ void KDateCtl::updateControls() {
  
 void KDateCtl::isEmptyToggled(bool state) { 
   updateControls();
-#ifdef _KU_DEBUG
-  puts("Checked");
-#endif
-}
-
-int KDateCtl::validate(const char *text) {
-  for (unsigned int i=0; i<strlen(text);i++)
-    if ((text[i]<'0')||(text[i]>'9'))
-      return 0;
-      
-  return 1;
 }
 
 void KDateCtl::dayChanged(const char *text) {
   long int tday = 0;
 
-  if (validate(text) == 1) {
-    tday = strtol(text, (char **)NULL, 10);
-    if (tday>31) {
-      QString *tmp = new QString();
-      day->setText(tmp->setNum(iday));
-      delete tmp;
-    } else
-      iday = tday;
-  } else {
-    QString *tmp = new QString();
-    day->setText(tmp->setNum(iday));
-    delete tmp;
-  }
+  tday = strtol(text, (char **)NULL, 10);
+  QString *tmp = new QString();
+  day->setText(tmp->setNum(iday));
+  delete tmp;
 
   textChanged();
 }
@@ -165,21 +150,9 @@ void KDateCtl::monthChanged(int data) {
 }
 
 void KDateCtl::yearChanged(const char *text) {
-  long int tyear = 0;
-
-  if (validate(text) == 1) {
-    tyear = strtol(text, (char **)NULL, 10);
-    if (tyear>2023) {
-      QString *tmp = new QString();
-      year->setText(tmp->setNum(iday));
-      delete tmp;
-    } else
-      iyear = tyear;
-  } else {
-    QString *tmp = new QString();
-    year->setText(tmp->setNum(iday));
-    delete tmp;
-  }
+  QString *tmp = new QString();
+  year->setText(tmp->setNum(iday));
+  delete tmp;
 
   textChanged();
 }

@@ -1,3 +1,4 @@
+#include <kmsgbox.h>
 #include "includes.h"
 #include "misc.h"
 
@@ -83,7 +84,7 @@ void pwd_write() {
 
   if ((passwd = fopen(PASSWORD_FILE,"w")) == NULL) {
     sprintf(other, _("Error opening %s for writing"), PASSWORD_FILE);
-    QMessageBox::message(_("Error"), other, "Ok");
+    KMsgBox::message(0, _("Error"), other, KMsgBox::STOP);
   }
 
   for (unsigned int i=0; i<users.count(); i++) {

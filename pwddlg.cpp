@@ -4,6 +4,8 @@
 #include <crypt.h>
 #endif
 
+#include <kmsgbox.h>
+
 #include "pwddlg.h"
 #include "pwddlg.moc"
 #include "misc.h"
@@ -48,7 +50,7 @@ void pwddlg::ok()
   const char * set = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./";
 
   if (strcmp(leusername1->text(), leusername2->text())) {
-    QMessageBox::message(_("Error"), _("Passwords are not identical.\nTry again"), "Ok");
+    KMsgBox::message(0, _("Error"), ("Passwords are not identical.\nTry again"), KMsgBox::STOP);
     leusername1->setText("");
     leusername2->setText("");
     leusername1->setFocus();
@@ -61,11 +63,13 @@ void pwddlg::ok()
 
     strcpy(tmp, crypt(leusername1->text(), salt));
 
+#ifdef _KU_SHADOW
     if (is_shadow != 0) {
       user->s_pwd.setStr(tmp);
       user->p_pwd.setStr("x");
     }
     else
+#endif
       user->p_pwd.setStr(tmp);
     accept();
   }

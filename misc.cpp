@@ -15,6 +15,7 @@
 #include <sys/mnttab.h>
 #endif
 
+#include <kmsgbox.h>
 #include "misc.h"
 #include "pwdtool.h"
 #include "sdwtool.h"
@@ -66,7 +67,7 @@ void backup(char const *name)
   if (rename(name, tmp) == -1)
   {
     sprintf(tmp, _("Can't create backup file for %s"), name);
-    QMessageBox::message(tmp, "Ok");
+    KMsgBox::message(0, _("Error"), tmp, KMsgBox::STOP);
     exit (1);
   }
 }
@@ -122,7 +123,7 @@ int getValue(long int &data, const char *text, const char *msg) {
   char *check;
   long int value = strtol(text, &check, 0);
   if (check[0]) {
-    QMessageBox::message(_("Error"), msg, "Ok");
+    KMsgBox::message(0, _("Error"), msg, KMsgBox::STOP);
     return (-1);
   }
   data = value;
@@ -134,7 +135,7 @@ int getValue(int &data, const char *text, const char *msg) {
   char *check;
   long int value = strtol(text, &check, 0);
   if (check[0]) {
-    QMessageBox::message(_("Error"), msg, "Ok");
+    KMsgBox::message(0, _("Error"), msg, KMsgBox::STOP);
     return (-1);
   }
   data = (int)value;
@@ -146,7 +147,7 @@ int getValue(unsigned int &data, const char *text, const char *msg) {
   char *check;
   long int value = strtol(text, &check, 0);
   if (check[0]) {
-    QMessageBox::message(_("Error"), msg, "Ok");
+    KMsgBox::message(0, _("Error"), msg, KMsgBox::STOP);
     return (-1);
   }
   data = (unsigned int)value;
@@ -156,10 +157,6 @@ int getValue(unsigned int &data, const char *text, const char *msg) {
 
 void getmounts() {
 #ifdef _KU_QUOTA
-
-#ifdef _KU_DEBUG
-printf("getmounts\n");
-#endif
 
 #ifdef BAD_GETMNTENT
   struct mnttab *m = NULL;
@@ -177,11 +174,9 @@ printf("getmounts\n");
 
 #ifdef BAD_GETMNTENT
   fp = fopen(MNTTAB, "r");
-puts("fp opened");
   m = (struct mnttab *)malloc(sizeof(mnttab));
 
   while ((getmntent(fp, m)) == 0) {
-printf("getmntent %p\n", m);
     if (strstr(m->mnt_mntopts, "quota") == NULL)
       continue;
 
@@ -228,10 +223,6 @@ printf("getmntent %p\n", m);
 }
 
 void init() {
-#ifdef _KU_DEBUG
-printf("init\n");
-#endif
-
   getmounts();
 
   pwd_read();
@@ -244,14 +235,6 @@ printf("init\n");
 #ifdef _KU_QUOTA
   if (is_quota != 0)
 
-#ifdef _KU_DEBUG
-puts("quota_read");
-#endif
-
     quota_read();
-
-#ifdef _KU_DEBUG
-puts("quota_read done");
-#endif
 #endif
 }

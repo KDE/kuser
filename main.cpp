@@ -1,3 +1,4 @@
+#include <kmsgbox.h>
 #include "includes.h"
 #include "misc.h"
 #include "maindlg.h"
@@ -45,9 +46,6 @@ void initmain() {
 
   config = kapp->getConfig();
 
-//  QFont *tmpf = new QFont();
-//  tpmf->
-
   init();
 
   rufont.setRawMode(TRUE);
@@ -56,30 +54,24 @@ void initmain() {
 }
 
 void donemain() {
-puts("Doing");
-//  delete pic_user;
-puts("Done");
 }
 
 int main( int argc, char **argv )
 {
   KApplication a(argc, argv, "kuser");
 
-  initmain();
-
   if (getuid()) {
-    QMessageBox::message(_("Error"), _("Only root allowed manage users."),"Ok");
+    KMsgBox::message(0, _("Error"), _("Only root allowed manage users."), KMsgBox::STOP);
     exit(1);
   }
 
-printf("Maindlg initializing\n");
-  maindlg w(NULL, "kuser");
+  initmain();
 
-printf("Maindlg initialized\n");
+  maindlg w("kuser");
   
   a.setMainWidget( &w );
   w.show();
 
-  int res=a.exec();
+  a.exec();
   donemain();
 }

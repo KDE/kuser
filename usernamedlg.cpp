@@ -1,3 +1,4 @@
+#include <kmsgbox.h>
 #include "usernamedlg.h"
 #include "usernamedlg.moc"
 #include "misc.h"
@@ -36,7 +37,7 @@ void usernamedlg::ok()
 {
   if (user_lookup(leusername->text()) != NULL) {
     sprintf(tmp, _("User with name %s is already exist."), leusername->text());
-    QMessageBox::message(_("Error"),tmp,"Ok");
+    KMsgBox::message(0, _("Error"), tmp, KMsgBox::STOP);
   }
   else {
     user->p_name.setStr(leusername->text());

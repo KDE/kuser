@@ -53,6 +53,8 @@ int quotactl(int cmd, const char * special, int id, caddr_t addr)
 
 #endif
 
+#include <kmsgbox.h>
+
 char s[120];
 
 #define   FOUND   0x01
@@ -64,7 +66,6 @@ void getquota(long int id, QList<Quota> *q)
 
   int qcmd, fd;
   static int warned = 0;
-  //  extern int errno;
   struct dqblk dq;
 #ifdef _KU_UFS_QUOTA
   struct quotctl qctl;
@@ -94,7 +95,7 @@ void getquota(long int id, QList<Quota> *q)
         if ((errno == EOPNOTSUPP || errno == ENOSYS) && !warned) {
 */
           warned++;
-	  //          QMessageBox::message(_("Error"), _("Quotas are not compiled into this kernel."), "Ok");
+	  //                    KMsgBox::message(0, _("Error"), _("Quotas are not compiled into this kernel."), KMsgBox::STOP);
           printf("errno: %i, ioctl: %i\n", errno, dd);
           sleep(3);
           is_quota = 0;
@@ -120,7 +121,7 @@ void getquota(long int id, QList<Quota> *q)
         if ((errno == EOPNOTSUPP || errno == ENOSYS) && !warned) {
 */
           warned++;
-          QMessageBox::message(_("Error"), _("Quotas are not compiled into this kernel."), "Ok");
+          KMsgBox::message(0, _("Error"), _("Quotas are not compiled into this kernel."), KMsgBox::STOP);
           sleep(3);
           is_quota = 0;
 	  break;
@@ -164,11 +165,6 @@ void setquota(long int id, QList<Quota> *q)
     dq.dqb_btimelimit = DQ_BTIMELIMIT;
     dq.dqb_ftimelimit = DQ_FTIMELIMIT;
     
-    if (id == 404) {
-      printf("id = %d\n%d %d %d\n%d %d %d\n", id, q->at(i)->fcur, q->at(i)->fsoft, q->at(i)->fhard,
-      q->at(i)->icur, q->at(i)->isoft, q->at(i)->ihard);
-    }
-
     fd = open((const char *)mounts.at(i)->quotafilename, O_WRONLY);
 
     if ((dd = ioctl(fd, Q_QUOTACTL, &qctl)) != 0)
@@ -203,20 +199,6 @@ void setquota(long int id, QList<Quota> *q)
       printf("Quotactl returned: %d\n", dd);
       continue;
     }
-    /*
-    if ((fd = open((const char *)mounts.at(i)->quotafilename, O_WRONLY)) < 0) {
-      sprintf(s, _("Error opening %s"), (const char *)mounts.at(i)->quotafilename);
-      QMessageBox::message(_("Error"), s, "Ok");
-    }
-    else {
-      lseek(fd, (long) id * (long) sizeof(struct dqblk), 0);
-      if (write(fd, &dq, sizeof(struct dqblk)) != sizeof(struct dqblk)) {
-        sprintf(s, _("Error writing %s"), (const char *)mounts.at(i)->quotafilename);
-        QMessageBox::message(_("Error"), s ,"Ok");
-      }
-      close(fd);
-    }
-    */
   }
 #endif
 }
@@ -226,9 +208,9 @@ void quota_read() {
     return;
 
   for (uint i=0; i<users.count(); i++) {
-  if (is_quota == 0)
-    return;
     getquota(users.at(i)->p_uid, &users.at(i)->quota);
+    if (is_quota == 0)
+      return;
   }
 }
 

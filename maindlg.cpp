@@ -1,3 +1,6 @@
+#include <kmsgbox.h>
+#include <ktoolbar.h>
+#include <kiconloader.h>
 #include "maindlg.h"
 #include "propdlg.h"
 #include "pwddlg.h"
@@ -5,12 +8,11 @@
 #include "sdwtool.h"
 #include "misc.h"
 #include "maindlg.moc"
+#include "kuser.h"
 #include "usernamedlg.h"
 
-maindlg::maindlg( QWidget *parent, const char *name) :
+maindlg::maindlg(const char *name) :
 KTopLevelWidget(name)
-//, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | 
-//                       WStyle_SysMenu | WStyle_MinMax)
 {
   changed = FALSE;
 
@@ -73,10 +75,10 @@ KTopLevelWidget(name)
   QPopupMenu *user = new QPopupMenu;
   CHECK_PTR(user);
   user->setFont(rufont);
-  int editID = user->insertItem(_("Edit"), this, SLOT(edit()) );
-  int delID = user->insertItem(_("Delete"), this, SLOT(del()) );
-  int addID = user->insertItem(_("Add"), this, SLOT(add()) );
-  int setpwdID = user->insertItem(_("Set password"), this, SLOT(setpwd()) );
+  user->insertItem(_("Edit"), this, SLOT(edit()) );
+  user->insertItem(_("Delete"), this, SLOT(del()) );
+  user->insertItem(_("Add"), this, SLOT(add()) );
+  user->insertItem(_("Set password"), this, SLOT(setpwd()) );
 
   QPopupMenu *help = new QPopupMenu;
   CHECK_PTR( help );
@@ -93,6 +95,17 @@ KTopLevelWidget(name)
   menu->insertItem(_("Help"), help );
 
   setMenu(menu);
+
+  KToolBar *toolbar;
+
+  toolbar = new KToolBar(this, "toolbar");
+  QPixmap pixmap;
+
+  pixmap = kapp->getIconLoader()->loadIcon("profile_bw.xpm");
+  toolbar->insertButton(pixmap, 0, SIGNAL(clicked()), this, SLOT(edit()), TRUE, _("Edit user"));
+  toolbar->setBarPos(KToolBar::Top);
+
+  addToolBar(toolbar);
 
   setFixedSize(400, 400);
 }
@@ -199,6 +212,7 @@ void maindlg::add() {
   tk->p_office2 = readentry("p_office2");
   tk->p_address = readentry("p_address");
 
+#ifdef _KU_SHADOW
   tk->s_lstchg = readnumentry("s_lstchg");
   tk->s_min = readnumentry("s_min");
   tk->s_max = readnumentry("s_max");
@@ -206,11 +220,14 @@ void maindlg::add() {
   tk->s_inact = readnumentry("s_inact");
   tk->s_expire = readnumentry("s_expire");
   tk->s_flag = readnumentry("s_flag");
+#endif
 
+#ifdef _KU_QUOTA
   tk->quota.at(0)->fsoft = readnumentry("quota.fsoft");
   tk->quota.at(0)->fhard = readnumentry("quota.fhard");
   tk->quota.at(0)->isoft = readnumentry("quota.isoft");
   tk->quota.at(0)->ihard = readnumentry("quota.ihard");
+#endif
 
   editUser = new propdlg(tk, this, "userin");
   if (editUser->exec() != 0)
@@ -251,7 +268,7 @@ printf("%d\n", is_quota);
 
 void maindlg::about() {
     sprintf(tmp, _("KUser version %s\nKDE project\nThis program was created by\nDenis Y. Pershin\ndyp@isis.nsu.ru\nCopyright 1997(c)"), _KU_VERSION);
-    QMessageBox::message(_("Message"), tmp, "Ok");
+    KMsgBox::message(0, _("Message"), tmp, KMsgBox::INFORMATION);
 }
 
 void maindlg::setpwd() {
@@ -294,6 +311,7 @@ void maindlg::properties() {
   tk->p_office2 = readentry("p_office2");
   tk->p_address = readentry("p_address");
 
+#ifdef _KU_SHADOW
   tk->s_lstchg = readnumentry("s_lstchg");
   tk->s_min = readnumentry("s_min");
   tk->s_max = readnumentry("s_max");
@@ -301,11 +319,14 @@ void maindlg::properties() {
   tk->s_inact = readnumentry("s_inact");
   tk->s_expire = readnumentry("s_expire");
   tk->s_flag = readnumentry("s_flag");
+#endif
 
+#ifdef _KU_QUOTA
   tk->quota.at(0)->fsoft = readnumentry("quota.fsoft");
   tk->quota.at(0)->fhard = readnumentry("quota.fhard");
   tk->quota.at(0)->isoft = readnumentry("quota.isoft");
   tk->quota.at(0)->ihard = readnumentry("quota.ihard");
+#endif
 
   editUser = new propdlg(tk, this, "userin");
   if (editUser->exec() != 0) {
@@ -317,6 +338,7 @@ void maindlg::properties() {
     config->writeEntry("p_office2", tk->p_office2);
     config->writeEntry("p_address", tk->p_address);
 
+#ifdef _KU_SHADOW
     config->writeEntry("s_lstchg", tk->s_lstchg);
     config->writeEntry("s_min", tk->s_min);
     config->writeEntry("s_max", tk->s_max);
@@ -324,11 +346,14 @@ void maindlg::properties() {
     config->writeEntry("s_inact", tk->s_inact);
     config->writeEntry("s_expire", tk->s_expire);
     config->writeEntry("s_flag", tk->s_flag);
+#endif
 
+#ifdef _KU_QUOTA
     config->writeEntry("quota.fsoft", tk->quota.at(0)->fsoft);
     config->writeEntry("quota.fhard", tk->quota.at(0)->fhard);
     config->writeEntry("quota.isoft", tk->quota.at(0)->isoft);
     config->writeEntry("quota.ihard", tk->quota.at(0)->ihard);
+#endif
   }
 
   delete tk;

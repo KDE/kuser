@@ -64,7 +64,7 @@ extern int is_quota;
 #define PASSWORD_FILE_MASK S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH
 
 extern char picspath[200];
-extern QPixmap *pic_user;
+extern QPixmap pic_user;
 extern KConfig *config;
 extern bool changed;
 

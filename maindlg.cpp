@@ -118,7 +118,7 @@ void maindlg::reload(int id) {
     pix.fill(white);
     p->begin(&pix);
     p->setFont(rufont);
-    p->drawPixmap(3, 2, *pic_user);
+    p->drawPixmap(3, 2, pic_user);
     p->drawText(40, 14, curuser->p_name);
     p->drawText(150, 14, curuser->p_fname);
     p->end();
@@ -138,7 +138,7 @@ void maindlg::highlighted(int i) {
     pix.fill(white);
     p->begin(&pix);
     p->setFont(rufont);
-    p->drawPixmap(3, 2, *pic_user);
+    p->drawPixmap(3, 2, pic_user);
     p->drawText(40, 14, users.at(prev)->p_name);
     p->drawText(150, 14, users.at(prev)->p_fname);
     p->end();
@@ -148,7 +148,7 @@ void maindlg::highlighted(int i) {
   pix.fill(black);
   p->begin(&pix);
   p->setFont(rufont);
-  p->drawPixmap(3, 2, *pic_user);
+  p->drawPixmap(3, 2, pic_user);
   p->setPen(white);
   p->drawText(40, 14, users.at(i)->p_name);
   p->drawText(150, 14, users.at(i)->p_fname);

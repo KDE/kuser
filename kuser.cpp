@@ -39,6 +39,13 @@
 #include "quota.h"
 #endif
 
+// This is to simplify compilation for Red Hat Linux systems, where
+// uid's for regular users start at 500 <duncan@kde.org>
+#ifdef _KU_FIRST_USER
+#define _KU_FIRST_UID _KU_FIRST_USER
+#else 
+#define _KU_FIRST_UID 1001 
+#endif
 
 // class KUser
 
@@ -640,9 +647,9 @@ KUser *KUsers::lookup(unsigned int uid) {
 
 int KUsers::first_free() {
   uint i = 0;
-  uint t = 1001;
+  uint t = _KU_FIRST_UID ;
 
-  for (t=1001; t<65534; t++) {
+  for (t = _KU_FIRST_UID ; t<65534; t++) {
     while ((i<u.count()) && (u.at(i)->getp_uid() != t))
       i++;
 

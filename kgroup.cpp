@@ -29,6 +29,14 @@
 #include "quota.h"
 #endif
 
+// This is to simplify compilation for Red Hat Linux systems, where
+// gid's for regular users' private groups start at 500 <duncan@kde.org>
+#ifdef _KU_FIRST_USER
+#define _KU_FIRST_GID _KU_FIRST_USER
+#else 
+#define _KU_FIRST_GID 1001 
+#endif
+
 KGroup::KGroup() {
   u.setAutoDelete(TRUE);
   name.setStr("");
@@ -215,9 +223,9 @@ KGroup *KGroups::lookup(unsigned int gid) {
 
 int KGroups::first_free() {
   uint i = 0;
-  uint t = 1001;
+  uint t = _KU_FIRST_GID ;
 
-  for (t=1001; t<65534; t++) {
+  for (t= _KU_FIRST_GID ; t<65534; t++) {
     while ((i<g.count()) && (g.at(i)->getgid() != t))
       i++;
 

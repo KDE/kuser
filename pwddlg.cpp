@@ -38,7 +38,7 @@ pwddlg::pwddlg(KUser *auser, QWidget* parent, const char* name)
   leusername1->setMinimumSize( leusername1->sizeHint() );
 
   // clear text
-  leusername1->setText( "" );
+  leusername1->clear();
   leusername1->setFocus();
   leusername1->setEchoMode( QLineEdit::Password );
   grid->addWidget(leusername1, 0, 1);
@@ -56,7 +56,7 @@ pwddlg::pwddlg(KUser *auser, QWidget* parent, const char* name)
   leusername2->setMinimumSize( leusername2->sizeHint() );
 
   // clear text
-  leusername2->setText( "" );
+  leusername2->clear();
   leusername2->setEchoMode( QLineEdit::Password );
   grid->addWidget(leusername2, 1, 1);
 
@@ -102,8 +102,8 @@ void pwddlg::ok()
   if (strcmp(leusername1->text(), leusername2->text())) {
     err->addMsg(i18n("Passwords are not identical.\nTry again"), STOP);
     err->display();
-    leusername1->setText("");
-    leusername2->setText("");
+    leusername1->clear();
+    leusername2->clear();
     leusername1->setFocus();
   }
   else {

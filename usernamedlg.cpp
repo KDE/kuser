@@ -29,7 +29,7 @@ usernamedlg::usernamedlg(KUser *auser, QWidget* parent, const char* name)
   leusername->setMinimumSize( leusername->sizeHint() );
 
   // clear text
-  leusername->setText( "" );
+  leusername->clear();
   leusername->setFocus();
   grid->addWidget(leusername, 0, 1);
 

@@ -38,7 +38,7 @@ grpnamedlg::grpnamedlg(KGroup *agroup, QWidget* parent, const char* name)
   legrpname->setMinimumSize( legrpname->sizeHint() );
 
   // clear text
-  legrpname->setText( "" );
+  legrpname->clear();
   legrpname->setFocus();
   grid->addWidget(legrpname, 0, 1);
 

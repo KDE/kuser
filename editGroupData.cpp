@@ -116,7 +116,7 @@ editGroupData::editGroupData
 	qtarch_Label_6->setBackgroundMode( QWidget::PaletteBackground );
 	qtarch_Label_6->setFontPropagation( QWidget::NoChildren );
 	qtarch_Label_6->setPalettePropagation( QWidget::NoChildren );
-	qtarch_Label_6->setText( "" );
+	qtarch_Label_6->clear();
 	qtarch_Label_6->setAlignment( 289 );
 	qtarch_Label_6->setMargin( -1 );
 
@@ -129,7 +129,7 @@ editGroupData::editGroupData
 	qtarch_Label_7->setBackgroundMode( QWidget::PaletteBackground );
 	qtarch_Label_7->setFontPropagation( QWidget::NoChildren );
 	qtarch_Label_7->setPalettePropagation( QWidget::NoChildren );
-	qtarch_Label_7->setText( "" );
+	qtarch_Label_7->clear();
 	qtarch_Label_7->setAlignment( 289 );
 	qtarch_Label_7->setMargin( -1 );
 
@@ -168,7 +168,7 @@ editGroupData::editGroupData
 	qtarch_Label_8->setBackgroundMode( QWidget::PaletteBackground );
 	qtarch_Label_8->setFontPropagation( QWidget::NoChildren );
 	qtarch_Label_8->setPalettePropagation( QWidget::NoChildren );
-	qtarch_Label_8->setText( "" );
+	qtarch_Label_8->clear();
 	qtarch_Label_8->setAlignment( 289 );
 	qtarch_Label_8->setMargin( -1 );
 
@@ -181,7 +181,7 @@ editGroupData::editGroupData
 	qtarch_Label_9->setBackgroundMode( QWidget::PaletteBackground );
 	qtarch_Label_9->setFontPropagation( QWidget::NoChildren );
 	qtarch_Label_9->setPalettePropagation( QWidget::NoChildren );
-	qtarch_Label_9->setText( "" );
+	qtarch_Label_9->clear();
 	qtarch_Label_9->setAlignment( 289 );
 	qtarch_Label_9->setMargin( -1 );
 
@@ -194,7 +194,7 @@ editGroupData::editGroupData
 	qtarch_Label_10->setBackgroundMode( QWidget::PaletteBackground );
 	qtarch_Label_10->setFontPropagation( QWidget::NoChildren );
 	qtarch_Label_10->setPalettePropagation( QWidget::NoChildren );
-	qtarch_Label_10->setText( "" );
+	qtarch_Label_10->clear();
 	qtarch_Label_10->setAlignment( 289 );
 	qtarch_Label_10->setMargin( -1 );
 

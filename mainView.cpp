@@ -325,7 +325,7 @@ bool mainView::queryClose()
     
   int result = KMessageBox::warningYesNoCancel(0, i18n("Would you like to save your changes?"),
                                i18n("Data Was Modified"),
-                               i18n("&Save"), i18n("&Discard Changes"));
+                               KStdGuiItem::save(), KStdGuiItem::discard());
 
   if (result == KMessageBox::Cancel)
     return false;

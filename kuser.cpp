@@ -1106,7 +1106,7 @@ int	rc = 0;
    	if (S_ISDIR(sb.st_mode)) {
 	    if (KMessageBox::
 		warningContinueCancel(0, i18n("Folder %1 already exists!\nWill make %2 owner and change permissions.\nDo you want to continue?")
-.arg(dir).arg(p_name), QString::null, i18n("&Continue")) ==
+.arg(dir).arg(p_name), QString::null, KStdGuiItem::cont()) ==
 KMessageBox::Continue) {
  		if (chown(QFile::encodeName(dir), p_uid, p_gid) != 0) {
    		    err->addMsg(i18n("Cannot change owner of %1 folder\nError: %2")

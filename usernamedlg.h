@@ -16,7 +16,7 @@ public:
 
 protected slots:
   void slotOk();
-
+ void slotUserNameChanged(const QString &);
 protected:
   KUser *user;
   QLineEdit   *leusername;

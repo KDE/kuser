@@ -126,7 +126,14 @@ void KUserLDAP::data( KIO::Job *job, const QByteArray& data )
           mUser->setHomeDir(QString::fromUtf8( value, value.size() ));
         else if ( name == "loginshell" )
           mUser->setShell(QString::fromUtf8( value, value.size() ));
-        else if ( name == "gecos" )
+        else if ( name == "postaladdress" )
+          mUser->setAddress(QString::fromUtf8( value, value.size() ));
+        else if ( name == "telephonenumber" ) {
+          if ( mUser->getOffice1().isEmpty() )
+            mUser->setOffice1(QString::fromUtf8( value, value.size() ));
+          else
+            mUser->setOffice2(QString::fromUtf8( value, value.size() ));
+        } else if ( name == "gecos" )
           fillGecos( mUser, QCString( value, value.size()+1 ));
         else if ( name == "cn" )
           mUser->setFullName(QString::fromUtf8( value, value.size() ));
@@ -185,8 +192,6 @@ void KUserLDAP::data( KIO::Job *job, const QByteArray& data )
         KUser newUser;
         mUsers.append( new KUser( mUser ) );
         mUser->copy( &newUser );
-        newUser.setPwd( "" );
-        newUser.setSPwd( "" );
         mUser->setDisabled( true );
         if ( ( mUsers.count() & 7 ) == 7 ) {
           mProg->progressBar()->advance( mAdv );
@@ -385,6 +390,11 @@ void KUserLDAP::getLDIF( KUser *user, bool mod )
     ldif += KABC::LDIF::assembleLine( "sn", user->getSurname() ) + "\n";
     if ( mod ) ldif += "-\nreplace: mail\n";
     ldif += KABC::LDIF::assembleLine( "mail", user->getEmail() ) + "\n";
+    if ( mod ) ldif += "-\nreplace: postaladdress\n";
+    ldif += KABC::LDIF::assembleLine( "postaladdress", user->getAddress() ) + "\n";
+    if ( mod ) ldif += "-\nreplace: telephoneNumber\n";
+    ldif += KABC::LDIF::assembleLine( "telephoneNumber", user->getOffice1() ) + "\n";
+    ldif += KABC::LDIF::assembleLine( "telephoneNumber", user->getOffice2() ) + "\n";
     if ( mod ) ldif += "-\n";
   }
   

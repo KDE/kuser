@@ -295,34 +295,35 @@ bool KUsers::loadsdw() {
   struct spwd *spw;
   KUser *up = NULL;
 
-  if (is_shadow) {
-    if ((f = fopen(SHADOW_FILE, "r")) == NULL) {
-      is_shadow = 0; 
-      tmp.sprintf(_("Error opening %s"), SHADOW_FILE);
-      KMsgBox::message(0, _("Error"), tmp, KMsgBox::STOP);
-      return (FALSE);
-    }
+  if (!is_shadow)
+    return FALSE;
 
-    while ((spw = fgetspent(f))) {     // read a shadow password structure
-      if ((up = user_lookup(spw->sp_namp)) == NULL) {
-        tmp.sprintf(_("No /etc/passwd entry for %s.\nEntry will be removed at the next `Save'-operation."),
-		    spw->sp_namp);
-        KMsgBox::message(0, _("Error"), tmp, KMsgBox::STOP);
-        continue;
-      }
-
-      up->sets_pwd(spw->sp_pwdp);        // cp the encrypted pwd
-      up->sets_lstchg(spw->sp_lstchg);
-      up->sets_min(spw->sp_min);
-      up->sets_max(spw->sp_max);
-      up->sets_warn(spw->sp_warn);
-      up->sets_inact(spw->sp_inact);
-      up->sets_expire(spw->sp_expire);
-      up->sets_flag(spw->sp_flag);
-    }
-
-    fclose(f);
+  if ((f = fopen(SHADOW_FILE, "r")) == NULL) {
+    is_shadow = 0; 
+    tmp.sprintf(_("Error opening %s"), SHADOW_FILE);
+    KMsgBox::message(0, _("Error"), tmp, KMsgBox::STOP);
+    return (FALSE);
   }
+
+  while ((spw = fgetspent(f))) {     // read a shadow password structure
+    if ((up = user_lookup(spw->sp_namp)) == NULL) {
+      tmp.sprintf(_("No /etc/passwd entry for %s.\nEntry will be removed at the next `Save'-operation."),
+                  spw->sp_namp);
+      KMsgBox::message(0, _("Error"), tmp, KMsgBox::STOP);
+      continue;
+    }
+
+    up->sets_pwd(spw->sp_pwdp);        // cp the encrypted pwd
+    up->sets_lstchg(spw->sp_lstchg);
+    up->sets_min(spw->sp_min);
+    up->sets_max(spw->sp_max);
+    up->sets_warn(spw->sp_warn);
+    up->sets_inact(spw->sp_inact);
+    up->sets_expire(spw->sp_expire);
+    up->sets_flag(spw->sp_flag);
+  }
+
+  fclose(f);
 
   return (TRUE);
 #endif // _KU_SHADOW
@@ -394,46 +395,47 @@ bool KUsers::savesdw() {
   KUser *up;
 
 
-  if (is_shadow) {
-    if (!s_backuped) {
-      backup(SHADOW_FILE);
-      s_backuped = TRUE;
-    }
+  if (!is_shadow)
+    return FALSE;
 
-    if ((f = fopen(SHADOW_FILE, "w")) == NULL) {
-      tmp.sprintf(_("Error opening %s for writing"), SHADOW_FILE);
-      err->addMsg((const char *)tmp, STOP);
-      return (FALSE);
-    }
-
-    s.sp_namp = (char *)malloc(200);
-    s.sp_pwdp = (char *)malloc(200);
-    
-    for (uint index = 0; index < u.count(); index++) {
-      up = u.at(index);
-      if (!(const char *)up->gets_pwd()) {
-        tmp.sprintf(_("No shadow entry for %s."), (const char *)up->getp_name());
-        err->addMsg(tmp, STOP);
-	continue;
-      }
-
-      strcpy(s.sp_namp, (const char *)up->getp_name());
-      strcpy(s.sp_pwdp, (const char *)up->gets_pwd());
-      s.sp_lstchg = up->gets_lstchg();
-      s.sp_min    = up->gets_min();
-      s.sp_max    = up->gets_max();
-      s.sp_warn   = up->gets_warn();
-      s.sp_inact  = up->gets_inact();
-      s.sp_expire = up->gets_expire();
-      s.sp_flag   = up->gets_flag();
-
-      spwp = &s;
-      putspent(spwp, f);
-    }
-    fclose(f);
-
-    chmod(SHADOW_FILE, SHADOW_FILE_MASK);
+  if (!s_backuped) {
+    backup(SHADOW_FILE);
+    s_backuped = TRUE;
   }
+
+  if ((f = fopen(SHADOW_FILE, "w")) == NULL) {
+    tmp.sprintf(_("Error opening %s for writing"), SHADOW_FILE);
+    err->addMsg((const char *)tmp, STOP);
+    return (FALSE);
+  }
+
+  s.sp_namp = (char *)malloc(200);
+  s.sp_pwdp = (char *)malloc(200);
+    
+  for (uint index = 0; index < u.count(); index++) {
+    up = u.at(index);
+    if (!(const char *)up->gets_pwd()) {
+      tmp.sprintf(_("No shadow entry for %s."), (const char *)up->getp_name());
+      err->addMsg(tmp, STOP);
+      continue;
+    }
+
+    strncpy(s.sp_namp, (const char *)up->getp_name(), 200);
+    strncpy(s.sp_pwdp, (const char *)up->gets_pwd(), 200);
+    s.sp_lstchg = up->gets_lstchg();
+    s.sp_min    = up->gets_min();
+    s.sp_max    = up->gets_max();
+    s.sp_warn   = up->gets_warn();
+    s.sp_inact  = up->gets_inact();
+    s.sp_expire = up->gets_expire();
+    s.sp_flag   = up->gets_flag();
+
+    spwp = &s;
+    putspent(spwp, f);
+  }
+  fclose(f);
+
+  chmod(SHADOW_FILE, SHADOW_FILE_MASK);
   free(s.sp_namp);
   free(s.sp_pwdp);
 #endif // _KU_SHADOW
@@ -498,3 +500,4 @@ void KUsers::addUser(KUser *ku) {
 void KUsers::delUser(KUser *au) {
   u.remove(au);
 }
+

@@ -19,7 +19,7 @@ MaxSize {32767 32767}
 Grid {10}
 
 Label {
-		Text {Other Users}
+		Text {Users not in Group}
 		AutoResize {FALSE}
 		Margin {-1}
 		Rect {5 5 200 30}
@@ -38,7 +38,7 @@ Label {
 		PalettePropagation {NoChildren}
 }
 Label {
-		Text {Group Users}
+		Text {Users in Group}
 		AutoResize {FALSE}
 		Margin {-1}
 		Rect {275 5 200 30}

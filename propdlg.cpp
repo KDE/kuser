@@ -196,35 +196,33 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
     leslstchg = addLabel(w2, "leslstchg", 140, 30, 70, 20, buf);
     l16 = addLabel(w2, "ml16", 10, 30, 50, 20, i18n("Last password change"));
 
-    lesmin = new KDateCtl(w2, "lesmin", i18n("Password change is not allowed"),
-               i18n("Date before which password may not\nbe changed"),
+    lesmin = new KDateCtl(w2, "lesmin", i18n("Password change not allowed"),
+               i18n("Date before which password cannot\nbe changed"),
                   user->getLastChange()+user->getMin(),
                   user->getLastChange(), 10, 70);
     QObject::connect(lesmin, SIGNAL(textChanged()), this, SLOT(changed()));
 
-    lesmax = new KDateCtl(w2, "lesmax", i18n("Password change not required"),
-                          i18n("Date after which password must\nbe changed"),
+    lesmax = new KDateCtl(w2, "lesmax", i18n("Password will not expire"),
+                          i18n("Date when password expires and\nmust be changed"),
                           user->getLastChange()+user->getMax(),
                           user->getLastChange(), 10, 130);
     QObject::connect(lesmax, SIGNAL(textChanged()), this, SLOT(changed()));
 
 
     leswarn = new KDateCtl(w2, "leswarn", i18n("No warning will be given"),
-                           i18n("Date after which warning of pending\n\
-password expiration is given"),
+                           i18n("Date after which warning about pending\npassword expiration will be given"),
                            user->getLastChange()+user->getWarn(),
                            user->getLastChange(), 10, 190);
     QObject::connect(leswarn, SIGNAL(textChanged()), this, SLOT(changed()));
 
     lesinact = new KDateCtl(w2, "lesinact", i18n("Account will remain enabled"),
-                            i18n("Date when account will be disabled\n\
-if password has expired"),
+                            i18n("Date when account will be disabled\nif password has expired"),
                             user->getLastChange()+user->getInactive(),
                             user->getLastChange(), 10, 250);
     QObject::connect(lesinact, SIGNAL(textChanged()), this, SLOT(changed()));
 
     lesexpire = new KDateCtl(w2, "lesexpire", i18n("Account never expires"),
-                             i18n("Date when account expires"),
+                             i18n("Date when account expires and will\nbe disabled"),
                              user->getExpire(),
                              0, 10, 310);
     QObject::connect(lesexpire, SIGNAL(textChanged()), this, SLOT(changed()));
@@ -238,7 +236,7 @@ if password has expired"),
     w3 = new QWidget(this, "wd_Quota");
 
     leqmnt = new QComboBox(TRUE, w3, "leqmnt");
-    QToolTip::add(leqmnt, i18n("Quota filesystem"));
+    QToolTip::add(leqmnt, i18n("Filesystem with quotas"));
     leqmnt->clear();
 
     for (uint i = 0; i<mounts->getMountsNumber(); i++)
@@ -247,55 +245,55 @@ if password has expired"),
     leqmnt->setGeometry(250, 20, 160, 27);
     QObject::connect(leqmnt, SIGNAL(highlighted(int)), this, SLOT(mntsel(int)));
 
-    l10a = addLabel(w3, "ml10a", 20, 28, 230, 20, i18n("Quota filesystem"));
+    l10a = addLabel(w3, "ml10a", 20, 28, 230, 20, i18n("Filesystem with quotas:"));
     l10a->setAlignment(AlignVCenter | AlignRight);
 
     leqfs = addLineEdit(w3, "leqfs", 10, 80, 70, 22, "");
     leqfs->setValidator(new QIntValidator(w3, "vaqfs"));
     QObject::connect(leqfs, SIGNAL(textChanged(const char *)), this, SLOT(qcharchanged(const char *)));
-    QToolTip::add(leqfs, i18n("File soft quota"));
-    l10 = addLabel(w3, "ml10", 95, 85, 50, 20, i18n("File soft quota"));
+    QToolTip::add(leqfs, i18n("Disk space soft quota"));
+    l10 = addLabel(w3, "ml10", 95, 85, 50, 20, i18n("Disk space soft quota"));
 
     leqfh = addLineEdit(w3, "leqfh", 10, 120, 70, 22, "");
     leqfh->setValidator(new QIntValidator(w3, "vaqfh"));
     QObject::connect(leqfh, SIGNAL(textChanged(const char *)), this, SLOT(qcharchanged(const char *)));
-    QToolTip::add(leqfh, i18n("File hard quota"));
-    l11 = addLabel(w3, "ml11", 95, 125, 50, 20, i18n("File hard quota"));
+    QToolTip::add(leqfh, i18n("Disk space  hard quota"));
+    l11 = addLabel(w3, "ml11", 95, 125, 50, 20, i18n("Disk space hard quota"));
 
     leqfcur = addLabel(w3, "leqfcur", 13, 160, 70, 20, "");
-    QToolTip::add(leqfcur, i18n("File usage"));
-    l14 = addLabel(w3, "ml14", 95, 160, 50, 20, i18n("File usage"));
+    QToolTip::add(leqfcur, i18n("Disk space usage"));
+    l14 = addLabel(w3, "ml14", 95, 160, 50, 20, i18n("Disk space usage"));
 
 #ifndef BSD
     leqft = addLineEdit(w3, "leqft", 10, 190, 70, 22, "");
     leqft->setValidator(new QIntValidator(w3, "vaqft"));
     QObject::connect(leqft, SIGNAL(textChanged(const char *)), this, SLOT(qcharchanged(const char *)));
-    QToolTip::add(leqft, i18n("File time limit"));
-    l18 = addLabel(w3, "ml18", 95, 195, 50, 20, i18n("File time limit"));
+    QToolTip::add(leqft, i18n("Time limit allowed for Disk space over soft quota"));
+    l18 = addLabel(w3, "ml18", 95, 195, 50, 20, i18n("Time limit allowed for Disk space over soft quota"));
 #endif
 
     leqis = addLineEdit(w3, "leqis", 10, 235, 70, 22, "");
     leqis->setValidator(new QIntValidator(w3, "vaqis"));
     QObject::connect(leqis, SIGNAL(textChanged(const char *)), this, SLOT(qcharchanged(const char *)));
-    QToolTip::add(leqis, i18n("iNode soft quota"));
-    l12 = addLabel(w3, "ml12", 95, 240, 50, 20, i18n("iNode soft quota"));
+    QToolTip::add(leqis, i18n("File number soft quota"));
+    l12 = addLabel(w3, "ml12", 95, 240, 50, 20, i18n("File number soft quota"));
 
     leqih = addLineEdit(w3, "leqih", 10, 275, 70, 22, "");
     leqih->setValidator(new QIntValidator(w3, "vaqih"));
     QObject::connect(leqih, SIGNAL(textChanged(const char *)), this, SLOT(qcharchanged(const char *)));
-    QToolTip::add(leqih, i18n("iNode hard quota"));
-    l13 = addLabel(w3, "ml13", 95, 280, 50, 20, i18n("iNode hard quota"));
+    QToolTip::add(leqih, i18n("File number hard quota"));
+    l13 = addLabel(w3, "ml13", 95, 280, 50, 20, i18n("File number hard quota"));
 
     leqicur = addLabel(w3, "leqicur", 13, 315, 70, 20, "");
-    QToolTip::add(leqicur, i18n("iNode usage"));
-    l15 = addLabel(w3, "ml15", 95, 315, 50, 20, i18n("iNode usage"));
+    QToolTip::add(leqicur, i18n("File number usage"));
+    l15 = addLabel(w3, "ml15", 95, 315, 50, 20, i18n("File number usage"));
 
 #ifndef BSD
     leqit = addLineEdit(w3, "leqit", 10, 345, 70, 22, "");
     leqit->setValidator(new QIntValidator(w3, "vaqit"));
     QObject::connect(leqit, SIGNAL(textChanged(const char *)), this, SLOT(qcharchanged(const char *)));
-    QToolTip::add(leqit, i18n("iNode time limit"));
-    l17 = addLabel(w3, "ml17", 95, 350, 50, 20, i18n("iNode time limit"));
+    QToolTip::add(leqit, i18n("Time limit allowd for File number over soft quota"));
+    l17 = addLabel(w3, "ml17", 95, 350, 50, 20, i18n("Time limit allowed for File number over soft quota"));
 #endif
 
     tw->addTab(w3, i18n("Quota"));
@@ -311,8 +309,8 @@ if password has expired"),
 
   QLabel* tmpQLabel;
   tmpQLabel = new QLabel(w4, "Label_1");
-  tmpQLabel->setGeometry(20, 60, 100, 20);
-  tmpQLabel->setText(i18n("Users"));
+  tmpQLabel->setGeometry(20, 60, 150, 20);
+  tmpQLabel->setText(i18n("Groups not belonged to"));
   tmpQLabel->setAlignment(289);
   tmpQLabel->setMargin(-1);
 
@@ -336,8 +334,8 @@ if password has expired"),
   pbdel->setAutoResize( FALSE );
 
   tmpQLabel = new QLabel(w4, "Label_2");
-  tmpQLabel->setGeometry(300, 60, 100, 20);
-  tmpQLabel->setText(i18n("Groups"));
+  tmpQLabel->setGeometry(255, 60, 150, 20);
+  tmpQLabel->setText(i18n("Groups belonged to"));
   tmpQLabel->setAlignment(289);
   tmpQLabel->setMargin(-1);
 
@@ -693,3 +691,15 @@ void propdlg::ok() {
 void propdlg::cancel() {
   reject();
 }
+
+
+
+
+
+
+
+
+
+
+
+

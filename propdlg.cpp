@@ -834,7 +834,7 @@ void propdlg::slotOk()
   
   bool one = ( mUsers.getFirst() == mUsers.getLast() );
 
-  uid_t newuid = leid->text().toInt();
+  uid_t newuid = leid->text().toULong();
 
   if ( one && olduid != newuid )
   {

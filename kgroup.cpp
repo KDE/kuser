@@ -211,7 +211,7 @@ KGroup *KGroups::lookup_sam( uint rid )
   return group;
 }
 
-int KGroups::first_free() 
+gid_t KGroups::first_free() 
 {
   gid_t t;
 
@@ -219,7 +219,7 @@ int KGroups::first_free()
     if (lookup(t) == NULL)
       return t;
 
-  return (-1);
+  return NO_FREE;
 }
 
 uint KGroups::first_free_sam()

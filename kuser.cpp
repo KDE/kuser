@@ -911,7 +911,7 @@ KUser *KUsers::lookup_sam( uint rid )
   return user;
 }
 
-int KUsers::first_free()
+uid_t KUsers::first_free()
 {
   uid_t t;
 
@@ -919,7 +919,7 @@ int KUsers::first_free()
     if (lookup(t) == NULL)
       return t;
 
-  return (-1);
+  return NO_FREE;
 }
 
 uint KUsers::first_free_sam()

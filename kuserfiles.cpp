@@ -293,7 +293,7 @@ bool KUserFiles::savepwd()
 {
   FILE *passwd_fd = NULL;
   FILE *nispasswd_fd = NULL;
-  int minuid = 0;
+  uid_t minuid = 0;
   int nis_users_written = 0;
   uid_t tmp_uid = 0;
   QString s;

@@ -236,11 +236,15 @@ public:
   void commit();
   void cancelMods();
   
+  enum {
+	NO_FREE = (uid_t) -1
+  };
+
   /**
   * May be reimplemented in descendant classes. 
-  * It should return the first available UID, or -1 if no more UID.
+  * It should return the first available UID, or KUsers::NO_FREE if no more UID.
   */
-  virtual int first_free();
+  virtual uid_t first_free();
   /**
   * May be reimplemented in descendant classes. 
   * It should return the first available user RID, or 0 if no more RID.

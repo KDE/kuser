@@ -95,7 +95,7 @@ void mainView::reloadUsers()
 
   lbusers->clear();
   lbusers->init();
-  uint uid = kug->kcfg()->firstUID();
+  uid_t uid = kug->kcfg()->firstUID();
   
   ku = kug->getUsers().first();
   while ( ku ) {
@@ -112,7 +112,7 @@ void mainView::reloadGroups()
 
   lbgroups->clear();
   lbgroups->init();
-  uint gid = kug->kcfg()->firstGID();
+  gid_t gid = kug->kcfg()->firstGID();
 
   kg = kug->getGroups().first();
   while ( kg ) {
@@ -180,11 +180,10 @@ void mainView::useradd()
 
   showPage(lbusers);
 
-  int uid;
-  uint rid;
+  uid_t uid, rid = 0;
   bool samba = kug->getUsers().getCaps() & KUsers::Cap_Samba;
 
-  if ((uid = kug->getUsers().first_free()) == -1) {
+  if ((uid = kug->getUsers().first_free()) == KUsers::NO_FREE) {
     KMessageBox::sorry( 0, i18n("You have run out of uid space.") );
     return;
   }
@@ -230,7 +229,7 @@ void mainView::useradd()
   tk->setMax( kug->kcfg()->smax() );
   tk->setWarn( kug->kcfg()->swarn() );
   tk->setInactive( kug->kcfg()->sinact() );
-  tk->setExpire( kug->kcfg()->sneverexpire() ? -1 : 
+  tk->setExpire( kug->kcfg()->sneverexpire() ? (uint) -1 : 
     (kug->kcfg()->sexpire()).toTime_t() );
   
   bool privgroup = kug->kcfg()->userPrivateGroup();
@@ -248,10 +247,10 @@ void mainView::useradd()
     KGroup *tg;
 
     if ((tg = kug->getGroups().lookup(tk->getName())) == 0) {
-      int gid = kug->getGroups().first_free();
-      uint rid = 0;
+      gid_t gid = kug->getGroups().first_free();
+      uid_t rid = 0;
       if ( samba ) rid = kug->getGroups().first_free_sam();
-      if ( gid < 0 || ( samba && rid == 0 ) ) {
+      if ( gid == KGroups::NO_FREE || ( samba && rid == 0 ) ) {
         kug->getGroups().cancelMods();
         delete tk;
         return;
@@ -290,7 +289,8 @@ void mainView::setpwd()
   if ( count == 0 ) return;
   if ( count > 1 ) {
     if ( KMessageBox::questionYesNo( 0, 
-      i18n("You have selected %1 users. Do you really want to change the password for all the selected users?").arg( count ) ) == KMessageBox::No ) return;
+      i18n("You have selected %1 users. Do you really want to change the password for all the selected users?")
+		.arg( count ) ) == KMessageBox::No ) return;
   }
   pwddlg d( this );
   if ( d.exec() != QDialog::Accepted ) return;
@@ -365,13 +365,13 @@ void mainView::grpadd()
 {
   showPage(lbgroups);
 
-  int gid;
-  uint rid;
+  gid_t gid;
+  uid_t rid = 0;
   bool samba;
   
   samba = kug->getGroups().getCaps() & KGroups::Cap_Samba;
 
-  if ( (gid = kug->getGroups().first_free()) == -1 )
+  if ( (gid = kug->getGroups().first_free()) == KGroups::NO_FREE )
   {
     KMessageBox::sorry( 0, i18n("You have run out of gid space.") );
     return;
@@ -408,7 +408,7 @@ void mainView::grpedit()
 void mainView::grpdel() 
 {
   QListViewItem *item;
-  KGroup *group;
+  KGroup *group = NULL;
   int selected = 0;
   
   item = lbgroups->firstChild();

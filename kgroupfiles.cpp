@@ -178,7 +178,7 @@ bool KGroupFiles::save()
   FILE *group_fd = NULL;
   FILE *gshadow_fd = NULL;
   FILE *nisgroup_fd = NULL;
-  int mingid = 0;
+  gid_t mingid = 0;
   int nis_groups_written = 0;
   gid_t tmp_gid = 0;
   QString tmpGe, tmpSe, tmp2;

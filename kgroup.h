@@ -116,7 +116,11 @@ public:
   void commit();
   void cancelMods();
   
-  virtual int first_free();
+  enum {
+	NO_FREE = (gid_t) -1
+  };
+
+  virtual gid_t first_free();
   virtual uint first_free_sam();
   virtual bool reload() = 0;
   virtual bool dbcommit() = 0;

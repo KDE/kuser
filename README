@@ -3,8 +3,9 @@ It supports:
 Solaris
 Linux
 Irix
+FreeBSD (You should add a define __FreeBSD__)
 
-It's prerelease only it's rather untested.
+It's a prerelease only. It's rather untested.
 
 ATTENTION: BACKUP ALL OF YOUR DATA. THIS PROGRAM MAY DESTROY
 IT. BE CAREFUL.

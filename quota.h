@@ -41,31 +41,39 @@
 #endif
 
 #ifdef HAVE_SYS_FS_UFS_QUOTA_H
-#include <sys/fs/ufs_quota.h>
-#define CORRECT_FSTYPE(type) (!strcmp(type,MNTTYPE_UFS))
-#define _KU_QUOTAFILENAME "quotas"
-#define _KU_UFS_QUOTA
+#  include <sys/fs/ufs_quota.h>
+#  define CORRECT_FSTYPE(type) (!strcmp(type,MNTTYPE_UFS))
+#  define _KU_QUOTAFILENAME "quotas"
+#  define _KU_UFS_QUOTA
 #else
-#ifdef HAVE_LINUX_QUOTA_H
-#if defined __GLIBC__ && __GLIBC__ >= 2
-typedef unsigned int __u32;
-#define MNTTYPE_EXT2 "ext2"
-#endif
-#include <linux/quota.h>
-#define CORRECT_FSTYPE(type) (!strcmp(type,MNTTYPE_EXT2))
-#define _KU_QUOTAFILENAME "quota.user"
-#define _KU_EXT2_QUOTA
-#else
-#ifdef HAVE_IRIX
-#include <sys/quota.h>
-#include <sys/param.h>
-#define CORRECT_FSTYPE(type) (!strcmp(type,MNTTYPE_EFS) || !strcmp(type,MNTTYPE_XFS))
-#define _KU_QUOTAFILENAME "quotas"
-#else
-#error "Your platform is not supported"
-#endif // HAVE_IRIX
+#  ifdef HAVE_LINUX_QUOTA_H
+#  if defined __GLIBC__ && __GLIBC__ >= 2
+     typedef unsigned int __u32;
+#    define MNTTYPE_EXT2 "ext2"
+#  endif
+#  include <linux/quota.h>
+#  define CORRECT_FSTYPE(type) (!strcmp(type,MNTTYPE_EXT2))
+#  define _KU_QUOTAFILENAME "quota.user"
+#  define _KU_EXT2_QUOTA
+#  else
+#    ifdef HAVE_IRIX
+#    include <sys/quota.h>
+#    include <sys/param.h>
+#    define CORRECT_FSTYPE(type) (!strcmp(type,MNTTYPE_EFS) || !strcmp(type,MNTTYPE_XFS))
+#    define _KU_QUOTAFILENAME "quotas"
+#    else
+#      ifdef __FreeBSD__
+#      include <sys/types.h>
+#      include <ufs/ufs/quota.h>
+#      include <fstab.h>
+/* Assuming all we're supporting is USER based quotas, not GROUP based ones */
+#      define _KU_QUOTAFILENAME "quota.user"
+#      else
+#        error "Your platform is not supported"
+#      endif // FreeBSD
+#    endif // HAVE_IRIX
+#  endif // HAVE_LINUX_QUOTA_H
 #endif // HAVE_SYS_FS_UFS_QUOTA_H
-#endif // HAVE_LINUX_QUOTA_H
 
 class QuotaMnt {
 public:

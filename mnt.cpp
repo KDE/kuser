@@ -22,10 +22,14 @@ Mounts::Mounts() {
 
 #ifdef OLD_GETMNTENT
   struct mnttab *m = NULL;
+#elif __FreeBSD__
+  struct fstab *m = NULL;
 #else
   struct mntent *m = NULL;
 #endif
+#ifndef __FreeBSD__
   FILE *fp;
+#endif
   MntEnt *mnt = NULL;
   QString quotafilename;
 
@@ -48,6 +52,16 @@ Mounts::Mounts() {
     quotafilename.sprintf("%s%s%s", m->mnt_mountp,
                           (m->mnt_mountp[strlen(m->mnt_mountp) - 1] == '/') ? "" : "/",
                           _KU_QUOTAFILENAME);
+#elif __FreeBSD__ /* Heh, heh, so much for standards, eh FreeBSD? */
+  while ((m=getfsent()) != NULL) {
+    if (strstr(m->fs_mntops,"quota")==NULL)
+      continue;
+    if (strcasecmp(m->fs_vfstype,"ufs") != 0)
+      continue;
+    quotafilename.sprintf("%s%s%s",m->fs_file,
+ 	                  (m->fs_file[strlen(m->fs_file) -1] == '/') ? "" : "/",
+ 		          _KU_QUOTAFILENAME);
+    m=getfsent();
 #else
   fp = setmntent(MNTTAB, "r");
   while ((m = getmntent(fp)) != (struct mntent *)0) {
@@ -69,6 +83,9 @@ Mounts::Mounts() {
 #ifdef OLD_GETMNTENT
     mnt = new MntEnt(m->mnt_special, m->mnt_mountp, m->mnt_fstype,
                      m->mnt_mntopts, quotafilename);
+#elif __FreeBSD__
+  mnt = new MntEnt(m->fs_spec,m->fs_file,m->fs_vfstype,
+		   m->fs_mntops,quotafilename);
 #else
     mnt = new MntEnt(m->mnt_fsname, m->mnt_dir, m->mnt_type,
                      m->mnt_opts, quotafilename);
@@ -78,6 +95,8 @@ Mounts::Mounts() {
   }
 #ifdef OLD_GETMNTENT
   fclose(fp);
+#elif __FreeBSD__
+  endfsent();
 #else
   endmntent(fp);
 #endif

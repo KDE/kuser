@@ -116,7 +116,7 @@ bool KGroupFiles::reload()
     gid = st.st_gid;
 
   // We are reading our configuration specified group file
-#ifdef HAVE_FGETGRENT
+#ifdef HAVE_DECL_FGETGRENT
     FILE *fgrp = fopen(QFile::encodeName(filename), "r");
     QString tmp;
     if (fgrp == NULL) {
@@ -146,7 +146,7 @@ bool KGroupFiles::reload()
 
     // End reading filename
 
-#ifdef HAVE_FGETGRENT
+#ifdef HAVE_DECL_FGETGRENT
     fclose(fgrp);
 #else
     endgrent();

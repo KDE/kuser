@@ -368,6 +368,8 @@ void mainDlg::groupSelected(int i) {
 
   egdlg = new editGroup(tmpKG);
 
+  egdlg->setCaption("Edit Groups");
+
   if (egdlg->exec() != 0)
     changed = TRUE;
 

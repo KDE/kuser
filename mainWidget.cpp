@@ -90,13 +90,21 @@ KTopLevelWidget(name)
     sscanf( geom, "%dx%d", &width, &height );
     resize( width, height );
   }
- }
+  sbar->changeItem("Ready", 0);
+}
 
 mainWidget::~mainWidget() {
-  delete md;
-  delete sbar;
-  delete toolbar;
-  delete menubar;
+  if (md)
+    delete md;
+
+  if (sbar)
+    delete sbar;
+
+  if (toolbar)
+    delete toolbar;
+
+  if (menubar)
+    delete menubar;
 }
 
 void mainWidget::resizeEvent (QResizeEvent *) {

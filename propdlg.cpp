@@ -272,6 +272,8 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
 #ifdef _KU_QUOTA
   isqchanged = FALSE;
 #endif
+
+  setCaption("Edit User");
 }
 
 propdlg::~propdlg() {

@@ -225,9 +225,10 @@ Quota::Quota(unsigned int auid, bool doget) {
     if (quotactl((const char *)mounts->getMount(i)->getfsname(), qcmd, uid, (caddr_t) &dq) !=0) {
       //  printf("%d\n",errno);
       warned++;
+      if (errno != EINVAL) /* For _SOME_ reason quotactl returns EINVAL vs EPERM or ENODEV when quotas are disabled*/
+            fprintf(stderr,"error: \"%s\" while calling quotactl\n", strerror(errno));
       KMsgBox::message(0, _("Error"), _("Quotas are not compiled into this kernel."), KMsgBox::STOP);
-      printf("errno: %i while calling quotactl\n", errno);
-      sleep(3);
+     /* Why punish people who don't want restrictions? sleep(3); */
       is_quota = 0;
       break;
     }
@@ -378,12 +379,12 @@ void Quota::save() {
   int qcmd = QCMD(Q_SETQUOTA,USRQUOTA);
 
   for (uint i=0; i<mounts->getMountsNumber(); i++) {
-    dq.dqb_curblocks  = btodb(q->at(i)->getfcur()*1024);
-    dq.dqb_bsoftlimit = btodb(q->at(i)->getfsoft()*1024);
-    dq.dqb_bhardlimit = btodb(q->at(i)->getfhard()*1024);
-    dq.dqb_curinodes  = q->at(i)->geticur();
-    dq.dqb_isoftlimit = q->at(i)->getisoft();
-    dq.dqb_ihardlimit = q->at(i)->getihard();
+    dq.dqb_curblocks  = btodb(q.at(i)->getfcur()*1024);
+    dq.dqb_bsoftlimit = btodb(q.at(i)->getfsoft()*1024);
+    dq.dqb_bhardlimit = btodb(q.at(i)->getfhard()*1024);
+    dq.dqb_curinodes  = q.at(i)->geticur();
+    dq.dqb_isoftlimit = q.at(i)->getisoft();
+    dq.dqb_ihardlimit = q.at(i)->getihard();
     dq.dqb_btime = q.at(i)->getftime()*3600;
     dq.dqb_itime = q.at(i)->getitime()*3600;
 
@@ -391,6 +392,7 @@ void Quota::save() {
       printf("Quotactl returned: %d\n", dd);
       continue;
     }
+  }
 #endif
 
 #ifdef _KU_HPUX_QUOTA

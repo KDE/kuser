@@ -14,17 +14,23 @@ grpnamedlg::grpnamedlg(KGroup *agroup, QWidget* parent, const char* name)
   group = agroup;
   group->setgid(groups->first_free());
 
-  setCaption(_("Enter groupname"));
+  setCaption(_("Add group"));
 
   QVBoxLayout *layout = new QVBoxLayout(this, 10);
   QGridLayout *grid = new QGridLayout(2, 2);
   layout->addLayout(grid);
 
   QLabel* lb1 = new QLabel(this, "lb1");
-  lb1->setText(_("Username:"));
+  lb1->setText(_("Group name:"));
   lb1->setMinimumSize(lb1->sizeHint());
   lb1->setAlignment(AlignRight|AlignVCenter);
   grid->addWidget(lb1, 0, 0, AlignRight);
+
+  QLabel* lb2 = new QLabel(this, "lb2");
+  lb2->setText(_("Group number:"));
+  lb2->setMinimumSize(lb2->sizeHint());
+  lb2->setAlignment(AlignRight|AlignVCenter);
+  grid->addWidget(lb2, 1, 0, AlignRight);
 
   legrpname = new QLineEdit( this, "LineEdit_1" );
 

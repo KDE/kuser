@@ -4,7 +4,7 @@ INCLUDES	=	$(all_includes)
 DEFS		+= 	@KU_NIS@ @KU_SHADOW@ @KU_QUOTA@ @QUOTACTL@ -D_KU_DEBUG
 
 kuser_LDFLAGS	=	$(all_libraries) $(KDE_RPATH)
-kuser_LDADD	=	-lkdeui -lkdecore  -lXext $(LIB_QT) $(LIBCRYPT) $(PAMLIBS) $(LIBPWDB) $(LIBGEN)
+kuser_LDADD	=	     $(LIB_KDEUI) $(LIBCRYPT) $(PAMLIBS) $(LIBPWDB) $(LIBGEN)
 
 ####### Files
 

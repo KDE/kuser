@@ -53,7 +53,7 @@
 // class KUser
 
 KUser::KUser() : p_pwd("*") {
-#ifdef __FreeBSD__
+#if defined(__FreeBSD__) || defined(__bsdi__)
   p_change = 0;
   p_expire = 0;
 #endif
@@ -85,7 +85,7 @@ void KUser::copy(const KUser *user) {
   p_dir = user->p_dir;
   p_shell = user->p_shell;
   p_fname = user->p_fname;
-#ifdef __FreeBSD__
+#if defined(__FreeBSD__) || defined(__bsdi__)
   p_office = user->p_office;
   p_ophone = user->p_ophone;
   p_hphone = user->p_hphone;
@@ -151,7 +151,7 @@ const QString &KUser::getFullName() const {
   return p_fname;
 }
 
-#ifdef __FreeBSD__
+#if defined(__FreeBSD__) || defined(__bsdi__)
 // FreeBSD apparently uses the GECOS fields differently than other Unices.
 // Create some better named functions to make the FreeBSD code clear
 const QString &KUser::getOffice() const {
@@ -257,7 +257,7 @@ void KUser::setFullName(const QString &data) {
   p_fname = data;
 }
 
-#ifdef __FreeBSD__
+#if defined(__FreeBSD__) || defined(__bsdi__)
 // FreeBSD apparently uses the GECOS fields differently than other Unices.
 // Create some better named functions to make the FreeBSD code clear
 void KUser::setOffice(const QString &data) {
@@ -392,7 +392,7 @@ void KUsers::fillGecos(KUser *user, const char *gecos) {
 
     switch(no) {
       case 0: user->setFullName(val); break;
-#ifdef __FreeBSD__
+#if defined(__FreeBSD__) || defined(__bsdi__)
       case 1: user->setOffice(val); break;
       case 2: user->setWorkPhone(val); break;
       case 3: user->setHomePhone(val); break;
@@ -456,7 +456,7 @@ bool KUsers::loadpwd() {
     tmpKU->setPwd(p->pw_passwd);
     tmpKU->setHomeDir(p->pw_dir);
     tmpKU->setShell(p->pw_shell);
-#ifdef __FreeBSD__
+#if defined(__FreeBSD__) || defined(__bsdi__)
     tmpKU->setClass(p->pw_class);
     tmpKU->setLastChange(p->pw_change);
     tmpKU->setExpire(p->pw_expire);
@@ -609,7 +609,7 @@ bool KUsers::savepwd() {
   for (unsigned int i=0; i<u.count(); i++) {
     KUser *user = u.at(i);
 
-#ifdef __FreeBSD__
+#if defined(__FreeBSD__) || defined(__bsdi__)
     s = QString("%1:%2:%3:%4:%5:%6:%7:")
         .arg(user->getName())
         .arg(user->getPwd())

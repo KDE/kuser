@@ -214,7 +214,7 @@ void mainView::useradd() {
   tk->setHomeDir(readentry("homeBase", KU_HOMEPREFIX)+"/"+tk->getName());
   tk->setGID(readnumentry("gid"));
   tk->setFullName(readentry("p_fname"));
-#ifdef __FreeBSD__
+#if defined(__FreeBSD__) || defined(__bsdi__)
   tk->setOffice(readentry("p_office"));
   tk->setWorkPhone(readentry("p_ophone"));
   tk->setHomePhone(readentry("p_hphone"));

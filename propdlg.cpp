@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#ifdef __FreeBSD__
+#if defined(__FreeBSD__) || defined(__bsdi__)
 #include <qdatetm.h>
 #endif
 #include <qvalidator.h>
@@ -31,7 +31,7 @@ propdlg::propdlg(KUser &AUser, QWidget *parent, const char *name, int)
 #endif
 {
 
-#ifdef __FreeBSD__
+#if defined(__FreeBSD__) || defined(__bsdi__)
   QDateTime *epoch = new QDateTime();
   QDateTime *temp_time = new QDateTime();
 #endif
@@ -107,7 +107,7 @@ propdlg::propdlg(KUser &AUser, QWidget *parent, const char *name, int)
   QToolTip::add(lehome, i18n("Home directory"));
   l6 = addLabel(w1, "ml6", 10, 155, 50, 20, i18n("Home directory"));
 
-#ifdef __FreeBSD__
+#if defined(__FreeBSD__) || defined(__bsdi__)
   // FreeBSD appears to use the comma separated fields in the GECOS entry
   // differently than Linux.
   leoffice = addLineEdit(w1, "leoffice", 10, 220, 160, 22, "");
@@ -460,7 +460,7 @@ void propdlg::charchanged(const QString &) {
 }
 
 void propdlg::save() {
-#ifdef __FreeBSD__
+#if defined(__FreeBSD__) || defined(__bsdi__)
   QDateTime *epoch = new QDateTime();
   QDateTime *temp_time = new QDateTime();
 #endif
@@ -468,7 +468,7 @@ void propdlg::save() {
   user.setUID(leid->text().toInt());
   user.setFullName(lefname->text());
 
-#ifdef __FreeBSD__
+#if defined(__FreeBSD__) || defined(__bsdi__)
   user.setOffice(leoffice->text());
   user.setWorkPhone(leophone->text());
   user.setHomePhone(lehphone->text());
@@ -615,7 +615,7 @@ void propdlg::selectuser() {
     leshell->setCurrentItem(0);
 
   lehome->setText(user.getHomeDir());
-#ifdef __FreeBSD__
+#if defined(__FreeBSD__) || defined(__bsdi__)
   leoffice->setText(user.getOffice());
   leophone->setText(user.getWorkPhone());
   lehphone->setText(user.getHomePhone());

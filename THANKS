@@ -17,3 +17,4 @@ Rudolf Weber <rw@weber.ravnet.de> (for NIS-related patch and some other futures)
 Duncan Haldane <f.d.m.haldane@cwix.com> (for RedHat specific issues and testing)
 Hans Petter Bieker <zerium@traad.lavvu.no> (for FreeBSD fgetpwent/getpwent/fgetr
 gent/getgrent fixes)
+"Steven M. Schultz" <sms@TO.GD-ES.COM> (for BSDI support)

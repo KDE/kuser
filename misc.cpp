@@ -1,3 +1,9 @@
+// $Id$
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -56,25 +62,20 @@ void backup(char const *name)
 }
 
 char *convertdate(char *buf, const long int base, const long int days) {
-#if defined(__hpux)
-  int tmpd;
-#else
-  long int tmpd;
-#endif // __hpux
+  time_t tmpd;
 
   tm *t;
 
-  if ((base+days)<24855l)
+  if ((base+days)<24855l) {
     if (days >0) {
       tmpd = (base+days)*24*60*60;
       t = localtime(&tmpd);
 
       sprintf(buf, "%d %d %d", t->tm_mday, t->tm_mon+1, t->tm_year+1900);
-    }
-    else {
+    } else {
       strcpy(buf, "Nothing");
     }
-  else {
+  } else {
     strcpy(buf, "Never");
   }
 

@@ -33,7 +33,7 @@ void KUserRow::paint( QPainter *p, int col, int width )
   }
 }
 
-KUserTable::KUserTable(QWidget *parent, const char *name) : KRowTable(SelectFixed, parent, name)
+KUserTable::KUserTable(QWidget *parent, const char *name) : KRowTable(SelectRow, parent, name)
 {
   QString pixdir = kapp->kdedir() + QString("/share/apps/kuser/pics/");
   pmUser = new QPixmap(pixdir + "user.xpm");
@@ -44,6 +44,14 @@ KUserTable::KUserTable(QWidget *parent, const char *name) : KRowTable(SelectFixe
 
   setAutoUpdate(TRUE);
   current = -1;
+}
+
+KUserTable::~KUserTable() {
+  delete pmUser;
+}
+
+void KUserTable::setAutoUpdate(bool state) {
+  QTableView::setAutoUpdate(state);
 }
 
 void KUserTable::clear()

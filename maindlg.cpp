@@ -7,7 +7,6 @@
 #include <kmsgbox.h>
 #include <ktoolbar.h>
 #include <kiconloader.h>
-//#include <ktablistbox.h>
 #include <unistd.h>
 
 #ifdef _KU_QUOTA
@@ -47,7 +46,7 @@ printf("mainDlg::init()\n");
   list->setGeometry(10,80,380,208);
 
 //  QObject::connect(list, SIGNAL(headerClicked(int)), this, SLOT(setSort(int)));
-//  QObject::connect(list, SIGNAL(selected(int,int)), this, SLOT(selected(int,int)));
+  QObject::connect(list, SIGNAL(selected(int)), this, SLOT(selected(int)));
 
   QLabel *lb1 = addLabel(this, "lb1", 55, 40, 50, 20,_("User name"));
   lb1->setFont(rufont);
@@ -55,9 +54,6 @@ printf("mainDlg::init()\n");
   lb2->setFont(rufont);
 
   reload(0);
-#ifdef _KU_DEBUG
-printf("mainDlg::mainDlg 6\n");
-#endif
 
   QPushButton* pbquit;
   pbquit = new QPushButton( this, "pbquit" );
@@ -153,6 +149,7 @@ void mainDlg::setSort(int col) {
 void mainDlg::reload(int id) {
   KUser *ku;
 
+  list->setAutoUpdate(FALSE);
   list->clear();
 
   for (uint i = 0; i<u->getUsersNumber(); i++) {
@@ -160,52 +157,63 @@ void mainDlg::reload(int id) {
     list->insertItem(ku);
   }
 
+  list->setAutoUpdate(TRUE);
   list->setCurrentItem(id);
 }
 
 void mainDlg::edit() {
-  //  selected(list->currentItem(),0);
+printf("mainDlg::edit()\n currentItem = %d\n", list->currentItem());
+  selected(list->currentItem());
 }
 
 void mainDlg::del() {
   uint i = 0;
   bool islast = FALSE;
-  /*
+
   if (KMsgBox::yesNo(0, _("WARNING"),
-                         _("Do you really want to delete user ?"),
-                         KMsgBox::STOP,
-                         _("Delete"), _("Cancel"))) {
+                     _("Do you really want to delete user ?"),
+                     KMsgBox::STOP,
+                     _("Delete"), _("Cancel")) == 1) {
 
     i = list->currentItem();
-    if (i == users.count()-1)
+    if (i == u->getUsersNumber()-1)
       islast = TRUE;
 
-    users.remove(i);
+    unsigned int uid = u->getUser(i)->p_uid;
 
-    list->removeItem(i);
+    u->delUser(i);
+
+#ifdef _KU_QUOTA
+    if (u->user_lookup(uid) == NULL)
+      q->delQuota(uid);
+#endif
 
     prev = -1;
 
     if (!islast)
-      list->setCurrentItem(i);
+      reload(i);
     else
-      list->setCurrentItem(i-1);
+      reload(i-1);
   }
-  */
 }
 
 void mainDlg::add() {
-  usernamedlg *u;
+  usernamedlg *ud;
   propdlg *editUser;
 
-  /*
   KUser *tk;
+  Quota *tq;
+
   tk = new KUser();
-  u = new usernamedlg(tk, this);
-  if (u->exec() == 0)
+
+  tk->p_uid = u->first_free();
+  tq = new Quota(tk->p_uid, FALSE);
+
+  ud = new usernamedlg(tk, this);
+  if (ud->exec() == 0)
     return;
 
-  delete u;
+  delete ud;
 
   config->setGroup("template");
   tk->p_shell = readentry("shell");
@@ -227,35 +235,36 @@ void mainDlg::add() {
 #endif
 
 #ifdef _KU_QUOTA
-  if (is_quota) {
-    tk->quota.at(0)->fsoft = readnumentry("quota.fsoft");
-    tk->quota.at(0)->fhard = readnumentry("quota.fhard");
-    tk->quota.at(0)->isoft = readnumentry("quota.isoft");
-    tk->quota.at(0)->ihard = readnumentry("quota.ihard");
-  }
+  if (is_quota)
+    editUser = new propdlg(tk, tq, this, "userin");
+  else
+    editUser = new propdlg(tk, tq, this, "userin");
+#else
+  editUser = new propdlg(tk, this, "userin");
 #endif
 
-  editUser = new propdlg(tk, this, "userin");
-  if (editUser->exec() != 0)
-    users.append(tk);
-  else
+  if (editUser->exec() != 0) {
+    u->addUser(tk);
+    q->addQuota(tq);
+    changed = TRUE;
+  }
+  else {
     delete tk;
+    delete tq;
+  }
 
-  reload(users.count()-1);
+  reload(u->getUsersNumber()-1);
 
   delete editUser;
-  */
 }
 
 void mainDlg::quit() {
-  if (changed == TRUE)
-    if (KMsgBox::yesNo(0, _("Data was modified"),
-                          _("Would you like to save changes ?"),
-  		          KMsgBox::INFORMATION,
-                          _("Save"), _("Discard changes"))) {
-
+ if (changed == TRUE)
+   if (KMsgBox::yesNo(0, _("Data was modified"),
+                      _("Would you like to save changes ?"),
+  		      KMsgBox::INFORMATION,
+		      _("Save"), _("Discard changes")) == 1) {
       u->save();
-                                                                                
 #ifdef _KU_QUOTA
       if (is_quota)
         q->save();
@@ -273,11 +282,10 @@ void mainDlg::about() {
 
 void mainDlg::setpwd() {
   pwddlg *d;
-  /*
-  d = new pwddlg(users.at(list->currentItem()), this, "pwddlg");
+  
+  d = new pwddlg(u->getUser(list->currentItem()), this, "pwddlg");
   d->exec();
   delete d;
-  */
 }
 
 void mainDlg::help() {
@@ -303,6 +311,10 @@ void mainDlg::properties() {
   KUser *tk;
 
   tk = new KUser();
+#ifdef _KU_QUOTA
+  Quota *tq = new Quota(0, FALSE);
+#endif
+
   config->setGroup("template");
   tk->p_shell = readentry("shell");
   tk->p_dir   = readentry("homeprefix");
@@ -334,7 +346,7 @@ void mainDlg::properties() {
 #endif
 
 #ifdef _KU_QUOTA
-  editUser = new propdlg(tk, NULL, this, "userin");
+  editUser = new propdlg(tk, tq, this, "userin");
 #else
   editUser = new propdlg(tk, this, "userin");
 #endif
@@ -370,20 +382,42 @@ void mainDlg::properties() {
   }
 
   delete tk;
+#ifdef _KU_QUOTA
+  delete tq;
+#endif
   delete editUser;
 }
 
-void mainDlg::selected(int i, int) {
+void mainDlg::selected(int i) {
   propdlg *editUser;
-  /*
-  editUser = new propdlg(users.at(i), this, "userin");
+  KUser *tmpKU;
+
+  tmpKU =  u->getUser(i);
+  if (tmpKU == NULL) {
+    printf("Null pointer tmpKU in mainDlg::selected(%d)\n", i);
+    return;
+  }
+
+#ifdef _KU_QUOTA
+  Quota *tmpQ;
+
+  tmpQ = q->getQuota(tmpKU->p_uid);
+  if (tmpQ == NULL) {
+    printf("Null pointer tmpQ in mainDlg::selected(%d)\n", i);
+    return;
+  }
+
+  editUser = new propdlg(tmpKU, tmpQ, this, "userin");
+#else
+  editUser = new propdlg(tmpKU, this, "userin");
+#endif
+
   if (editUser->exec() != 0) {
     reload(list->currentItem());
     changed = TRUE;
   }
 
   delete editUser;
-  */
 }
 
 KUsers *mainDlg::getUsers() {
@@ -396,7 +430,6 @@ Mounts *mainDlg::getMounts() {
 }
 
 Quotas *mainDlg::getQuotas() {
-printf("mainDlg::getQuotas \n");
   return (q);
 }
 #endif

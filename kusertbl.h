@@ -20,20 +20,20 @@ protected:
 
 class KUserTable : public KRowTable
 {
-	Q_OBJECT
-
+  Q_OBJECT
 public:
-	KUserTable( QWidget *parent = NULL, const char *name = NULL );
+  KUserTable( QWidget *parent = NULL, const char *name = NULL );
 
-	void clear();
-	void insertItem(KUser *aku);
-	int currentItem();
-	void setCurrentItem( int item );
+  void setAutoUpdate(bool state);
+  void clear();
+  void insertItem(KUser *aku);
+  int currentItem();
+  void setCurrentItem( int item );
 
 private:
-	QPixmap *pmUser;
-	int fontpos;
-	int	current;
+  QPixmap *pmUser;
+  int fontpos;
+  int current;
 };
 
 #endif // _KUSERTBL_H

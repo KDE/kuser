@@ -87,14 +87,15 @@ public:
 
 class Quota {
 public:
-  Quota(long auid);
+  Quota(unsigned int auid, bool doget = TRUE);
   ~Quota();
 
   QuotaMnt *getQuotaMnt(uint mntnum);
   uint getMountsNumber();
+  unsigned int getUid();
   void save();
 protected:
-  long uid;
+  unsigned int uid;
   QList<QuotaMnt> q;
 };
 
@@ -103,8 +104,10 @@ public:
   Quotas();
   ~Quotas();
 
-  Quota *getQuota(long uid);
-  void addQuota(long uid);
+  Quota *getQuota(unsigned int uid);
+  void addQuota(unsigned int uid);
+  void addQuota(Quota *aq);
+  void delQuota(unsigned int uid);
   void save();
  protected:
   QIntDict<Quota> q;

@@ -16,6 +16,7 @@ public:
   void insertItem(KUser *aku);
   int currentItem();
   void setCurrentItem( int item );
+  void setAutoUpdate(bool state);
 
 protected:
   virtual void KUserView::resizeEvent( QResizeEvent *rev );
@@ -32,5 +33,5 @@ private:
   void init();
   KHeader *m_Header;
   KUserTable *m_Users;
-
+  int current;
 };

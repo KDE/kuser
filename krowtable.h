@@ -1,6 +1,3 @@
-#ifndef _KROWTABLE_H
-#define _KROWTABLE_H
-
 #include "qtablevw.h"
 #include "qpainter.h"
 #include "qlist.h"
@@ -35,10 +32,10 @@ public:
 	KRow *selectedRow();
 	void setNumCols( int cols );
 	void setNumRows( int rows );
-	bool insertRow( KRow *cell, uint row );
+	bool insertRow( KRow *cell, int row );
 	void setCurrentRow( int row, int col );
 	void setHighlightColumn( int col );
-	KRow *getRow( uint row );
+	KRow *getRow( int row );
 	void clear();
 	void setAutoDelete( bool autodelete );
 	bool autoDelete() const;
@@ -83,5 +80,3 @@ private:
 	int	current_row;
 	int m_flags;
 };
-
-#endif // _KROWTABLE_H

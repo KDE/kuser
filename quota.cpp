@@ -35,13 +35,19 @@ QuotaMnt::QuotaMnt(const QuotaMnt *q) {
   icur = q->icur; isoft = q->isoft; ihard = q->ihard; itime = q->itime;
 }
 
-Quota::Quota(long auid) {
+Quota::Quota(unsigned int auid, bool doget) {
   uid = auid;
 
   q.setAutoDelete(TRUE);
 
   if (is_quota == 0)
     return;
+
+  if (!doget) {
+    for (uint i=0; i<mounts->getMountsNumber(); i++)
+      q.append(new QuotaMnt);
+    return;
+  }
 
   static int warned = 0;
   struct dqblk dq;
@@ -232,6 +238,10 @@ void Quota::save() {
 #endif
 }
 
+unsigned int Quota::getUid() {
+  return (uid);
+}
+
 Quotas::Quotas() {
   q.setAutoDelete(TRUE);
 }
@@ -240,17 +250,30 @@ Quotas::~Quotas() {
   q.clear();
 }
 
-Quota *Quotas::getQuota(long uid) {
-  return (q.take(uid));
+Quota *Quotas::getQuota(unsigned int uid) {
+  return (q[uid]);
 }
 
-void Quotas::addQuota(long uid) {
+void Quotas::addQuota(unsigned int uid) {
   Quota *tmpQ = NULL;
 
   if (!q[uid]) {
     tmpQ = new Quota(uid);
     q.insert(uid, tmpQ);
   }
+}
+
+void Quotas::addQuota(Quota *aq) {
+  unsigned int uid;
+
+  uid = aq->getUid();
+
+  if (!q[uid])
+    q.insert(uid, aq);
+}
+
+void Quotas::delQuota(unsigned int uid) {
+  q.remove(uid);
 }
 
 void Quotas::save() {

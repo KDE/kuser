@@ -249,8 +249,14 @@ void KRowTable::mousePressEvent( QMouseEvent *e )
 
 void KRowTable::mouseDoubleClickEvent( QMouseEvent *e )
 {
-	if( current_col != -1 && current_row != -1 )
+        if (m_flags == SelectRow)
+          if ( current_row != -1 )
 		emit selected( current_row, current_col );
+
+        if (m_flags != SelectRow)
+  	  if( current_col != -1 && current_row != -1 )
+		emit selected( current_row, current_col );
+
 	repaint();
 }
 

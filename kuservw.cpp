@@ -3,12 +3,17 @@
 KUserView::KUserView(QWidget *parent, const char *name) : QWidget( parent, name )
 {
   init();
+  current = -1;
 }
 
 KUserView::~KUserView()
 {
   delete m_Header;
   delete m_Users;
+}
+
+void KUserView::setAutoUpdate(bool state) {
+  m_Users->setAutoUpdate(state);
 }
 
 void KUserView::clear() {
@@ -20,10 +25,11 @@ void KUserView::insertItem(KUser *aku) {
 }
 
 int KUserView::currentItem() {
-  return (m_Users->currentItem());
+  return (current);
 }
 
 void KUserView::setCurrentItem(int item) {
+  current = item;
   m_Users->setCurrentItem(item);
 }
 
@@ -43,7 +49,7 @@ void KUserView::init()
   connect(m_Header, SIGNAL(sizeChanged(int,int)), m_Users, SLOT(setColumnWidth(int,int)));
 
 // This connection makes it jumpy and slow (but it works!)
-//	connect(m_Header, SIGNAL(sizeChanging(int,int)), m_UserList, SLOT(setColumnWidth(int,int)));
+  connect(m_Header, SIGNAL(sizeChanging(int,int)), m_Users, SLOT(setColumnWidth(int,int)));
 
   connect(m_Users, SIGNAL(hSliderMoved(int)), m_Header, SLOT(setOrigin(int)));
 
@@ -53,11 +59,13 @@ void KUserView::init()
 
 void KUserView::onSelect(int row, int)
 {
+  current = row;
   emit selected(row);
 }
 
 void KUserView::onHighlight(int row, int)
 {
+  current = row;
   emit highlighted(row);
 }
 

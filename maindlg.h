@@ -37,7 +37,7 @@ public:
 public slots:
   void properties();
   void quit();
-  void selected(int i,int);
+  void selected(int i);
   void edit();
   void del();
   void add();

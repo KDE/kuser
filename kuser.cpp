@@ -35,7 +35,7 @@ KUser::KUser() {
   p_office2.setStr("");
   p_address.setStr("");
   p_uid     = 0;
-  p_gid     = 100;
+  p_gid     = 0;
 
 #ifdef _KU_SHADOW   
   s_pwd.setStr("");
@@ -79,6 +79,7 @@ KUser::~KUser() {
 }
 
 KUsers::KUsers() {
+printf("KUsers::KUsers\n");
   p_saved = 0;
   s_saved = 0;
 
@@ -267,15 +268,22 @@ void KUsers::save() {
 #endif // _KU_SHADOW
 }
 
-KUser *KUsers::user_lookup(const char *name) {                                               
-  for (uint i = 0; i<u.count(); i++)                                       
-    if (name == u.at(i)->p_name)                                     
-      return (u.at(i));                                                    
-  return (NULL);                                                               
-}                                                                               
+KUser *KUsers::user_lookup(const char *name) {
+  for (uint i = 0; i<u.count(); i++)
+    if (name == u.at(i)->p_name)
+      return (u.at(i));
+  return (NULL);
+}
 
-uint KUsers::first_free() {
-  uint t = 501;
+KUser *KUsers::user_lookup(unsigned int uid) {
+  for (uint i = 0; i<u.count(); i++)
+    if (uid == u.at(i)->p_uid)
+      return (u.at(i));
+  return (NULL);
+}
+
+unsigned int KUsers::first_free() {
+  unsigned int t = 1001;
 
   for (uint i=0;i<u.count();i++)
   {
@@ -308,4 +316,12 @@ KUser *KUsers::first() {
 
 KUser *KUsers::next() {
   return (u.next());
+}
+
+void KUsers::addUser(KUser *ku) {
+  u.append(ku);
+}
+
+void KUsers::delUser(uint num) {
+  u.remove(num);
 }

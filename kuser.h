@@ -47,12 +47,17 @@ public:
   KUsers();
   ~KUsers();
   KUser *user_lookup(const char *name);
-  uint first_free();
+  KUser *user_lookup(unsigned int uid);
+  unsigned int first_free();
   void save();
   KUser *first();
   KUser *next();
   uint getUsersNumber();
   KUser *getUser(uint num);
+
+  void addUser(KUser *ku);
+  void delUser(uint num);
+
 protected:
   int p_saved;
   int s_saved;

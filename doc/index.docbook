@@ -1,4 +1,5 @@
 <!DOCTYPE book PUBLIC "-//KDE//DTD DocBook V3.1-Based Variant V1.0//EN">
+
 <book lang="en">
 <bookinfo>
 <title>The Kuser Handbook</title>
@@ -8,8 +9,8 @@
 <surname>Pershin</surname>
 </author>
 </authorgroup>
-<date>April 25, 1999</date>
-<releaseinfo><!-- information about this particular version --></releaseinfo>
+<date>25/04/1999</date>
+<releaseinfo>1.00.00</releaseinfo>
 <revhistory>
 <revision>
 <revnumber></revnumber>
@@ -18,7 +19,7 @@
 </revhistory>
 <abstract>
 <para>This documentation was last updated for Kuser version 1.0. Please send any comments and additions to the authors.</para>
-<para>The Kuser Handbook</para><!-- Merge this with the previous paragraph; it comes from <META NAME="description" CONTENT="..."> --></abstract>
+</abstract>
 <keywordset>
 <keyword>kuser</keyword>
 <keyword>user</keyword>
@@ -27,6 +28,7 @@
 <keyword>tools</keyword>
 </keywordset>
 </bookinfo>
+
 <chapter id="secIntro">
 <title>Introduction</title>
 <para>Some time ago I had downloaded xusermgr written with XForms. This program has a

@@ -10,17 +10,59 @@
 #include "maindlg.h"
 #include "editGroup.moc"
 #include "editGroupData.moc"
+#include <kapp.h>
+#include <kbuttonbox.h>
+#include <qlayout.h>
 
 #define Inherited editGroupData
 
 editGroup::editGroup(KGroup *akg,
 		       QWidget* parent,
 		       const char* name)
-  :Inherited( parent, name )
+  : QDialog( parent, name, true)
 {
   uint i;
 
   kg = akg;
+
+  QVBoxLayout *tl = new QVBoxLayout(this, 10, 10);
+  QGridLayout *l1 = new QGridLayout(2, 3);
+  tl->addLayout(l1);
+
+  QLabel *l = new QLabel(i18n("Users"), this);
+  l->setFixedSize(l->sizeHint());
+  l1->addWidget(l, 0, 0, AlignLeft);
+
+  l = new QLabel(i18n("Groups"), this);
+  l->setFixedSize(l->sizeHint());
+  l1->addWidget(l, 0, 2, AlignLeft);
+
+  QPushButton *pb_add = new QPushButton("->", this);
+  QPushButton *pb_del = new QPushButton("<-", this);
+  pb_del->setFixedSize(pb_del->sizeHint());
+  pb_add->setFixedSize(pb_add->sizeHint());
+  QVBoxLayout *l2 = new QVBoxLayout;
+  l1->addLayout(l2, 1, 1);
+  l2->addStretch(1);
+  l2->addWidget(pb_add);
+  l2->addWidget(pb_del);
+  l2->addStretch(1);
+
+  m_Users = new QListBox(this);
+  m_Users->setMinimumSize(160, 120);
+  m_Group = new QListBox(this);
+  m_Group->setMinimumSize(160, 120);
+
+  l1->addWidget(m_Users, 1, 0);
+  l1->addWidget(m_Group, 1, 2);
+
+  KButtonBox *bbox = new KButtonBox(this);
+  bbox->addStretch(1);
+  QPushButton *pbok = bbox->addButton(i18n("OK"));
+  QPushButton *pbcancel = bbox->addButton(i18n("Cancel"));
+  bbox->layout();
+  tl->addWidget(bbox);
+  tl->activate();
 
   for (i = 0; i<kg->getUsersNumber(); i++)
     m_Group->insertItem(kg->getUserName(i));
@@ -33,6 +75,15 @@ editGroup::editGroup(KGroup *akg,
     m_Users->setCurrentItem(0);
   if (m_Group->count() != 0)
     m_Group->setCurrentItem(0);
+
+  connect(pbok, SIGNAL(clicked()),
+	  this, SLOT(ok()));
+  connect(pbcancel, SIGNAL(clicked()),
+	  this, SLOT(cancel()));
+  connect(pb_add, SIGNAL(clicked()),
+	  this, SLOT(add()));
+  connect(pb_del, SIGNAL(clicked()),
+	  this, SLOT(del()));
 }
 
 

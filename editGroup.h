@@ -10,13 +10,15 @@
 #ifndef editGroup_included
 #define editGroup_included
 
+#include <qdialog.h>
+#include <qlistbox.h>
+
 #include "editGroupData.h"
 #include "kgroup.h"
 
-class editGroup : public editGroupData
+class editGroup : public QDialog 
 {
   Q_OBJECT
-
 public:
 
   editGroup(KGroup *akg,
@@ -34,5 +36,7 @@ protected slots:
 
 protected:
   KGroup *kg;
+
+  QListBox *m_Users, *m_Group;
 };
 #endif // editGroup_included

@@ -1,3 +1,8 @@
+1999-03-15 Mario Weilguni <mweilguni@kde.org>
+
+	* fixed the broken QtArch layout and replaced with a working one
+	
+
 22/12/98: RedHat awared issues added.
 	  Private group mechanism implemented. Works both for
 	  add and delete.

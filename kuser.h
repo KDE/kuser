@@ -20,7 +20,7 @@ public:
     p_uid,
     p_gid;
 
-#ifdef _XU_SHADOW
+#ifdef _KU_SHADOW
   QString
     s_pwd;                         // parsed shadow information
   long
@@ -34,7 +34,7 @@ public:
     s_flag;                        // reserved for future use
 #endif
 
-#ifdef _XU_QUOTA
+#ifdef _KU_QUOTA
   QList<Quota>
     quota;
 #endif

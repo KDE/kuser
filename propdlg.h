@@ -1,5 +1,5 @@
-#ifndef _XU_PROPDLG_H_
-#define _XU_PROPDLG_H_
+#ifndef _KU_PROPDLG_H_
+#define _KU_PROPDLG_H_
 
 #include "includes.h"
 #include "kdatectl.h"
@@ -85,5 +85,5 @@ private:
   QLabel      *leqicur;
 };
 
-#endif // _XU_PROPDLG_H_
+#endif // _KU_PROPDLG_H_
 

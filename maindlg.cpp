@@ -231,12 +231,12 @@ void maindlg::quit() {
 
       pwd_write();                                                                 
                                                                                 
-#ifdef _XU_SHADOW                                                               
+#ifdef _KU_SHADOW
       if (is_shadow)                                                               
         sdw_write();                                                                
 #endif                                                                         
                                                                                
-#ifdef _XU_QUOTA                                                                
+#ifdef _KU_QUOTA
 #ifdef _KU_DEBUG
 printf("%d\n", is_quota);
 #endif
@@ -250,7 +250,7 @@ printf("%d\n", is_quota);
 }
 
 void maindlg::about() {
-    sprintf(tmp, _("KUser version %s\nKDE project\nThis program was created by\nDenis Y. Pershin\ndyp@isis.nsu.ru\nCopyright 1997(c)"), _XU_VERSION);
+    sprintf(tmp, _("KUser version %s\nKDE project\nThis program was created by\nDenis Y. Pershin\ndyp@isis.nsu.ru\nCopyright 1997(c)"), _KU_VERSION);
     QMessageBox::message(_("Message"), tmp, "Ok");
 }
 

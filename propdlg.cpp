@@ -287,7 +287,7 @@ void propdlg::save() {
   else
     user->p_shell.setStr("");
 
-#ifdef _XU_SHADOW
+#ifdef _KU_SHADOW
   if (is_shadow) {
     user->s_min = lesmin->getDate()-user->s_lstchg;
     user->s_max = lesmax->getDate()-user->s_lstchg;
@@ -373,7 +373,7 @@ void propdlg::selectuser() {
   leoffice1->setText(user->p_office1);
   leoffice2->setText(user->p_office2);
   leaddress->setText(user->p_address);
-#ifdef _XU_QUOTA
+#ifdef _KU_QUOTA
   if (is_quota != 0) {
     int q = 0;
     if (chquota != -1)

@@ -1,5 +1,5 @@
-#ifndef _XU_MNT_H_
-#define _XU_MNT_H_
+#ifndef _KU_MNT_H_
+#define _KU_MNT_H_
 
 #include <qstring.h>
 #include <qlist.h>
@@ -22,4 +22,4 @@ public:
          const char *aquotafilename);
 };
 
-#endif // _XU_MNT_H_
+#endif // _KU_MNT_H_

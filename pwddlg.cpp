@@ -1,4 +1,4 @@
-#include "config.h"
+#include "../config.h"
 
 #ifdef HAVE_CRYPT_H
 #include <crypt.h>

@@ -1,7 +1,7 @@
 INCLUDE	=	@all_includes@
 
 # May be -DLINUX -D_XU_QUOTA -DAIX -D_XU_SHADOW
-SYSFLAGS = 	-D_XU_QUOTA -D_XU_SHADOW -D_KU_DEBUG # -g
+SYSFLAGS = 	-D_KU_QUOTA -D_KU_SHADOW -D_KU_DEBUG # -g
 
 # For Linux
 OFLAGS =	-O2 -W -DLOCDIR=\"$(LOCALEDIR)\"
@@ -49,7 +49,7 @@ VERSION =	0.1
 	$(CXX) -c $(CFLAGS) $(INCLUDE) $<
 ####### Build rules
 
-all: depend $(TARGET) $(MOFILES)
+all: $(TARGET) $(MOFILES)
 
 $(TARGET): $(SRCMETA) $(OBJECTS)
 	$(CXX) $(OBJECTS) -o $(TARGET) $(LFLAGS)

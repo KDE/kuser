@@ -4,7 +4,7 @@
 
 int s_saved = 0;
 
-#ifdef _XU_SHADOW
+#ifdef _KU_SHADOW
 void sdw_read(void)
 {
   FILE *f;
@@ -102,5 +102,5 @@ void shadow_cp(KUser *up, const spwd *src)
   up->s_flag     = src->sp_flag;
 }
 
-#endif // _XU_SHADOW
+#endif // _KU_SHADOW
 

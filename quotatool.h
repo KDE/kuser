@@ -1,7 +1,7 @@
-#ifndef _XU_QUOTATOOL_H_
-#define _XU_QUOTATOOL_H_
+#ifndef _KU_QUOTATOOL_H_
+#define _KU_QUOTATOOL_H_
 
-#ifdef _XU_QUOTA
+#ifdef _KU_QUOTA
 
 class Quota {
 public:
@@ -21,7 +21,7 @@ public:
 extern void quota_read();
 extern void quota_write();
 
-#endif // _XU_QUOTA
+#endif // _KU_QUOTA
 
-#endif // _XU_EDQUOTA_H_
+#endif // _KU_EDQUOTA_H_
 

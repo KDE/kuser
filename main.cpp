@@ -11,13 +11,13 @@ QPixmap *pic_user;
 KConfig *config;
 bool changed = false;
 
-#ifdef _XU_QUOTA
+#ifdef _KU_QUOTA
 int is_quota = 1;
 #else
 int is_quota = 0;
 #endif
 
-#ifdef _XU_SHADOW
+#ifdef _KU_SHADOW
 int is_shadow = 1;
 #else
 int is_shadow = 0;

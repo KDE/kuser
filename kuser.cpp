@@ -13,7 +13,7 @@ KUser::KUser() {
   p_uid     = first_free();
   p_gid     = 100;
 
-#ifdef _XU_SHADOW   
+#ifdef _KU_SHADOW   
   s_pwd.setStr("");
   s_lstchg  = 0;
   s_min     = 0;
@@ -24,7 +24,7 @@ KUser::KUser() {
   s_flag    = 0;
 #endif
 
-#ifdef _XU_QUOTA
+#ifdef _KU_QUOTA
   if (is_quota == 1) {
   }
 #endif
@@ -42,7 +42,7 @@ KUser::KUser(KUser *copy) {
     p_uid     = copy->p_uid;
     p_gid     = copy->p_gid;
 
-#ifdef _XU_SHADOW   
+#ifdef _KU_SHADOW   
   if (is_shadow == 1) {
     s_pwd     = copy->s_pwd;
     s_lstchg  = copy->s_lstchg;
@@ -55,7 +55,7 @@ KUser::KUser(KUser *copy) {
   }
 #endif
 
-#ifdef _XU_QUOTA
+#ifdef _KU_QUOTA
   if (is_quota == 1) {
     quota = copy->quota;
   }

@@ -1,7 +1,7 @@
-#ifndef _XU_INCLUDES_H_
-#define _XU_INCLUDES_H_
+#ifndef _KU_INCLUDES_H_
+#define _KU_INCLUDES_H_
 
-#define _XU_VERSION "0.1"
+#define _KU_VERSION "0.1"
 
 #include <qpainter.h>
 #include <qpixmap.h>
@@ -30,7 +30,7 @@
 #include <kpopmenu.h>
 #include <ktopwidget.h>
 
-#ifdef _XU_SHADOW
+#ifdef _KU_SHADOW
 #include <shadow.h>
 #endif
 
@@ -50,7 +50,7 @@ extern char tmp[1024];
 
 class KUser;
 
-#ifdef _XU_QUOTA
+#ifdef _KU_QUOTA
 #include "quotatool.h"
 #endif
 extern int is_quota;
@@ -58,7 +58,7 @@ extern int is_quota;
 #include "kuser.h"
 #include "mnt.h"
 
-#define XU_BACKUP_EXT ".bak"
+#define KU_BACKUP_EXT ".bak"
 
 #define PASSWORD_FILE "./passwd"
 #define PASSWORD_FILE_MASK S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH
@@ -68,7 +68,7 @@ extern QPixmap *pic_user;
 extern KConfig *config;
 extern bool changed;
 
-#ifdef _XU_SHADOW
+#ifdef _KU_SHADOW
 #define SHADOW_FILE "./shadow"
 #define SHADOW_FILE_MASK S_IRUSR | S_IWUSR
 #endif
@@ -86,5 +86,5 @@ extern "C" int getuid(void);
 extern "C" int unlink(const char *);
 #endif
 
-#endif // _XU_INCLUDES_H_
+#endif // _KU_INCLUDES_H_
 

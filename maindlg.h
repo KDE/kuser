@@ -1,5 +1,5 @@
-#ifndef _XU_MAINDLG_H
-#define _XU_MAINDLG_H
+#ifndef _KU_MAINDLG_H
+#define _KU_MAINDLG_H
 
 #include "includes.h"
 
@@ -28,4 +28,4 @@ private:
   bool changed;
 };
 
-#endif // _XU_MAINDLG_H
+#endif // _KU_MAINDLG_H

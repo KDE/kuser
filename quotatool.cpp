@@ -1,15 +1,10 @@
-#ifdef _XU_QUOTA
+#ifdef _KU_QUOTA
 
 #include <sys/types.h>
 #include <sys/param.h>
 #include <sys/stat.h>
 #include <sys/file.h>
-#include "config.h"
-
-#ifdef HAVE_LINUX_QUOTA_H
-#include <linux/quota.h>
-#define _KU_EXT2_QUOTA
-#endif
+#include "../config.h"
 
 #ifdef HAVE_FCNTL_H
 #include <fcntl.h>
@@ -56,25 +51,11 @@ int quotactl(int cmd, const char * special, int id, caddr_t addr)
 #include <linux/unistd.h>
 #endif
 
-//_syscall4(int, quotactl, int, cmd, const char *, special, int, id, caddr_t, addr);
-#endif
-
-#ifdef HAVE_SYS_FS_UFS_QUOTA_H
-#include <sys/fs/ufs_quota.h>
-#define CORRECT_FSTYPE(type) (!strcmp(type,MNTTYPE_UFS))
-#define QUOTAFILENAME "quotas"
-#define _KU_UFS_QUOTA
-#else
-#define CORRECT_FSTYPE(type) (!strcmp(type,MNTTYPE_EXT2))
-#define QUOTAFILENAME "quota.user"
 #endif
 
 char s[120];
 
 #define   FOUND   0x01
-
-// all procedures
-int alldigits(const char *s);
 
 void getquota(long int id, QList<Quota> *q)
 {
@@ -128,7 +109,8 @@ void getquota(long int id, QList<Quota> *q)
                         dq.dqb_fhardlimit));
     close(fd);
   }
-#else
+#endif
+
 #ifdef _KU_EXT2_QUOTA
   qcmd = QCMD(Q_GETQUOTA, USRQUOTA);
 
@@ -146,16 +128,13 @@ void getquota(long int id, QList<Quota> *q)
         }
 */
       }
-      q->append(new Quota(dbtob(dq.dqb_curblocks),
-                          dbtob(dq.dqb_bsoftlimit),
-        		  dbtob(dq.dqb_bhardlimit),
+      q->append(new Quota(dbtob(dq.dqb_curblocks)/1024,
+                          dbtob(dq.dqb_bsoftlimit)/1024,
+        		  dbtob(dq.dqb_bhardlimit)/1024,
 			  dq.dqb_curinodes,
 			  dq.dqb_isoftlimit,
 			  dq.dqb_ihardlimit));
     }
-#else
-#error "Your platform is not supported"
-#endif
 #endif
 }
 
@@ -163,11 +142,6 @@ void setquota(long int id, QList<Quota> *q)
 {
   if (is_quota == 0)
     return;
-
-/*
-  if (id = getentry(uname) == -1)
-    return;
-*/
 
   int qcmd, fd;
   struct dqblk dq;
@@ -208,22 +182,26 @@ void setquota(long int id, QList<Quota> *q)
         close(fd);
         break;
       }
-    qctl.op = Q_SYNC;
     close(fd);
   }
-#else
+#endif
+
+#ifdef _KU_EXT2_QUOTA
+printf("setquota: id = %il\n", id);
   qcmd = QCMD(Q_SETQUOTA, USRQUOTA);
   for (uint i=0; i<mounts.count(); i++) {
-    dq.dqb_curblocks  = btodb(q->at(i)->fcur);
-    dq.dqb_bsoftlimit = btodb(q->at(i)->fsoft);
-    dq.dqb_bhardlimit = btodb(q->at(i)->fhard);
+    dq.dqb_curblocks  = btodb(q->at(i)->fcur*1024);
+    dq.dqb_bsoftlimit = btodb(q->at(i)->fsoft*1024);
+    dq.dqb_bhardlimit = btodb(q->at(i)->fhard*1024);
     dq.dqb_curinodes  = q->at(i)->icur;
     dq.dqb_isoftlimit = q->at(i)->isoft;
     dq.dqb_ihardlimit = q->at(i)->ihard;
+    dq.dqb_btime = MX_DQ_TIME;
+    dq.dqb_itime = MX_IQ_TIME;
 
     if (quotactl(qcmd, (const char *)mounts.at(i)->fsname, id, (caddr_t) &dq) != 0)
       continue;
-
+    /*
     if ((fd = open((const char *)mounts.at(i)->quotafilename, O_WRONLY)) < 0) {
       sprintf(s, _("Error opening %s"), (const char *)mounts.at(i)->quotafilename);
       QMessageBox::message(_("Error"), s, "Ok");
@@ -236,45 +214,9 @@ void setquota(long int id, QList<Quota> *q)
       }
       close(fd);
     }
+    */
   }
 #endif
-}
-
-/*
- * This routine converts a name for a particular quota type to an identifier.
-int getentry(const char *name)
-{
-  if (is_quota != 0) {
-    struct passwd  *pw;
-    struct group   *gr;
-
-    if (alldigits(name))
-      return (atoi(name));
-    if (pw = getpwnam(name))
-      return (pw->pw_uid);
-
-    sprintf(s, _("%s: no such user"), name);
-    QMessageBox::message(_("Error") ,s ,"Ok");  
-
-    sleep(1);
-  }
-  return (-1);
-}
-*/
-
-/*
- * Check whether a string is completely composed of digits.
- */
-int alldigits(const char *s)
-{
-  int c;
-
-  c = *s++;
-  do {
-    if (!isdigit(c))
-      return (0);
-  } while (c = *s++);
-  return (1);
 }
 
 void quota_read() {
@@ -317,5 +259,4 @@ Quota::Quota(const Quota *q) {
   icur = q->icur; isoft = q->isoft; ihard = q->ihard;
 }
 
-#endif
-
+#endif // _KU_QUOTA

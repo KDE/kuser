@@ -1,5 +1,6 @@
 #include "includes.h"
-#include "config.h"
+
+#include "../config.h"
 
 #ifdef HAVE_MNTENT_H
 #include <mntent.h>
@@ -12,15 +13,6 @@
 
 #ifdef HAVE_SYS_MNTTAB_H
 #include <sys/mnttab.h>
-#endif
-
-#ifdef HAVE_SYS_FS_UFS_QUOTA_H
-#include <sys/fs/ufs_quota.h>
-#define CORRECT_FSTYPE(type) (!strcmp(type,MNTTYPE_UFS))
-#define QUOTAFILENAME "quotas"
-#else
-#define CORRECT_FSTYPE(type) (!strcmp(type,MNTTYPE_EXT2))
-#define QUOTAFILENAME "quota.user"
 #endif
 
 #include "misc.h"
@@ -68,7 +60,7 @@ uint first_free()
 
 void backup(char const *name)
 {
-  sprintf(tmp, "%s%s", name, XU_BACKUP_EXT);
+  sprintf(tmp, "%s%s", name, KU_BACKUP_EXT);
   unlink(tmp);
 
   if (rename(name, tmp) == -1)
@@ -163,7 +155,7 @@ int getValue(unsigned int &data, const char *text, const char *msg) {
 }
 
 void getmounts() {
-#ifdef _XU_QUOTA
+#ifdef _KU_QUOTA
 
 #ifdef _KU_DEBUG
 printf("getmounts\n");
@@ -198,7 +190,7 @@ printf("getmntent %p\n", m);
 
     quotafilename.sprintf("%s%s%s", m->mnt_mountp,
                           (m->mnt_mountp[strlen(m->mnt_mountp) - 1] == '/') ? "" : "/",
-                          QUOTAFILENAME);
+                          _KU_QUOTAFILENAME);
 #else
   fp = setmntent(MNTTAB, "r");
   while ((m = getmntent(fp)) != (struct mntent *)0) {
@@ -210,7 +202,7 @@ printf("getmntent %p\n", m);
 
     quotafilename.sprintf("%s%s%s", m->mnt_dir,
                           (m->mnt_dir[strlen(m->mnt_dir) - 1] == '/') ? "" : "/",
-                          QUOTAFILENAME);
+                          _KU_QUOTAFILENAME);
 #endif
 
     QFile *f = new QFile(quotafilename);
@@ -244,12 +236,12 @@ printf("init\n");
 
   pwd_read();
 
-#ifdef _XU_SHADOW
+#ifdef _KU_SHADOW
   if (is_shadow != 0)
     sdw_read();
 #endif
 
-#ifdef _XU_QUOTA
+#ifdef _KU_QUOTA
   if (is_quota != 0)
 
 #ifdef _KU_DEBUG

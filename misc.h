@@ -1,8 +1,9 @@
-#ifndef _XU_MISC_H
-#define _XU_MISC_H
+#ifndef _KU_MISC_H
+#define _KU_MISC_H
 
 #include "kuser.h"
 #include "includes.h"
+#include "../config.h"
 
 #define _(Text) gettext (Text)
 
@@ -21,5 +22,25 @@ int getValue(unsigned int &data, const char *text, const char *msg);
 void getmounts();
 void init();
 
-#endif // _XU_MISC_H
+#ifdef _KU_QUOTA
+
+#ifdef HAVE_SYS_FS_UFS_QUOTA_H
+#include <sys/fs/ufs_quota.h>
+#define CORRECT_FSTYPE(type) (!strcmp(type,MNTTYPE_UFS))
+#define _KU_QUOTAFILENAME "quotas"
+#define _KU_UFS_QUOTA
+#else
+#ifdef HAVE_LINUX_QUOTA_H
+#include <linux/quota.h>
+#define CORRECT_FSTYPE(type) (!strcmp(type,MNTTYPE_EXT2))
+#define _KU_QUOTAFILENAME "quota.user"
+#define _KU_EXT2_QUOTA
+#else
+#error "Your platform is not supported"
+#endif  // HAVE_SYS_FS_UFS_QUOTA_H
+#endif // HAVE_LINUX_QUOTA_H
+
+#endif // _KU_QUOTA
+
+#endif // _KU_MISC_H
 

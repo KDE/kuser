@@ -13,6 +13,18 @@ int quotactl(int cmd, const char * special, int id, caddr_t addr) {
 #  endif
 #endif
 
+#ifdef _AIX
+#include <jfs/quota.h>
+extern "C" int quotactl (const char* path, int cmd, int id, const char* addr);
+/* HACK: To be correct, block sizes have to retrieved from each
+ * volume group separately.
+ * That takes more time and probably more info than is currently
+ * provided by the structures.
+ */
+#define dbtob(a) a
+#define btodb(a) a
+#endif
+
 #include <qfile.h>
 
 #include "misc.h"
@@ -133,7 +145,7 @@ void QuotaMnt::setitime(long data) {
 #define _KU_SETQUOTA Q_SETQUOTA
 #endif
 
-#if defined(_KU_EXT2_QUOTA) || defined(BSD)
+#if defined(_KU_EXT2_QUOTA) || defined(BSD) || defined(_AIX)
 #define _KU_GETQUOTA QCMD(Q_GETQUOTA, USRQUOTA)
 #define _KU_SETQUOTA QCMD(Q_SETQUOTA, USRQUOTA)
 #endif
@@ -158,7 +170,7 @@ static int doQuotaCtl(int ACmd, uint AUID, const MntEnt *m, struct dqblk *dq) {
 #    ifdef __osf__
          return quotactl((char*)QFile::encodeName(m->getdir()).data(), ACmd, AUID, (caddr_t) dq);
 #    else
-#        ifdef BSD
+#        if defined(BSD) || defined(_AIX)
              return quotactl(QFile::encodeName(m->getdir()), ACmd, AUID, (caddr_t) dq);
 #        endif
 #    endif

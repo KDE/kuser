@@ -67,10 +67,13 @@ Mounts::Mounts() {
   struct mnttab *mt = NULL;
 #elif BSD
   struct fstab *mt = NULL;
+#elif defined(_AIX)
+  struct fstab *mt = NULL;
+  struct vfs_ent *vt = NULL;
 #else
   struct mntent *mt = NULL;
 #endif
-#ifndef BSD
+#if !defined(BSD) &&!defined(_AIX)
   FILE *fp;
 #endif
   MntEnt *mnt = NULL;
@@ -105,6 +108,19 @@ Mounts::Mounts() {
                           .arg(mt->fs_file)
                           .arg((mt->fs_file[strlen(mt->fs_file) -1] == '/') ? "" : "/")
  		                      .arg(_KU_QUOTAFILENAME);
+#elif defined(_AIX)
+  while ((vt=getvfsent()) != NULL) {
+    /* The prototype of getfstype() is botched (old K&R without args).
+     * Or alternatively the man page is, in which case this code
+     * is trash. */
+    while ((mt=(*(getfstype_proto)&getfstype)(vt->vfsent_name)) != NULL) {
+      if (strstr(mt->fs_spec,FSTAB_RQ)==NULL)
+        continue;
+      // if (strcasecmp(mt->fs_vfstype,"ufs") != 0) continue;
+      quotafilename = QString("%1%2%3")
+                            .arg(mt->fs_file)
+                            .arg((mt->fs_file[strlen(mt->fs_file) -1] == '/') ? "" : "/")
+                            .arg(_KU_QUOTAFILENAME);
 #else
   fp = setmntent(MNTTAB, "r");
   while ((mt = getmntent(fp)) != (struct mntent *)0) {
@@ -130,21 +146,35 @@ Mounts::Mounts() {
 #ifdef OLD_GETMNTENT
     mnt = new MntEnt(mt->mnt_special, mt->mnt_mountp, mt->mnt_fstype,
                      mt->mnt_mntopts, quotafilename);
-#elif BSD
-    mnt = new MntEnt(mt->fs_spec,mt->fs_file,mt->fs_vfstype,
-		   mt->fs_mntops,quotafilename);
-#else
-    mnt = new MntEnt(mt->mnt_fsname, mt->mnt_dir, mt->mnt_type,
-                     mt->mnt_opts, quotafilename);
-#endif
     m.append(mnt);
     is_quota = 1;
   }
-#ifdef OLD_GETMNTENT
   fclose(fp);
 #elif BSD
+    mnt = new MntEnt(mt->fs_spec,mt->fs_file,mt->fs_vfstype,
+		   mt->fs_mntops,quotafilename);
+    m.append(mnt);
+    is_quota = 1;
+  }
   endfsent();
+#elif defined(_AIX)
+      /* Are the mount options parsed away by the mount helpers?
+       * I can't find them in the structures.
+       */
+      mnt = new MntEnt(mt->fs_spec,mt->fs_file,vt->vfsent_name,
+		     "",quotafilename);
+      m.append(mnt);
+      is_quota = 1;
+    }
+    endfsent();
+  }
+  endvfsent();
 #else
+    mnt = new MntEnt(mt->mnt_fsname, mt->mnt_dir, mt->mnt_type,
+                     mt->mnt_opts, quotafilename);
+    m.append(mnt);
+    is_quota = 1;
+  }
   endmntent(fp);
 #endif
 }

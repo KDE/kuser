@@ -88,6 +88,15 @@
 #        define CORRECT_FSTYPE(type) (!strcmp(type,MNTTYPE_HFS))
 #        define _KU_QUOTAFILENAME "quotas"
 #        define _KU_HPUX_QUOTA
+#  elif defined(_AIX)
+#    include <fstab.h>
+#    include <sys/types.h>
+#    include <jfs/quota.h>
+#    include <sys/vfs.h>
+#    include <sys/vmount.h>
+#    include <fshelp.h>
+#    define _KU_QUOTAFILENAME "quotas"
+     typedef struct fstab *(*getfstype_proto)(char* type);
 #  else
 #        error "Your platform is not supported"
 #endif // HAVE_SYS_FS_UFS_QUOTA_H

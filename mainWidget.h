@@ -44,6 +44,7 @@ protected slots:
   void slotApplySettings();
   void slotApplyConnection();
   void selectconn();
+  void reload();
 
 private:
   KToggleAction *mShowSys;

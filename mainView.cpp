@@ -163,10 +163,10 @@ void mainView::userdel()
     group = kug->getGroups().lookup( gid );
 
     if ( group &&
-      KMessageBox::warningContinueCancel( 0, i18n("You are using private groups.\n"
+      KMessageBox::questionYesNo( 0, i18n("You are using private groups.\n"
         "Do you want to delete the user's private group '%1'?")
         .arg(group->getName()), QString::null,
-        i18n("&Delete")) == KMessageBox::Continue) {
+        KStdGuiItem::del()) == KMessageBox::Yes) {
 
       kug->getGroups().del( group );
     }
@@ -435,12 +435,12 @@ void mainView::grpdel()
     case 1:
       if (KMessageBox::warningContinueCancel( 0,
         i18n("Do you really want to delete the group '%1'?").arg(group->getName()),
-        QString::null, i18n("&Delete")) != KMessageBox::Continue) return;
+        QString::null, KStdGuiItem::del()) != KMessageBox::Continue) return;
       break;
     default:
       if (KMessageBox::warningContinueCancel( 0,
         i18n("Do you really want to delete the %1 selected groups?").arg(selected),
-        QString::null, i18n("&Delete")) != KMessageBox::Continue) return;
+        QString::null, KStdGuiItem::del()) != KMessageBox::Continue) return;
   }
 
   item = lbgroups->firstChild();

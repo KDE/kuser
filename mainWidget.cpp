@@ -96,6 +96,9 @@ void mainWidget::setupActions()
   (void) new KAction(i18n("&Delete"), QIconSet(BarIconC("delete_group")), 0, md,
     SLOT(grpdel()), actionCollection(), "delete_group");
 
+  (void) new KAction(i18n("&Reload"), QIconSet(BarIconC("reload")), 0, this,
+    SLOT(reload()), actionCollection(), "reload");
+
 #undef BarIconC
 	
   (void) new KAction(i18n("&Select Connection..."),
@@ -123,6 +126,11 @@ void mainWidget::properties()
   connect(eddlg, SIGNAL(settingsChanged()), this, SLOT(slotApplySettings()));
 
   eddlg->show();
+}
+
+void mainWidget::reload()
+{
+  init();
 }
 
 void mainWidget::init()

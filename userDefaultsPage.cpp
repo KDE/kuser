@@ -26,7 +26,7 @@ userDefaultsPage::userDefaultsPage(
   QVBoxLayout *tl = new QVBoxLayout(this, 10, 10);
 
   QLabel *l;
-  l = new QLabel(i18n("Shell"), this);
+  l = new QLabel(i18n("Shell:"), this);
   l->setFixedSize(l->sizeHint());
   tl->addWidget(l, 0, AlignLeft);
   shell = new QComboBox(this);  
@@ -42,7 +42,7 @@ userDefaultsPage::userDefaultsPage(
 
   tl->addStretch(1);
 
-  l = new QLabel(i18n("Base of home directories"), this);
+  l = new QLabel(i18n("Base of home directories:"), this);
   l->setFixedSize(l->sizeHint());
   tl->addWidget(l, 0, AlignLeft);
   home=new QLineEdit(this);

@@ -73,7 +73,7 @@ void mainWidget::setupActions() {
     SLOT(grpedit()), actionCollection(), "edit_group");
   connect(md, SIGNAL(groupSelected(bool)), action, SLOT(setEnabled(bool)));
 
-  action = new KAction(i18n("&Delete..."), QIconSet(BarIconC("delete_group")), 0, md,
+  action = new KAction(i18n("&Delete"), QIconSet(BarIconC("delete_group")), 0, md,
     SLOT(grpdel()), actionCollection(), "delete_group");
   connect(md, SIGNAL(groupSelected(bool)), action, SLOT(setEnabled(bool)));
 

@@ -57,7 +57,7 @@ allows you to manage users and groups on your system.</para> </abstract>
 <chapter id="start">
 <title>Getting Started</title>
 <para>This is a short introduction to &kuser;. For more detailed information see
-<link linkend="Using">Usage</link>.</para>
+<link linkend="using">Usage</link>.</para>
 
 <para>Actually you do not need to do anything to begin using &kuser; except
 <link linkend="customizing">configuration</link>.</para>

@@ -3,6 +3,7 @@
 Name=User Manager
 Name[ru]=Управление пользователями
 Name[fi]=KДyttДjДhallinta
+Name[pt]=Gestor de Utilizadores
 Exec=kuser
 Icon=kuser.xpm
 Type=Application
@@ -10,5 +11,6 @@ DocPath=kuser/index.html
 Comment=Full Featured User Manager
 Comment[ru]=Расширенное управление пользователями
 Comment[fi]=Kaikki ominaisuudet sisДltДvД kДyttДjДhallinta
+Comment[pt]=Gestor de Utilizadores com Muitas OpГУes
 Terminal=0
 MiniIcon=kuser.xpm

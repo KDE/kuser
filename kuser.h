@@ -102,7 +102,7 @@ public:
   void setCopySkel(int data);
 
 protected:
-  friend KUsers;
+  friend class KUsers;
 
   void createHome();
   int createMailBox();
@@ -144,10 +144,10 @@ protected:
     s_lstchg;                      // last password change
   signed int
     s_min,                         // days until pwchange allowed.
-    s_max,                         // days before change required 
-    s_warn,                        // days warning for expiration 
+    s_max,                         // days before change required
+    s_warn,                        // days warning for expiration
     s_inact,                       // days before  account  inactive
-    s_expire,                      // date when account expires 
+    s_expire,                      // date when account expires
     s_flag;                        // reserved for future use
 #endif
   int

@@ -17,7 +17,7 @@ else
 fi
 if test "$pam_support" = "yes"; then
   AC_CHECK_LIB(pam, main, [PASSWDLIB="-lpam -ldl"
-  AC_DEFINE_UNQUOTED(HAVE_PAM_LIB)],
+  AC_DEFINE_UNQUOTED(HAVE_PAM_LIB, 1, [If you have the pam libraries])],
   [],-ldl)
 fi
 
@@ -31,9 +31,9 @@ AC_CHECK_HEADERS(crypt.h fcntl.h mntent.h linux/quota.h linux/unistd.h \
                  signal.h)
 
 case "$host" in 
-*irix*) AC_DEFINE(HAVE_IRIX, 1)
+*irix*) AC_DEFINE(HAVE_IRIX, 1, [Irix])
        ;;
-*linux*) AC_DEFINE(HAVE_LINUX,1)
+*linux*) AC_DEFINE(HAVE_LINUX,1, [Linux])
        ;;
 esac
 
@@ -56,7 +56,7 @@ fi
 AC_SUBST(KU_NIS)
 
 AC_ARG_WITH(homeprefix, [ --with-homeprefix        use specified prefix for homedir [default=/home] ], ku_homeprefix="$withval", ku_homeprefix="/home")
-AC_DEFINE_UNQUOTED(KU_HOMEPREFIX, "$ku_homeprefix")
+AC_DEFINE_UNQUOTED(KU_HOMEPREFIX, "$ku_homeprefix",[default prefix for homedir])
 
 AC_ARG_WITH(private-groups, [ --with-private-groups   user private groups [default=no] ], ku_userprivategroup="$withval", ku_userprivategroup="no")
 if test "$ku_userprivategroup" = "yes"; then
@@ -64,7 +64,7 @@ if test "$ku_userprivategroup" = "yes"; then
 else
   ku_userprivategroup="false"
 fi
-AC_DEFINE_UNQUOTED(KU_USERPRIVATEGROUP, $ku_userprivategroup)
+AC_DEFINE_UNQUOTED(KU_USERPRIVATEGROUP, $ku_userprivategroup, [private groups])
 
 AC_CHECK_FGETPWENT
 AC_CHECK_FGETGRENT

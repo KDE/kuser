@@ -167,6 +167,9 @@ void mainDlg::userdel() {
      * Save these for later, since contents of pwd may be
      * invalidated by deletion
      */
+#ifndef _PATH_MAILDIR
+#define _PATH_MAILDIR "/var/mail"
+#endif
     snprintf(file, sizeof(file), "%s/%s", _PATH_MAILDIR, (const char*)lbusers->getCurrentUser()->getp_name());
     strncpy(home, (const char*)lbusers->getCurrentUser()->getp_dir(), sizeof home);
     home[sizeof home - 1] = '\0';

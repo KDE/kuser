@@ -10,7 +10,7 @@
 #include "kglobal_.h"
 
 grpnamedlg::grpnamedlg(KGroup &AGroup, QWidget* parent, const char* name)
-  : KDialogBase(parent, name, true, i18n("Add group"), Ok | Cancel, Ok, true), 
+  : KDialogBase(parent, name, true, i18n("Add Group"), Ok | Cancel, Ok, true), 
     group(AGroup) 
 {
   group.setGID(kug->getGroups().first_free());

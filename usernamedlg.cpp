@@ -10,7 +10,7 @@
 #include "kglobal_.h"
 
 usernamedlg::usernamedlg(KUser *auser, QWidget* parent, const char* name)
-	: KDialogBase(parent, name, true, i18n("Enter username"),
+	: KDialogBase(parent, name, true, i18n("Enter Username"),
 		Ok|Cancel, Ok, true),
 	user(auser)
 {

@@ -180,7 +180,7 @@ propdlg::propdlg(KUser *AUser, QWidget *parent, const char *name, int)
 //    whatstr = i18n("WHAT IS THIS: User Id");
     addRow(frame, layout, row++, leid, i18n("User Id:"), whatstr, false);
 
-    pbsetpwd = new QPushButton(i18n("Set password"), frame);
+    pbsetpwd = new QPushButton(i18n("Set Password"), frame);
     layout->addMultiCellWidget(pbsetpwd, 0, 1, 2, 2, AlignBottom);
     QObject::connect(pbsetpwd, SIGNAL(clicked()), this, SLOT(setpwd()));
 

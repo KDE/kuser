@@ -19,7 +19,7 @@
 
 
 editGroup::editGroup(KGroup *akg, QWidget* parent, const char* name)
-: KDialogBase(parent, name, true, i18n("Group properties"),
+: KDialogBase(parent, name, true, i18n("Group Properties"),
 	Ok | Cancel, Ok, true),
   kg(akg) 
 {

@@ -56,7 +56,7 @@ void mainWidget::setupActions() {
     SLOT(userdel()), actionCollection(), "delete_user");
   connect(md, SIGNAL(userSelected(bool)), action, SLOT(setEnabled(bool)));
 
-  (void)new KAction(i18n("&Set password..."), QIconSet(BarIcon("set_password_user")),
+  (void)new KAction(i18n("&Set Password..."), QIconSet(BarIcon("set_password_user")),
     0, md, SLOT(setpwd()), actionCollection(), "set_password_user");
 
   (void)new KAction(i18n("&Add..."), QIconSet(BarIcon("add_group")), 0, md,

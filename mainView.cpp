@@ -303,7 +303,7 @@ void mainView::setpwd() {
 void mainView::properties() {
   editDefaults eddlg;
 
-  eddlg.setCaption(i18n("Edit defaults"));
+  eddlg.setCaption(i18n("Edit Defaults"));
 
   config->setGroup("template");
   eddlg.setShell(config->readEntry("shell", ""));

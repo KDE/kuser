@@ -34,9 +34,16 @@ usernamedlg::usernamedlg(KUser *auser, QWidget* parent, const char* name)
   leusername->clear();
   leusername->setFocus();
   layout->addWidget(leusername, 0, 1);
+  connect(leusername,SIGNAL(textChanged ( const QString & )),this,SLOT(slotUserNameChanged(const QString & )));
+  enableButtonOK(!leusername->text().isEmpty());
 }
 
 usernamedlg::~usernamedlg() {
+}
+
+void usernamedlg::slotUserNameChanged(const QString & text)
+{
+  enableButtonOK(!text.isEmpty());
 }
 
 void usernamedlg::slotOk() {

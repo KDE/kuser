@@ -9,6 +9,7 @@
 #include <ktabctl.h>
 
 #include "editDefaults.h"
+#include <klocale.h>
 
 editDefaults::editDefaults(QWidget* parent, const char* name)
   : QTabDialog(parent, name, TRUE, 184320) 

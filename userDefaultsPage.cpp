@@ -13,6 +13,7 @@
 #include <qlabel.h>
 #include "globals.h"
 #include "userDefaultsPage.h"
+#include <klocale.h>
 
 userDefaultsPage::userDefaultsPage
 (

@@ -12,6 +12,7 @@
 #include <kapp.h>
 #include <kbuttonbox.h>
 #include <qlayout.h>
+#include <klocale.h>
 
 #define Inherited editGroupData
 

@@ -473,9 +473,11 @@ void propdlg::save() {
 #endif
 
   user->setHomeDir(lehome->text());
-  user->setShell(leshell->currentText());
+  if (leshell->currentItem() == 0)
+    user->setShell(QString::null);
+  else
+    user->setShell(leshell->currentText());
   // TODO: Check shell.
-
 
 #ifdef HAVE_SHADOW
   if (is_shadow) {
@@ -609,7 +611,7 @@ void propdlg::selectuser() {
   lefname->setText(user->getFullName());
 
   oldshell = user->getShell();
-  if (oldshell.isEmpty() != TRUE) {
+  if (!oldshell.isEmpty()) {
     bool tested = FALSE;
     for (int i=0; i<leshell->count(); i++)
       if (leshell->text(i) == oldshell) {
@@ -682,7 +684,9 @@ void propdlg::slotOk() {
     }
   }
   
-  QString newshell = leshell->currentText();
+  QString newshell;
+  if (leshell->currentItem() != 0)
+    newshell = leshell->currentText();
   
   if (oldshell != newshell)
   {

@@ -157,7 +157,7 @@ const QString &KUser::getOffice() const {
   return (p_office);
 }
 
-const QString &KUser::getWorkPphone() const {
+const QString &KUser::getWorkPhone() const {
   return (p_ophone);
 }
 
@@ -434,6 +434,7 @@ bool KUsers::loadpwd() {
 
   // We are reading our PASSWORD_FILE
   QString tmp;
+#ifdef HAVE_FGETPWENT
   FILE *fpwd = fopen(PASSWORD_FILE, "r");
   if(fpwd == NULL) {
      err->addMsg(QString(i18n("Error opening %1 for reading")).arg(PASSWORD_FILE), STOP);
@@ -441,6 +442,9 @@ bool KUsers::loadpwd() {
   }
 
   while ((p = fgetpwent(fpwd)) != NULL) {
+#else
+  while ((p = getpwent()) != NULL) {
+#endif
 #ifdef _KU_QUOTA
     quotas->addQuota(p->pw_uid);
 #endif
@@ -465,7 +469,9 @@ bool KUsers::loadpwd() {
 
   // End reading passwd file
 
+#ifdef HAVE_FGETPWENT
   fclose(fpwd);
+#endif
 
   return (TRUE);
 }

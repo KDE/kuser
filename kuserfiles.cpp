@@ -344,8 +344,6 @@ bool KUserFiles::savepwd()
         KMessageBox::error( 0, i18n("Error opening %1 for writing").arg(nispasswd_filename) );
   }
 
-  umask(0077);
-
   QPtrListIterator<KUser> it( mUsers );
   KUser *user;
   bool addok = false;
@@ -376,69 +374,62 @@ bool KUserFiles::savepwd()
         
     
 #if defined(__FreeBSD__) || defined(__bsdi__)
-    s = QString::fromLatin1("%1:%2:%3:%4:%5:%6:%7:")
-      .arg(user->getName())
-      .arg(tmp)
-      .arg(user->getUID())
-      .arg(user->getGID())
-      .arg(user->getClass())
-      .arg(user->getLastChange())
-      .arg(user->getExpire());
+    s =
+      user->getName() + ":" +
+      tmp + ":" + 
+      QString::number( user->getUID() ) + ":" +
+      QString::number( user->getGID() ) + ":" +
+      user->getClass() + ":" +
+      QString::number( user->getLastChange() ) + ":" +
+      QString::number( user->getExpire() ) + ":";
 
-    s1 = QString::fromLatin1("%1,%2,%3,%4")
-      .arg(user->getFullName())
-      .arg(user->getOffice())
-      .arg(user->getWorkPhone())
-      .arg(user->getHomePhone());
+    s1 =
+      user->getFullName() + "," +
+      user->getOffice() + "," +
+      user->getWorkPhone() + "," +
+      user->getHomePhone();
 #else
+    s =
+      user->getName() + ":" +
+      tmp + ":" +
+      QString::number( user->getUID() ) + ":" +
+      QString::number( user->getGID() ) + ":";
 
-    s = QString::fromLatin1("%1:%2:%3:%4:")
-      .arg(user->getName())
-      .arg(tmp)
-      .arg(user->getUID())
-      .arg(user->getGID());
-
-    s1 = QString::fromLatin1("%1,%2,%3,%4")
-      .arg(user->getFullName())
-      .arg(user->getOffice1())
-      .arg(user->getOffice2())
-      .arg(user->getAddress());
+    s1 =
+      user->getFullName() + "," +
+      user->getOffice1() + "," +
+      user->getOffice2() + "," +
+      user->getAddress();
 
 #endif
-
     for (int j=(s1.length()-1); j>=0; j--) {
       if (s1[j] != ',')
         break;
       s1.truncate(j);
     }
 
-    s += s1+QString::fromLatin1(":")+
-         user->getHomeDir()+QString::fromLatin1(":")+
-         user->getShell()+QString::fromLatin1("\n");
+    s += s1 + ":" +
+         user->getHomeDir() + ":" +
+         user->getShell() + "\n";
 
     if( (nispasswd_fd != 0) && (minuid != 0) ) {
       if (minuid <= tmp_uid) {
         fputs(s.local8Bit().data(), nispasswd_fd);
-        nis_users_written++;		
-        continue;
-      } else{
-        fputs(s.local8Bit().data(), passwd_fd);	
+        nis_users_written++;
+        ++it;
+        user = (*it);
         continue;
       }
     }
 
     if( (nispasswd_fd != 0) && (minuid == 0) ) {
       errors_found = errors_found | NOMINUID;  
-      fputs(s.local8Bit().data(), passwd_fd);	
-      continue;
     }
 
     if( (nispasswd_fd == 0) && (minuid != 0) ) {
       errors_found = errors_found | NONISPASSWD;	
-      fputs(s.local8Bit().data(), passwd_fd);	
-      continue;
     }
-
+    kdDebug() << s << endl; 
     fputs(s.local8Bit().data(), passwd_fd);	
     
     ++it;
@@ -510,8 +501,6 @@ bool KUserFiles::savesdw()
     s_backuped = TRUE;
   }
 
-  umask(0077);
-
   if ((f = fopen(QFile::encodeName(new_shadow_file), "w")) == NULL) {
     KMessageBox::error( 0, i18n("Error opening %1 for writing").arg(new_shadow_file) );
     return FALSE;
@@ -539,7 +528,7 @@ bool KUserFiles::savesdw()
     }
     if ( mMod.contains( up ) ) up = &( mMod[ up ] );
     
-    strncpy(s.sp_namp, QFile::encodeName(up->getName()), 200);
+    strncpy( s.sp_namp, QFile::encodeName( up->getName() ), 200 );
     if ( up->getDisabled() )
       strncpy( s.sp_pwdp, QFile::encodeName("!!" + up->getSPwd()), 200 );
     else
@@ -585,12 +574,21 @@ void KUserFiles::createPassword( KUser *user, const QString &password )
   
 bool KUserFiles::dbcommit()
 {
-  if (!savepwd())
-    return FALSE;
-
-  if (!savesdw())
-    return FALSE;
-
+  bool ret;
+  mode_t mode;
+  
+  mAddSucc.clear();
+  mDelSucc.clear();
+  mModSucc.clear();
+  if ( mDel.isEmpty() && mAdd.isEmpty() && mMod.isEmpty() )
+    return true;
+  
+  mode = umask(0077);
+  ret = savepwd();
+  if ( ret ) ret = savesdw();
+  umask( mode );
+  if ( !ret ) return false;
+  
   mDelSucc = mDel;
   mAddSucc = mAdd;
   mModSucc = mMod;

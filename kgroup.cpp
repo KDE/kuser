@@ -258,7 +258,7 @@ uint KGroups::count() const
   return mGroups.count();
 }
 
-QString KGroups::getDOMSID() const
+const QString &KGroups::getDOMSID() const
 {
   return domsid;
 }

@@ -87,7 +87,7 @@ void mainView::reloadUsers()
 
   lbusers->clear();
   lbusers->init();
-  int uid = kug->kcfg()->firstUID();
+  uint uid = kug->kcfg()->firstUID();
   
   ku = kug->getUsers().first();
   while ( ku ) {
@@ -104,7 +104,7 @@ void mainView::reloadGroups()
 
   lbgroups->clear();
   lbgroups->init();
-  int gid = kug->kcfg()->firstGID();
+  uint gid = kug->kcfg()->firstGID();
 
   kg = kug->getGroups().first();
   while ( kg ) {

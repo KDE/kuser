@@ -146,37 +146,37 @@ bool KUser::getCopySkel()
   return isCopySkel;
 }
 
-QString KUser::getName() const 
+const QString &KUser::getName() const 
 {
   return p_name;
 }
 
-QString KUser::getSurname() const 
+const QString &KUser::getSurname() const 
 {
   return p_surname;
 }
 
-QString KUser::getEmail() const 
+const QString &KUser::getEmail() const 
 {
   return p_email;
 }
 
-QString KUser::getPwd() const 
+const QString &KUser::getPwd() const 
 {
   return p_pwd;
 }
 
-QString KUser::getHomeDir() const 
+const QString &KUser::getHomeDir() const 
 {
   return p_dir;
 }
 
-QString KUser::getShell() const 
+const QString &KUser::getShell() const 
 {
   return p_shell;
 }
 
-QString KUser::getFullName() const 
+const QString &KUser::getFullName() const 
 {
   return p_fname;
 }
@@ -188,38 +188,38 @@ bool KUser::getDisabled() const
 
 // FreeBSD apparently uses the GECOS fields differently than other Unices.
 // Create some better named functions to make the FreeBSD code clear
-QString KUser::getOffice() const 
+const QString &KUser::getOffice() const 
 {
   return p_office;
 }
 
-QString KUser::getWorkPhone() const 
+const QString &KUser::getWorkPhone() const 
 {
   return p_ophone;
 }
 
-QString KUser::getHomePhone() const 
+const QString &KUser::getHomePhone() const 
 {
   return p_hphone;
 }
 
 // New fields needed for the FreeBSD /etc/master.passwd file
-QString KUser::getClass() const 
+const QString &KUser::getClass() const 
 {
   return p_class;
 }
 
-QString KUser::getOffice1() const 
+const QString &KUser::getOffice1() const 
 {
   return p_office1;
 }
 
-QString KUser::getOffice2() const 
+const QString &KUser::getOffice2() const 
 {
   return p_office2;
 }
 
-QString KUser::getAddress() const 
+const QString &KUser::getAddress() const 
 {
   return p_address;
 }
@@ -234,7 +234,7 @@ gid_t KUser::getGID() const
   return p_gid;
 }
 
-QString KUser::getSPwd() const 
+const QString &KUser::getSPwd() const 
 {
   return s_pwd;
 }
@@ -264,7 +264,6 @@ int KUser::getInactive() const
   return s_inact;
 }
 
-
 int KUser::getFlag() const 
 {
   return s_flag;
@@ -275,42 +274,42 @@ time_t KUser::getExpire() const
   return p_expire;
 }
 
-QString KUser::getLMPwd() const //  sam_lmpwd,
+const QString &KUser::getLMPwd() const //  sam_lmpwd,
 {
   return sam_lmpwd;
 }
 
-QString KUser::getNTPwd() const //sam_ntpwd,
+const QString &KUser::getNTPwd() const //sam_ntpwd,
 {
   return sam_ntpwd;
 }
 
-QString KUser::getLoginScript() const //sam_loginscript,
+const QString &KUser::getLoginScript() const //sam_loginscript,
 {
   return sam_loginscript;
 }
 
-QString KUser::getProfilePath() const //  sam_profile,
+const QString &KUser::getProfilePath() const //  sam_profile,
 {
   return sam_profile;
 }
 
-QString KUser::getHomeDrive() const //sam_homedrive,
+const QString &KUser::getHomeDrive() const //sam_homedrive,
 {
   return sam_homedrive;
 }
 
-QString KUser::getHomePath() const //sam_homepath;
+const QString &KUser::getHomePath() const //sam_homepath;
 {
   return sam_homepath;
 }
 
-SID KUser::getSID() const //sid,
+const SID &KUser::getSID() const //sid,
 {
   return sid;
 }
 
-SID KUser::getPGSID() const //pgroup_sid;
+const SID &KUser::getPGSID() const //pgroup_sid;
 {
   return pgroup_sid;
 }
@@ -882,7 +881,7 @@ KUsers::~KUsers()
   mUsers.clear();
 }
   
-QString KUsers::getDOMSID() const
+const QString &KUsers::getDOMSID() const
 {
   return domsid;
 }

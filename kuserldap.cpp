@@ -91,7 +91,7 @@ void KUserLDAP::result( KIO::Job *job )
   }
 }
 
-void KUserLDAP::data( KIO::Job *job, const QByteArray& data )
+void KUserLDAP::data( KIO::Job *, const QByteArray& data )
 {
   if ( data.size() ) {
     mParser.setLDIF( data );
@@ -482,7 +482,7 @@ bool KUserLDAP::dbcommit()
   return( mOk );
 }
 
-void KUserLDAP::putData( KIO::Job *job, QByteArray& data )
+void KUserLDAP::putData( KIO::Job *, QByteArray& data )
 {
   ModIt mit = mMod.begin();
   

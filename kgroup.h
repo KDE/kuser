@@ -96,7 +96,7 @@ public:
   virtual ~KGroups();
   
   int getCaps() const { return caps; }
-  QString getDOMSID() const;
+  const QString &getDOMSID() const;
 
   KGroup *lookup( const QString &name );
   KGroup *lookup( gid_t gid );

@@ -252,8 +252,6 @@ bool KGroupFiles::save()
     }
   }  
 
-  umask(0077);
-
   QPtrListIterator<KGroup> it( mGroups );
   KGroup *gr;
   bool addok = false;
@@ -277,20 +275,16 @@ bool KGroupFiles::save()
     }
     if ( mMod.contains( gr ) ) gr = &( mMod[ gr ] );
 
-
 #ifdef HAVE_SHADOW
     if ( addok && !mCfg->gshadowsrc().isEmpty() )
       gr->setPwd("x");
 #endif
 
-    
     tmp_gid = gr->getGID();
-    tmpGe = QString::fromLatin1("%1:%2:%3:")
-      .arg(gr->getName())
-      .arg(gr->getPwd())
-      .arg(gr->getGID());
-    tmpSe = QString::fromLatin1("%1:!::")
-      .arg(gr->getName());
+    tmpGe = gr->getName() + ":" +
+            gr->getPwd() + ":" +
+            QString::number( gr->getGID() ) + ":";
+    tmpSe = gr->getName() + ":!::";
     for (uint j=0; j<gr->count(); j++) {
        if (j != 0) {
          tmpGe += ','; 
@@ -304,36 +298,25 @@ bool KGroupFiles::save()
       if(mingid <= tmp_gid) {
         fputs(tmpGe.local8Bit(), nisgroup_fd);
         nis_groups_written++;
-        continue;
-      }
-      else{
-        fputs(tmpGe.local8Bit(), group_fd);
-        if ( gshadow_fd ) fputs(tmpSe.local8Bit(), gshadow_fd);
+        ++it;
+        gr = (*it);
         continue;
       }
     }
 
     if( (nisgroup_fd != 0) && (mingid == 0) ) {
       errors_found = errors_found | NOMINGID;
-      fputs(tmpGe.local8Bit(), group_fd);
-      if ( gshadow_fd ) fputs(tmpSe.local8Bit(), gshadow_fd);
-      continue;
     }
 
     if( (nisgroup_fd == 0) && (mingid != 0) ) {
       errors_found = errors_found | NONISGROUP;
-      fputs(tmpGe.local8Bit(), group_fd);
-      if ( gshadow_fd ) fputs(tmpSe.local8Bit(), gshadow_fd);
-      continue;
     }
 
-    fputs(tmpGe.local8Bit(), group_fd);
-    if ( gshadow_fd ) fputs(tmpSe.local8Bit(), gshadow_fd);
-    
+    fputs( tmpGe.local8Bit(), group_fd );
+    if ( gshadow_fd ) fputs( tmpSe.local8Bit(), gshadow_fd );
     ++it;
     gr = (*it);
   }
-
   
   if(group_fd) {
     fclose(group_fd);
@@ -381,9 +364,20 @@ bool KGroupFiles::save()
   
 bool KGroupFiles::dbcommit()
 {
+  bool ret;
+  mode_t mode;
+  
   kdDebug() << "KGroupFiles dbcommit" << endl;
-  if ( !save() ) 
-    return false;
+  mAddSucc.clear();
+  mDelSucc.clear();
+  mModSucc.clear();
+  if ( mDel.isEmpty() && mAdd.isEmpty() && mMod.isEmpty() )
+    return true;
+  
+  mode = umask(0077);
+  ret = save();
+  umask( mode );
+  if ( !ret ) return false;
     
   mDelSucc = mDel;
   mAddSucc = mAdd;

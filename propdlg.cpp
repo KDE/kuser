@@ -243,7 +243,7 @@ void propdlg::initDlg()
     layout->addWidget( cbexpire, row++, 3 );
 
     connect( lesexpire, SIGNAL(valueChanged(const QDateTime&)), this, SLOT(changed()) );
-    connect( cbexpire, SIGNAL(toggled(bool)), this, SLOT(changed()) );
+    connect( cbexpire, SIGNAL(stateChanged(int)), this, SLOT(changed()) );
     connect( cbexpire, SIGNAL(toggled(bool)), lesexpire, SLOT(setDisabled(bool)) );
   }
   
@@ -346,7 +346,6 @@ void propdlg::setLE( KLineEdit *le, const QString &val, bool first )
   }
   if ( val.isEmpty() && le->text().isEmpty() ) return;
   if ( le->text() != val ) {
-    kdDebug() << "le->text() ='" << le->text() << "' val: '" << val << "'" << endl;
     le->setText( "" );
     if ( mNoChanges.contains( le ) ) {
       mNoChanges[ le ]->show();
@@ -414,9 +413,8 @@ void propdlg::selectuser()
 
     setLE( lefname, user->getFullName(), first );
     QString home;
-    home = one ? 
-      user->getHomeDir() :
-      user->getHomeDir().replace( user->getName(), "%U" );
+    home = user->getHomeDir();
+    if ( !one ) home.replace( user->getName(), "%U" );
     setLE( lehome, home, first );
     
     QString shell = user->getShell();
@@ -450,14 +448,12 @@ void propdlg::selectuser()
     if ( kug->getUsers().getCaps() & KUsers::Cap_Samba ) {
       setLE( leliscript, user->getLoginScript(), first );
       QString profile;
-      profile = one ? 
-        user->getProfilePath() :
-        user->getProfilePath().replace( user->getName(), "%U" );
+      profile = user->getProfilePath();
+      if ( !one ) profile.replace( user->getName(), "%U" );
       setLE( leprofile, profile, first );
       setLE( lehomedrive, user->getHomeDrive(), first );
-      home = one ? 
-        user->getHomePath() :
-        user->getHomePath().replace( user->getName(), "%U" );
+      home = user->getHomePath();
+      if ( !one ) home.replace( user->getName(), "%U" );
       setLE( lehomepath, home, first );
       setLE( ledomsid, user->getSID().getDOM(), first );
     }
@@ -473,7 +469,8 @@ void propdlg::selectuser()
       
       QDateTime expire;
       expire.setTime_t( user->getExpire() );
-      setCB( cbexpire, expire.toTime_t() == -1, first );
+      setCB( cbexpire, (int) expire.toTime_t() == -1, first );
+      if ( (int) expire.toTime_t() == -1 ) expire.setTime_t( 0 );
       if ( first ) {
         lesexpire->setDateTime( expire );
       } else {
@@ -603,6 +600,7 @@ void propdlg::changed()
   QWidget *widget = (QWidget*) sender();
   if ( mNoChanges.contains( widget ) ) mNoChanges[ widget ]->setChecked( false );
   ischanged = true;
+  kdDebug() << "changed" << endl;
 }
 
 void propdlg::gchanged() 
@@ -636,7 +634,7 @@ void propdlg::mergeUser( KUser *user, KUser *newuser )
     newuser->setName( leuser->text() );
     newuser->setUID( leid->text().toInt() );
   }
-  if ( !newpass.isEmpty() ) {
+  if ( !newpass.isNull() ) {
     kug->getUsers().createPassword( newuser, newpass );
     newuser->setLastChange( lstchg );
   }
@@ -694,13 +692,20 @@ void propdlg::mergeUser( KUser *user, KUser *newuser )
        kug->getUsers().getCaps() & KUsers::Cap_Samba ||
        kug->getUsers().getCaps() & KUsers::Cap_BSD ) {
     
-    if ( lesexpire->isEnabled() )
-      newuser->setExpire( lesexpire->dateTime().toTime_t() );
-    else {
-      newuser->setExpire( -1 );
+    switch ( cbexpire->state() ) {
+      case QButton::NoChange:
+        newuser->setExpire( user->getExpire() );
+        break;
+      case QButton::On:
+        newuser->setExpire( -1 );
+        break;
+      case QButton::Off:
+        newuser->setExpire( !one && lesexpire->dateTime().toTime_t() == 0 ? 
+          user->getExpire() : lesexpire->dateTime().toTime_t() );
+        break;
     }
-
   }
+  
   if ( !primaryGroup.isEmpty() ) {
     KGroup *group = kug->getGroups().lookup( primaryGroup );
     if ( group ) {
@@ -731,7 +736,8 @@ bool propdlg::saveg()
       KUser *user = mUsers.first();
       
       while ( user ) {
-        if ( on && primaryGroup != group->getName() ) {
+        if ( on && (( !primaryGroup.isEmpty() && primaryGroup != group->getName() ) ||
+                    ( primaryGroup.isEmpty() && user->getGID() != group->getGID() )) ) {
           if ( newgroup.addUser( user->getName() ) ) mod = true;
         } else {
           if ( newgroup.removeUser( user->getName() ) ) mod = true;

@@ -39,45 +39,46 @@ public:
 
   void copy(const KUser *user);
 
-  QString getName() const;
-  QString getSurname() const;
-  QString getEmail() const;
-  QString getPwd() const;
-  QString getHomeDir() const;
-  QString getShell() const;
-  QString getFullName() const;
+  const QString &getName() const;
+  const QString &getSurname() const;
+  const QString &getEmail() const;
+  const QString &getPwd() const;
+  const QString &getHomeDir() const;
+  const QString &getShell() const;
+  const QString &getFullName() const;
 
   uid_t getUID() const;
   uid_t getGID() const;
   bool getDisabled() const;
-//BSD
-  QString getOffice() const;
-  QString getWorkPhone() const;
-  QString getHomePhone() const;
-  QString getClass() const;
+//BSD gecos
+  const QString &getOffice() const;
+  const QString &getWorkPhone() const;
+  const QString &getHomePhone() const;
+  const QString &getClass() const;
 //BSD end
-  QString getOffice1() const;
-  QString getOffice2() const;
-  QString getAddress() const;
+  const QString &getOffice1() const;
+  const QString &getOffice2() const;
+  const QString &getAddress() const;
 
-  QString getSPwd() const;
+//shadow  
+  const QString &getSPwd() const;
   time_t getExpire() const;
   time_t getLastChange() const;
   int getMin() const;
   int getMax() const;
   int getWarn() const;
   int getInactive() const;
-
   int getFlag() const;
 
-  QString getLMPwd() const; //  sam_lmpwd,
-  QString getNTPwd() const; //sam_ntpwd,
-  QString getLoginScript() const; //sam_loginscript,
-  QString getProfilePath() const; //  sam_profile,
-  QString getHomeDrive() const; //sam_homedrive,
-  QString getHomePath() const; //sam_homepath;
-  SID getSID() const; //sid,
-  SID getPGSID() const; //pgroup_sid;
+//samba  
+  const QString &getLMPwd() const; //  sam_lmpwd,
+  const QString &getNTPwd() const; //sam_ntpwd,
+  const QString &getLoginScript() const; //sam_loginscript,
+  const QString &getProfilePath() const; //  sam_profile,
+  const QString &getHomeDrive() const; //sam_homedrive,
+  const QString &getHomePath() const; //sam_homepath;
+  const SID &getSID() const; //sid,
+  const SID &getPGSID() const; //pgroup_sid;
 
   void setName(const QString &data);
   void setSurname(const QString &data);
@@ -223,7 +224,7 @@ public:
   KUser *lookup_sam( uint rid );
   
   int getCaps() { return caps; }
-  QString getDOMSID() const;
+  const QString &getDOMSID() const;
   
   KUser *first();
   KUser *next();

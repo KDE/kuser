@@ -55,7 +55,17 @@ KTopLevelWidget(name)
   setView(md);
 
   resize(500, 400);
-}
+
+  // restore geometry settings
+  KConfig *config = KApplication::getKApplication()->getConfig();
+  config->setGroup( "Appearance" );
+  QString geom = config->readEntry( "Geometry" );
+  if (!geom.isEmpty()) {
+    int width, height;
+    sscanf( geom, "%dx%d", &width, &height );
+    resize( width, height );
+  }
+ }
 
 mainWidget::~mainWidget() {
   delete menubar;
@@ -63,6 +73,12 @@ mainWidget::~mainWidget() {
 }
 
 void mainWidget::resizeEvent (QResizeEvent *) {
+  // save size of the application window
+  KConfig *config = KApplication::getKApplication()->getConfig();
+  config->setGroup( "Appearance" );
+  QString geom;
+  geom.sprintf( "%dx%d", geometry().width(), geometry().height() );
+  config->writeEntry( "Geometry", geom );
   updateRects();
 }
 

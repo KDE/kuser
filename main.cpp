@@ -38,6 +38,7 @@ int main( int argc, char **argv )
   mainWidget *mw = NULL;
 
   KApplication a(argc, argv, "kuser");
+
   if (getuid()) {
     KMsgBox::message(0, _("Error"), _("Only root is allowed to manage users."), KMsgBox::STOP);
     exit(1);

@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/file.h>
-#ifdef _SCO_DS
+#ifdef HAVE_SYS_FCNTL_H
 #include <sys/fcntl.h>
 #endif
 #include <sys/stat.h>
@@ -129,108 +129,108 @@ int KUser::getCopySkel() {
 }
 
 const QString &KUser::getName() const {
-  return (p_name);
+  return p_name;
 }
 
 const QString &KUser::getPwd() const {
-  return (p_pwd);
+  return p_pwd;
 }
 
 const QString &KUser::getHomeDir() const {
-  return (p_dir);
+  return p_dir;
 }
 
 const QString &KUser::getShell() const {
-  return (p_shell);
+  return p_shell;
 }
 
 const QString &KUser::getFullName() const {
-  return (p_fname);
+  return p_fname;
 }
 
 #ifdef __FreeBSD__
 // FreeBSD apparently uses the GECOS fields differently than other Unices.
 // Create some better named functions to make the FreeBSD code clear
 const QString &KUser::getOffice() const {
-  return (p_office);
+  return p_office;
 }
 
 const QString &KUser::getWorkPhone() const {
-  return (p_ophone);
+  return p_ophone;
 }
 
 const QString &KUser::getHomePhone() const {
-  return (p_hphone);
+  return p_hphone;
 }
 
 // New fields needed for the FreeBSD /etc/master.passwd file
 const QString &KUser::getClass() const {
-  return (p_class);
+  return p_class;
 }
 
 time_t KUser::getLastChange() const {
-  return (p_change);
+  return p_change;
 }
 
 time_t KUser::getExpire() const {
-  return (p_expire);
+  return p_expire;
 }
 
 #else
 
 const QString &KUser::getOffice1() const {
-  return (p_office1);
+  return p_office1;
 }
 
 const QString &KUser::getOffice2() const {
-  return (p_office2);
+  return p_office2;
 }
 
 const QString &KUser::getAddress() const {
-  return (p_address);
+  return p_address;
 }
 
 #endif
 
-unsigned int KUser::getUID() const {
-  return (p_uid);
+uid_t KUser::getUID() const {
+  return p_uid;
 }
 
-unsigned int KUser::getGID() const {
-  return (p_gid);
+gid_t KUser::getGID() const {
+  return p_gid;
 }
 
 #ifdef _KU_SHADOW
 const QString &KUser::getSPwd() const {
-  return (s_pwd);
+  return s_pwd;
 }
 
 long KUser::getLastChange() const {
-  return(s_lstchg);
+  return s_lstchg;
 }
 
 int KUser::getMin() const {
-  return (s_min);
+  return s_min;
 }
 
 int KUser::getMax() const {
-  return (s_max);
+  return s_max;
 }
 
 int KUser::getWarn() const {
-  return (s_warn);
+  return s_warn;
 }
 
 int KUser::getInactive() const {
-  return (s_inact);
+  return s_inact;
 }
 
 int KUser::getExpire() const {
-  return (s_expire);
+  return s_expire;
 }
 
 int KUser::getFlag() const {
-  return (s_flag);
+  return s_flag;
 }
 #endif
 
@@ -298,11 +298,11 @@ void KUser::setAddress(const QString &data) {
 
 #endif
 
-void KUser::setUID(unsigned int data) {
+void KUser::setUID(uid_t data) {
   p_uid = data;
 }
 
-void KUser::setGID(unsigned int data) {
+void KUser::setGID(gid_t data) {
   p_gid = data;
 }
 
@@ -354,8 +354,8 @@ void KUser::setCopySkel(int data) {
 }
 
 KUsers::KUsers() {
-  p_backuped = 0;
-  s_backuped = 0;
+  p_backuped = FALSE;
+  s_backuped = FALSE;
 
   pwd_mode = 0644;
   pwd_uid = 0;
@@ -731,25 +731,19 @@ KUser *KUsers::lookup(const char *name) {
   return NULL;
 }
 
-KUser *KUsers::lookup(unsigned int uid) {
+KUser *KUsers::lookup(uid_t uid) {
   for (uint i = 0; i<u.count(); i++)
     if (u.at(i)->getUID() == uid)
       return (u.at(i));
   return NULL;
 }
 
-int KUsers::first_free() {
-  uint i = 0;
-  uint t = _KU_FIRST_UID ;
+uid_t KUsers::first_free() {
+  uid_t t = _KU_FIRST_UID ;
 
-  for (t = _KU_FIRST_UID ; t<65534; t++) {
-    while ((i<u.count()) && (u.at(i)->getUID() != t))
-      i++;
-
-    if (i == u.count())
-      return (t);
-    i = 0;
-  }
+  for (t = _KU_FIRST_UID ; t<65534; t++)
+    if (lookup(t) == NULL)
+      return t;
 
   err->addMsg(i18n("You have more than 65534 users!?!? You have ran out of uid space!"));
   return (-1);
@@ -761,19 +755,19 @@ KUsers::~KUsers() {
 }
 
 uint KUsers::count() const {
-  return (u.count());
+  return u.count();
 }
 
 KUser *KUsers::operator[](uint num) {
-  return (u.at(num));
+  return u.at(num);
 }
 
 KUser *KUsers::first() {
-  return (u.first());
+  return u.first();
 }
 
 KUser *KUsers::next() {
-  return (u.next());
+  return u.next();
 }
 
 void KUsers::add(KUser *ku) {

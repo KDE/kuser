@@ -1,6 +1,8 @@
 #ifndef _KUSER_H_
 #define _KUSER_H_
 
+#include <sys/types.h>
+
 #include <qstring.h>
 #include <qlist.h>
 
@@ -30,8 +32,8 @@ public:
   const QString &getShell() const;
   const QString &getFullName() const;
 
-  unsigned int getUID() const;
-  unsigned int getGID() const;
+  uid_t getUID() const;
+  uid_t getGID() const;
 
 #ifdef __FreeBSD__
   const QString &getOffice() const;
@@ -64,8 +66,8 @@ public:
   void setShell(const QString &data);
   void setFullName(const QString &data);
 
-  void setUID(unsigned int data);
-  void setGID(unsigned int data);
+  void setUID(uid_t data);
+  void setGID(uid_t data);
 
 #ifdef __FreeBSD__
   void setOffice(const QString &data);
@@ -132,9 +134,8 @@ protected:
     p_office2,
     p_address;
 #endif
-  unsigned int
-    p_uid,
-    p_gid;
+  uid_t p_uid;
+  gid_t p_gid;
 
 #ifdef _KU_SHADOW
   QString
@@ -160,8 +161,8 @@ public:
   KUsers();
   ~KUsers();
   KUser *lookup(const char *name);
-  KUser *lookup(unsigned int uid);
-  int first_free();
+  KUser *lookup(uid_t uid);
+  uid_t first_free();
 
   bool load();
 
@@ -176,12 +177,11 @@ public:
   void del(KUser *au);
 
 protected:
+  bool p_backuped;
+  bool s_backuped;
 
-  int p_backuped;
-  int s_backuped;
-
-  int pwd_mode;
-  int sdw_mode;
+  mode_t pwd_mode;
+  mode_t sdw_mode;
 
   uid_t pwd_uid;
   gid_t pwd_gid;

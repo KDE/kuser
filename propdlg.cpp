@@ -37,7 +37,8 @@ propdlg::propdlg(KUser &AUser, QWidget *parent, const char *name, int)
 #ifdef _KU_QUOTA
   if (&AQuota == NULL)
     is_quota = 0;
-  quota = AQuota;
+  else
+    quota = AQuota;
   chquota = 0;
 #endif
 
@@ -457,15 +458,14 @@ void propdlg::charchanged(const QString &) {
 }
 
 void propdlg::save() {
-  uint newuid = leid->text().toInt();
 #ifdef __FreeBSD__
   QDateTime *epoch = new QDateTime();
   QDateTime *temp_time = new QDateTime();
 #endif
   
-  user.setUID(newuid);
-
+  user.setUID(leid->text().toInt());
   user.setFullName(lefname->text());
+
 #ifdef __FreeBSD__
   user.setOffice(leoffice->text());
   user.setWorkPhone(leophone->text());
@@ -570,26 +570,27 @@ void propdlg::shactivated(const QString &text) {
 bool propdlg::check() {
   bool ret = FALSE;
 
-  if (ischanged == TRUE) {
+  if (ischanged) {
     save();
     saveg();
     ret = TRUE;
   }
 
 #ifdef _KU_QUOTA
-  if (isqchanged == TRUE) {
+  if (isqchanged) {
     saveq();
     ret = TRUE;
   }
 #endif
 
-  return (ret);
+  return ret;
 }
 
 void propdlg::selectuser() {
   leuser->setText(user.getName());
 
   leid->setText(QString("%1").arg(user.getUID()));
+  olduid = user.getUID();
 
 //  sprintf(uname, "%i", user.getp_gid());
 //  legid->setText(uname);
@@ -597,10 +598,10 @@ void propdlg::selectuser() {
   lefname->setText(user.getFullName());
 
   if (user.getShell().isEmpty() != TRUE) {
-    int tested = 0;
+    bool tested = FALSE;
     for (int i=0; i<leshell->count(); i++)
       if (leshell->text(i) == user.getShell()) {
-        tested = 1;
+        tested = TRUE;
         leshell->setCurrentItem(i);
         break;
       }
@@ -656,7 +657,7 @@ void propdlg::setpwd() {
 }
 
 void propdlg::ok() {
-  uint newuid = leid->text().toInt();
+  uid_t newuid = leid->text().toInt();
 
   if (olduid != newuid)
     if (kug->getUsers().lookup(newuid) != NULL) {
@@ -665,7 +666,7 @@ void propdlg::ok() {
       return;
     }
     
-  if (check() == TRUE)
+  if (check())
     accept();
   else
     reject();

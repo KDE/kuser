@@ -59,7 +59,7 @@ protected:
   Quota &quota;
 #endif
   bool ischanged;
-  uint olduid;
+  uid_t olduid;
 
   KTabCtl *tw;
   

@@ -1,6 +1,8 @@
 #ifndef _KGROUP_H_
 #define _KGROUP_H_
 
+#include <sys/types.h>
+
 #include <qstring.h>
 #include <qlist.h>
 
@@ -16,11 +18,11 @@ public:
 
   const QString &getName() const;
   const QString &getPwd() const;
-  unsigned int getGID() const;
+  gid_t getGID() const;
 
   void setName(const QString &data);
   void setPwd(const QString &data);
-  void setGID(unsigned int data);
+  void setGID(gid_t data);
 
   void addUser(const QString &name);
   bool removeUser(const QString &name);
@@ -33,8 +35,7 @@ protected:
   QString
     name,
     pwd;
-  unsigned int
-    gid;
+  gid_t gid;
 
   QList<QString> u;
 };
@@ -45,8 +46,8 @@ public:
   ~KGroups();
 
   KGroup *lookup(const QString &name);
-  KGroup *lookup(unsigned int gid);
-  int first_free();
+  KGroup *lookup(gid_t gid);
+  gid_t first_free();
 
   bool save();
   bool load();
@@ -58,15 +59,15 @@ public:
   void add(KGroup *ku);
   void del(KGroup *au);
 
-	uint count() const;
+  uint count() const;
 
 protected:
   int g_saved;
   QList<KGroup> g;
 
   int mode;
-  int uid;
-  int gid;
+  uid_t uid;
+  gid_t gid;
 };
 
 #endif // _KGROUP_H_

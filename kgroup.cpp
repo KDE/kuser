@@ -36,7 +36,7 @@
 
 KGroup::KGroup() : pwd("*") {
   u.setAutoDelete(TRUE);
-  gid     = 0;
+  gid = 0;
 }
   
 KGroup::KGroup(KGroup *copy) {
@@ -52,15 +52,15 @@ KGroup::~KGroup() {
 }
 
 const QString &KGroup::getName() const {
-  return (name);
+  return name;
 }
 
 const QString &KGroup::getPwd() const {
-  return (pwd);
+  return pwd;
 }
 
-unsigned int KGroup::getGID() const {
-  return (gid);
+gid_t KGroup::getGID() const {
+  return gid;
 }
 
 void KGroup::setName(const QString &data) {
@@ -71,7 +71,7 @@ void KGroup::setPwd(const QString &data) {
   pwd = data;
 }
 
-void KGroup::setGID(unsigned int data) {
+void KGroup::setGID(gid_t data) {
   gid = data;
 }
 
@@ -98,11 +98,11 @@ bool KGroup::removeUser(const QString &name) {
 }
 
 uint KGroup::count() const {
-  return (u.count());
+  return u.count();
 }
 
 QString KGroup::user(uint i) {
-  return (*u.at(i));
+  return *u.at(i);
 }
 
 void KGroup::clear() {
@@ -169,7 +169,6 @@ bool KGroups::load() {
 bool KGroups::save() {
   FILE *grp;
   QString tmpS;
-  QString tmpN;
   QString tmp;
 
   if (!g_saved) {
@@ -185,13 +184,16 @@ bool KGroups::save() {
   }
 
   for (unsigned int i=0; i<g.count(); i++) {
-    tmpN.setNum(g.at(i)->getGID());
-    tmpS = g.at(i)->getName()+':'+g.at(i)->getPwd()+':'+tmpN+':';
-    for (uint j=0; j<g.at(i)->count(); j++) {
+    KGroup *gr = g.at(i);
+    tmpS = QString("%1:%2:%3:")
+      .arg(gr->getName())
+      .arg(gr->getPwd())
+      .arg(gr->getGID());
+    for (uint j=0; j<gr->count(); j++) {
        if (j != 0)
 	 tmpS += ',';
 
-       tmpS += g.at(i)->user(j);
+       tmpS += gr->user(j);
     }
     tmpS += '\n';
     fputs(tmpS, grp);
@@ -207,34 +209,29 @@ bool KGroups::save() {
     return FALSE;
   }
 #endif
-  return (TRUE);
+  return TRUE;
 }
 
 KGroup *KGroups::lookup(const QString &name) {
   for (uint i = 0; i<g.count(); i++)
     if (g.at(i)->getName() == name)
-      return (g.at(i));
+      return g.at(i);
   return NULL;
 }
 
-KGroup *KGroups::lookup(unsigned int gid) {
+KGroup *KGroups::lookup(gid_t gid) {
   for (uint i = 0; i<g.count(); i++)
     if (g.at(i)->getGID() == gid)
-      return (g.at(i));
+      return g.at(i);
   return NULL;
 }
 
-int KGroups::first_free() {
-  uint i = 0;
-  uint t = _KU_FIRST_GID ;
+gid_t KGroups::first_free() {
+  gid_t t = _KU_FIRST_GID ;
 
-  for (t= _KU_FIRST_GID ; t<65534; t++) {
-    while ((i<count()) && ((*this)[i]->getGID() != t))
-      i++;
-
-    if (i == count())
-      return (t);
-  }
+  for (t = _KU_FIRST_GID ; t<65534; t++)
+    if (lookup(t) == NULL)
+      return t;
 
   err->addMsg(i18n("You have more than 65534 groups!?!? You have ran out of gid space!"));
   return (-1);
@@ -245,15 +242,15 @@ KGroups::~KGroups() {
 }
 
 KGroup *KGroups::operator[](uint num) {
-  return (g.at(num));
+  return g.at(num);
 }
 
 KGroup *KGroups::first() {
-  return (g.first());
+  return g.first();
 }
 
 KGroup *KGroups::next() {
-  return (g.next());
+  return g.next();
 }
 
 void KGroups::add(KGroup *ku) {
@@ -265,6 +262,6 @@ void KGroups::del(KGroup *au) {
 }
 
 uint KGroups::count() const {
-	return g.count();
+  return g.count();
 }
 

@@ -1,4 +1,9 @@
+- Use exceptions for error reporting in first_free.
+  (Maybe use them later everywhere).
 - Replace listbox with something standard.
+- Replace all UID with type uid_t. The same with GID.
+- Replace call of rm with own procedure.
+- Use QFile for file operations.
 - Add right mouse popup
 - Add 'Help' button to user and group properties dialogs.
 - Home dir permission configuration in Preferences dialog.

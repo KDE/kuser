@@ -33,7 +33,7 @@ editGroup::editGroup(KGroup *akg, QWidget* parent, const char* name)
   connect(this,SIGNAL(okClicked(void)),
           this,SLOT(okClicked()));
 
-  for (int i = 0; i<kug->getUsers().count(); i++) {
+  for (unsigned int i = 0; i<kug->getUsers().count(); i++) {
     QString userName = kug->getUsers()[i]->getName();
     QCheckListItem *item = new QCheckListItem(m_list, userName, QCheckListItem::CheckBox);
     if (kg->lookup_user(userName))

@@ -41,7 +41,8 @@ public:
   QString getHomePhone() const;
   QString getClass() const;
   time_t getLastChange() const;
-  time_t getExpire() const;
+
+
 #else
   QString getOffice1() const;
   QString getOffice2() const;
@@ -56,9 +57,24 @@ public:
   int getMax() const;
   int getWarn() const;
   int getInactive() const;
-  int getExpire() const;
+
   int getFlag() const;
 #endif
+
+  /**
+  * 
+  * Returns the time at which the user's password expires,
+  * in _days_ from the Epoch (ie. from midnight january 1st, 1970).
+  *
+  * This is of course hopelessly inaccurate compared to the
+  * time_t FreeBSD really stores, but for compatibility with
+  * Linux we need to have days.
+  *
+  * On systems without an expiry date, returns 0.
+  *
+  */
+  int getExpire() const;
+
 
   void setName(const QString &data);
   void setPwd(const QString &data);

@@ -1,3 +1,7 @@
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #ifdef _KU_QUOTA
 #include <stdlib.h>
 #include <stdio.h>
@@ -98,16 +102,17 @@ Mounts::Mounts() {
                           .arg(mt->mnt_mountp)
                           .arg((mt->mnt_mountp[strlen(mt->mnt_mountp) - 1] == '/') ? "" : "/")
                           .arg(_KU_QUOTAFILENAME);
-#elif defined(BSD) /* Heh, heh, so much for standards, eh Bezerkely? */
+#elif defined(BSD)
   while ((mt=getfsent()) != NULL) {
     if (strstr(mt->fs_mntops,"quota")==NULL)
       continue;
     if (strcasecmp(mt->fs_vfstype,"ufs") != 0)
       continue;
-    quotafilename = QString("%1%2%3")
-                          .arg(mt->fs_file)
-                          .arg((mt->fs_file[strlen(mt->fs_file) -1] == '/') ? "" : "/")
- 		                      .arg(_KU_QUOTAFILENAME);
+    quotafilename = QString::fromLatin1("%1%2%3")
+                          .arg(QString::fromLatin1(mt->fs_file))
+                          .arg((mt->fs_file[strlen(mt->fs_file) -1] == '/') ? 
+			  	QString::null : QString::fromLatin1("/"))
+			  .arg(QString::fromLatin1(_KU_QUOTAFILENAME));
 #elif defined(_AIX)
   while ((vt=getvfsent()) != NULL) {
     /* The prototype of getfstype() is botched (old K&R without args).

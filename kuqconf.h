@@ -43,14 +43,14 @@
 #  define CORRECT_FSTYPE(type) (!strcmp(type,MNTTYPE_UFS))
 #  define _KU_QUOTAFILENAME "quotas"
 #  define _KU_UFS_QUOTA
-#elif HAVE_LINUX
+#elif defined(HAVE_LINUX)
 #    if defined __GLIBC__ && __GLIBC__ >= 2
        typedef unsigned int __u32;
 #      define MNTTYPE_EXT2 "ext2"
 #    endif
 #    ifdef HAVE_SYS_QUOTA_H
 #      include <sys/quota.h>
-#    elif HAVE_LINUX_QUOTA_H
+#    elif defined(HAVE_LINUX_QUOTA_H)
 #      include <linux/quota.h>
 #    else
 #      error "Cannot find your quota.h"
@@ -63,12 +63,12 @@
 #    define CORRECT_FSTYPE(type) (!strcmp(type,MNTTYPE_EXT2))
 #    define _KU_QUOTAFILENAME "quota.user"
 #    define _KU_EXT2_QUOTA
-#  elif HAVE_IRIX
+#  elif defined(HAVE_IRIX)
 #    include <sys/quota.h>
 #    include <sys/param.h>
 #    define CORRECT_FSTYPE(type) (!strcmp(type,MNTTYPE_EFS) || !strcmp(type,MNTTYPE_XFS))
 #    define _KU_QUOTAFILENAME "quotas"
-#  elif __osf__                /* OSF1, aka Digital Unix, aka Tru64 Unix */
+#  elif defined(__osf__)                /* OSF1, aka Digital Unix, aka Tru64 Unix */
 #      undef _POSIX_SOURCE
 #      define _OSF_SOURCE
 #      include <machine/machparam.h> /* for dbtob and the like */
@@ -76,7 +76,7 @@
 #      include <ufs/quota.h>
 #      include <fstab.h>
 #      define _KU_QUOTAFILENAME "quota.user"
-#  elif BSD /* I'm not 100% sure about this, but it should work with Net/OpenBSD */
+#  elif defined(BSD) /* I'm not 100% sure about this, but it should work with Net/OpenBSD */
 #      include <machine/param.h> /* for dbtob and the like */
 #      include <sys/types.h>
 #      include <ufs/ufs/quota.h>

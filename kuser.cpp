@@ -180,10 +180,6 @@ time_t KUser::getLastChange() const {
   return p_change;
 }
 
-time_t KUser::getExpire() const {
-  return p_expire;
-}
-
 #else
 
 QString KUser::getOffice1() const {
@@ -233,14 +229,35 @@ int KUser::getInactive() const {
   return s_inact;
 }
 
-int KUser::getExpire() const {
-  return s_expire;
-}
 
 int KUser::getFlag() const {
   return s_flag;
 }
 #endif
+
+/**
+* Return the number of days from the epoch until the
+* password expires.
+*/
+int KUser::getExpire() const 
+{
+#if defined(__FreeBSD__) || defined(__bsdi__)
+  time_t secondsToExpiry = p_expire;
+  QDate epoch(1970,1,1);
+  QDateTime expiryDate;
+  
+  expiryDate.setTime_t(secondsToExpiry);
+
+  return epoch.daysTo(expiryDate.date());
+#elif defined(HAVE_SHADOW) 
+  return s_expire;
+#else
+  return 0;
+#endif
+}
+
+
+
 
 void KUser::setName(const QString &data) {
   p_name = data;
@@ -511,7 +528,7 @@ bool KUsers::loadpwd() {
       tmpKU->setHomeDir(QString::fromLocal8Bit(p->pw_dir));
       tmpKU->setShell(QString::fromLocal8Bit(p->pw_shell));
 #if defined(__FreeBSD__) || defined(__bsdi__)
-      tmpKU->setClass(p->pw_class);
+      tmpKU->setClass(QString::fromLatin1(p->pw_class));
       tmpKU->setLastChange(p->pw_change);
       tmpKU->setExpire(p->pw_expire);
 #endif
@@ -738,7 +755,7 @@ bool KUsers::savepwd() {
       tmp_uid = user->getUID();	 	
 
 #if defined(__FreeBSD__) || defined(__bsdi__)
-      s = QString("%1:%2:%3:%4:%5:%6:%7:")
+      s = QString::fromLatin1("%1:%2:%3:%4:%5:%6:%7:")
         .arg(user->getName())
         .arg(user->getPwd())
 	.arg(user->getUID())

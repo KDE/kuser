@@ -2,7 +2,7 @@ Great thanks to:
 
 Paul Kendall <paul@orion.co.nz> (for Irix quota support,
   his beautiful ktablevw classes and some minor patches)
-Bernhard Rosenkraenzer <root@bero-online.ml.org> (for some glibc2 fixes)
+Bernhard Rosenkraenzer <bero@redhat.com> (for some glibc2 fixes)
 Alex Zepeda <garbanzo@hooked.net> (for FreeBSD support)
 Mario Weilguni <mweilguni@sime.com> (for some usefull comments and suggestions)
 Michael Rodionov <marod@solo.iis.nsk.su> (for his icons)

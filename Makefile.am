@@ -37,7 +37,7 @@ rc_DATA = kuserui.rc
 bin_PROGRAMS = kuser
 
 # the subdirs we have. Better would be to include pic here too
-SUBDIRS = pic toolbar icon lsm
+SUBDIRS = pic toolbar icon
 
 appsdir   = $(kde_appsdir)/System
 apps_DATA = kuser.desktop
@@ -52,4 +52,3 @@ pot::
 	/usr/local/bin/xgettext -ki18n -o kuser.pot -p ../po -d kuser -C -n *.cpp
 	/usr/local/bin/msgmerge --strict -v -o $(podir)/kuser.pot
 	mv $(podir)/ru/kuser.po
-

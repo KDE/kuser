@@ -181,8 +181,6 @@ public:
 protected:
   bool pw_backuped;
   bool pn_backuped;
-  bool gr_backuped;
-  bool gn_backuped;
   bool s_backuped;
 
   mode_t pwd_mode;

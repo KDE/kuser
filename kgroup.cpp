@@ -17,10 +17,12 @@
 #endif
 
 #include <qstring.h>
+#include <qdir.h>
 
 #include "kglobal_.h"
 #include "kgroup.h"
 #include "misc.h"
+#include "editDefaults.h"
 
 #ifdef _KU_QUOTA
 #include "mnt.h"
@@ -98,7 +100,8 @@ void KGroup::clear() {
 }
 
 KGroups::KGroups() {
-  g_saved = 0;
+  gr_backuped = FALSE;
+  gn_backuped = FALSE;
 
   mode = 0644;
   uid = 0;
@@ -114,65 +117,171 @@ bool KGroups::load() {
   struct group *p;
   KGroup *tmpKG = 0;
   struct stat st;
+  QString filename;
+  QString group_filename;
+  QString nisgroup_filename;
+  int rc = 0;
+  int group_errno = 0;
+  int nisgroup_errno = 0;
+  char processing_file = '\0';
+  #define GROUP    0x01
+  #define NISGROUP 0x02
 
-  stat(GROUP_FILE, &st);
-  mode = st.st_mode;
-  uid = st.st_uid;
-  gid = st.st_gid;
+  // Prepare to read KUser configuration
 
-#ifdef HAVE_FGETGRENT
-  FILE *fgrp = fopen(GROUP_FILE, "r");
-  QString tmp;
-  if (fgrp == 0) {
-    err->addMsg(i18n("Error opening %1 for reading").arg(GROUP_FILE));
-    return FALSE;
+  config->setGroup("template");
+  group_filename = config->readEntry("groupsrc");
+  nisgroup_filename = config->readEntry("nisgroupsrc");
+  if(!group_filename.isEmpty()) {
+    processing_file = processing_file | GROUP;
+    filename.append(group_filename);
   }
 
-  while ((p = fgetgrent(fgrp)) != NULL) {
-#else
-  while ((p = getgrent()) != NULL) {
-#endif
-    tmpKG = new KGroup();
-    tmpKG->setGID(p->gr_gid);
-    tmpKG->setName(p->gr_name);
-    tmpKG->setPwd(p->gr_passwd);
+  // Start reading group file(s)
 
-    char *u_name;
-    int i = 0;
-    while ((u_name = p->gr_mem[i])!=0) {
-      tmpKG->addUser(u_name);
-      i++;
+  for(int k = 0; k < 2; k++) {
+    rc = stat(QFile::encodeName(filename), &st);
+    if(rc != 0) {
+      err->addMsg(i18n("stat call on file %1 failed: %2\nCheck KUser Settings (Sources)\n").arg(filename).arg(strerror(errno)));
+      err->display();
+      if( (processing_file & GROUP) != 0 ) {
+        group_errno = errno;
+        if(!nisgroup_filename.isEmpty()) {
+          processing_file = processing_file & ~GROUP;
+          processing_file = processing_file | NISGROUP;
+          filename.truncate(0);
+          filename.append(nisgroup_filename);
+        }
+        continue;
+      }
+      else{
+        nisgroup_errno = errno;
+        break;
+      }
     }
 
-    g.append(tmpKG);
-  }
+    mode = st.st_mode;
+    uid = st.st_uid;
+    gid = st.st_gid;
+
+  // We are reading our configuration specified group file
+#ifdef HAVE_FGETGRENT
+    FILE *fgrp = fopen(QFile::encodeName(filename), "r");
+    QString tmp;
+    if (fgrp == NULL) {
+      err->addMsg(i18n("Error opening %1 for reading").arg(filename));
+      return FALSE;
+    }
+
+    while ((p = fgetgrent(fgrp)) != NULL) {
+#else
+    while ((p = getgrent()) != NULL) {
+#endif
+      tmpKG = new KGroup();
+      tmpKG->setGID(p->gr_gid);
+      tmpKG->setName(p->gr_name);
+      tmpKG->setPwd(p->gr_passwd);
+
+      char *u_name;
+      int i = 0;
+      while ((u_name = p->gr_mem[i])!=0) {
+        tmpKG->addUser(u_name);
+        i++;
+      }
+
+      g.append(tmpKG);
+    }
+
+    // End reading filename
 
 #ifdef HAVE_FGETGRENT
-  fclose(fgrp);
+    fclose(fgrp);
 #endif
+    if(!nisgroup_filename.isEmpty()) {
+      processing_file = processing_file & ~GROUP;
+      processing_file = processing_file | NISGROUP;
+      filename.truncate(0);
+      filename.append(nisgroup_filename);
+    }
+    else
+      break;
 
-  return TRUE;
+  }	// end of processing files, for loop
+
+  if( (group_errno == 0) && (nisgroup_errno == 0) )
+    return(TRUE);
+  if( (group_errno != 0) && (nisgroup_errno != 0) )
+    return(FALSE);
+  else
+    return(TRUE);
 }
 
 bool KGroups::save() {
-  FILE *grp;
+  FILE *group_fd = NULL;
+  FILE *nisgroup_fd = NULL;
+  int mingid = 0;
+  int nis_groups_written = 0;
+  gid_t tmp_gid = 0;
   QString tmpS;
   QString tmp;
+  QString group_filename;
+  QString nisgroup_filename;
+  QString qs_mingid;
 
-  if (!g_saved) {
-    backup(GROUP_FILE);
-    g_saved = TRUE;
+  const char *c_mingid;
+  const char *gr_filename;
+  const char *gn_filename;
+  char errors_found = '\0';
+    #define NOMINGID    0x01
+    #define NONISGROUP  0x02
+
+  // read KUser configuration info
+
+  config->setGroup("template");
+  group_filename = config->readEntry("groupsrc");
+  nisgroup_filename = config->readEntry("nisgroupsrc");
+  qs_mingid = config->readEntry("nismingid");
+  if(!qs_mingid.isEmpty()) {
+    c_mingid = qs_mingid.latin1();
+    mingid = atoi(c_mingid);
   }
+
+  // Backup file(s)
+
+
+  if(!group_filename.isEmpty()) {
+    if (!gr_backuped) {
+      gr_filename = group_filename.latin1();
+      backup(gr_filename);
+      gr_backuped = TRUE;
+    }
+  }
+  if(!nisgroup_filename.isEmpty()) {
+    if (!gn_backuped) {
+      gn_filename = nisgroup_filename.latin1();
+      backup(gn_filename);
+      gn_backuped = TRUE;
+    }
+  }
+
+  // Open file(s)
+
+  if(!group_filename.isEmpty()) {
+    if((group_fd = fopen(QFile::encodeName(group_filename), "w")) == NULL)
+      err->addMsg(i18n("Error opening %1 for writing").arg(group_filename));
+  }  
+
+  if(!nisgroup_filename.isEmpty()) {
+    if((nisgroup_fd = fopen(QFile::encodeName(nisgroup_filename), "w")) == NULL)
+      err->addMsg(i18n("Error opening %1 for writing").arg(nisgroup_filename));
+  }  
 
   umask(0077);
 
-  if ((grp = fopen(GROUP_FILE, "w")) == NULL) {
-    err->addMsg(i18n("Error opening %1 for writing").arg(GROUP_FILE));
-    return FALSE;
-  }
 
   for (unsigned int i=0; i<g.count(); i++) {
     KGroup *gr = g.at(i);
+    tmp_gid = gr->getGID();
     tmpS = QString::fromLatin1("%1:%2:%3:")
       .arg(gr->getName())
       .arg(gr->getPwd())
@@ -183,19 +292,66 @@ bool KGroups::save() {
        tmpS += gr->user(j);
     }
     tmpS += '\n';
-    fputs(tmpS.local8Bit(), grp);
-  }
-  fclose(grp);
 
-  chmod(GROUP_FILE, mode);
-  chown(GROUP_FILE, uid, gid);
+    if( (nisgroup_fd != 0) && (mingid != 0) ) {
+      if(mingid <= tmp_gid) {
+        fputs(tmpS.local8Bit(), nisgroup_fd);
+        nis_groups_written++;
+        continue;
+      }
+      else{
+        fputs(tmpS.local8Bit(), group_fd);
+        continue;
+      }
+    }
+
+    if( (nisgroup_fd != 0) && (mingid == 0) ) {
+      errors_found = errors_found | NOMINGID;
+      fputs(tmpS.local8Bit(), group_fd);
+      continue;
+    }
+
+    if( (nisgroup_fd == 0) && (mingid != 0) ) {
+      errors_found = errors_found | NONISGROUP;
+      fputs(tmpS.local8Bit(), group_fd);
+      continue;
+    }
+
+    fputs(tmpS.local8Bit(), group_fd);
+
+  }		/* end for i loop */
+
+  if(group_fd) {
+    fclose(group_fd);
+    chmod(QFile::encodeName(group_filename), mode);
+    chown(QFile::encodeName(group_filename), uid, gid);
+  }
+
+  if(nisgroup_fd) {
+    fclose(nisgroup_fd);
+    chmod(QFile::encodeName(nisgroup_filename), mode);
+    chown(QFile::encodeName(nisgroup_filename), uid, gid);
+  }
+
+  if( (errors_found & NOMINGID) != 0 ) {
+    err->addMsg(i18n("Unable to process NIS group file without a minimum GID specified.\nPlease update KUser Settings (Sources)"));
+    err->display();
+  }
+
+  if( (errors_found & NONISGROUP) != 0 ) {
+    err->addMsg(i18n("Specifying NIS minimum GID requires NIS file(s).\nPlease update KUser Settings (Sources)"));
+    err->display();
+  }
 
 #ifdef GRMKDB
-  if (system(GRMKDB) != 0) {
-    err->addMsg(i18n("Unable to build group database"));
-    return FALSE;
+  if(nis_groups_written > 0) {
+    if (system(GRMKDB) != 0) {
+      err->addMsg(i18n("Unable to build NIS group databases"));
+      return FALSE;
+    }
   }
 #endif
+
   return TRUE;
 }
 

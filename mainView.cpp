@@ -317,7 +317,7 @@ void mainView::properties() {
   eddlg.setNISGroupSrc(config->readEntry("nisgroupsrc", ""));
   eddlg.setMINUID(config->readEntry("nisminuid", ""));
   eddlg.setMINGID(config->readEntry("nismingid", ""));
-  eddlg.setEnableNIS(config->readBoolEntry("enableNIS", true));
+//  eddlg.setEnableNIS(config->readBoolEntry("enableNIS", true));
 
 
   if (eddlg.exec() != 0) {
@@ -333,7 +333,7 @@ void mainView::properties() {
     config->writeEntry("nisgroupsrc", eddlg.getNISGroupSrc());
     config->writeEntry("nisminuid", eddlg.getMINUID());
     config->writeEntry("nismingid", eddlg.getMINGID());
-    config->writeEntry("enableNIS", eddlg.getEnableNIS());
+//    config->writeEntry("enableNIS", eddlg.getEnableNIS());
   }
 }
 

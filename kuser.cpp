@@ -442,6 +442,7 @@ bool KUsers::loadpwd() {
 
   config->setGroup("template");		
   passwd_filename = config->readEntry("passwdsrc");	
+  nispasswd_filename = config->readEntry("nispasswdsrc");	
   if(!passwd_filename.isEmpty()) {			
     processing_file = processing_file | PASSWD;		
     filename.append(passwd_filename);			
@@ -455,8 +456,7 @@ bool KUsers::loadpwd() {
       err->addMsg(i18n("stat call on file %1 failed: %2\nCheck KUser Settings (Sources)\n").arg(filename).arg(strerror(errno)));	
       err->display();						
       if( (processing_file & PASSWD) != 0 ) {			
-        passwd_errno = rc;					
-        nispasswd_filename = config->readEntry("nispasswdsrc");	
+        passwd_errno = errno;					
         if(!nispasswd_filename.isEmpty()) {			
           processing_file = processing_file & ~PASSWD;		
           processing_file = processing_file | NISPASSWD;	
@@ -466,7 +466,7 @@ bool KUsers::loadpwd() {
         continue;				
       }						
       else{					
-        nispasswd_errno = rc;					
+        nispasswd_errno = errno;					
         break;					
       }						
     }						
@@ -514,7 +514,6 @@ bool KUsers::loadpwd() {
 #ifdef HAVE_FGETPWENT
     fclose(fpwd);
 #endif
-    nispasswd_filename = config->readEntry("nispasswdsrc");	
     if(!nispasswd_filename.isEmpty()) {				
       processing_file = processing_file & ~PASSWD;		
       processing_file = processing_file | NISPASSWD;		
@@ -794,25 +793,32 @@ bool KUsers::savepwd() {
     }							
 
     if( (errors_found & NOMINUID) != 0 ) {	
-      err->addMsg(i18n("Unable to process NIS passwd file without a minimum UID specified\nPlease update KUser Settings (Sources)"));	
+      err->addMsg(i18n("Unable to process NIS passwd file without a minimum UID specified.\nPlease update KUser Settings (Sources)"));	
       err->display();				
     }						
 
     if( (errors_found & NONISPASSWD) != 0 ) {	
-      err->addMsg(i18n("Specifying NIS minimum UID requires NIS file(s)\nPlease update KUser Settings (Sources)"));	
+      err->addMsg(i18n("Specifying NIS minimum UID requires NIS file(s).\nPlease update KUser Settings (Sources)"));	
       err->display();				
     }						
 
 #ifdef PWMKDB
   // need to run a utility program to build /etc/passwd, /etc/pwd.db
   // and /etc/spwd.db from /etc/master.passwd
+#if defined(__FreeBSD__) || defined(__bsdi__)
+  if (system(PWMKDB) != 0) {
+    err->addMsg(i18n("Unable to build password database"));
+    return FALSE;
+  }
+#else
   if(nis_users_written > 0) {		
     if (system(PWMKDB) != 0) {
-      err->addMsg(i18n("Unable to build password database(s)"));
+      err->addMsg(i18n("Unable to build password databases"));
       return FALSE;
     }
   }					
 #endif
+#endif   // PWMKDB
 
   return TRUE;
 }

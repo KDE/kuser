@@ -1,9 +1,12 @@
 #ifndef _KU_GLOBALS_H_
-#define _KU_GLOBALS_H_
+#define _KU_GLOBALS_H_ "$Id$"
 
 #define _KU_VERSION "1.0"
 
-#include "../config.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <kconfig.h>
 #include "kerror.h"
 

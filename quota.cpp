@@ -161,8 +161,9 @@ Quota::Quota(unsigned int auid, bool doget) {
 #endif
 #ifdef __FreeBSD__
   int qcmd = QCMD(Q_GETQUOTA, USRQUOTA);
-  for (uint i=0; i<mounts.count(); i++) {
-    if (quotactl((const char *)mounts.at(i)->fsname,qcmd,id,(caddr_t) &dq) !=0) {
+
+  for (uint i=0; i<mounts->getMountsNumber(); i++) {
+    if (quotactl((const char *)mounts->getMount(i)->fsname, qcmd, uid, (caddr_t) &dq) !=0) {
       //  printf("%d\n",errno);
       warned++;
       KMsgBox::message(0, _("Error"), _("Quotas are not compiled into this kernel."), KMsgBox::STOP);
@@ -171,14 +172,14 @@ Quota::Quota(unsigned int auid, bool doget) {
       is_quota = 0;
       break;
     }
-    q->append(new QuotaMnt(dbtob(dq.dqb_curblocks)/1024,
-			   dbtob(dq.dqb_bsoftlimit)/1024,
-			   dbtob(dq.dqb_bhardlimit)/1024,
-			   dq.dqb_curinodes,
-			   dq.dqb_isoftlimit,
-			   dq.dqb_ihardlimit,
-			   dq.dqb_btime,
-			   dq.dqb_btime));
+    q.append(new QuotaMnt(dbtob(dq.dqb_curblocks)/1024,
+			  dbtob(dq.dqb_bsoftlimit)/1024,
+			  dbtob(dq.dqb_bhardlimit)/1024,
+			  dq.dqb_curinodes,
+			  dq.dqb_isoftlimit,
+			  dq.dqb_ihardlimit,
+			  dq.dqb_btime,
+			  dq.dqb_btime));
   }
 #endif
 }
@@ -247,8 +248,8 @@ void Quota::save() {
     dq.dqb_curinodes  = q.at(i)->icur;
     dq.dqb_isoftlimit = q.at(i)->isoft;
     dq.dqb_ihardlimit = q.at(i)->ihard;
-    dq.dqb_btime = MAX_DQ_TIME;
-    dq.dqb_itime = MAX_IQ_TIME;
+    dq.dqb_btime = q.at(i)->ftime;
+    dq.dqb_itime = q.at(i)->itime;
 
     if ((dd =quotactl(qcmd, (const char *)mounts->getMount(i)->fsname, uid, (caddr_t) &dq)) != 0) {
       printf("Quotactl returned: %d\n", dd);
@@ -278,7 +279,9 @@ void Quota::save() {
 
 #ifdef __FreeBSD__
   int dd = 0;
-  for (uint i=0; i<mounts.count(); i++) {
+  int qcmd = QCMD(Q_SETQUOTA,USRQUOTA);
+
+  for (uint i=0; i<mounts->getMountsNumber(); i++) {
     dq.dqb_curblocks  = btodb(q->at(i)->fcur*1024);
     dq.dqb_bsoftlimit = btodb(q->at(i)->fsoft*1024);
     dq.dqb_bhardlimit = btodb(q->at(i)->fhard*1024);
@@ -288,7 +291,7 @@ void Quota::save() {
     dq.dqb_btime = q.at(i)->ftime;
     dq.dqb_itime = q.at(i)->itime;
 
-    if ((dd =quotactl((const char *)mounts.at(i)->fsname, Q_SETQUOTA,id, (caddr_t) &dq)) != 0) {
+    if ((dd =quotactl((const char *)mounts->getMount(i)->fsname, qcmd, uid, (caddr_t) &dq)) != 0) {
       printf("Quotactl returned: %d\n", dd);
       continue;
     }

@@ -2,6 +2,7 @@
 [KDE Desktop Entry]
 Name=User Manager
 Name[de]=Benutzermanager
+Name[no]=Brukerbehandler
 Name[fr]=Gestionnaire d'utilisateurs
 Name[ru]=Управление пользователями
 Name[fi]=KДyttДjДhallinta
@@ -17,6 +18,7 @@ Type=Application
 DocPath=kuser/index.html
 Comment=Full Featured User Manager
 Comment[de]=Ein vollstДndiger Benutzermanager
+Comment[no]=En fullstendig brukerbehandler
 Comment[fr]=Gestionnaire d'utilisateurs complet
 Comment[ru]=Расширенное управление пользователями
 Comment[fi]=Kaikki ominaisuudet sisДltДvД kДyttДjДhallinta

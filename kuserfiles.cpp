@@ -152,7 +152,7 @@ bool KUserFiles::loadpwd()
     // We are reading our configuration specified passwd file
     QString tmp;
 
-#ifdef HAVE_DECL_FGETPWENT
+#if HAVE_DECL_FGETPWENT
     FILE *fpwd = fopen(QFile::encodeName(filename), "r");
     if(fpwd == NULL) {
       KMessageBox::error( 0, i18n("Error opening %1 for reading.").arg(filename) );
@@ -190,7 +190,7 @@ bool KUserFiles::loadpwd()
 
     // End reading passwd_filename
 
-#ifdef HAVE_DECL_FGETPWENT
+#if HAVE_DECL_FGETPWENT
     fclose(fpwd);
 #else
     endpwent();
@@ -233,7 +233,7 @@ bool KUserFiles::loadsdw()
   sdw_uid = st.st_uid;
   sdw_gid = st.st_gid;
 
-#ifdef HAVE_DECL_FGETSPENT
+#if HAVE_DECL_FGETSPENT
   FILE *f;
   kdDebug() << "open shadow file: " << shadow_file << endl;
   if ((f = fopen( QFile::encodeName(shadow_file), "r")) == NULL) {
@@ -271,7 +271,7 @@ bool KUserFiles::loadsdw()
 #endif
   }
 
-#ifdef HAVE_DECL_FGETSPENT
+#if HAVE_DECL_FGETSPENT
   fclose(f);
 #else
   endspent();

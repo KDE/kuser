@@ -8,6 +8,10 @@
 #include "quota.h"
 #endif
 
+#ifdef __FreeBSD__
+#undef _KU_SHADOW
+#endif
+
 class KUser {
 public:
   KUser();
@@ -18,9 +22,18 @@ public:
   QString getp_dir();
   QString getp_shell();
   QString getp_fname();
+#ifdef __FreeBSD__
+  QString getp_office();
+  QString getp_ophone();
+  QString getp_hphone();
+  QString getp_class();
+  time_t getp_change();
+  time_t getp_expire();
+#else
   QString getp_office1();
   QString getp_office2();
   QString getp_address();
+#endif
   unsigned int getp_uid();
   unsigned int getp_gid();
 
@@ -40,9 +53,18 @@ public:
   void setp_dir(const char *data);
   void setp_shell(const char *data);
   void setp_fname(const char *data);
+#ifdef __FreeBSD__
+  void setp_office(const char *data);
+  void setp_ophone(const char *data);
+  void setp_hphone(const char *data);
+  void setp_class(const char *data);
+  void setp_expire(time_t data);
+  void setp_change(time_t data);
+#else
   void setp_office1(const char *data);
   void setp_office2(const char *data);
   void setp_address(const char *data);
+#endif
   void setp_uid(unsigned int data);
   void setp_gid(unsigned int data);
 
@@ -64,9 +86,19 @@ protected:
     p_dir,
     p_shell,
     p_fname,                        // parsed comment information
+#ifdef __FreeBSD__
+    p_office,
+    p_ophone,
+    p_hphone,
+    p_class;
+  time_t
+    p_change,
+    p_expire;
+#else
     p_office1,
     p_office2,
     p_address;
+#endif
   unsigned int
     p_uid,
     p_gid;

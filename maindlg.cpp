@@ -207,9 +207,18 @@ void mainDlg::useradd() {
   tk->setp_dir(readentry("homeprefix")+"/"+tk->getp_name());
   tk->setp_gid(readnumentry("gid"));
   tk->setp_fname(readentry("p_fname"));
+#ifdef __FreeBSD__
+  tk->setp_office(readentry("p_office"));
+  tk->setp_ophone(readentry("p_ophone"));
+  tk->setp_hphone(readentry("p_hphone"));
+  tk->setp_class(readentry("p_class"));
+  tk->setp_change(readnumentry("p_change"));
+  tk->setp_expire(readnumentry("p_expire"));
+#else
   tk->setp_office1(readentry("p_office1"));
   tk->setp_office2(readentry("p_office2"));
   tk->setp_address(readentry("p_address"));
+#endif
 
 #ifdef _KU_SHADOW
   tk->sets_lstchg(today());
@@ -313,9 +322,18 @@ void mainDlg::properties() {
   tk->setp_dir(readentry("homeprefix"));
   tk->setp_gid(readnumentry("gid"));
   tk->setp_fname(readentry("p_fname"));
+#ifdef __FreeBSD__
+  tk->setp_office(readentry("p_office"));
+  tk->setp_ophone(readentry("p_ophone"));
+  tk->setp_hphone(readentry("p_hphone"));
+  tk->setp_class(readentry("p_class"));
+  tk->setp_change(readnumentry("p_change"));
+  tk->setp_expire(readnumentry("p_expire"));
+#else
   tk->setp_office1(readentry("p_office1"));
   tk->setp_office2(readentry("p_office2"));
   tk->setp_address(readentry("p_address"));
+#endif
 
 #ifdef _KU_SHADOW
   tk->sets_lstchg(readnumentry("s_lstchg"));
@@ -348,9 +366,18 @@ void mainDlg::properties() {
     config->writeEntry("homeprefix", tk->getp_dir());
     config->writeEntry("gid", tk->getp_gid());
     config->writeEntry("p_fname", tk->getp_fname());
+#ifdef __FreeBSD__
+    config->writeEntry("p_office", tk->getp_office());
+    config->writeEntry("p_ophone", tk->getp_ophone());
+    config->writeEntry("p_hphone", tk->getp_hphone());
+    config->writeEntry("p_class", tk->getp_class());
+    config->writeEntry("p_change", tk->getp_change());
+    config->writeEntry("p_expire", tk->getp_expire());
+#else
     config->writeEntry("p_office1", tk->getp_office1());
     config->writeEntry("p_office2", tk->getp_office2());
     config->writeEntry("p_address", tk->getp_address());
+#endif
 
 #ifdef _KU_SHADOW
     config->writeEntry("s_lstchg", tk->gets_lstchg());

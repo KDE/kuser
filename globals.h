@@ -7,10 +7,6 @@
 #include <sys/param.h>
 #endif
 
-#ifdef BSD
-#undef _KU_SHADOW
-#endif
-
 #include "../config.h"
 #include <kconfig.h>
 #include "kerror.h"
@@ -20,8 +16,15 @@ extern int is_shadow;
 
 #define KU_BACKUP_EXT ".bak"
 
+#ifdef __FreeBSD__
+#undef _KU_SHADOW
+#define PASSWORD_FILE "/etc/master.passwd"
+#define PASSWORD_FILE_MASK S_IRUSR | S_IWUSR
+#define PWMKDB "/usr/sbin/pwd_mkdb -p /etc/master.passwd"
+#else
 #define PASSWORD_FILE "/etc/passwd"
 #define PASSWORD_FILE_MASK S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH
+#endif
 
 extern char picspath[200];
 extern KConfig *config;

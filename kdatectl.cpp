@@ -122,9 +122,12 @@ void KDateCtl::updateControls() {
   QString s("");
 
   if (isempty->isChecked() == TRUE) {
-    day->setText("");
+    iday = 1;
+    imonth = 1;
+    iyear = 1970;
+    day->setText("1");
     month->setCurrentItem(0);
-    year->setText("");
+    year->setText("1970");
     day->setEnabled(FALSE);
     month->setEnabled(FALSE);
     year->setEnabled(FALSE);
@@ -140,31 +143,22 @@ void KDateCtl::updateControls() {
  
 void KDateCtl::isEmptyToggled(bool) { 
   updateControls();
+  emit textChanged();
 }
 
 void KDateCtl::dayChanged(const char *text) {
-  long int tday = 0;
-
-  tday = strtol(text, (char **)NULL, 10);
-  QString *tmp = new QString();
-  day->setText(tmp->setNum(iday));
-  delete tmp;
-
-  textChanged();
+  iday = atoi(text);
+  emit textChanged();
 }
 
 void KDateCtl::monthChanged(int) {
   imonth = month->currentItem()+1;
-
-  textChanged();
+  emit textChanged();
 }
 
-void KDateCtl::yearChanged(const char *) {
-  QString *tmp = new QString();
-  year->setText(tmp->setNum(iyear));
-  delete tmp;
-
-  textChanged();
+void KDateCtl::yearChanged(const char *text) {
+  iyear = atoi(text);
+  emit textChanged();
 }
 
 void KDateCtl::setFont(const QFont &f) {

@@ -1,9 +1,6 @@
 #include <qstring.h>
 #include <kmsgbox.h>
 
-#ifdef _KU_SHADOW
-#include <shadow.h>
-#endif
 #include <sys/file.h>
 #include <errno.h>
 #include <unistd.h>
@@ -21,6 +18,10 @@
 #include "kuser.h"
 #include "misc.h"
 
+#ifdef _KU_SHADOW
+#include <shadow.h>
+#endif
+
 #ifdef _KU_QUOTA
 #include "mnt.h"
 #include "quota.h"
@@ -34,9 +35,18 @@ KUser::KUser() {
   p_dir.setStr("");
   p_shell.setStr("");
   p_fname.setStr("");
+#ifdef __FreeBSD__
+  p_office.setStr("");
+  p_ophone.setStr("");
+  p_hphone.setStr("");
+  p_class.setStr("");
+  p_change = 0;
+  p_expire = 0;
+#else
   p_office1.setStr("");
   p_office2.setStr("");
   p_address.setStr("");
+#endif
   p_uid     = 0;
   p_gid     = 100;
 
@@ -75,6 +85,36 @@ QString KUser::getp_fname() {
   return (p_fname);
 }
 
+#ifdef __FreeBSD__
+// FreeBSD apparently uses the GECOS fields differently than other Unices.
+// Create some better named functions to make the FreeBSD code clear
+QString KUser::getp_office() {
+  return (p_office);
+}
+
+QString KUser::getp_ophone() {
+  return (p_ophone);
+}
+
+QString KUser::getp_hphone() {
+  return (p_hphone);
+}
+
+// New fields needed for the FreeBSD /etc/master.passwd file
+QString KUser::getp_class() {
+  return (p_class);
+}
+
+time_t KUser::getp_change() {
+  return (p_change);
+}
+
+time_t KUser::getp_expire() {
+  return (p_expire);
+}
+
+#else
+
 QString KUser::getp_office1() {
   return (p_office1);
 }
@@ -86,6 +126,8 @@ QString KUser::getp_office2() {
 QString KUser::getp_address() {
   return (p_address);
 }
+
+#endif
 
 unsigned int KUser::getp_uid() {
   return (p_uid);
@@ -149,6 +191,36 @@ void KUser::setp_fname(const char *data) {
   p_fname.setStr(data);
 }
 
+#ifdef __FreeBSD__
+// FreeBSD apparently uses the GECOS fields differently than other Unices.
+// Create some better named functions to make the FreeBSD code clear
+void KUser::setp_office(const char *data) {
+  p_office.setStr(data);
+}
+
+void KUser::setp_ophone(const char *data) {
+  p_ophone.setStr(data);
+}
+
+void KUser::setp_hphone(const char *data) {
+  p_hphone.setStr(data);
+}
+
+// New fields needed for the FreeBSD /etc/master.passwd file
+void KUser::setp_class(const char *data) {
+  p_class.setStr(data);
+}
+
+void KUser::setp_change(time_t data) {
+  p_change = data;
+}
+
+void KUser::setp_expire(time_t data) {
+  p_expire = data;
+}
+
+#else
+
 void KUser::setp_office1(const char *data) {
   p_office1.setStr(data);
 }
@@ -160,6 +232,8 @@ void KUser::setp_office2(const char *data) {
 void KUser::setp_address(const char *data) {
   p_address.setStr(data);
 }
+
+#endif
 
 void KUser::setp_uid(unsigned int data) {
   p_uid = data;
@@ -231,9 +305,15 @@ void KUsers::fillGecos(KUser *user, const char *gecos) {
 
     switch(no) {
       case 0: user->setp_fname(val); break;
+#ifdef __FreeBSD__
+      case 1: user->setp_office(val); break;
+      case 2: user->setp_ophone(val); break;
+      case 3: user->setp_hphone(val); break;
+#else
       case 1: user->setp_office1(val); break;
       case 2: user->setp_office2(val); break;
       case 3: user->setp_address(val); break;
+#endif
     }
     if(pos == NULL) break;
     s = pos+1;
@@ -272,6 +352,11 @@ bool KUsers::loadpwd() {
     tmpKU->setp_pwd(p->pw_passwd);
     tmpKU->setp_dir(p->pw_dir);
     tmpKU->setp_shell(p->pw_shell);
+#ifdef __FreeBSD__
+    tmpKU->setp_class(p->pw_class);
+    tmpKU->setp_change(p->pw_change);
+    tmpKU->setp_expire(p->pw_expire);
+#endif
 
     if ((p->pw_gecos != 0) && (p->pw_gecos[0] != 0))
       fillGecos(tmpKU, p->pw_gecos);
@@ -361,12 +446,27 @@ bool KUsers::savepwd() {
 
   for (unsigned int i=0; i<u.count(); i++) {
     KUser *user = u.at(i);
+
+#ifdef __FreeBSD__
+    s.sprintf("%s:%s:%i:%i:%s:%i:%i:",  (const char *)user->getp_name(),
+             (const char *)user->getp_pwd(), user->getp_uid(),
+             user->getp_gid(), (const char *)user->getp_class(),
+             user->getp_change(), user->getp_expire());
+
+    s1.sprintf("%s,%s,%s,%s", (const char *)user->getp_fname(),
+              (const char *)user->getp_office(),
+              (const char *)user->getp_ophone(),
+              (const char *)user->getp_hphone());
+#else
+
     s.sprintf("%s:%s:%i:%i:",  (const char *)user->getp_name(),
 		 (const char *)user->getp_pwd(), (const char *)user->getp_uid(),
 		 (const char *)user->getp_gid());
 
     s1.sprintf("%s,%s,%s,%s", (const char *)user->getp_fname(), (const char *)user->getp_office1()
 	       ,(const char *)user->getp_office2(), (const char *)user->getp_address());
+
+#endif
 
     for (int j=(s1.length()-1); j>=0; j--) {
       if (s1[j] != ',')
@@ -381,6 +481,15 @@ bool KUsers::savepwd() {
   fclose(passwd);
 
   chmod(PASSWORD_FILE, PASSWORD_FILE_MASK);
+#ifdef __FreeBSD__
+  // need to run a utility program to build /etc/passwd, /etc/pwd.db
+  // and /etc/spwd.db from /etc/master.passwd
+  if (0 != system(PWMKDB)) {
+     sprintf(other, _("Unable to build password database"));
+     err->addMsg(other, STOP);
+     return (FALSE);
+  }
+#endif
   return (TRUE);
 }
 

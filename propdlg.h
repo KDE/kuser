@@ -66,6 +66,10 @@ protected:
   QWidget *w2;
   QWidget *w3;
   QWidget *w4;
+#ifdef __FreeBSD__
+  // extra tab page for login class & expiry dates
+  QWidget *w5;
+#endif
 
   QListBox* m_Other;
   QListBox* m_Group;
@@ -94,6 +98,11 @@ protected:
   QLabel *l16;
   QLabel *l17;
   QLabel *l18;
+#ifdef __FreeBSD__
+  // labels for login class
+  QLabel *l19;
+  QLabel *ld19;
+#endif
 
   QPushButton *pbsetpwd;
   QPushButton *pbok;
@@ -105,9 +114,18 @@ protected:
   QLineEdit   *lefname;
   QComboBox   *leshell;
   QLineEdit   *lehome;
+#ifdef __FreeBSD__
+  QLineEdit   *leoffice;
+  QLineEdit   *leophone;
+  QLineEdit   *lehphone;
+  QLineEdit   *leclass;
+  KDateCtl    *lechange;
+  KDateCtl    *leexpire;
+#else
   QLineEdit   *leoffice1;
   QLineEdit   *leoffice2;
   QLineEdit   *leaddress;
+#endif
 
   QComboBox   *cbpgrp;
 #ifdef _KU_QUOTA

@@ -1,9 +1,6 @@
 #include <qstring.h>
 #include <kmsgbox.h>
 
-#ifdef _KU_SHADOW
-#include <shadow.h>
-#endif
 #include <sys/file.h>
 #include <errno.h>
 #include <unistd.h>
@@ -19,6 +16,10 @@
 #include "globals.h"
 #include "kgroup.h"
 #include "misc.h"
+
+#ifdef _KU_SHADOW
+#include <shadow.h>
+#endif
 
 #ifdef _KU_QUOTA
 #include "mnt.h"

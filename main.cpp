@@ -6,6 +6,7 @@
 #include <ktopwidget.h>
 #include <qfont.h>
 #include <unistd.h>
+#include "globals.h"
 #include "misc.h"
 #include "maindlg.h"
 #include "mainWidget.h"

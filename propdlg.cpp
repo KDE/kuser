@@ -3,6 +3,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#ifdef __FreeBSD__
+#include <qdatetm.h>
+#endif
 #include "globals.h"
 #include "propdlg.h"
 #include "propdlg.moc"
@@ -22,6 +25,11 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
        WStyle_MinMax | WType_Modal) {
   user = auser;
   olduid = user->getp_uid();
+#ifdef __FreeBSD__
+  QDateTime *epoch = new QDateTime();
+  QDateTime *temp_time = new QDateTime();
+#endif
+
 #ifdef _KU_QUOTA
   if (aquota == NULL)
     is_quota = 0;
@@ -97,6 +105,69 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
   QToolTip::add(lehome, _("Home directory"));
   l6 = addLabel(w1, "ml6", 10, 155, 50, 20, _("Home directory"));
 
+#ifdef __FreeBSD__
+  // FreeBSD appears to use the comma separated fields in the GECOS entry
+  // differently than Linux.
+  leoffice = addLineEdit(w1, "leoffice", 10, 220, 160, 22, "");
+  QObject::connect(leoffice, SIGNAL(textChanged(const char *)), this, SLOT(charchanged(const char *)));
+  QToolTip::add(leoffice, _("Office"));
+  l7 = addLabel(w1, "ml7", 10, 200, 50, 20, _("Office"));
+
+  ld7 = addLabel(w1, "mld7", 190, 225, 50, 20, _("Office description"));
+
+  leophone = addLineEdit(w1, "leophone", 10, 265, 160, 22, "");
+  QObject::connect(leophone, SIGNAL(textChanged(const char *)), this, SLOT(charchanged(const char *)));
+  QToolTip::add(leophone, _("Office phone"));
+  l8 = addLabel(w1, "ml8", 10, 245, 50, 20, _("Office phone"));
+
+  ld8 = addLabel(w1, "mld8", 190, 270, 50, 20, _("Office phone number"));
+
+  lehphone = addLineEdit(w1, "lehphone", 10, 310, 160, 22, "");
+  QObject::connect(lehphone, SIGNAL(textChanged(const char *)), this, SLOT(charchanged(const char *)));
+  QToolTip::add(lehphone, _("Home phone"));
+  l9 = addLabel(w1, "ml9", 10, 290, 50, 20, _("Home phone"));
+
+  ld9 = addLabel(w1, "mld9", 190, 315, 50, 20, _("Home phone number"));
+  tw->addTab(w1, _("User info"));
+
+  // put the new fields on a separate tab page just to avoid rewriting all
+  // the positioning code.
+  w5 = new QWidget(this, "wd_Extended");
+
+  leclass = addLineEdit(w5, "leclass", 10, 80, 160, 22, "");
+  QObject::connect(leclass, SIGNAL(textChanged(const char *)), this, SLOT(charchanged(const char *)));
+  QToolTip::add(leclass, _("Login class"));
+  l19 = addLabel(w5, "ml19", 10, 60, 50, 20, _("Login class"));
+
+  ld19 = addLabel(w5, "mld19", 190, 85, 50, 20, _("Login resource class"));
+
+  // KDateCtl works in `days since the epoch' so we convert from seconds.
+  // Set the `base' to 1 so getDate returns 0 (base - 1) if the `never expires'
+  // box is checked.
+  epoch->setTime_t(0);
+  temp_time->setTime_t(user->getp_change());
+  lechange = new KDateCtl(w5, "lechange", _("Password never expires"),
+                         _("Date when password expires"),
+                         epoch->daysTo(*temp_time), 1,
+                         10, 150);
+
+  QObject::connect(lechange, SIGNAL(textChanged()), this, SLOT(changed()));
+
+  temp_time->setTime_t(user->getp_expire());
+
+  leexpire = new KDateCtl(w5, "leexpire", _("Account never expires"),
+                         _("Date when account expires"),
+                         epoch->daysTo(*temp_time), 1,
+                         10, 250);
+
+  QObject::connect(leexpire, SIGNAL(textChanged()), this, SLOT(changed()));
+
+  delete epoch;
+  delete temp_time;
+  tw->addTab(w5, _("Extended"));
+
+#else
+
   leoffice1 = addLineEdit(w1, "leoffice1", 10, 220, 160, 22, "");
   QObject::connect(leoffice1, SIGNAL(textChanged(const char *)), this, SLOT(charchanged(const char *)));
   QToolTip::add(leoffice1, _("The first office"));
@@ -115,6 +186,7 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
   QToolTip::add(leaddress, _("Postal address"));
   l9 = addLabel(w1, "ml9", 10, 290, 50, 20, _("Address"));
   ld9 = addLabel(w1, "mld9", 190, 315, 50, 20, _("Full postal address"));
+#endif
 
   tw->addTab(w1, _("User info"));
 
@@ -175,10 +247,11 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
     for (uint i = 0; i<mounts->getMountsNumber(); i++)
        leqmnt->insertItem(mounts->getMount(i)->getdir());
 
-    leqmnt->setGeometry(200, 20, 160, 27);
+    leqmnt->setGeometry(250, 20, 160, 27);
     QObject::connect(leqmnt, SIGNAL(highlighted(int)), this, SLOT(mntsel(int)));
 
-    l10a = addLabel(w3, "ml10a", 20, 28, 50, 20, _("Quota filesystem"));
+    l10a = addLabel(w3, "ml10a", 20, 28, 230, 20, _("Quota filesystem"));
+    l10a->setAlignment(AlignVCenter | AlignRight);
 
     leqfs = addLineEdit(w3, "leqfs", 10, 80, 70, 22, "");
     leqfs->setValidator(new QIntValidator(w3, "vaqfs"));
@@ -272,9 +345,9 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
   QObject::connect(cbpgrp, SIGNAL(activated(const char *)), this, SLOT(setpgroup(const char *)));
 
   tmpQLabel = new QLabel(w4, "Label_3");
-  tmpQLabel->setGeometry(150, 35, 100, 20);
+  tmpQLabel->setGeometry(100, 35, 140, 20);
   tmpQLabel->setText(_("Primary group"));
-  tmpQLabel->setAlignment(289);
+  tmpQLabel->setAlignment(AlignVCenter | AlignRight);
   tmpQLabel->setMargin(-1);
 
   tw->addTab(w4, _("Groups"));
@@ -384,13 +457,42 @@ void propdlg::save() {
   uint newuid;
   tmp.setStr(leid->text());
   newuid = tmp.toInt();
+#ifdef __FreeBSD__
+  QDateTime *epoch = new QDateTime();
+  QDateTime *temp_time = new QDateTime();
+#endif
   
   user->setp_uid(newuid);
 
   user->setp_fname(lefname->text());
+#ifdef __FreeBSD__
+  user->setp_office(leoffice->text());
+  user->setp_ophone(leophone->text());
+  user->setp_hphone(lehphone->text());
+  user->setp_class(leclass->text());
+
+  // getDate() returns days since the epoch if a date is specified
+  // which we convert to seconds since the epoch.
+  // getDate() returns 0 if the `never expires' box is checked which
+  // ends up being converted to 0 seconds which is what we need.
+  epoch->setTime_t(0);
+
+  temp_time->setTime_t(0);
+  *temp_time = temp_time->addDays(lechange->getDate());
+  user->setp_change(epoch->secsTo(*temp_time));
+
+  temp_time->setTime_t(0);
+  *temp_time = temp_time->addDays(leexpire->getDate());
+  user->setp_expire(epoch->secsTo(*temp_time));
+
+  delete epoch;
+  delete temp_time;
+#else
   user->setp_office1(leoffice1->text());
   user->setp_office2(leoffice2->text());
   user->setp_address(leaddress->text());
+#endif
+
   user->setp_dir(lehome->text());
   if (leshell->currentItem() != 0)
     user->setp_shell(leshell->text(leshell->currentItem()));
@@ -507,9 +609,18 @@ void propdlg::selectuser() {
     leshell->setCurrentItem(0);
 
   lehome->setText(user->getp_dir());
+#ifdef __FreeBSD__
+  leoffice->setText(user->getp_office());
+  leophone->setText(user->getp_ophone());
+  lehphone->setText(user->getp_hphone());
+  leclass->setText(user->getp_class());
+  // the date fields get set when the dialogue is built
+#else
   leoffice1->setText(user->getp_office1());
   leoffice2->setText(user->getp_office2());
   leaddress->setText(user->getp_address());
+#endif
+
 #ifdef _KU_QUOTA
   if (is_quota != 0) {
     int q = 0;

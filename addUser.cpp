@@ -111,7 +111,7 @@ bool addUser::checkHome() {
 
   r = stat(QFile::encodeName(user.getHomeDir()), &s);
 
-  if ((r == -1) && (errno = ENOENT))
+  if ((r == -1) && (errno == ENOENT))
     return true;
 
   if (r == 0)

@@ -17,6 +17,46 @@ MntEnt::MntEnt(const char *afsname, const char *adir,
 MntEnt::~MntEnt() {
 }
 
+QString MntEnt::getfsname() {
+  return (fsname);
+}
+
+QString MntEnt::getdir() {
+  return (dir);
+}
+
+QString MntEnt::gettype() {
+  return (type);
+}
+
+QString MntEnt::getopts() {
+  return (opts);
+}
+
+QString MntEnt::getquotafilename() {
+  return (quotafilename);
+}
+
+void MntEnt::setfsname(const char *data) {
+  fsname.setStr(data);
+}
+
+void MntEnt::setdir(const char *data) {
+  dir.setStr(data);
+}
+
+void MntEnt::settype(const char *data) {
+  type.setStr(data);
+}
+
+void MntEnt::setopts(const char *data) {
+  opts.setStr(data);
+}
+
+void MntEnt::setquotafilename(const char *data) {
+  quotafilename.setStr(data);
+}
+
 Mounts::Mounts() {
   Mounts::m.setAutoDelete(TRUE);
 

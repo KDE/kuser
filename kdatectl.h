@@ -12,36 +12,39 @@
 
 class KDateCtl: public QObject
 {
-Q_OBJECT
+  Q_OBJECT
 public:
-	int x;
-	int y;
+  KDateCtl(QWidget *parent, const char *name, const char *checkTitle,
+	   const char *title, long int adate, int ax, int ay);
+  ~KDateCtl();
+  void setDate(long int adate);
+  long int getDate();	
+  void setFont(const QFont &f);
 
-	int iday;
-	int imonth;
-	int iyear;
+protected:
+  int x;
+  int y;
 
-	QLineEdit *day;
-	KCombo *month;
-	QLineEdit *year;
-	QCheckBox *isempty;
-        QLabel *label;
+  int iday;
+  int imonth;
+  int iyear;
+  
+  QLineEdit *day;
+  KCombo *month;
+  QLineEdit *year;
+  QCheckBox *isempty;
+  QLabel *label;
+  
+  void updateControls();
 
-	KDateCtl(QWidget *parent, const char *name, const char *checkTitle,
-		 const char *title, long int adate, int ax, int ay);
-	~KDateCtl();
- 	void setDate(long int adate);
-	long int getDate();	
-	void setFont(const QFont &f);
-private:
-	void updateControls();
 protected slots:
-	void isEmptyToggled(bool);
-	void dayChanged(const char *text);
-	void monthChanged(int);
-	void yearChanged(const char *);
+  void isEmptyToggled(bool);
+  void dayChanged(const char *text);
+  void monthChanged(int);
+  void yearChanged(const char *);
+
 signals:
-	void textChanged();
+  void textChanged();
 };
 
 #endif // K_DATECTL_H

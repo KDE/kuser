@@ -23,7 +23,7 @@ pwddlg::pwddlg(KUser *auser, QWidget* parent, const char* name)
 
   setCaption(_("Enter password"));
 
-  QVBoxLayout *layout = new QVBoxLayout(this, 10);
+  layout = new QVBoxLayout(this, 10);
   QGridLayout *grid = new QGridLayout(2, 2);
   layout->addLayout(grid);
 
@@ -86,6 +86,14 @@ pwddlg::pwddlg(KUser *auser, QWidget* parent, const char* name)
   layout->freeze();
 }
 
+pwddlg::~pwddlg() {
+  delete leusername1;
+  delete leusername2;
+  delete pbOk;
+  delete pbCancel;
+  delete layout;
+}
+
 void pwddlg::ok()
 {
   char salt[3];
@@ -109,12 +117,12 @@ void pwddlg::ok()
 
 #ifdef _KU_SHADOW
     if (is_shadow != 0) {
-      user->s_pwd.setStr(tmp);
-      user->p_pwd.setStr("x");
+      user->sets_pwd(tmp);
+      user->setp_pwd("x");
     }
     else
 #endif
-      user->p_pwd.setStr(tmp);
+      user->setp_pwd(tmp);
     accept();
   }
 }

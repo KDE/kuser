@@ -10,22 +10,33 @@
 
 class KGroup {
 public:
+  KGroup();
+  KGroup(KGroup *copy);
+  ~KGroup();
+
+  QString getname();
+  QString getpwd();
+  unsigned int getgid();
+
+  void setname(const char *data);
+  void setpwd(const char *data);
+  void setgid(unsigned int data);
+
+  void addUser(const char *aname);
+  bool removeUser(const char *aname);
+  QString *lookup_user(const char *aname);
+  uint getUsersNumber();
+  QString getUserName(uint i);
+  void clearUsers();
+
+protected:
   QString
     name,
     pwd;
   unsigned int
     gid;
 
-  QString *lookup_user(const char *aname);
-
   QList<QString> u;
-
-  KGroup();
-  KGroup(KGroup *copy);
-  ~KGroup();
-
-  void addUser(const char *aname);
-  bool removeUser(const char *aname);
 };
 
 class KGroups {
@@ -33,7 +44,7 @@ public:
   KGroups();
   ~KGroups();
   KGroup *group_lookup(const char *name);
-  KGroup *group_lookup(unsigned int uid);
+  KGroup *group_lookup(unsigned int gid);
   unsigned int first_free();
   void save();
   KGroup *first();

@@ -33,7 +33,7 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
 
   w1 = new QWidget(this, "wd_Password");
 
-  leuser = addLabel(w1, "leuser", 10, 27, 150, 27, user->p_name);
+  leuser = addLabel(w1, "leuser", 10, 27, 150, 27, user->getp_name());
   QToolTip::add(leuser, _("User name"));
   l1 = addLabel(w1, "ml1", 10, 10, 50, 20, _("User login"));
   leid = addLineEdit(w1, "leid", 200, 30, 70, 22, "");
@@ -117,31 +117,31 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
     l16 = addLabel(w2, "ml16", 95, 30, 50, 20, _("Last password change"));
     lesmin = new KDateCtl(w2, "lesmin", _("Change never allowed"),
                _("Date until change allowed"),
-                  user->s_lstchg+user->s_min, 10, 70);
+                  user->gets_lstchg()+user->gets_min(), 10, 70);
     QObject::connect(lesmin, SIGNAL(textChanged()), this, SLOT(changed()));
 //    QToolTip::add(lesmin, _("Date until change allowed"));
 
     lesmax = new KDateCtl(w2, "lesmax", _("Change required after first login"),
                           _("Date before change required"),
-                          user->s_lstchg+user->s_max, 10, 130);
+                          user->gets_lstchg()+user->gets_max(), 10, 130);
     QObject::connect(lesmax, SIGNAL(textChanged()), this, SLOT(changed()));
 //    QToolTip::add(lesmax, _("Date before change required"));
 
     leswarn = new KDateCtl(w2, "leswarn", _("User will never be warned"),
                            _("Date user will be warned about\nexpiration"),
-                           user->s_lstchg+user->s_warn, 10, 190);
+                           user->gets_lstchg()+user->gets_warn(), 10, 190);
     QObject::connect(leswarn, SIGNAL(textChanged()), this, SLOT(changed()));
 //    QToolTip::add(leswarn, _("Date user will be warned about expiration"));
 
     lesinact = new KDateCtl(w2, "lesinact", _("Account is active from the day of creation"),
                             _("Date before account inactive"),
-                            user->s_lstchg+user->s_inact, 10, 250);
+                            user->gets_lstchg()+user->gets_inact(), 10, 250);
     QObject::connect(lesinact, SIGNAL(textChanged()), this, SLOT(changed()));
 //    QToolTip::add(lesinact, _("Date before account inactive"));
 
     lesexpire = new KDateCtl(w2, "lesexpire", _("Account never expires"),
                              _("Date when account expires"),
-                             user->s_lstchg+user->s_expire, 10, 310);
+                             user->gets_lstchg()+user->gets_expire(), 10, 310);
     QObject::connect(lesexpire, SIGNAL(textChanged()), this, SLOT(changed()));
 //    QToolTip::add(lesexpire, _("Date when account expires"));
 
@@ -158,7 +158,7 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
     leqmnt->clear();
 
     for (uint i = 0; i<mounts->getMountsNumber(); i++)
-       leqmnt->insertItem(mounts->getMount(i)->dir);
+       leqmnt->insertItem(mounts->getMount(i)->getdir());
 
     leqmnt->setGeometry(200, 20, 160, 27);
     QObject::connect(leqmnt, SIGNAL(highlighted(int)), this, SLOT(mntsel(int)));
@@ -169,31 +169,46 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
     leqfs->setValidator(new QIntValidator(w3, "vaqfs"));
     QObject::connect(leqfs, SIGNAL(textChanged(const char *)), this, SLOT(qcharchanged(const char *)));
     QToolTip::add(leqfs, _("File soft quota"));
-    l10 = addLabel(w3, "ml10", 95, 80, 50, 20, _("File soft quota"));
+    l10 = addLabel(w3, "ml10", 95, 85, 50, 20, _("File soft quota"));
 
-    leqfh = addLineEdit(w3, "leqfh", 10, 125, 70, 22, "");
+    leqfh = addLineEdit(w3, "leqfh", 10, 120, 70, 22, "");
     leqfh->setValidator(new QIntValidator(w3, "vaqfh"));
     QObject::connect(leqfh, SIGNAL(textChanged(const char *)), this, SLOT(qcharchanged(const char *)));
     QToolTip::add(leqfh, _("File hard quota"));
     l11 = addLabel(w3, "ml11", 95, 125, 50, 20, _("File hard quota"));
-    leqfcur = addLabel(w3, "leqfcur", 10, 185, 70, 20, "");
-    QToolTip::add(leqfcur, _("File usage"));
-    l14 = addLabel(w3, "ml14", 95, 185, 50, 20, _("File usage"));
 
-    leqis = addLineEdit(w3, "leqis", 10, 225, 70, 22, "");
+    leqfcur = addLabel(w3, "leqfcur", 13, 160, 70, 20, "");
+    QToolTip::add(leqfcur, _("File usage"));
+    l14 = addLabel(w3, "ml14", 95, 160, 50, 20, _("File usage"));
+
+    leqft = addLineEdit(w3, "leqft", 10, 190, 70, 22, "");
+    leqft->setValidator(new QIntValidator(w3, "vaqft"));
+    QObject::connect(leqft, SIGNAL(textChanged(const char *)), this, SLOT(qcharchanged(const char *)));
+    QToolTip::add(leqft, _("File time limit"));
+    l18 = addLabel(w3, "ml18", 95, 195, 50, 20, _("File time limit"));
+
+    leqis = addLineEdit(w3, "leqis", 10, 235, 70, 22, "");
     leqis->setValidator(new QIntValidator(w3, "vaqis"));
     QObject::connect(leqis, SIGNAL(textChanged(const char *)), this, SLOT(qcharchanged(const char *)));
     QToolTip::add(leqis, _("iNode soft quota"));
-    l12 = addLabel(w3, "ml12", 95, 225, 50, 20, _("iNode soft quota"));
+    l12 = addLabel(w3, "ml12", 95, 240, 50, 20, _("iNode soft quota"));
 
-    leqih = addLineEdit(w3, "leqih", 10, 270, 70, 22, "");
+    leqih = addLineEdit(w3, "leqih", 10, 275, 70, 22, "");
     leqih->setValidator(new QIntValidator(w3, "vaqih"));
     QObject::connect(leqih, SIGNAL(textChanged(const char *)), this, SLOT(qcharchanged(const char *)));
     QToolTip::add(leqih, _("iNode hard quota"));
-    l13 = addLabel(w3, "ml13", 95, 270, 50, 20, _("iNode hard quota"));
-    leqicur = addLabel(w3, "leqicur", 10, 320, 70, 20, "");
+    l13 = addLabel(w3, "ml13", 95, 280, 50, 20, _("iNode hard quota"));
+
+    leqicur = addLabel(w3, "leqicur", 13, 315, 70, 20, "");
     QToolTip::add(leqicur, _("iNode usage"));
-    l15 = addLabel(w3, "ml15", 95, 320, 50, 20, _("iNode usage"));
+    l15 = addLabel(w3, "ml15", 95, 315, 50, 20, _("iNode usage"));
+
+    leqit = addLineEdit(w3, "leqit", 10, 345, 70, 22, "");
+    leqit->setValidator(new QIntValidator(w3, "vaqit"));
+    QObject::connect(leqit, SIGNAL(textChanged(const char *)), this, SLOT(qcharchanged(const char *)));
+    QToolTip::add(leqit, _("iNode time limit"));
+    l17 = addLabel(w3, "ml17", 95, 350, 50, 20, _("iNode time limit"));
+
     addTab(w3, _("Quota"));
   }
 #endif
@@ -201,39 +216,49 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
   w4 = new QWidget(this, "wd_Groups");
 
   m_Other = new QListBox( w4, "m_Other" );
-  m_Other->setGeometry( 15, 30, 160, 130 );
+  m_Other->setGeometry( 15, 80, 160, 130 );
   m_Other->setFrameStyle( 51 );
   m_Other->setLineWidth( 2 );
 
   QLabel* tmpQLabel;
   tmpQLabel = new QLabel( w4, "Label_1" );
-  tmpQLabel->setGeometry( 20, 10, 100, 20 );
+  tmpQLabel->setGeometry( 20, 60, 100, 20 );
   tmpQLabel->setText( "Users" );
   tmpQLabel->setAlignment( 289 );
   tmpQLabel->setMargin( -1 );
 
   m_Group = new QListBox( w4, "m_Group" );
-  m_Group->setGeometry( 250, 30, 160, 130 );
+  m_Group->setGeometry( 250, 80, 160, 130 );
   m_Group->setFrameStyle( 51 );
   m_Group->setLineWidth( 2 );
 
   pbadd = new QPushButton( w4, "pbadd" );
-  pbadd->setGeometry( 195, 50, 40, 30 );
+  pbadd->setGeometry( 195, 100, 40, 30 );
   connect( pbadd, SIGNAL(clicked()), SLOT(add()) );
   pbadd->setText( "->" );
   pbadd->setAutoRepeat( FALSE );
   pbadd->setAutoResize( FALSE );
 
   pbdel = new QPushButton( w4, "pbdel" );
-  pbdel->setGeometry( 195, 100, 40, 30 );
+  pbdel->setGeometry( 195, 150, 40, 30 );
   connect( pbdel, SIGNAL(clicked()), SLOT(del()) );
   pbdel->setText( "<-" );
   pbdel->setAutoRepeat( FALSE );
   pbdel->setAutoResize( FALSE );
 
   tmpQLabel = new QLabel( w4, "Label_2" );
-  tmpQLabel->setGeometry( 300, 10, 100, 20 );
+  tmpQLabel->setGeometry( 300, 60, 100, 20 );
   tmpQLabel->setText( "Groups" );
+  tmpQLabel->setAlignment( 289 );
+  tmpQLabel->setMargin( -1 );
+
+  cbpgrp = new QComboBox(FALSE, w4, "cbpgrp");
+  cbpgrp->setGeometry(250, 30, 160, 30);
+  QObject::connect(cbpgrp, SIGNAL(activated(const char *)), this, SLOT(setpgroup(const char *)));
+
+  tmpQLabel = new QLabel( w4, "Label_3" );
+  tmpQLabel->setGeometry( 150, 35, 100, 20 );
+  tmpQLabel->setText( "Primary group" );
   tmpQLabel->setAlignment( 289 );
   tmpQLabel->setMargin( -1 );
 
@@ -250,21 +275,34 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
 }
 
 propdlg::~propdlg() {
+  delete w1;
+  delete w2;
+  delete w3;
+  delete w4;
 }
 
 void propdlg::loadgroups() {
   uint i;
 
-  for (i = 0; i<groups->getGroupsNumber(); i++)
-    if (groups->getGroup(i)->lookup_user(user->p_name)!=0)
-      m_Group->insertItem(groups->getGroup(i)->name);
+  for (i = 0; i<groups->getGroupsNumber(); i++) {
+    if (groups->getGroup(i)->lookup_user(user->getp_name())!=0)
+      m_Group->insertItem(groups->getGroup(i)->getname());
     else
-      m_Other->insertItem(groups->getGroup(i)->name);
+      m_Other->insertItem(groups->getGroup(i)->getname());
+
+    cbpgrp->insertItem(groups->getGroup(i)->getname());
+    if (groups->getGroup(i)->getgid() == user->getp_gid())
+      cbpgrp->setCurrentItem(i);
+  }
 
   if (m_Other->count() != 0)
     m_Other->setCurrentItem(0);
   if (m_Group->count() != 0)
     m_Group->setCurrentItem(0);
+}
+
+void propdlg::setpgroup(const char *) {
+  ischanged = TRUE;
 }
 
 void propdlg::changed() {
@@ -316,23 +354,23 @@ void propdlg::charchanged(const char *) {
 }
 
 void propdlg::save() {
-  user->p_fname.setStr(lefname->text());
-  user->p_office1.setStr(leoffice1->text());
-  user->p_office2.setStr(leoffice2->text());
-  user->p_address.setStr(leaddress->text());
-  user->p_dir.setStr(lehome->text());
+  user->setp_fname(lefname->text());
+  user->setp_office1(leoffice1->text());
+  user->setp_office2(leoffice2->text());
+  user->setp_address(leaddress->text());
+  user->setp_dir(lehome->text());
   if (leshell->currentItem() != 0)
-    user->p_shell.setStr(leshell->text(leshell->currentItem()));
+    user->setp_shell(leshell->text(leshell->currentItem()));
   else
-    user->p_shell.setStr("");
+    user->setp_shell("");
 
 #ifdef _KU_SHADOW
   if (is_shadow) {
-    user->s_min = lesmin->getDate()-user->s_lstchg;
-    user->s_max = lesmax->getDate()-user->s_lstchg;
-    user->s_warn = leswarn->getDate()-user->s_lstchg;
-    user->s_inact = lesinact->getDate()-user->s_lstchg;
-    user->s_expire = lesexpire->getDate()-user->s_lstchg;
+    user->sets_min(lesmin->getDate()-user->gets_lstchg());
+    user->sets_max(lesmax->getDate()-user->gets_lstchg());
+    user->sets_warn(leswarn->getDate()-user->gets_lstchg());
+    user->sets_inact(lesinact->getDate()-user->gets_lstchg());
+    user->sets_expire(lesexpire->getDate()-user->gets_lstchg());
   }
 #endif
 }
@@ -341,22 +379,19 @@ void propdlg::saveg() {
   uint i;
 
   for (i=0;i<m_Group->count();i++)
-    if (groups->group_lookup(m_Group->text(i))->lookup_user(user->p_name) == NULL)
-      groups->group_lookup(m_Group->text(i))->addUser(user->p_name);
+    if (groups->group_lookup(m_Group->text(i))->lookup_user(user->getp_name()) == NULL)
+      groups->group_lookup(m_Group->text(i))->addUser(user->getp_name());
   
   for (i=0;i<m_Other->count();i++)
-    if (groups->group_lookup(m_Other->text(i))->lookup_user(user->p_name) != NULL)
-      groups->group_lookup(m_Other->text(i))->removeUser(user->p_name);
+    if (groups->group_lookup(m_Other->text(i))->lookup_user(user->getp_name()) != NULL)
+      groups->group_lookup(m_Other->text(i))->removeUser(user->getp_name());
+
+  user->setp_gid(groups->group_lookup(cbpgrp->text(cbpgrp->currentItem()))->getgid());
 }
 
 #ifdef _KU_QUOTA
 void propdlg::mntsel(int index) {
-  QuotaMnt *tmpq = quota->getQuotaMnt(chquota);
-
-  tmpq->fhard = atol(leqfh->text());
-  tmpq->fsoft = atol(leqfs->text());
-  tmpq->ihard = atol(leqih->text());
-  tmpq->isoft = atol(leqis->text());
+  saveq();
 
   chquota = index;
   selectuser();
@@ -369,10 +404,12 @@ void propdlg::qcharchanged(const char *) {
 void propdlg::saveq() {
   QuotaMnt *tmpq = quota->getQuotaMnt(chquota);
 
-  tmpq->fhard = atol(leqfh->text());
-  tmpq->fsoft = atol(leqfs->text());
-  tmpq->ihard = atol(leqih->text());
-  tmpq->isoft = atol(leqis->text());
+  tmpq->setfhard(atol(leqfh->text()));
+  tmpq->setfsoft(atol(leqfs->text()));
+  tmpq->setftime(atol(leqft->text()));
+  tmpq->setihard(atol(leqih->text()));
+  tmpq->setisoft(atol(leqis->text()));
+  tmpq->setitime(atol(leqit->text()));
 }
 #else
 void propdlg::qcharchanged(const char *) {
@@ -410,58 +447,64 @@ bool propdlg::check() {
 void propdlg::selectuser() {
   char uname[100];
 
-  leuser->setText(user->p_name);
+  leuser->setText(user->getp_name());
 
-  sprintf(uname,"%i",user->p_uid);
+  sprintf(uname,"%i",user->getp_uid());
   leid->setText(uname);
 
-  sprintf(uname,"%i",user->p_gid);
+  sprintf(uname,"%i",user->getp_gid());
   legid->setText(uname);
 
-  lefname->setText(user->p_fname);
+  lefname->setText(user->getp_fname());
 
-  if (user->p_shell[0] != 0) {
+  if (user->getp_shell().isEmpty() != TRUE) {
     int tested = 0;
     for (int i=0; i<leshell->count(); i++)
-      if (!strcmp(leshell->text(i), user->p_shell)) {
+      if (!strcmp(leshell->text(i), user->getp_shell())) {
         tested = 1;
         leshell->setCurrentItem(i);
         break;
       }
     if (!tested) {
-      leshell->insertItem(user->p_shell);
+      leshell->insertItem(user->getp_shell());
       leshell->setCurrentItem(leshell->count()-1);
     }
   } else
     leshell->setCurrentItem(0);
 
-  lehome->setText(user->p_dir);
-  leoffice1->setText(user->p_office1);
-  leoffice2->setText(user->p_office2);
-  leaddress->setText(user->p_address);
+  lehome->setText(user->getp_dir());
+  leoffice1->setText(user->getp_office1());
+  leoffice2->setText(user->getp_office2());
+  leaddress->setText(user->getp_address());
 #ifdef _KU_QUOTA
   if (is_quota != 0) {
     int q = 0;
     if (chquota != -1)
       q = chquota;
 
-    sprintf(uname,"%li",quota->getQuotaMnt(q)->fsoft);
+    sprintf(uname,"%li",quota->getQuotaMnt(q)->getfsoft());
     leqfs->setText(uname);
 
-    sprintf(uname,"%li",quota->getQuotaMnt(q)->fhard);
+    sprintf(uname,"%li",quota->getQuotaMnt(q)->getfhard());
     leqfh->setText(uname);
 
-    sprintf(uname,"%li",quota->getQuotaMnt(q)->isoft);
+    sprintf(uname,"%li",quota->getQuotaMnt(q)->getisoft());
     leqis->setText(uname);
 
-    sprintf(uname,"%li",quota->getQuotaMnt(q)->ihard);
+    sprintf(uname,"%li",quota->getQuotaMnt(q)->getihard());
     leqih->setText(uname);
 
-    sprintf(uname,"%li",quota->getQuotaMnt(q)->fcur);
+    sprintf(uname,"%li",quota->getQuotaMnt(q)->getfcur());
     leqfcur->setText(uname);
 
-    sprintf(uname,"%li",quota->getQuotaMnt(q)->icur);
+    sprintf(uname,"%li",quota->getQuotaMnt(q)->geticur());
     leqicur->setText(uname);
+
+    sprintf(uname,"%li",quota->getQuotaMnt(q)->getftime());
+    leqft->setText(uname);
+
+    sprintf(uname,"%li",quota->getQuotaMnt(q)->getitime());
+    leqit->setText(uname);
   }
 #endif
 }

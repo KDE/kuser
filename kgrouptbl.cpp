@@ -29,12 +29,12 @@ void KGroupRow::paint( QPainter *p, int col, int width )
       width -= pmGroup->width()+4;
 
       p->drawPixmap( 1, 0, *pmGroup );
-      tmpS.setNum(ku->gid);
+      tmpS.setNum(ku->getgid());
       p->drawText( start, fontpos, width, p->fontMetrics().lineSpacing(), AlignRight, tmpS);
     }
       break;
     case 1:	// size
-      p->drawText( 2, fontpos, width-4, p->fontMetrics().lineSpacing(), AlignLeft, ku->name );
+      p->drawText( 2, fontpos, width-4, p->fontMetrics().lineSpacing(), AlignLeft, ku->getname());
       break;
   }
   //  printf("KGroupRow::paint end\n");
@@ -102,13 +102,13 @@ void KGroupTable::insertItem(KGroup *aku)
 
        switch (sort) {
          case 0:
-           if (krow->getData()->gid > aku->gid) {
+           if (krow->getData()->getgid() > aku->getgid()) {
              insertRow(tmpUser, i);
              isinserted = TRUE;
            }
            break;
          case 1:
-           if (krow->getData()->name > (const char *)aku->name) {
+           if (krow->getData()->getname() > (const char *)aku->getname()) {
              insertRow(tmpUser, i);
              isinserted = TRUE;
            }

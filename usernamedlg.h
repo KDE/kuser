@@ -9,14 +9,15 @@
 
 class usernamedlg : public QDialog {
   Q_OBJECT
-public slots:
+public:
+  usernamedlg(KUser*auser, QWidget* parent = NULL, const char* name = NULL);
+  ~usernamedlg();
+
+protected slots:
   void ok();
   void cancel();
 
-public:
-  usernamedlg(KUser*auser, QWidget* parent = NULL, const char* name = NULL);
-
-private:
+protected:
   KUser *user;
 
   QPushButton *pbOk;

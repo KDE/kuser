@@ -24,10 +24,6 @@
 mainDlg::mainDlg(QWidget *parent) :
 QWidget(parent)
 {
-#ifdef _KU_DEBUG
-printf("mainDlg::mainDlg\n");
-#endif
-
   changed = FALSE;
   prev = 0;
 
@@ -36,7 +32,6 @@ printf("mainDlg::mainDlg\n");
 }
 
 void mainDlg::init() {
-printf("mainDlg::init()\n");
 #ifdef _KU_QUOTA
   m = new Mounts();
   q = new Quotas();
@@ -90,6 +85,11 @@ mainDlg::~mainDlg() {
   delete lbusers;
   delete lbgroups;
 
+  delete pbquit;
+  delete pbedit;
+  delete pbdel;
+  delete pbadd;
+  
   delete u;
   delete g;
 
@@ -170,7 +170,7 @@ void mainDlg::del() {
     if (i == u->getUsersNumber()-1)
       islast = TRUE;
 
-    unsigned int uid = lbusers->getCurrentUser()->p_uid;
+    unsigned int uid = lbusers->getCurrentUser()->getp_uid();
 
     u->delUser(lbusers->getCurrentUser());
 
@@ -200,10 +200,10 @@ void mainDlg::add() {
 
   tk = new KUser();
 
-  tk->p_uid = u->first_free();
+  tk->setp_uid(u->first_free());
 
 #ifdef _KU_QUOTA
-  tq = new Quota(tk->p_uid, FALSE);
+  tq = new Quota(tk->getp_uid(), FALSE);
 #endif // _KU_QUOTA
 
   ud = new usernamedlg(tk, this);
@@ -213,22 +213,22 @@ void mainDlg::add() {
   delete ud;
 
   config->setGroup("template");
-  tk->p_shell = readentry("shell");
-  tk->p_dir   = readentry("homeprefix")+"/"+tk->p_name;
-  tk->p_gid   = readnumentry("gid");
-  tk->p_fname = readentry("p_fname");
-  tk->p_office1 = readentry("p_office1");
-  tk->p_office2 = readentry("p_office2");
-  tk->p_address = readentry("p_address");
+  tk->setp_shell(readentry("shell"));
+  tk->setp_dir(readentry("homeprefix")+"/"+tk->getp_name());
+  tk->setp_gid(readnumentry("gid"));
+  tk->setp_fname(readentry("p_fname"));
+  tk->setp_office1(readentry("p_office1"));
+  tk->setp_office2(readentry("p_office2"));
+  tk->setp_address(readentry("p_address"));
 
 #ifdef _KU_SHADOW
-  tk->s_lstchg = readnumentry("s_lstchg");
-  tk->s_min = readnumentry("s_min");
-  tk->s_max = readnumentry("s_max");
-  tk->s_warn = readnumentry("s_warn");
-  tk->s_inact = readnumentry("s_inact");
-  tk->s_expire = readnumentry("s_expire");
-  tk->s_flag = readnumentry("s_flag");
+  tk->sets_lstchg(readnumentry("s_lstchg"));
+  tk->sets_min(readnumentry("s_min"));
+  tk->sets_max(readnumentry("s_max"));
+  tk->sets_warn(readnumentry("s_warn"));
+  tk->sets_inact(readnumentry("s_inact"));
+  tk->sets_expire(readnumentry("s_expire"));
+  tk->sets_flag(readnumentry("s_flag"));
 #endif
 
 #ifdef _KU_QUOTA
@@ -305,22 +305,22 @@ void mainDlg::properties() {
 #endif
 
   config->setGroup("template");
-  tk->p_shell = readentry("shell");
-  tk->p_dir   = readentry("homeprefix");
-  tk->p_gid   = readnumentry("gid");
-  tk->p_fname = readentry("p_fname");
-  tk->p_office1 = readentry("p_office1");
-  tk->p_office2 = readentry("p_office2");
-  tk->p_address = readentry("p_address");
+  tk->setp_shell(readentry("shell"));
+  tk->setp_dir(readentry("homeprefix"));
+  tk->setp_gid(readnumentry("gid"));
+  tk->setp_fname(readentry("p_fname"));
+  tk->setp_office1(readentry("p_office1"));
+  tk->setp_office2(readentry("p_office2"));
+  tk->setp_address(readentry("p_address"));
 
 #ifdef _KU_SHADOW
-  tk->s_lstchg = readnumentry("s_lstchg");
-  tk->s_min = readnumentry("s_min");
-  tk->s_max = readnumentry("s_max");
-  tk->s_warn = readnumentry("s_warn");
-  tk->s_inact = readnumentry("s_inact");
-  tk->s_expire = readnumentry("s_expire");
-  tk->s_flag = readnumentry("s_flag");
+  tk->sets_lstchg(readnumentry("s_lstchg"));
+  tk->sets_min(readnumentry("s_min"));
+  tk->sets_max(readnumentry("s_max"));
+  tk->sets_warn(readnumentry("s_warn"));
+  tk->sets_inact(readnumentry("s_inact"));
+  tk->sets_expire(readnumentry("s_expire"));
+  tk->sets_flag(readnumentry("s_flag"));
 #endif
 
 #ifdef _KU_QUOTA
@@ -340,22 +340,22 @@ void mainDlg::properties() {
   editUser = new propdlg(tk, this, "userin");
 #endif
   if (editUser->exec() != 0) {
-    config->writeEntry("shell", tk->p_shell);
-    config->writeEntry("homeprefix", tk->p_dir);
-    config->writeEntry("gid", tk->p_gid);
-    config->writeEntry("p_fname", tk->p_fname);
-    config->writeEntry("p_office1", tk->p_office1);
-    config->writeEntry("p_office2", tk->p_office2);
-    config->writeEntry("p_address", tk->p_address);
+    config->writeEntry("shell", tk->getp_shell());
+    config->writeEntry("homeprefix", tk->getp_dir());
+    config->writeEntry("gid", tk->getp_gid());
+    config->writeEntry("p_fname", tk->getp_fname());
+    config->writeEntry("p_office1", tk->getp_office1());
+    config->writeEntry("p_office2", tk->getp_office2());
+    config->writeEntry("p_address", tk->getp_address());
 
 #ifdef _KU_SHADOW
-    config->writeEntry("s_lstchg", tk->s_lstchg);
-    config->writeEntry("s_min", tk->s_min);
-    config->writeEntry("s_max", tk->s_max);
-    config->writeEntry("s_warn", tk->s_warn);
-    config->writeEntry("s_inact", tk->s_inact);
-    config->writeEntry("s_expire", tk->s_expire);
-    config->writeEntry("s_flag", tk->s_flag);
+    config->writeEntry("s_lstchg", tk->gets_lstchg());
+    config->writeEntry("s_min", tk->gets_min());
+    config->writeEntry("s_max", tk->gets_max());
+    config->writeEntry("s_warn", tk->gets_warn());
+    config->writeEntry("s_inact", tk->gets_inact());
+    config->writeEntry("s_expire", tk->gets_expire());
+    config->writeEntry("s_flag", tk->gets_flag());
 #endif
 
 #ifdef _KU_QUOTA
@@ -409,7 +409,7 @@ void mainDlg::userSelected(int i) {
 #ifdef _KU_QUOTA
   Quota *tmpQ;
 
-  tmpQ = q->getQuota(tmpKU->p_uid);
+  tmpQ = q->getQuota(tmpKU->getp_uid());
   if (tmpQ == NULL) {
     printf(_("Null pointer tmpQ in mainDlg::selected(%d)\n"), i);
     return;

@@ -85,7 +85,32 @@
 
 class QuotaMnt {
 public:
-  long int
+  QuotaMnt();
+  QuotaMnt(int afcur, int afsoft, int afhard, int aicur, int aisoft, int aihard);
+  QuotaMnt(int afcur, int afsoft, int afhard, int aicur, int aisoft, int aihard, int aftime, int aitime);
+  QuotaMnt(const QuotaMnt *q);
+  ~QuotaMnt();
+
+  long getfcur();
+  long getfsoft();
+  long getfhard();
+  long geticur();
+  long getisoft();
+  long getihard();
+  long getftime();
+  long getitime();
+
+  void setfcur(long data);
+  void setfsoft(long data);
+  void setfhard(long data);
+  void seticur(long data);
+  void setisoft(long data);
+  void setihard(long data);
+  void setftime(long data);
+  void setitime(long data);
+
+protected:
+  long
     fcur,
     fsoft,
     fhard,
@@ -94,12 +119,6 @@ public:
     ihard,
     ftime,
     itime;
-  QuotaMnt();
-  QuotaMnt(int afcur, int afsoft, int afhard, int aicur, int aisoft, int aihard);
-  QuotaMnt(int afcur, int afsoft, int afhard, int aicur, int aisoft, int aihard, int aftime, int aitime);
-  QuotaMnt(const QuotaMnt *q);
-  ~QuotaMnt();
-  QuotaMnt& operator= (const QuotaMnt& q);
 };
 
 class Quota {

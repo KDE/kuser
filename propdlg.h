@@ -37,8 +37,9 @@ protected slots:
   void charchanged(const char *);
   void add();
   void del();
+  void setpgroup(const char *text);
 
-private:
+protected:
   void selectuser();
   void save();
   void saveg();
@@ -87,6 +88,8 @@ private:
   QLabel *l14;
   QLabel *l15;
   QLabel *l16;
+  QLabel *l17;
+  QLabel *l18;
 
   QPushButton *pbsetpwd;
 
@@ -102,10 +105,13 @@ private:
 
 #ifdef _KU_QUOTA
   QComboBox   *leqmnt;
+  QComboBox   *cbpgrp;
   QLineEdit   *leqfs;
   QLineEdit   *leqfh;
+  QLineEdit   *leqft;
   QLineEdit   *leqis;
   QLineEdit   *leqih;
+  QLineEdit   *leqit;
   QLabel      *leqfcur;
   QLabel      *leqicur;
 #endif

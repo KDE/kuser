@@ -44,6 +44,30 @@ KGroup::~KGroup() {
   u.clear();
 }
 
+QString KGroup::getname() {
+  return (name);
+}
+
+QString KGroup::getpwd() {
+  return (pwd);
+}
+
+unsigned int KGroup::getgid() {
+  return (gid);
+}
+
+void KGroup::setname(const char *data) {
+  name.setStr(data);
+}
+
+void KGroup::setpwd(const char *data) {
+  pwd.setStr(data);
+}
+
+void KGroup::setgid(unsigned int data) {
+  gid = data;
+}
+
 QString *KGroup::lookup_user(const char *aname) {
   for (uint i = 0; i<u.count(); i++)
     if (aname == (*u.at(i)))
@@ -66,6 +90,18 @@ bool KGroup::removeUser(const char *aname) {
   return (FALSE);
 }
 
+uint KGroup::getUsersNumber() {
+  return (u.count());
+}
+
+QString KGroup::getUserName(uint i) {
+  return (*u.at(i));
+}
+
+void KGroup::clearUsers() {
+  u.clear();
+}
+
 KGroups::KGroups() {
   g_saved = 0;
 
@@ -78,14 +114,14 @@ KGroups::KGroups() {
 
   while ((p = getgrent())!=NULL) {
     tmpKG = new KGroup();
-    tmpKG->gid = p->gr_gid;
-    tmpKG->name.setStr(p->gr_name);
-    tmpKG->pwd.setStr(p->gr_passwd);
+    tmpKG->setgid(p->gr_gid);
+    tmpKG->setname(p->gr_name);
+    tmpKG->setpwd(p->gr_passwd);
 
     char *u_name;
     int i = 0;
     while ((u_name = p->gr_mem[i])!=0) {
-      tmpKG->u.append(new QString(u_name));
+      tmpKG->addUser(u_name);
       i++;
     }
 
@@ -115,13 +151,13 @@ void KGroups::save() {
   }
 
   for (unsigned int i=0; i<g.count(); i++) {
-    tmpN.setNum(g.at(i)->gid);
-    tmpS = g.at(i)->name+':'+g.at(i)->pwd+':'+tmpN+':';
-    for (uint j=0; j<g.at(i)->u.count(); j++) {
+    tmpN.setNum(g.at(i)->getgid());
+    tmpS = g.at(i)->getname()+':'+g.at(i)->getpwd()+':'+tmpN+':';
+    for (uint j=0; j<g.at(i)->getUsersNumber(); j++) {
        if (j != 0)
 	 tmpS += ',';
 
-       tmpS += (*g.at(i)->u.at(j));
+       tmpS += g.at(i)->getUserName(j);
     }
     tmpS += '\n';
     fputs(tmpS, grp);
@@ -133,14 +169,14 @@ void KGroups::save() {
 
 KGroup *KGroups::group_lookup(const char *name) {
   for (uint i = 0; i<g.count(); i++)
-    if (name == g.at(i)->name)
+    if (name == g.at(i)->getname())
       return (g.at(i));
   return (NULL);
 }
 
-KGroup *KGroups::group_lookup(unsigned int uid) {
+KGroup *KGroups::group_lookup(unsigned int gid) {
   for (uint i = 0; i<g.count(); i++)
-    if (uid == g.at(i)->gid)
+    if (gid == g.at(i)->getgid())
       return (g.at(i));
   return (NULL);
 }
@@ -150,7 +186,7 @@ unsigned int KGroups::first_free() {
 
   for (uint i=0;i<g.count();i++)
   {
-    if (g.at(i)->gid == t)
+    if (g.at(i)->getgid() == t)
     {
       t++;
       i = 0;

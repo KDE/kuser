@@ -27,11 +27,11 @@ void KUserRow::paint( QPainter *p, int col, int width )
       width -= 2 + pmUser->width();
 
       p->drawPixmap( 1, 0, *pmUser );
-      p->drawText( start, fontpos, width, p->fontMetrics().lineSpacing(), AlignLeft, ku->p_name);
+      p->drawText( start, fontpos, width, p->fontMetrics().lineSpacing(), AlignLeft, ku->getp_name());
     }
       break;
     case 1:	// size
-      p->drawText( 2, fontpos, width-4, p->fontMetrics().lineSpacing(), AlignLeft, ku->p_fname );
+      p->drawText( 2, fontpos, width-4, p->fontMetrics().lineSpacing(), AlignLeft, ku->getp_fname());
       break;
   }
   //  printf("KUserRow::paint end\n");
@@ -99,13 +99,13 @@ void KUserTable::insertItem(KUser *aku)
 
        switch (sort) {
          case 0:
-           if (krow->getData()->p_name > (const char *)aku->p_name) {
+           if (krow->getData()->getp_name() > (const char *)aku->getp_name()) {
              insertRow(tmpUser, i);
              isinserted = TRUE;
            }
            break;
          case 1:
-           if (krow->getData()->p_fname > (const char *)aku->p_fname) {
+           if (krow->getData()->getp_fname() > (const char *)aku->getp_fname()) {
              insertRow(tmpUser, i);
              isinserted = TRUE;
            }

@@ -6,12 +6,6 @@
 
 class MntEnt {
 public:
-  QString fsname;
-  QString dir;
-  QString type;
-  QString opts;
-  QString quotafilename;
-  
   MntEnt() {
   }
   
@@ -19,6 +13,25 @@ public:
          const char *atype, const char *aopts,
          const char *aquotafilename);
   ~MntEnt();
+
+  QString getfsname();
+  QString getdir();
+  QString gettype();
+  QString getopts();
+  QString getquotafilename();
+
+  void setfsname(const char *data);
+  void setdir(const char *data);
+  void settype(const char *data);
+  void setopts(const char *data);
+  void setquotafilename(const char *data);
+
+protected:
+  QString fsname;
+  QString dir;
+  QString type;
+  QString opts;
+  QString quotafilename;
 };
 
 class Mounts {

@@ -68,6 +68,7 @@ KTopLevelWidget(name)
  }
 
 mainWidget::~mainWidget() {
+  delete md;
   delete menubar;
   delete toolbar;
 }

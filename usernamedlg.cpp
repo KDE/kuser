@@ -59,6 +59,11 @@ usernamedlg::usernamedlg(KUser *auser, QWidget* parent, const char* name)
   layout->freeze();
 }
 
+usernamedlg::~usernamedlg() {
+  delete leusername;
+  delete pbOk;
+  delete pbCancel;
+}
 
 void usernamedlg::ok()
 {
@@ -69,7 +74,7 @@ void usernamedlg::ok()
     KMsgBox::message(0, _("Error"), tmp, KMsgBox::STOP);
   }
   else {
-    user->p_name.setStr(leusername->text());
+    user->setp_name(leusername->text());
     accept();
   }
 }

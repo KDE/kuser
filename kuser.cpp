@@ -26,6 +26,8 @@
 #include "quota.h"
 #endif
 
+// class KUser
+
 KUser::KUser() {
   p_name.setStr("");
   p_pwd.setStr("*");
@@ -36,7 +38,7 @@ KUser::KUser() {
   p_office2.setStr("");
   p_address.setStr("");
   p_uid     = 0;
-  p_gid     = 0;
+  p_gid     = 100;
 
 #ifdef _KU_SHADOW   
   s_pwd.setStr("");
@@ -50,47 +52,207 @@ KUser::KUser() {
 #endif
 }
   
-KUser::KUser(KUser *copy) {
-    p_name    = copy->p_name;
-    p_pwd     = copy->p_pwd;
-    p_dir     = copy->p_dir;
-    p_shell   = copy->p_shell;
-    p_fname   = copy->p_fname;
-    p_office1 = copy->p_office1;
-    p_office2 = copy->p_office2;
-    p_address = copy->p_address;
-    p_uid     = copy->p_uid;
-    p_gid     = copy->p_gid;
-
-#ifdef _KU_SHADOW   
-  if (is_shadow == 1) {
-    s_pwd     = copy->s_pwd;
-    s_lstchg  = copy->s_lstchg;
-    s_min     = copy->s_min;
-    s_max     = copy->s_max;
-    s_warn    = copy->s_warn;
-    s_inact   = copy->s_inact;
-    s_expire  = copy->s_expire;
-    s_flag    = copy->s_flag;
-  }
-#endif
-}
-
 KUser::~KUser() {
 }
 
+QString KUser::getp_name() {
+  return (p_name);
+}
+
+QString KUser::getp_pwd() {
+  return (p_pwd);
+}
+
+QString KUser::getp_dir() {
+  return (p_dir);
+}
+
+QString KUser::getp_shell() {
+  return (p_shell);
+}
+
+QString KUser::getp_fname() {
+  return (p_fname);
+}
+
+QString KUser::getp_office1() {
+  return (p_office1);
+}
+
+QString KUser::getp_office2() {
+  return (p_office2);
+}
+
+QString KUser::getp_address() {
+  return (p_address);
+}
+
+unsigned int KUser::getp_uid() {
+  return (p_uid);
+}
+
+unsigned int KUser::getp_gid() {
+  return (p_gid);
+}
+
+#ifdef _KU_SHADOW
+QString KUser::gets_pwd() {
+  return (s_pwd);
+}
+
+long KUser::gets_lstchg() {
+  return(s_lstchg);
+}
+
+int KUser::gets_min() {
+  return (s_min);
+}
+
+int KUser::gets_max() {
+  return (s_max);
+}
+
+int KUser::gets_warn() {
+  return (s_warn);
+}
+
+int KUser::gets_inact() {
+  return (s_inact);
+}
+
+int KUser::gets_expire() {
+  return (s_expire);
+}
+
+int KUser::gets_flag() {
+  return (s_flag);
+}
+#endif
+
+void KUser::setp_name(const char *data) {
+  p_name.setStr(data);
+}
+
+void KUser::setp_pwd(const char *data) {
+  p_pwd.setStr(data);
+}
+
+void KUser::setp_dir(const char *data) {
+  p_dir.setStr(data);
+}
+
+void KUser::setp_shell(const char *data) {
+  p_shell.setStr(data);
+}
+
+void KUser::setp_fname(const char *data) {
+  p_fname.setStr(data);
+}
+
+void KUser::setp_office1(const char *data) {
+  p_office1.setStr(data);
+}
+
+void KUser::setp_office2(const char *data) {
+  p_office2.setStr(data);
+}
+
+void KUser::setp_address(const char *data) {
+  p_address.setStr(data);
+}
+
+void KUser::setp_uid(unsigned int data) {
+  p_uid = data;
+}
+
+void KUser::setp_gid(unsigned int data) {
+  p_gid = data;
+}
+
+#ifdef _KU_SHADOW
+void KUser::sets_pwd(const char *data) {
+  s_pwd.setStr(data);
+}
+
+void KUser::sets_lstchg(long data) {
+  s_lstchg = data;
+}
+
+void KUser::sets_min(int data) {
+  s_min = data;
+}
+
+void KUser::sets_max(int data) {
+  s_max = data;
+}
+
+void KUser::sets_warn(int data) {
+  s_warn = data;
+}
+
+void KUser::sets_inact(int data) {
+  s_inact = data;
+}
+
+void KUser::sets_expire(int data) {
+  s_expire = data;
+}
+
+void KUser::sets_flag(int data) {
+  s_flag = data;
+}
+#endif
+
+// class KUsers
+
 KUsers::KUsers() {
-  p_saved = 0;
-  s_saved = 0;
+  p_backuped = 0;
+  s_backuped = 0;
 
   u.setAutoDelete(TRUE);
 
+  load();
+}
+
+void KUsers::fillGecos(KUser *user, const char *gecos) {
+  int no = 0;
+  const char *s = gecos;
+  const char *pos = NULL;
+  // At least one part of the string exists
+  for(;;) {
+    pos = strchr(s, ',');
+    char val[200];
+    if(pos == NULL)
+      strcpy(val, s);
+    else {
+      strncpy(val, s, (int)(pos-s));
+      val[(int)(pos-s)] = 0;
+    }
+
+    switch(no) {
+      case 0: user->setp_fname(val); break;
+      case 1: user->setp_office1(val); break;
+      case 2: user->setp_office2(val); break;
+      case 3: user->setp_address(val); break;
+    }
+    if(pos == NULL) break;
+    s = pos+1;
+    no++;
+  }
+}
+
+void KUsers::load() {
+  loadpwd();
+  loadsdw();
+}
+
+// Load passwd file
+
+bool KUsers::loadpwd() {
   passwd *p;
   KUser *tmpKU = 0;
-  uint ofs = 0;
-  uint i = 0;
-  char uname[200];
-  char other[200];
+
+  // Start reading passwd file
 
   setpwent();
 
@@ -99,57 +261,29 @@ KUsers::KUsers() {
     quotas->addQuota(p->pw_uid);
 #endif
     tmpKU = new KUser();
-    tmpKU->p_uid = p->pw_uid;
-    tmpKU->p_gid = p->pw_gid;
-    tmpKU->p_name.setStr(p->pw_name);
-    tmpKU->p_pwd.setStr(p->pw_passwd);
-    tmpKU->p_dir.setStr(p->pw_dir);
-    tmpKU->p_shell.setStr(p->pw_shell);
+    tmpKU->setp_uid(p->pw_uid);
+    tmpKU->setp_gid(p->pw_gid);
+    tmpKU->setp_name(p->pw_name);
+    tmpKU->setp_pwd(p->pw_passwd);
+    tmpKU->setp_dir(p->pw_dir);
+    tmpKU->setp_shell(p->pw_shell);
 
-    if ((!p->pw_gecos) || (!p->pw_gecos[0]))
-    {
-      tmpKU->p_fname.setStr("");
-      tmpKU->p_office1.setStr("");
-      tmpKU->p_office2.setStr("");
-      tmpKU->p_address.setStr("");
-    } else {
-      strncpy(other, p->pw_gecos, 200);
-      uname[0] = 0;
-      for (i = 0; (i<strlen(other))&&(other[i]!=','); i++)
-        uname[i] = other[i];
-      ofs = ++i;
-      uname[i-1] = 0;
-      tmpKU->p_fname.setStr(uname);
-      uname[0] = 0;
-      if (ofs < strlen(other)) {
-        for (i = ofs; (i<strlen(other))&&(other[i]!=','); i++)
-          uname[i-ofs] = other[i];
-        uname[i-ofs] = 0;
-        tmpKU->p_address.setStr(uname);
-        uname[0] = 0;
-        ofs = ++i;
-        if ((ofs+1) < strlen(other)) {
-          for (i = ofs; (i<strlen(other))&&(other[i]!=','); i++)
-            uname[i-ofs] = other[i];
-          uname[i-ofs] = 0;
-          tmpKU->p_office1.setStr(uname);
-          ofs = ++i;
-          uname[0] = 0;
-          if ((ofs+1) < strlen(other)) {
-            for (i = ofs; i<strlen(other); i++)
-              uname[i-ofs] = other[i];
-            uname[i-ofs] = 0;
-            tmpKU->p_office2.setStr(uname);
-          }
-        }
-      }
-    }
+    if ((p->pw_gecos != 0) && (p->pw_gecos[0] != 0))
+      fillGecos(tmpKU, p->pw_gecos);
 
     u.append(tmpKU);
   }
 
+  // End reading passwd file
+
   endpwent();
 
+  return (TRUE);
+}
+
+// Load shadow passwords
+
+bool KUsers::loadsdw() {
 #ifdef _KU_SHADOW
   QString tmp;
   FILE *f;
@@ -161,59 +295,87 @@ KUsers::KUsers() {
       is_shadow = 0; 
       tmp.sprintf(_("Error opening %s"), SHADOW_FILE);
       KMsgBox::message(0, _("Error"), tmp, KMsgBox::STOP);
-      return;
+      return (FALSE);
     }
 
-    while ((spw = fgetspent(f)))      // read a shadow password structure
-    {
-      if ((up = user_lookup(spw->sp_namp)) != NULL) {
-        up->s_pwd.setStr(spw->sp_pwdp);        // cp the encrypted pwd
-        up->s_lstchg   = spw->sp_lstchg;
-        up->s_min      = spw->sp_min;
-        up->s_max      = spw->sp_max;
-        up->s_warn     = spw->sp_warn;
-        up->s_inact    = spw->sp_inact;
-        up->s_expire   = spw->sp_expire;
-        up->s_flag     = spw->sp_flag;
-      }
-      else {
-        tmp.sprintf(_("No /etc/passwd entry for %s.\n\
-Entry will be removed at the next `Save'-operation."), spw->sp_namp);
+    while ((spw = fgetspent(f))) {     // read a shadow password structure
+      if ((up = user_lookup(spw->sp_namp)) == NULL) {
+        tmp.sprintf(_("No /etc/passwd entry for %s.\nEntry will be removed at the next `Save'-operation."),
+		    spw->sp_namp);
         KMsgBox::message(0, _("Error"), tmp, KMsgBox::STOP);
+	continue;
       }
+
+      up->sets_pwd(spw->sp_pwdp);        // cp the encrypted pwd
+      up->sets_lstchg(spw->sp_lstchg);
+      up->sets_min(spw->sp_min);
+      up->sets_max(spw->sp_max);
+      up->sets_warn(spw->sp_warn);
+      up->sets_inact(spw->sp_inact);
+      up->sets_expire(spw->sp_expire);
+      up->sets_flag(spw->sp_flag);
     }
 
     fclose(f);
   }
+
+  return (TRUE);
 #endif // _KU_SHADOW
 }
 
 void KUsers::save() {
+  savepwd();
+  savesdw();
+}
+
+// Save password file
+
+bool KUsers::savepwd() {
   FILE *passwd;
-  QString tmpS;
+  QString s;
+  QString s1;
+
   char other[200];
 
-  if (!p_saved) {
+  if (!p_backuped) {
     backup(PASSWORD_FILE);
-    p_saved = TRUE;
+    p_backuped = TRUE;
   }
 
   if ((passwd = fopen(PASSWORD_FILE,"w")) == NULL) {
     sprintf(other, _("Error opening %s for writing"), PASSWORD_FILE);
     KMsgBox::message(0, _("Error"), other, KMsgBox::STOP);
+    return (FALSE);
   }
 
   for (unsigned int i=0; i<u.count(); i++) {
-    tmpS.sprintf("%s:%s:%i:%i:%s,%s,%s,%s:%s:%s\n", (const char *)u.at(i)->p_name,
-            (const char *)u.at(i)->p_pwd, (const char *)u.at(i)->p_uid, (const char *)u.at(i)->p_gid, (const char *)u.at(i)->p_fname,
-            (const char *)u.at(i)->p_office1, (const char *)u.at(i)->p_office2, (const char *)u.at(i)->p_address,
-            (const char *)u.at(i)->p_dir, (const char *)u.at(i)->p_shell);
-    fputs(tmpS, passwd);
+    KUser *user = u.at(i);
+    s.sprintf("%s:%s:%i:%i:",  (const char *)user->getp_name(),
+		 (const char *)user->getp_pwd(), (const char *)user->getp_uid(),
+		 (const char *)user->getp_gid());
+
+    s1.sprintf("%s,%s,%s,%s", (const char *)user->getp_fname(), (const char *)user->getp_office1()
+	       ,(const char *)user->getp_office2(), (const char *)user->getp_address());
+
+    for (int i=(s1.length()-1); i>=0; i--) {
+      if (s1[i] != ',')
+	break;
+
+      s1.truncate(i);
+    }
+
+    s+=s1+":"+user->getp_dir()+":"+user->getp_shell()+"\n";
+    fputs((const char *)s, passwd);
   }
   fclose(passwd);
 
   chmod(PASSWORD_FILE, PASSWORD_FILE_MASK);
+  return (TRUE);
+}
 
+// Save shadow passwords file
+
+bool KUsers::savesdw() {
 #ifdef _KU_SHADOW
   QString tmp;
   FILE *f;
@@ -223,41 +385,40 @@ void KUsers::save() {
 
 
   if (is_shadow) {
-    if (!s_saved) {
+    if (!s_backuped) {
       backup(SHADOW_FILE);
-      s_saved = TRUE;
+      s_backuped = TRUE;
     }
 
     if ((f = fopen(SHADOW_FILE, "w")) == NULL) {
       tmp.sprintf(_("Error opening %s for writing"), SHADOW_FILE);
       KMsgBox::message(0, _("Error"), (const char *)tmp, KMsgBox::STOP);
+      return (FALSE);
     }
 
     s.sp_namp = (char *)malloc(200);
     s.sp_pwdp = (char *)malloc(200);
     
-    for (uint index = 0; index < u.count(); index++)
-    {
+    for (uint index = 0; index < u.count(); index++) {
       up = u.at(index);
-      if (!(const char *)up->s_pwd)
-      {
-        tmp.sprintf(_("No shadow entry for %s."), (const char *)up->p_name);
+      if (!(const char *)up->gets_pwd()) {
+        tmp.sprintf(_("No shadow entry for %s."), (const char *)up->getp_name());
         KMsgBox::message(0, _("Error"), tmp, KMsgBox::STOP);
+	continue;
       }
-      else {
-        strcpy(s.sp_namp, (const char *)up->p_name);
-        strcpy(s.sp_pwdp, (const char *)up->s_pwd);
-        s.sp_lstchg = up->s_lstchg;
-        s.sp_min    = up->s_min;
-        s.sp_max    = up->s_max;
-        s.sp_warn   = up->s_warn;
-        s.sp_inact  = up->s_inact;
-        s.sp_expire = up->s_expire;
-        s.sp_flag   = up->s_flag;
 
-        spwp = &s;
-        putspent(spwp, f);
-      }
+      strcpy(s.sp_namp, (const char *)up->getp_name());
+      strcpy(s.sp_pwdp, (const char *)up->gets_pwd());
+      s.sp_lstchg = up->gets_lstchg();
+      s.sp_min    = up->gets_min();
+      s.sp_max    = up->gets_max();
+      s.sp_warn   = up->gets_warn();
+      s.sp_inact  = up->gets_inact();
+      s.sp_expire = up->gets_expire();
+      s.sp_flag   = up->gets_flag();
+
+      spwp = &s;
+      putspent(spwp, f);
     }
     fclose(f);
 
@@ -266,36 +427,37 @@ void KUsers::save() {
   free(s.sp_namp);
   free(s.sp_pwdp);
 #endif // _KU_SHADOW
+  return (TRUE);
 }
 
 KUser *KUsers::user_lookup(const char *name) {
   for (uint i = 0; i<u.count(); i++)
-    if (name == u.at(i)->p_name)
+    if (name == u.at(i)->getp_name())
       return (u.at(i));
   return (NULL);
 }
 
 KUser *KUsers::user_lookup(unsigned int uid) {
   for (uint i = 0; i<u.count(); i++)
-    if (uid == u.at(i)->p_uid)
+    if (uid == u.at(i)->getp_uid())
       return (u.at(i));
   return (NULL);
 }
 
 unsigned int KUsers::first_free() {
-  unsigned int t = 1001;
+  uint t = 1001;
+  uint i = 0;
 
-  for (uint i=0;i<u.count();i++)
-  {
-    if (u.at(i)->p_uid == t)
-    {
-      t++;
-      i = 0;
-      continue;
-    }
+  for (t=1001; t<65534; t++) {
+    while ((i<u.count()) && (u.at(i)->getp_uid() != t))
+      i++;
+
+    if (i == u.count())
+      return (t);
   }
 
-  return t;
+  KMsgBox::message(0, _("Error"), _("You have more than 65534 users!?!? You have ran out of uid space!"), KMsgBox::STOP);
+  return (65537l);
 }
 
 KUsers::~KUsers() {

@@ -184,10 +184,13 @@ void mainDlg::userdel() {
     u->delUser(lbusers->getCurrentUser());
 
 
-    // kill all processes owned by that user
-    pid_t pid = fork();
+    // be paranoid
+    if (uid)
+    {
+      // kill all processes owned by that user
+      pid_t pid = fork();
 
-    switch (pid)
+      switch (pid)
       {
         case 0:
           setuid(uid);
@@ -198,6 +201,7 @@ void mainDlg::userdel() {
           perror("fork");
           break;
       }
+    }
     prev = -1;
 
     if (!islast)

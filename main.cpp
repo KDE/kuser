@@ -53,7 +53,6 @@ int main(int argc, char **argv) {
   aboutData.addAuthor("Denis Pershin",0, "dyp@inetlab.com");
   KCmdLineArgs::init( argc, argv, &aboutData );
 //  KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
-  KApplication app;
   mainWidget *mw = NULL;
 
   KApplication a;

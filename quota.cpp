@@ -185,6 +185,9 @@ Quota::Quota(unsigned int auid, bool doget) {
 #endif
 
 #ifdef _KU_HPUX_QUOTA
+  int fd;
+  int dd = 0;
+
   for (uint i=0; i<mounts->getMountsNumber(); i++) {
     
     if ((dd = quotactl(Q_GETQUOTA, (const char *)mounts->getMount(i)->quotafilename, uid, &dq)) != 0)

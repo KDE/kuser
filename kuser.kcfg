@@ -65,7 +65,7 @@
     </entry>
     <entry name="defaultgroup" type="Int">
       <label>Default primary group</label>
-      <whatsthis>This is the default primary group which will assigned to a newly created user.</whatsthis>
+      <whatsthis>This is the default primary group which will be assigned to a newly created user.</whatsthis>
       <default>100</default>
     </entry>
     

@@ -1,39 +1,57 @@
 #ifndef _KU_PROPDLG_H_
 #define _KU_PROPDLG_H_
 
-#include "includes.h"
+#include <qlined.h>
+#include <qlabel.h>
+#include <qcombo.h>
+#include <qpushbt.h>
+#include <qwidget.h>
+#include <qlistbox.h>
+#include <qtooltip.h>
+#include <qtabdlg.h>
+
 #include "kdatectl.h"
+#include "kuser.h"
+#include "quota.h"
 
 class propdlg : public QTabDialog
 {
   Q_OBJECT
 
 public:
+#ifdef _KU_QUOTA
+  propdlg(KUser *auser, Quota *aquota, QWidget *parent = 0, const char *name = 0, int isprep = false);
+#else
   propdlg(KUser *auser, QWidget *parent = 0, const char *name = 0, int isprep = false);
+#endif
   ~propdlg();
 
 protected slots:
   void ok();
   void cancel();
-  bool check();
-  void save();
-  void saveq();
   void setpwd();
   void mntsel(int index);
+  void qcharchanged(const char *);
   void shactivated(const char *text);
   void changed();
   void charchanged(const char *);
-  void qcharchanged(const char *);
 
 private:
-  int chquota;
   void selectuser();
+  void save();
+  bool check();
 
-private:
-  KUser       *user;
-
-  bool ischanged;
+#ifdef _KU_QUOTA
+  void saveq();
+  int chquota;
   bool isqchanged;
+#endif
+
+  KUser       *user;
+#ifdef _KU_QUOTA
+  Quota *quota;
+#endif
+  bool ischanged;
 
   QWidget *w1;
   QWidget *w2;
@@ -66,23 +84,27 @@ private:
   QLineEdit   *legid;
   QLineEdit   *lefname;
   QComboBox   *leshell;
-  QComboBox   *leqmnt;
   QLineEdit   *lehome;
   QLineEdit   *leoffice1;
   QLineEdit   *leoffice2;
   QLineEdit   *leaddress;
+
+#ifdef _KU_QUOTA
+  QComboBox   *leqmnt;
   QLineEdit   *leqfs;
   QLineEdit   *leqfh;
   QLineEdit   *leqis;
   QLineEdit   *leqih;
+  QLabel      *leqfcur;
+  QLabel      *leqicur;
+#endif
+
   QLabel      *leslstchg;
   KDateCtl    *lesmin;
   KDateCtl    *lesmax;
   KDateCtl    *leswarn;
   KDateCtl    *lesinact;
   KDateCtl    *lesexpire;
-  QLabel      *leqfcur;
-  QLabel      *leqicur;
 };
 
 #endif // _KU_PROPDLG_H_

@@ -1,21 +1,21 @@
 INCLUDES	=	$(all_includes)
 
 # May be -D_XU_QUOTA -D_XU_SHADOW
-DEFS		+= 	-D_KU_QUOTA -D_KU_SHADOW -D_KU_DEBUG 
+DEFS		+= 	-D_KU_SHADOW -D_KU_DEBUG -D_KU_QUOTA
 
 kuser_LDFLAGS	=	$(all_libraries) $(KDE_RPATH)
 kuser_LDADD	=	-lkdeui -lkdecore -lqt -lX11 -lXext $(LIBSOCKET) $(LIBCRYPT)
 
 ####### Files
 
-kuser_SOURCES	=	kdatectl.cpp kuser.cpp main.cpp maindlg.cpp mnt.cpp propdlg.cpp quotatool.cpp pwdtool.cpp sdwtool.cpp misc.cpp usernamedlg.cpp pwddlg.cpp mrqpasswdlined.cpp
-BUILTSOURCE	=       kdatectl.moc maindlg.moc propdlg.moc usernamedlg.moc pwddlg.moc mrqpasswdlined.moc
+kuser_SOURCES	=	kuservw.cpp kheader.cpp krowtable.cpp kusertbl.cpp kdatectl.cpp kuser.cpp main.cpp maindlg.cpp mnt.cpp propdlg.cpp quota.cpp misc.cpp usernamedlg.cpp pwddlg.cpp mrqpasswdlined.cpp
+BUILTSOURCE	=       kuservw.moc kheader.moc krowtable.moc kusertbl.moc kdatectl.moc maindlg.moc propdlg.moc usernamedlg.moc pwddlg.moc mrqpasswdlined.moc
 
 # the following are only useful, if you want to use "make dist"
-noinst_HEADERS	=       kdatectl.h kuser.h maindlg.h   propdlg.h  mnt.h quotatool.h sdwtool.h pwdtool.h includes.h misc.h usernamedlg.h pwddlg.h mrqpasswdlined.h
+noinst_HEADERS	=       kuservw.h kheader.h krowtable.h kusertbl.h kdatectl.h kuser.h maindlg.h   propdlg.h  mnt.h quota.h globals.h misc.h usernamedlg.h pwddlg.h mrqpasswdlined.h
 DISTFILES 	=	README AUTHORS
 DISTCLEANFILES	= 	$(BUILTSOURCE) 
-EDITABLE	=	$(DISTFILES) $(noinst_HEADERS) $(kuser_SOURCES)
+EDITABLE	=	$(DISTFILES) $(noinst_HEADERS) $(kuser_SOURCES) Makefile.am
 
 # the programs get installed in $(prefix)/bin
 bin_PROGRAMS = kuser
@@ -63,5 +63,20 @@ pwddlg.cpp:pwddlg.moc
 pwddlg.moc: pwddlg.h
 	$(MOC) pwddlg.h -o pwddlg.moc
 
+kusertbl.cpp: kusertbl.moc
+kusertbl.moc: kusertbl.h
+	$(MOC) kusertbl.h -o kusertbl.moc
+
+krowtable.cpp: krowtable.moc
+krowtable.moc: krowtable.h
+	$(MOC) krowtable.h -o krowtable.moc
+
+kheader.cpp: kheader.moc
+kheader.moc: kheader.h
+	$(MOC) kheader.h -o kheader.moc
+
+kuservw.cpp: kuservw.moc
+kuservw.moc: kuservw.h
+	$(MOC) kuservw.h -o kuservw.moc
 
 

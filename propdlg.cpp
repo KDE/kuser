@@ -1,21 +1,27 @@
+#include <qvalidator.h>
+
+#include "globals.h"
 #include "propdlg.h"
 #include "propdlg.moc"
 #include "pwddlg.h"
+#include "maindlg.h"
 #include "misc.h"
-#include "pwdtool.h"
-#include "sdwtool.h"
 #include "kdatectl.h"
-#include "quotatool.h"
-#include <qvalidator.h>
 
 
+#ifdef _KU_QUOTA
+propdlg::propdlg(KUser *auser, Quota *aquota, QWidget *parent, const char *name, int)
+#else
 propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
+#endif
        :QTabDialog(parent, name, FALSE,
        WStyle_Customize | WStyle_DialogBorder | WStyle_SysMenu |
        WStyle_MinMax | WType_Modal) {
-
   user = auser;
+#ifdef _KU_QUOTA
+  quota = aquota;
   chquota = 0;
+#endif
 
   QObject::connect(this, SIGNAL(applyButtonPressed()), this, SLOT(ok()));
   setCancelButton();
@@ -181,19 +187,8 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
     QToolTip::add(leqmnt, _("Quota filesystem"));
     leqmnt->clear();
 
-    /*
-    struct mntent *mnt;
-    FILE *fp;
-
-    fp = setmntent(MNTTAB, "r");
-    while ((mnt = getmntent(fp)) != (struct mntent *)0)
-      if (hasmntopt(mnt, MNTOPT_USRQUOTA) != (char *)0)
-        leqmnt->insertItem(mnt->mnt_dir);
-    endmntent(fp);
-    */
-
-    for (uint i = 0; i<mounts.count(); i++)
-       leqmnt->insertItem(mounts.at(i)->dir);
+    for (uint i = 0; i<mounts->getMountsNumber(); i++)
+       leqmnt->insertItem(mounts->getMount(i)->dir);
 
     leqmnt->setGeometry(200, 20, 160, 27);
     QObject::connect(leqmnt, SIGNAL(highlighted(int)), this, SLOT(mntsel(int)));
@@ -247,7 +242,9 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
   resize(450, 470);
 
   ischanged = FALSE;
+#ifdef _KU_QUOTA
   isqchanged = FALSE;
+#endif
 }
 
 propdlg::~propdlg() {
@@ -259,10 +256,6 @@ void propdlg::changed() {
 
 void propdlg::charchanged(const char *) {
   ischanged = TRUE;
-}
-
-void propdlg::qcharchanged(const char *) {
-  isqchanged = TRUE;
 }
 
 void propdlg::save() {
@@ -287,9 +280,9 @@ void propdlg::save() {
 #endif
 }
 
-void propdlg::mntsel(int index) {
 #ifdef _KU_QUOTA
-  Quota *tmpq = user->quota.at(chquota);
+void propdlg::mntsel(int index) {
+  QuotaMnt *tmpq = quota->getQuotaMnt(chquota);
 
   tmpq->fhard = atol(leqfh->text());
   tmpq->fsoft = atol(leqfs->text());
@@ -298,19 +291,26 @@ void propdlg::mntsel(int index) {
 
   chquota = index;
   selectuser();
-#endif
+}
+
+void propdlg::qcharchanged(const char *) {
+  isqchanged = TRUE;
 }
 
 void propdlg::saveq() {
-#ifdef _KU_QUOTA
-  Quota *tmpq = user->quota.at(chquota);
+  QuotaMnt *tmpq = quota->getQuotaMnt(chquota);
 
   tmpq->fhard = atol(leqfh->text());
   tmpq->fsoft = atol(leqfs->text());
   tmpq->ihard = atol(leqih->text());
   tmpq->isoft = atol(leqis->text());
-#endif
 }
+#else
+void propdlg::qcharchanged(const char *) {
+}
+void propdlg::mntsel(int) {
+}
+#endif
 
 void propdlg::shactivated(const char *text) { 
   int id = leshell->currentItem();
@@ -326,10 +326,12 @@ bool propdlg::check() {
     ret = TRUE;
   }
 
+#ifdef _KU_QUOTA
   if (isqchanged == TRUE) {
     saveq();
     ret = TRUE;
   }
+#endif
 
   return (ret);
 }
@@ -372,22 +374,22 @@ void propdlg::selectuser() {
     if (chquota != -1)
       q = chquota;
 
-    sprintf(uname,"%li",user->quota.at(q)->fsoft);
+    sprintf(uname,"%li",quota->getQuotaMnt(q)->fsoft);
     leqfs->setText(uname);
 
-    sprintf(uname,"%li",user->quota.at(q)->fhard);
+    sprintf(uname,"%li",quota->getQuotaMnt(q)->fhard);
     leqfh->setText(uname);
 
-    sprintf(uname,"%li",user->quota.at(q)->isoft);
+    sprintf(uname,"%li",quota->getQuotaMnt(q)->isoft);
     leqis->setText(uname);
 
-    sprintf(uname,"%li",user->quota.at(q)->ihard);
+    sprintf(uname,"%li",quota->getQuotaMnt(q)->ihard);
     leqih->setText(uname);
 
-    sprintf(uname,"%li",user->quota.at(q)->fcur);
+    sprintf(uname,"%li",quota->getQuotaMnt(q)->fcur);
     leqfcur->setText(uname);
 
-    sprintf(uname,"%li",user->quota.at(q)->icur);
+    sprintf(uname,"%li",quota->getQuotaMnt(q)->icur);
     leqicur->setText(uname);
   }
 #endif

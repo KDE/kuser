@@ -1,49 +1,69 @@
+#define _KU_MAIN
+#include "maindlg.h"
+#include "maindlg.moc"
+
+#include "globals.h"
+#include <qtooltip.h>
 #include <kmsgbox.h>
 #include <ktoolbar.h>
 #include <kiconloader.h>
-#include <ktablistbox.h>
-#include "maindlg.h"
+//#include <ktablistbox.h>
+#include <unistd.h>
+
+#ifdef _KU_QUOTA
+#include "quota.h"
+#include "mnt.h"
+#endif
+
+#include "kuser.h"
+#include "misc.h"
+#include "usernamedlg.h"
 #include "propdlg.h"
 #include "pwddlg.h"
-#include "pwdtool.h"
-#include "sdwtool.h"
-#include "misc.h"
-#include "maindlg.moc"
-#include "kuser.h"
-#include "usernamedlg.h"
 
-maindlg::maindlg(const char *name) :
+mainDlg::mainDlg(const char *name) :
 KTopLevelWidget(name)
 {
+#ifdef _KU_DEBUG
+printf("mainDlg::mainDlg\n");
+#endif
+
   changed = FALSE;
   prev = 0;
 
-  QString pixdir = kapp->kdedir() + QString("/share/apps/kuser/pics/");
-
-  list = new KTabListBox(this, "list", 2);
-  list->setGeometry(10,60,380,208);
-  list->setColumn(0, "Login", 80, KTabListBox::MixedColumn);
-  list->setColumn(1, "Full Name", 160);
-  list->setTableFlags (Tbl_smoothVScrolling | Tbl_autoVScrollBar);
-  list->clearTableFlags(Tbl_hScrollBar);
-  list->setSeparator('\n');
-  list->dict().insert("U", new QPixmap(pixdir + "user.xpm"));
-
-  QObject::connect(list, SIGNAL(headerClicked(int)), this, SLOT(setSort(int)));
-  QObject::connect(list, SIGNAL(selected(int,int)), this, SLOT(selected(int,int)));
-
   setCaption(name);
+}
+
+void mainDlg::init() {
+printf("mainDlg::init()\n");
+#ifdef _KU_QUOTA
+  m = new Mounts();
+  q = new Quotas();
+#endif
+
+  u = new KUsers();
+
+  list = new KUserView(this, "list");
+  list->setGeometry(10,80,380,208);
+
+//  QObject::connect(list, SIGNAL(headerClicked(int)), this, SLOT(setSort(int)));
+//  QObject::connect(list, SIGNAL(selected(int,int)), this, SLOT(selected(int,int)));
+
   QLabel *lb1 = addLabel(this, "lb1", 55, 40, 50, 20,_("User name"));
   lb1->setFont(rufont);
   QLabel *lb2 = addLabel(this, "lb2", 165, 40, 250, 20, _("Full name"));
   lb2->setFont(rufont);
 
   reload(0);
+#ifdef _KU_DEBUG
+printf("mainDlg::mainDlg 6\n");
+#endif
 
   QPushButton* pbquit;
   pbquit = new QPushButton( this, "pbquit" );
   pbquit->setFont(rufont);
   QToolTip::add(pbquit, _("Quit KUser"));
+
   pbquit->setGeometry( 50, 350, 100, 30 );
   pbquit->setText(_("Quit"));
   QObject::connect(pbquit, SIGNAL(clicked()), this, SLOT(quit()));
@@ -117,29 +137,40 @@ KTopLevelWidget(name)
   setFixedSize(400, 400);
 }
 
-void maindlg::setSort(int col) {
+mainDlg::~mainDlg() {
+  delete u;
+
+#ifdef _KU_QUOTA
+  delete q;
+  delete m;
+#endif
+}
+
+void mainDlg::setSort(int col) {
   printf("Sort by %d\n", col);
 }
 
-void maindlg::reload(int id) {
-  QString item;
+void mainDlg::reload(int id) {
+  KUser *ku;
 
-  for (KUser *curuser=users.first(); curuser!=NULL; curuser=users.next()) {
-    item = "{U}"+curuser->p_name+"\n"+curuser->p_fname;
-    list->insertItem(item);
+  list->clear();
+
+  for (uint i = 0; i<u->getUsersNumber(); i++) {
+    ku = u->getUser(i);
+    list->insertItem(ku);
   }
 
   list->setCurrentItem(id);
 }
 
-void maindlg::edit() {
-  selected(list->currentItem(),0);
+void mainDlg::edit() {
+  //  selected(list->currentItem(),0);
 }
 
-void maindlg::del() {
+void mainDlg::del() {
   uint i = 0;
   bool islast = FALSE;
-  
+  /*
   if (KMsgBox::yesNo(0, _("WARNING"),
                          _("Do you really want to delete user ?"),
                          KMsgBox::STOP,
@@ -160,12 +191,14 @@ void maindlg::del() {
     else
       list->setCurrentItem(i-1);
   }
+  */
 }
 
-void maindlg::add() {
+void mainDlg::add() {
   usernamedlg *u;
   propdlg *editUser;
 
+  /*
   KUser *tk;
   tk = new KUser();
   u = new usernamedlg(tk, this);
@@ -211,45 +244,43 @@ void maindlg::add() {
   reload(users.count()-1);
 
   delete editUser;
+  */
 }
 
-void maindlg::quit() {
+void mainDlg::quit() {
   if (changed == TRUE)
     if (KMsgBox::yesNo(0, _("Data was modified"),
                           _("Would you like to save changes ?"),
   		          KMsgBox::INFORMATION,
                           _("Save"), _("Discard changes"))) {
 
-      pwd_write();                                                                 
+      u->save();
                                                                                 
-#ifdef _KU_SHADOW
-      if (is_shadow)                                                               
-        sdw_write();                                                                
-#endif                                                                         
-                                                                               
 #ifdef _KU_QUOTA
       if (is_quota)
-        quota_write();
+        q->save();
 #endif
     }
 
   qApp->quit();
 }
 
-void maindlg::about() {
-    sprintf(tmp, _("KUser version %s\nKDE project\nThis program was created by\nDenis Y. Pershin\ndyp@isis.nsu.ru\nCopyright 1997(c)"), _KU_VERSION);
+void mainDlg::about() {
+    QString tmp;
+    tmp.sprintf(_("KUser version %s\nKDE project\nThis program was created by\nDenis Y. Pershin\ndyp@isis.nsu.ru\nCopyright 1997(c)"), _KU_VERSION);
     KMsgBox::message(0, _("Message"), tmp, KMsgBox::INFORMATION);
 }
 
-void maindlg::setpwd() {
+void mainDlg::setpwd() {
   pwddlg *d;
-
+  /*
   d = new pwddlg(users.at(list->currentItem()), this, "pwddlg");
   d->exec();
   delete d;
+  */
 }
 
-void maindlg::help() {
+void mainDlg::help() {
   int id = 0;
 
   id = fork();
@@ -267,7 +298,7 @@ void maindlg::help() {
   }
 }
 
-void maindlg::properties() {
+void mainDlg::properties() {
   propdlg *editUser;
   KUser *tk;
 
@@ -293,14 +324,20 @@ void maindlg::properties() {
 
 #ifdef _KU_QUOTA
   if (is_quota) {
+    /*
     tk->quota.at(0)->fsoft = readnumentry("quota.fsoft");
     tk->quota.at(0)->fhard = readnumentry("quota.fhard");
     tk->quota.at(0)->isoft = readnumentry("quota.isoft");
     tk->quota.at(0)->ihard = readnumentry("quota.ihard");
+    */
   }
 #endif
 
+#ifdef _KU_QUOTA
+  editUser = new propdlg(tk, NULL, this, "userin");
+#else
   editUser = new propdlg(tk, this, "userin");
+#endif
   if (editUser->exec() != 0) {
     config->writeEntry("shell", tk->p_shell);
     config->writeEntry("homeprefix", tk->p_dir);
@@ -322,10 +359,12 @@ void maindlg::properties() {
 
 #ifdef _KU_QUOTA
     if (is_quota) {
+      /*
       config->writeEntry("quota.fsoft", tk->quota.at(0)->fsoft);
       config->writeEntry("quota.fhard", tk->quota.at(0)->fhard);
       config->writeEntry("quota.isoft", tk->quota.at(0)->isoft);
       config->writeEntry("quota.ihard", tk->quota.at(0)->ihard);
+      */
     }
 #endif
   }
@@ -334,8 +373,9 @@ void maindlg::properties() {
   delete editUser;
 }
 
-void maindlg::selected(int i, int) {
+void mainDlg::selected(int i, int) {
   propdlg *editUser;
+  /*
   editUser = new propdlg(users.at(i), this, "userin");
   if (editUser->exec() != 0) {
     reload(list->currentItem());
@@ -343,4 +383,20 @@ void maindlg::selected(int i, int) {
   }
 
   delete editUser;
+  */
 }
+
+KUsers *mainDlg::getUsers() {
+  return (u);
+}
+
+#ifdef _KU_QUOTA
+Mounts *mainDlg::getMounts() {
+  return (m);
+}
+
+Quotas *mainDlg::getQuotas() {
+printf("mainDlg::getQuotas \n");
+  return (q);
+}
+#endif

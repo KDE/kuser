@@ -1,4 +1,9 @@
+#include <stdlib.h>
+#include <stdio.h>
+
 #include <qvalidator.h>
+#include <qdatetm.h>
+
 #include "kdatectl.h"
 #include "kdatectl.moc"
 #include "misc.h"

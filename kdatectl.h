@@ -1,7 +1,14 @@
-#ifndef KU_DATETOOL_H
-#define KU_DATETOOL_H
+#ifndef KU_DATECTL_H
+#define KU_DATECTL_H
 
-#include "includes.h"
+//#include "includes.h"
+#include <qobject.h>
+#include <qlined.h>
+#include <qlabel.h>
+#include <qchkbox.h>
+#include <qfont.h>
+
+#include <kcombo.h>
 
 class KDateCtl: public QObject
 {
@@ -37,5 +44,5 @@ signals:
 	void textChanged();
 };
 
-#endif // K_DATETOOL_H
+#endif // K_DATECTL_H
 

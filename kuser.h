@@ -3,7 +3,10 @@
 
 #include <qstring.h>
 #include <qlist.h>
-#include "quotatool.h"
+
+#ifdef _KU_QUOTA
+#include "quota.h"
+#endif
 
 class KUser {
 public:
@@ -34,14 +37,26 @@ public:
     s_flag;                        // reserved for future use
 #endif
 
-#ifdef _KU_QUOTA
-  QList<Quota>
-    quota;
-#endif
-
   KUser();
   KUser(KUser *copy);
   ~KUser();
+};
+
+class KUsers {
+public:
+  KUsers();
+  ~KUsers();
+  KUser *user_lookup(const char *name);
+  uint first_free();
+  void save();
+  KUser *first();
+  KUser *next();
+  uint getUsersNumber();
+  KUser *getUser(uint num);
+protected:
+  int p_saved;
+  int s_saved;
+  QList<KUser> u;
 };
 
 #endif // _KUSER_H_

@@ -4,8 +4,6 @@
 #include <qstring.h>
 #include <qlist.h>
 
-//#include <mntent.h>
-
 class MntEnt {
 public:
   QString fsname;
@@ -20,6 +18,18 @@ public:
   MntEnt(const char *afsname, const char *adir,
          const char *atype, const char *aopts,
          const char *aquotafilename);
+  ~MntEnt();
+};
+
+class Mounts {
+public:
+  Mounts();
+  ~Mounts();
+
+  MntEnt *getMount(uint num);
+  uint getMountsNumber();
+protected:
+  QList<MntEnt> m;
 };
 
 #endif // _KU_MNT_H_

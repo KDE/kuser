@@ -1,7 +1,13 @@
 #ifndef _KU_PWDDLG
 #define _KU_PWDDLG
 
-#include "includes.h"
+//#include "includes.h"
+#include <qdialog.h>
+#include <qpushbt.h>
+
+#include "kuser.h"
+#include "mrqpasswdlined.h"
+
 
 class pwddlg : public QDialog
 {

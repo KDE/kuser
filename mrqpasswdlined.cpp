@@ -1,22 +1,11 @@
-
-//
-//
-//
-
-
-
 #include<qpainter.h>
 #include<qdrawutl.h>
 #include<qkeycode.h>
 #include<qapp.h>
 #include<qclipbrd.h>
 
-
-
 #include "mrqpasswdlined.h"
 #include "mrqpasswdlined.moc"
-
-
 
 MrQPasswordLineEdit::MrQPasswordLineEdit(QWidget *parent, const char *name, WFlags f)
    : QWidget(parent, name, f)

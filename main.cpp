@@ -1,11 +1,13 @@
 #include <kmsgbox.h>
 #include <kiconloader.h>
-#include "includes.h"
+#include <kapp.h>
+#include <kconfig.h>
+#include <ktopwidget.h>
+#include <qfont.h>
+#include <unistd.h>
 #include "misc.h"
 #include "maindlg.h"
 
-QList<KUser> users;
-QList<MntEnt> mounts;
 QFont rufont("-*-times-medium-r-*-*-*-120-*-*-*-*-*-*");
 
 char tmp[1024];
@@ -25,11 +27,7 @@ int is_shadow = 0;
 #endif
 
 void initmain() {
-  users.setAutoDelete(TRUE);
-
   config = kapp->getConfig();
-
-  init();
 
   rufont.setRawMode(TRUE);
   if (!rufont.exactMatch())
@@ -38,6 +36,7 @@ void initmain() {
 
 void donemain() {
 }
+mainDlg *md = NULL;
 
 int main( int argc, char **argv )
 {
@@ -49,11 +48,14 @@ int main( int argc, char **argv )
 
   initmain();
 
-  maindlg w("kuser");
+  md = new mainDlg("kuser");
+  md->init();
   
-  a.setMainWidget( &w );
-  w.show();
+  a.setMainWidget(md);
+  md->show();
 
   a.exec();
+
+  delete md;
   donemain();
 }

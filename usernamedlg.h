@@ -1,7 +1,11 @@
-#ifndef username_included
-#define username_included
+#ifndef _KU_USERNAMEDLG_H
+#define _KU_USERNAMEDLG_H
 
-#include "includes.h"
+#include <qdialog.h>
+#include <qpushbt.h>
+#include <qlined.h>
+
+#include "kuser.h"
 
 class usernamedlg : public QDialog
 {
@@ -18,5 +22,5 @@ private:
   QPushButton *pbCancel;
   QLineEdit   *leusername;
 };
-#endif // username_included
+#endif // _KU_USERNAMEDLG_H
 

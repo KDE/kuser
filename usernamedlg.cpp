@@ -2,6 +2,7 @@
 #include "usernamedlg.h"
 #include "usernamedlg.moc"
 #include "misc.h"
+#include "maindlg.h"
 
 usernamedlg::usernamedlg(KUser *auser, QWidget* parent, const char* name)
            :QDialog(parent, name, TRUE)
@@ -35,8 +36,10 @@ usernamedlg::usernamedlg(KUser *auser, QWidget* parent, const char* name)
 
 void usernamedlg::ok()
 {
-  if (user_lookup(leusername->text()) != NULL) {
-    sprintf(tmp, _("User with name %s is already exist."), leusername->text());
+  QString tmp;
+
+  if (users->user_lookup(leusername->text()) != NULL) {
+    tmp.sprintf(_("User with name %s is already exist."), leusername->text());
     KMsgBox::message(0, _("Error"), tmp, KMsgBox::STOP);
   }
   else {

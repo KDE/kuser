@@ -1,4 +1,8 @@
-#include "../config.h"
+#include "globals.h"
+
+#include <stdlib.h>
+#include <time.h>
+#include <unistd.h>
 
 #ifdef HAVE_CRYPT_H
 #include <crypt.h>
@@ -9,6 +13,7 @@
 #include "pwddlg.h"
 #include "pwddlg.moc"
 #include "misc.h"
+#include "globals.h"
 
 pwddlg::pwddlg(KUser *auser, QWidget* parent, const char* name)
            :QDialog(parent, name, TRUE)
@@ -47,6 +52,8 @@ pwddlg::pwddlg(KUser *auser, QWidget* parent, const char* name)
 void pwddlg::ok()
 {
   char salt[3];
+  char tmp[128];
+
   const char * set = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./";
 
   if (strcmp(leusername1->text(), leusername2->text())) {

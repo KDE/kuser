@@ -89,6 +89,7 @@ editGroup.moc: editGroup.h
 	$(MOC) editGroup.h -o editGroup.moc
 
 editGroupData.cpp: editGroupData.moc
+editGroup.cpp: editGroupData.moc
 editGroupData.moc: editGroupData.h
 	$(MOC) editGroupData.h -o editGroupData.moc
 

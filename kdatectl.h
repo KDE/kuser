@@ -7,8 +7,7 @@
 #include <qlabel.h>
 #include <qcheckbox.h>
 #include <qfont.h>
-
-#include <kcombo.h>
+#include <qcombobox.h>
 
 class KDateCtl: public QObject
 {
@@ -32,7 +31,7 @@ protected:
   long base;
   
   QLineEdit *day;
-  KCombo *month;
+  QComboBox *month;
   QLineEdit *year;
   QCheckBox *isempty;
   QLabel *label;

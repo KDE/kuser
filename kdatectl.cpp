@@ -15,7 +15,7 @@ KDateCtl::KDateCtl(QWidget *parent, const char *name,
   day = addLineEdit(parent, QString("%1_day").arg(name), x, y+25, 30, 27, "");
   day->setValidator(new QIntValidator(1, 31, parent, QString("va_%1_day").arg(name)));
 
-  month = new KCombo(FALSE, parent, QString("%1_month").arg(name));
+  month = new QComboBox(FALSE, parent, QString("%1_month").arg(name));
   month->clear();
   month->insertItem(i18n("January"));
   month->insertItem(i18n("February"));

@@ -103,11 +103,7 @@ void KGroupLDAP::data( KIO::Job*, const QByteArray& data )
   if ( data.size() ) {
     mParser.setLDIF( data );
   } else {
-    QByteArray dummy( 3 );
-    dummy[ 0 ] = '\n';
-    dummy[ 1 ] = '\n';
-    dummy[ 2 ] = '\n';
-    mParser.setLDIF( dummy );
+    mParser.endLDIF();
   }
 
   KABC::LDIF::ParseVal ret;

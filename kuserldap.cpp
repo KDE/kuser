@@ -96,11 +96,7 @@ void KUserLDAP::data( KIO::Job *, const QByteArray& data )
   if ( data.size() ) {
     mParser.setLDIF( data );
   } else {
-    QByteArray dummy( 3 );
-    dummy[ 0 ] = '\n';
-    dummy[ 1 ] = '\n';
-    dummy[ 2 ] = '\n';
-    mParser.setLDIF( dummy );
+    mParser.endLDIF();
   }
 
   KABC::LDIF::ParseVal ret;
@@ -184,11 +180,13 @@ void KUserLDAP::data( KIO::Job *, const QByteArray& data )
         mUsers.append( new KUser( mUser ) );
         mUser->copy( &newUser );
         mUser->setDisabled( true );
+        
         if ( ( mUsers.count() & 7 ) == 7 ) {
           mProg->progressBar()->advance( mAdv );
           if ( mProg->progressBar()->progress() == 0 ) mAdv = 1;
           if ( mProg->progressBar()->progress() == mProg->progressBar()->totalSteps()-1 ) mAdv = -1;
         }
+        
         break;
       }
       default:
@@ -461,7 +459,7 @@ void KUserLDAP::getLDIF( KUser *user, bool mod )
     if ( mod ) ldif += "-\n";
   }
   ldif += "\n";
-  kdDebug() << "ldif: " << ldif << endl;
+//  kdDebug() << "ldif: " << ldif << endl;
 }
 
 void KUserLDAP::delData( KUser *user )

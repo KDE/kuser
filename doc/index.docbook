@@ -1,131 +1,229 @@
-<!DOCTYPE book PUBLIC "-//KDE//DTD DocBook V3.1-Based Variant V1.0//EN">
-
+<!DOCTYPE book PUBLIC  "-//KDE//DTD DocBook V3.1-Based Variant V1.0//EN" [
+  <!ENTITY kuser "<application>KUser</application>">
+  <!ENTITY kuser "&kuser;">
+  <!ENTITY % addindex "IGNORE">
+  <!ENTITY % ents PUBLIC "-//KDE//ENTITIES Application-Variable Entities V1.0//EN">
+  %ents;
+]>
 <book lang="en">
+
 <bookinfo>
-<title>The Kuser Handbook</title>
+<title>The &kuser; Handbook</title>
 <authorgroup>
 <author>
-<firstname>Denis</firstname>
-<surname>Pershin</surname>
+<firstname>Matt</firstname>
+<surname>Johnston</surname>
+<affiliation>
+<address><email>mattj@flashmail.com</email></address>
+</affiliation>
 </author>
+
+<othercredit>
+<firstname>Lauri</firstname>
+<surname>Watts</surname>
+<affiliation>
+<address><email>vampyr@atconnex.net</email></address>
+</affiliation>
+<contrib>Reviewer</contrib>
+</othercredit>
+
 </authorgroup>
-<date>25/04/1999</date>
-<releaseinfo>1.00.00</releaseinfo>
-<abstract>
-<para>This documentation was last updated for Kuser version 1.0. Please send any comments and additions to the authors.</para>
-</abstract>
+
+<copyright>
+<year>2000</year>
+<holder>Matt Johnston</holder>
+</copyright>
+<legalnotice>&FDLNotice;</legalnotice>
+
+
+<date>22/08/2000</date>
+<releaseinfo>1.3.00</releaseinfo>
+
+<abstract><para>This documentation describes &kuser; version 1.0. This program
+allows you to manage users and groups on your system.</para> </abstract> 
+
 <keywordset>
 <keyword>kuser</keyword>
 <keyword>user</keyword>
 <keyword>management</keyword>
 <keyword>admin</keyword>
 <keyword>tools</keyword>
+<keyword>group</keyword>
+<keyword>password</keyword>
 </keywordset>
 </bookinfo>
 
-<chapter id="secIntro">
-<title>Introduction</title>
-<para>Some time ago I had downloaded xusermgr written with XForms. This program has a
-great interface but on my 800x600 display it looked very ugly. Some text labels
-on the buttons were out of bounds. Of course I started to complain
-about it. My friend heard me and said : "Why are you complaining? 
-If you don't
-like something make it better!" I thought that he was right and wrote this
-primitive user manager.</para>
-</chapter>
-<chapter id="secStart">
+<chapter id="Start">
 <title>Getting Started</title>
-<para>This is a short introduction to Kuser. For more detailed information see
-<link linkend="secUsing">Usage</link>.</para>
-<para>Actually you do not need to do anything to begin using Kuser except
-<link linkend="secCust">configuration</link>.</para>
+<para>This is a short introduction to &kuser;. For more detailed information see
+<link linkend="Using">Usage</link>.</para>
+
+<para>Actually you do not need to do anything to begin using &kuser; except
+<link linkend="customizing">configuration</link>.</para>
+
+<para>When you have made the changes you want, you must
+<guimenuitem>Save</guimenuitem>save> them for them to take effect. Either choose
+the Toolbar icon, or use the <guimenu>File</guimenu> menu.</para>
+
 </chapter>
-<chapter id="secUsing">
+
+<chapter id="Using">
 <title>Usage</title>
+
 <sect1 id="sec1MainWindow">
 <title>Main Window</title>
-<para>Kuser is a very simple application. In the main window you can see two lists:
-the list of users and the list of groups. To edit a user or a group you
+
+<para>&kuser; is a very simple application. In the main window you can see two 
+lists: the list of users and the list of groups. To edit a user or a group you
 just double click on it. The user/group properties dialog will
 appear.</para>
+
 </sect1>
-<sect1 id="sec1UserProps">
+
+<sect1 id="user-properties">
 <title>User Properties Dialog</title>
-<para>The user properties dialog has two, three or four tabs.</para>
-<para>The number of tabs 
-depends on the type of the user storage system and quota presence.
-Additional tabs will appear if you have shadow passwords, or any other similar
-things such as /etc/master.passwd in BSD flavor Unices.</para>
-<sect2 id="sec2userinfo">
-<title>User Info Tab</title>
-<para>In the 'User Info' tab you can modify: Full name, Login shell (the list of login
-shells is taken from the /etc/shells file), Home directory, Extra info, User
-ID, and
-Password.</para>
+
+<para>The user properties dialog has various tabs.</para>
+
+<para>The number of tabs depends on the type of the user storage system and
+whether quotas are being used. Additional tabs will appear if you have shadow
+passwords, or any other similar things such as
+<filename>/etc/master.passwd</filename> in BSD flavor Unices.</para> 
+
+<sect2 id="user-info"> 
+<title><guilabel>User Info</guilabel> Tab</title>
+
+<para>In the "<guilabel>User Info</guilabel>" tab you can modify: </para>
+
+<itemizedlist>
+<listitem><para><guilabel>Full name</guilabel></para></listitem>
+<listitem><para><guilabel>Login shell</guilabel> (the list of login shells is
+taken from the <filename>/etc/shells</filename> file)</para></listitem>
+<listitem><para><guilabel>Home directory</guilabel></para></listitem>
+<listitem><para><guilabel>Extra info</guilabel></para></listitem>
+<listitem><para><guilabel>User ID</guilabel></para></listitem>
+<listitem><para><guilabel>Password</guilabel></para></listitem>
+</itemizedlist>
+
 </sect2>
-<sect2 id="sec2extended">
-<title>Extended Info Tab</title>
-<para>The 'Extended Info' tab will appear if you have shadow passwords, or any other similar
-things such as /etc/master.passwd in BSD flavor Unices.
-In the 'Extended Info' tab you can modify parameters related to extended account control: Date until
-change allowed, Date before change required, Date user will be warned about
-expiration, Date before account inactivation, Date when account expires, and
-Class (on BSD systems).</para>
+
+<sect2 id="extended-info">
+<title><guilabel>Extended Info</guilabel> Tab</title>
+
+<para>The "<guilabel>Extended Info</guilabel>" tab will appear if you have
+shadow passwords, or any other similar things such as
+<filename>/etc/master.passwd</filename> in BSD flavor Unices.</para>
+
+<para>In the "<guilabel>Extended Info</guilabel>" tab you can modify parameters
+related to extended account control: </para>
+
+<itemizedlist>
+<listitem><para><guilabel>Date until change allowed</guilabel></para></listitem>
+<listitem><para><guilabel>Date before change required</guilabel></para></listitem>
+<listitem><para><guilabel>Date user will be warned about
+expiration</guilabel></para></listitem>
+<listitem><para><guilabel>Date before account
+inactivation</guilabel></para></listitem>
+<listitem><para><guilabel>Date when account expires</guilabel></para></listitem>
+<listitem><para><guilabel>Class</guilabel> (on BSD systems)</para></listitem>
+</itemizedlist>
+
 </sect2>
-<sect2 id="sec2quota">
-<title>Quota Tab</title>
-<para>You may see the 'Quota' tab only if you have at least one mounted volume with
-quota enabled and a quota file present. There you may modify all quota related
-parameters: File Soft Quota, File Hard Quota, File Time Limit (Grace Period),
-iNode Soft Quota, iNode Hard Quota, iNode Time Limit (Grace Period). All
-this parameters can be changed for each filesystem that has user quota
-enabled. Filesystems can be changed using the 'Quota Filesystem' combobox.</para>
-</sect2>
-<sect2 id="sec2group">
-<title>Groups Tab</title>
-<para>The 'Groups' tab contains all the information about user's participation in groups.
-First of all, it shows the user's primary group. Also, you can assign as many
-secondary groups as you wish using the arrow buttons.</para>
+
+<sect2 id="quota">
+<title><guilabel>Quota</guilabel> Tab</title>
+
+<para>You will probably see the "<guilabel>Quota</guilabel>" tab only if you
+have at least one mounted volume with quota enabled and a quota file
+present. There you may modify all quota related parameters: </para>
+
+<itemizedlist>
+<listitem><para><guilabel>File Soft Quota</guilabel></para></listitem>
+<listitem><para><guilabel>File Hard Quota</guilabel></para></listitem>
+<listitem><para><guilabel>File Time Limit (Grace Period)</guilabel></para></listitem>
+<listitem><para><guilabel>iNode Soft Quota</guilabel></para></listitem>
+<listitem><para><guilabel>iNode Hard Quota</guilabel></para></listitem>
+<listitem><para><guilabel>iNode Time Limit (Grace Period)</guilabel></para></listitem>
+</itemizedlist>
+
+<para> All these parameters can be changed for each filesystem that has user
+quota enabled. Filesystems can be changed using the "<guilabel>Quota
+Filesystem</guilabel>" combobox.</para> 
+
+</sect2> 
+
+<sect2 id="group">
+<title><guilabel>Groups</guilabel> Tab</title>
+
+<para>The "<guilabel>Groups</guilabel>" tab contains all the information about
+user's participation in groups. First of all, it shows the user's primary
+group. Also, you can assign as many secondary groups as you wish using the arrow
+buttons.</para> 
+
 </sect2>
 </sect1>
-<sect1 id="sec1GroupProps">
-<title>Group Properties</title>
-<para>The Group properties dialog has two list boxes. The right one contains users,
-who are included in the group, and the left one contains the list of
-all other users in the system.</para>
+
+<sect1 id="group-properties">
+<title><guilabel>Group Properties</guilabel></title>
+
+<para>The <guilabel>Group</guilabel> properties dialog has two list boxes. The
+right one contains users ("<guilabel>Users in group</guilabel>"), who are
+included in the group, and the left one contains the list of all other users in
+the system ("<guilabel>Users not in group</guilabel>"). You can use the
+<guibutton>arrow</guibutton> buttons to move a user from one list to the
+other. Select the user you want to move, then use the
+<guibutton>arrow</guibutton> button  to move the user.</para> 
+
 </sect1>
-<sect1 id="sec1add">
-<title>Adding Users/Groups</title>
-<para>Also you can add and delete users using either buttons or the menu.</para>
-</sect1>
+
+<sect1 id="add-user">
+<title>Adding and Removing Users or Groups</title>
+
+<para>To add a user or group to the system, either choose
+<guimenuitem>Add</guimenuitem> from the <guimenu>User</guimenu> or
+<guimenu>Group</guimenu> menu, or click the "<guiicon>Add</guiicon>" button on
+the toolbar. The same applies to removing users. </para> 
+</sect1> 
 </chapter>
-<chapter id="secCust">
-<title>Customizing Kuser</title>
-<sect1 id="sec1defaults">
+
+<chapter id="customizing">
+<title>Customizing &kuser;</title>
+
+<sect1 id="defaults">
 <title>Edit user creation defaults</title>
-<para>To edit the user creation defaults you can use the 'Edit defaults' dialog, which
-is accessible via the menu <literal remap="tt">File-&gt;Preferences</literal>. There you may change the
-defaults that are
-used when creating a new user: Shell, Home Directory (or home directories
-volume). Also, you can chose whether to make a home directory on 'create' or
-not, to copy a
-skeleton 
-to the home directory or not. You can also enable  'User Private Group' 
-mechanism, which creates a new  personal group with the creation of a new
-user, and removes the personal group when the user is removed.</para>
+
+<para>To edit the user creation defaults you can use the "<guilabel>Edit
+defaults</guilabel>" dialog, which is accessible via the menu
+<menuchoice><guimenu>Settings</guimenu>
+<guimenuitem>Preferences</guimenuitem></menuchoice>. There you may change the
+defaults that are used when creating a new user: Shell and Home Directory (or
+home directories volume). You can choose whether to make a home directory on
+"create" or not, to copy a skeleton to the home directory or not. You can also
+enable "User Private Group" mechanism, which creates a new personal group with
+the creation of a new user, and removes the personal group when the user is
+removed.</para>
+
 </sect1>
 </chapter>
-<chapter id="secEpilogue">
-<title>Authors</title>
-<sect1 id="sec1devel">
-<title>Developers</title>
-<para>Denis Pershin <ulink url="mailto:dyp@inetlab.com">&lt;dyp@inetlab.com&gt;</ulink> </para>
-</sect1>
-<sect1 id="secDoc">
-<title>Documentation</title>
-<para>Denis Pershin <ulink url="mailto:dyp@inetlab.com">&lt;dyp@inetlab.com&gt;</ulink> </para>
-</sect1>
+
+<chapter id="credits">
+<title>Credits and License</title>
+
+<para>&kuser;</para>
+
+<para>Program copyright 1997-2000 Denis Pershin
+<email>dyp@inetlab.com</email></para>
+
+<para>Documentation copyright 1997-2000 Denis Pershin
+<email>dyp@inetlab.com</email></para>
+<para>Documentation copyright 2000 Matt Johnston
+<email>mattj@flashmail.com</email></para>
+
+&license-links;
+
 </chapter>
+<![ %addindex; [ &kdedocindex; ]]>
+
 </book>
 <!--
 Local Variables:

@@ -129,6 +129,9 @@
             <property name="name">
                 <cstring>kcfg_copySkel</cstring>
             </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
             <property name="text">
                 <string>Copy skeleton to home folder</string>
             </property>
@@ -143,5 +146,26 @@
         </widget>
     </vbox>
 </widget>
+<connections>
+    <connection>
+        <sender>kcfg_createHomeDir</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>kcfg_copySkel</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+</connections>
+<tabstops>
+    <tabstop>kcfg_source</tabstop>
+    <tabstop>kcfg_shell</tabstop>
+    <tabstop>kcfg_homepath</tabstop>
+    <tabstop>kcfg_firstUID</tabstop>
+    <tabstop>kcfg_firstGID</tabstop>
+    <tabstop>kcfg_createHomeDir</tabstop>
+    <tabstop>kcfg_copySkel</tabstop>
+    <tabstop>kcfg_userPrivateGroup</tabstop>
+</tabstops>
+<slots>
+    <slot>kcfg_createHomeDir_toggled( bool )</slot>
+</slots>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

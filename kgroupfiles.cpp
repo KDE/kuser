@@ -174,6 +174,7 @@ bool KGroupFiles::reload()
 
 bool KGroupFiles::save() 
 {
+  kdDebug() << "KGroupFiles::save() " << endl;
   FILE *group_fd = NULL;
   FILE *gshadow_fd = NULL;
   FILE *nisgroup_fd = NULL;
@@ -228,25 +229,27 @@ bool KGroupFiles::save()
   // Open file(s)
 
   if(!group_filename.isEmpty()) {
-    if((group_fd = fopen(QFile::encodeName(new_group_filename), "w")) == NULL)
+    if((group_fd = fopen(QFile::encodeName(new_group_filename), "w")) == NULL) {
       KMessageBox::error( 0, i18n("Error opening %1 for writing").arg(new_group_filename) );
       return false;
+    }
   }  
   
   if(!gshadow_filename.isEmpty()) {
-    if((gshadow_fd = fopen(QFile::encodeName(new_gshadow_filename), "w")) == NULL)
+    if((gshadow_fd = fopen(QFile::encodeName(new_gshadow_filename), "w")) == NULL) {
       KMessageBox::error( 0, i18n("Error opening %1 for writing").arg(new_gshadow_filename) );
       if ( group_fd ) fclose ( group_fd );
       return false;
-      
+    }      
   }  
 
   if(!nisgroup_filename.isEmpty() && (nisgroup_filename != group_filename)) {
-    if((nisgroup_fd = fopen(QFile::encodeName(new_nisgroup_filename), "w")) == NULL)
+    if((nisgroup_fd = fopen(QFile::encodeName(new_nisgroup_filename), "w")) == NULL) {
       KMessageBox::error( 0, i18n("Error opening %1 for writing").arg(new_nisgroup_filename) );
       if ( group_fd ) fclose ( group_fd );
       if ( gshadow_fd ) fclose ( gshadow_fd );
       return false;
+    }
   }  
 
   umask(0077);
@@ -329,7 +332,6 @@ bool KGroupFiles::save()
     
     ++it;
     gr = (*it);
-
   }
 
   
@@ -379,6 +381,7 @@ bool KGroupFiles::save()
   
 bool KGroupFiles::dbcommit()
 {
+  kdDebug() << "KGroupFiles dbcommit" << endl;
   if ( !save() ) 
     return false;
     

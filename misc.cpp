@@ -38,7 +38,7 @@ bool backup(const QString & name)
   QString tmp = name + QString::fromLatin1(KU_BACKUP_EXT);
   unlink(QFile::encodeName(tmp));
 
-  if (rename(QFile::encodeName(name), QFile::encodeName(tmp)) == -1)
+  if (copyFile(QFile::encodeName(name), QFile::encodeName(tmp)) == -1)
   {
     QString str;
     KMessageBox::error( 0, i18n("Can't create backup file for %1").arg(name) );

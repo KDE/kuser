@@ -1,31 +1,31 @@
-#ifndef _KU_KUSERVW_H
-#define _KU_KUSERVW_H
+#ifndef _KU_GROUPVW_H
+#define _KU_GROUPVW_H
 
 #include <qwidget.h>
 
 #include "kheader.h"
-#include "kusertbl.h"
+#include "kgrouptbl.h"
 
-class KUserView : public QWidget
+class KGroupView : public QWidget
 {
     Q_OBJECT
 
 public:
-  KUserView( QWidget* parent = NULL, const char* name = NULL );
+  KGroupView( QWidget* parent = NULL, const char* name = NULL );
 
-  virtual ~KUserView();
+  virtual ~KGroupView();
 
   void clear();
-  void insertItem(KUser *aku);
+  void insertItem(KGroup *aku);
   int currentItem();
-  KUser *getCurrentUser();
+  KGroup *getCurrentUser();
   void setCurrentItem( int item );
   void setAutoUpdate(bool state);
   void sortBy(int num);
   void repaint();
 
 protected:
-  virtual void KUserView::resizeEvent( QResizeEvent *rev );
+  virtual void KGroupView::resizeEvent( QResizeEvent *rev );
 
 signals:
   void selected(int item);
@@ -40,8 +40,8 @@ private slots:
 private:
   void init();
   KHeader *m_Header;
-  KUserTable *m_Users;
+  KGroupTable *m_Groups;
   int current;
 };
 
-#endif // _KU_USERVW_H
+#endif // _KGROUPVW_H

@@ -19,9 +19,10 @@
 #include "usernamedlg.h"
 #include "propdlg.h"
 #include "pwddlg.h"
+#include "editGroup.h"
 
-mainDlg::mainDlg(const char *name) :
-KTopLevelWidget(name)
+mainDlg::mainDlg(QWidget *parent) :
+QWidget(parent)
 {
 #ifdef _KU_DEBUG
 printf("mainDlg::mainDlg\n");
@@ -30,7 +31,8 @@ printf("mainDlg::mainDlg\n");
   changed = FALSE;
   prev = 0;
 
-  setCaption(name);
+  usort = -1;
+  gsort = -1;
 }
 
 void mainDlg::init() {
@@ -41,85 +43,52 @@ printf("mainDlg::init()\n");
 #endif
 
   u = new KUsers();
+  g = new KGroups();
 
-  list = new KUserView(this, "list");
-  list->setGeometry(10,80,380,208);
+  lbusers = new KUserView(this, "lbusers");
+  //  lbusers->setGeometry(10,80,380,208);
 
-  QObject::connect(list, SIGNAL(headerClicked(int)), this, SLOT(setSort(int)));
-  QObject::connect(list, SIGNAL(selected(int)), this, SLOT(selected(int)));
+  lbgroups = new KGroupView(this, "lbgroups");
+  //  lbgroups->setGeometry(10,400,380,208);
 
-  reload(0);
+  QObject::connect(lbusers, SIGNAL(headerClicked(int)), this, SLOT(setUsersSort(int)));
+  QObject::connect(lbusers, SIGNAL(selected(int)), this, SLOT(userSelected(int)));
+
+  QObject::connect(lbgroups, SIGNAL(headerClicked(int)), this, SLOT(setGroupsSort(int)));
+  QObject::connect(lbgroups, SIGNAL(selected(int)), this, SLOT(groupSelected(int)));
+
+  reloadUsers(0);
+  reloadGroups(0);
 
   pbquit = new QPushButton( this, "pbquit" );
   QToolTip::add(pbquit, _("Quit KUser"));
 
-  pbquit->setGeometry( 50, 350, 100, 30 );
+  pbquit->resize(100, 30);
   pbquit->setText(_("Quit"));
   QObject::connect(pbquit, SIGNAL(clicked()), this, SLOT(quit()));
 
   pbedit = new QPushButton( this, "pbedit" );
   QToolTip::add(pbedit, _("Edit user profile"));
-  pbedit->setGeometry( 250, 350, 100, 30 );
+  pbedit->resize(100, 30);
   pbedit->setText(_("Edit"));
   QObject::connect(pbedit, SIGNAL(clicked()), this, SLOT(edit()));
 
   pbdel = new QPushButton( this, "pbdel" );
   QToolTip::add(pbdel, _("Delete user"));
-  pbdel->setGeometry( 50, 300, 100, 30 );
+  pbdel->resize(100, 30);
   pbdel->setText(_("Delete"));
   QObject::connect(pbdel, SIGNAL(clicked()), this, SLOT(del()));
 
   pbadd = new QPushButton(this, "pbadd");
   QToolTip::add(pbadd, _("Add user"));
-  pbadd->setGeometry(250, 300, 100, 30);
+  pbadd->resize(100, 30);
   pbadd->setText(_("Add"));
   QObject::connect(pbadd, SIGNAL(clicked()), this, SLOT(add()));
-
-  QPopupMenu *file = new QPopupMenu;
-  CHECK_PTR( file );
-  file->insertItem(_("Properties..."),  this, SLOT(properties()) );
-  file->insertSeparator();
-  file->insertItem(_("Quit"),  this, SLOT(quit()) );
-
-  QPopupMenu *user = new QPopupMenu;
-  CHECK_PTR(user);
-  user->insertItem(_("Edit..."), this, SLOT(edit()) );
-  user->insertItem(_("Delete..."), this, SLOT(del()) );
-  user->insertItem(_("Add..."), this, SLOT(add()) );
-  user->insertItem(_("Set password..."), this, SLOT(setpwd()) );
-
-  QPopupMenu *help = new QPopupMenu;
-  CHECK_PTR( help );
-  help->insertItem(_("Help"), this, SLOT(help()));
-  help->insertSeparator();
-  help->insertItem(_("About..."), this, SLOT(about()));
-
-  menubar = new KMenuBar( this );
-  CHECK_PTR( menubar );
-  menubar->insertItem(_("File"), file );
-  menubar->insertItem(_("User"), user );
-  menubar->insertSeparator();
-  menubar->insertItem(_("Help"), help );
-
-  setMenu(menubar);
-
-  toolbar = new KToolBar(this, "toolbar");
-  QPixmap pixmap;
-
-  pixmap = kapp->getIconLoader()->loadIcon("profile_bw.xpm");
-  toolbar->insertButton(pixmap, 0, SIGNAL(clicked()), this, SLOT(edit()), TRUE, _("Edit user"));
-  toolbar->setBarPos(KToolBar::Top);
-
-  addToolBar(toolbar);
-
-  resize(400, 400);
 }
 
 mainDlg::~mainDlg() {
-  delete menubar;
-  delete toolbar;
-
   delete u;
+  delete g;
 
 #ifdef _KU_QUOTA
   delete q;
@@ -127,35 +96,62 @@ mainDlg::~mainDlg() {
 #endif
 }
 
-void mainDlg::setSort(int col) {
-  if (sort == col)
-    sort = -1;
+void mainDlg::setUsersSort(int col) {
+  if (usort == col)
+    usort = -1;
   else
-    sort = col;
+    usort = col;
 
-  list->sortBy(sort);
+  lbusers->sortBy(usort);
 
-  reload(list->currentItem());
+  reloadUsers(lbusers->currentItem());
 }
 
-void mainDlg::reload(int id) {
+void mainDlg::setGroupsSort(int col) {
+  if (gsort == col)
+    gsort = -1;
+  else
+    gsort = col;
+
+  lbgroups->sortBy(gsort);
+
+  reloadGroups(lbgroups->currentItem());
+}
+
+void mainDlg::reloadUsers(int id) {
   KUser *ku;
 
-  list->setAutoUpdate(FALSE);
-  list->clear();
+  lbusers->setAutoUpdate(FALSE);
+  lbusers->clear();
 
   for (uint i = 0; i<u->getUsersNumber(); i++) {
     ku = u->getUser(i);
-    list->insertItem(ku);
+    lbusers->insertItem(ku);
   }
 
-  list->setAutoUpdate(TRUE);
-  list->repaint();
-  list->setCurrentItem(id);
+  lbusers->setAutoUpdate(TRUE);
+  lbusers->repaint();
+  lbusers->setCurrentItem(id);
+}
+
+void mainDlg::reloadGroups(int gid) {
+  KGroup *kg;
+
+  lbgroups->setAutoUpdate(FALSE);
+  lbgroups->clear();
+
+  for (uint i = 0; i<g->getGroupsNumber(); i++) {
+    kg = g->getGroup(i);
+    lbgroups->insertItem(kg);
+  }
+
+  lbgroups->setAutoUpdate(TRUE);
+  lbgroups->repaint();
+  lbgroups->setCurrentItem(gid);
 }
 
 void mainDlg::edit() {
-  selected(list->currentItem());
+  userSelected(lbusers->currentItem());
 }
 
 void mainDlg::del() {
@@ -167,13 +163,13 @@ void mainDlg::del() {
                      KMsgBox::STOP,
                      _("Cancel"), _("Delete")) == 2) {
 
-    i = list->currentItem();
+    i = lbusers->currentItem();
     if (i == u->getUsersNumber()-1)
       islast = TRUE;
 
-    unsigned int uid = list->getCurrentUser()->p_uid;
+    unsigned int uid = lbusers->getCurrentUser()->p_uid;
 
-    u->delUser(list->getCurrentUser());
+    u->delUser(lbusers->getCurrentUser());
 
 #ifdef _KU_QUOTA
     if (u->user_lookup(uid) == NULL)
@@ -183,9 +179,9 @@ void mainDlg::del() {
     prev = -1;
 
     if (!islast)
-      reload(i);
+      reloadUsers(i);
     else
-      reload(i-1);
+      reloadUsers(i-1);
     changed = TRUE;
   }
 }
@@ -255,7 +251,7 @@ void mainDlg::add() {
 #endif
   }
 
-  reload(u->getUsersNumber()-1);
+  reloadUsers(u->getUsersNumber()-1);
 
   delete editUser;
 }
@@ -267,6 +263,7 @@ void mainDlg::quit() {
   		      KMsgBox::INFORMATION,
 		      _("Save"), _("Discard changes")) == 1) {
       u->save();
+      g->save();
 #ifdef _KU_QUOTA
       if (is_quota)
         q->save();
@@ -286,7 +283,7 @@ void mainDlg::about() {
 void mainDlg::setpwd() {
   pwddlg *d;
   
-  d = new pwddlg(list->getCurrentUser(), this, "pwddlg");
+  d = new pwddlg(lbusers->getCurrentUser(), this, "pwddlg");
   d->exec();
   delete d;
 }
@@ -377,13 +374,32 @@ void mainDlg::properties() {
   delete editUser;
 }
 
-void mainDlg::selected(int i) {
+void mainDlg::groupSelected(int i) {
+  editGroup *egdlg;
+  KGroup *tmpKG;
+
+  tmpKG = g->getGroup(i);
+
+  if (tmpKG == NULL) {
+    printf(_("Null pointer tmpKG in mainDlg::groupSelected(%d)\n"), i);
+    return;
+  }
+
+  egdlg = new editGroup(tmpKG);
+
+  if (egdlg->exec() != 0)
+    changed = TRUE;
+
+  delete egdlg;
+}
+
+void mainDlg::userSelected(int i) {
   propdlg *editUser;
   KUser *tmpKU;
 
-  tmpKU =  list->getCurrentUser();
+  tmpKU =  lbusers->getCurrentUser();
   if (tmpKU == NULL) {
-    printf(_("Null pointer tmpKU in mainDlg::selected(%d)\n"), i);
+    printf(_("Null pointer tmpKU in mainDlg::userSelected(%d)\n"), i);
     return;
   }
 
@@ -402,7 +418,7 @@ void mainDlg::selected(int i) {
 #endif
 
   if (editUser->exec() != 0) {
-    reload(list->currentItem());
+    reloadUsers(lbusers->currentItem());
     changed = TRUE;
   }
 
@@ -411,6 +427,10 @@ void mainDlg::selected(int i) {
 
 KUsers *mainDlg::getUsers() {
   return (u);
+}
+
+KGroups *mainDlg::getGroups() {
+  return (g);
 }
 
 #ifdef _KU_QUOTA
@@ -428,13 +448,12 @@ void mainDlg::resizeEvent (QResizeEvent *rse) {
 
   sz = rse->size();
 
-  list->setGeometry(10,80,sz.width()-20,sz.height()-192);
+  lbusers->setGeometry(10, 10, sz.width()-20, sz.height()/2-70);
+  lbgroups->setGeometry(10, sz.height()/2+60, sz.width()-20, sz.height()/2-70);
 
-  pbquit->move(sz.width()/8, sz.height()-50);
-  pbedit->move(sz.width()*7/8-100, sz.height()-50);
-  pbdel->move(sz.width()/8, sz.height()-100);
-  pbadd->move(sz.width()*7/8-100, sz.height()-100);
-
-  updateRects();
+  pbquit->move(sz.width()/8, sz.height()/2-40);
+  pbedit->move(sz.width()*7/8-100, sz.height()/2-40);
+  pbdel->move(sz.width()/8, sz.height()/2+10);
+  pbadd->move(sz.width()*7/8-100, sz.height()/2+10);
 }
 

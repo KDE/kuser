@@ -1,9 +1,9 @@
-KUser is rewriten XUser which was writen in XForms.
+KUser is rewritten XUser which was written in XForms.
 It supports:
 Solaris
 Linux
 Irix
-FreeBSD (You should add a define __FreeBSD__)
+FreeBSD
 
 It's a prerelease only. It's rather untested.
 

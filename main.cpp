@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include "misc.h"
 #include "maindlg.h"
+#include "mainWidget.h"
 
 char tmp[1024];
 KConfig *config;
@@ -34,6 +35,8 @@ mainDlg *md = NULL;
 
 int main( int argc, char **argv )
 {
+  mainWidget *mw = NULL;
+
   KApplication a(argc, argv, "kuser");
   if (getuid()) {
     KMsgBox::message(0, _("Error"), _("Only root is allowed to manage users."), KMsgBox::STOP);
@@ -42,11 +45,10 @@ int main( int argc, char **argv )
 
   initmain();
 
-  md = new mainDlg("kuser");
-  md->init();
+  mw = new mainWidget("kuser");
   
-  a.setMainWidget(md);
-  md->show();
+  a.setMainWidget(mw);
+  mw->show();
 
   a.exec();
 

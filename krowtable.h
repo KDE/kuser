@@ -1,3 +1,6 @@
+#ifndef _KROWTABLE_H
+#define _KROWTABLE_H
+
 #include "qtablevw.h"
 #include "qpainter.h"
 #include "qlist.h"
@@ -82,3 +85,5 @@ private:
 	int	current_row;
 	int m_flags;
 };
+
+#endif // _KROWTABLE_H

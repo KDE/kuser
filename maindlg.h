@@ -2,9 +2,6 @@
 #define _KU_MAINDLG_H
 
 #include <ktablistbox.h>
-#include <ktopwidget.h>
-#include <ktoolbar.h>
-#include <kmenubar.h>
 #include <qevent.h>
 #include <qlist.h>
 #include <qpushbt.h>
@@ -17,22 +14,25 @@
 
 #include "kuser.h"
 #include "kuservw.h"
+#include "kgroupvw.h"
 #include "kheader.h"
 
-class mainDlg:public KTopLevelWidget
+class mainDlg:public QWidget
 {
 Q_OBJECT
 public:
-  mainDlg(const char *name = 0);
+  mainDlg(QWidget *parent = 0);
   ~mainDlg();
 
   void init();
 
-  KUserView *list;
+  KUserView *lbusers;
+  KGroupView *lbgroups;
   int prev;
   QPixmap pic_user;
 
   KUsers *getUsers();
+  KGroups *getGroups();
 #ifdef _KU_QUOTA
   Mounts *getMounts();
   Quotas *getQuotas();
@@ -41,22 +41,26 @@ public:
 public slots:
   void properties();
   void quit();
-  void selected(int i);
+  void userSelected(int i);
+  void groupSelected(int i);
   void edit();
   void del();
   void add();
   void about();
   void help();
   void setpwd();
-  void setSort(int col);
+  void setUsersSort(int col);
+  void setGroupsSort(int col);
   
 protected:
   KUsers *u;
+  KGroups *g;
 #ifdef _KU_QUOTA
   Mounts *m;
   Quotas *q;
 #endif
-  void reload(int id);
+  void reloadUsers(int id);
+  void reloadGroups(int gid);
   virtual void resizeEvent (QResizeEvent *rse);
 
 private:
@@ -65,9 +69,8 @@ private:
   QPushButton *pbdel;
   QPushButton *pbadd;
 
-  KToolBar *toolbar;
-  KMenuBar *menubar;
-  int sort;
+  int usort;
+  int gsort;
   bool changed;
 };
 

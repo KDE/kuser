@@ -31,7 +31,7 @@ void KUserRow::paint( QPainter *p, int col, int width )
     }
       break;
     case 1:	// size
-      p->drawText( 0, fontpos, width-2, p->fontMetrics().lineSpacing(), AlignLeft, ku->p_fname );
+      p->drawText( 2, fontpos, width-4, p->fontMetrics().lineSpacing(), AlignLeft, ku->p_fname );
       break;
   }
   //  printf("KUserRow::paint end\n");
@@ -52,7 +52,7 @@ KUserTable::KUserTable(QWidget *parent, const char *name) : KRowTable(SelectRow,
 
   setAutoUpdate(TRUE);
   current = -1;
-  sort = 0;
+  sort = -1;
 }
 
 KUserTable::~KUserTable() {

@@ -1,11 +1,11 @@
 Begin
 Title:          kuser
-Version:        0.2
-Entered-date:   27/11/97
+Version:        0.5
+Entered-date:   04/10/98
 Description:    User management tool for the K Desktop Environment
 Keywords:       kde admin user management X11 Qt
-Author:         Denis Y. Pershin <dyp@inetlab.com>
-Maintained-by:  Denis Y. Pershin <dyp@inetlab.com>
+Author:         Denis Pershin <dyp@inetlab.com>
+Maintained-by:  Denis Pershin <dyp@inetlab.com>
 Primary-site:   ftp://ftp.kde.org/pub/kde/unstable/apps/admin
 Alternate-site: 
 Original-site:  ftp://ftp.kde.org/pub/kde/unstable/apps/admin

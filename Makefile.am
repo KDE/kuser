@@ -1,7 +1,7 @@
 INCLUDES	=	$(all_includes)
 
 # May be -D_XU_QUOTA -D_XU_SHADOW
-DEFS		+= 	@KU_SHADOW@ -D_KU_DEBUG @KU_QUOTA@ @QUOTACTL@
+DEFS		+= 	@KU_NIS@ @KU_SHADOW@ @KU_QUOTA@ @QUOTACTL@ -D_KU_DEBUG
 
 kuser_LDFLAGS	=	$(all_libraries) $(KDE_RPATH)
 kuser_LDADD	=	-lkdeui -lkdecore -lqt -lXext -lX11 $(LIBSOCKET) $(LIBCRYPT) $(PAMLIBS) $(LIBPWDB) $(LIBGEN)
@@ -12,12 +12,13 @@ kuser_SOURCES	=	mainWidget.cpp editGroup.cpp editGroupData.cpp kuservw.cpp\
 			kheader.cpp krowtable.cpp kusertbl.cpp kgrouptbl.cpp kgroupvw.cpp\
 			kdatectl.cpp kuser.cpp kgroup.cpp main.cpp maindlg.cpp mnt.cpp\
 			propdlg.cpp quota.cpp misc.cpp usernamedlg.cpp pwddlg.cpp\
-			grpnamedlg.cpp kerror.cpp addUser.cpp
+			grpnamedlg.cpp kerror.cpp addUser.cpp editDefaults.cpp \
+			userDefaultsPage.cpp userDefaultsPageData.cpp
 
 BUILTSOURCE	=       mainWidget.moc editGroup.moc editGroupData.moc kuservw.moc kheader.moc\
 			krowtable.moc kusertbl.moc kgrouptbl.moc kgroupvw.moc kdatectl.moc\
 			maindlg.moc propdlg.moc usernamedlg.moc pwddlg.moc grpnamedlg.moc\
-			addUser.moc
+			addUser.moc userDefaultsPageData.moc userDefaultsPage.moc editDefaults.moc
 
 # the following are only useful, if you want to use "make dist"
 noinst_HEADERS	=       mainWidget.h editGroup.h editGroupData.h kuservw.h kheader.h krowtable.h\
@@ -118,5 +119,17 @@ mainWidget.moc: mainWidget.h
 addUser.cpp: addUser.moc
 addUser.moc: addUser.h
 	$(MOC) addUser.h -o addUser.moc
+
+editDefaults.cpp: editDefaults.moc
+editDefaults.moc: editDefaults.h
+	$(MOC) editDefaults.h -o editDefaults.moc
+
+userDefaultsPage.cpp: userDefaultsPage.moc
+userDefaultsPage.moc: userDefaultsPage.h
+	$(MOC) userDefaultsPage.h -o userDefaultsPage.moc
+
+userDefaultsPageData.cpp: userDefaultsPageData.moc
+userDefaultsPageData.moc: userDefaultsPageData.h
+	$(MOC) userDefaultsPageData.h -o userDefaultsPageData.moc
 
 

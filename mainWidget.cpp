@@ -19,7 +19,7 @@ KTopLevelWidget(name)
   CHECK_PTR( file );
   file->insertItem(i18n("&Save"),  md, SLOT(save()) );
   file->insertSeparator();
-  file->insertItem(i18n("&Template for new users..."),  md, SLOT(properties()) );
+  file->insertItem(i18n("&Preferences..."),  md, SLOT(properties()) );
   file->insertSeparator();
   file->insertItem(i18n("&Quit"),  md, SLOT(quit()) );
 

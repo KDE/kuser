@@ -4,6 +4,8 @@
 #include <qvalidator.h>
 #include <qdatetm.h>
 
+#include <kstring.h>
+
 #include "kdatectl.h"
 #include "kdatectl.moc"
 #include "misc.h"
@@ -11,16 +13,16 @@
 KDateCtl::KDateCtl(QWidget *parent, const char *name,
                    const char *checktitle, const char *title,
                    long adate, long abase, int ax, int ay) {
-  char tmp[200];
+  QString tmp;
 
   x = ax; y = ay;
 
-  sprintf(tmp, "%s_day", name);
+  ksprintf(&tmp, "%s_day", name);
   day = addLineEdit(parent, tmp, x, y+25, 30, 27, "");
-  sprintf(tmp,  "va_%s_day", name);
+  ksprintf(&tmp,  "va_%s_day", name);
   day->setValidator(new QIntValidator(1, 31, parent, name));
 
-  sprintf(tmp, "%s_month", name);
+  ksprintf(&tmp, "%s_month", name);
   month = new KCombo(FALSE, parent, tmp);
   month->clear();
   month->insertItem(i18n("January"));
@@ -38,16 +40,16 @@ KDateCtl::KDateCtl(QWidget *parent, const char *name,
 
   month->setGeometry(x+40, y+25, 100, 27);
 
-  sprintf(tmp,  "%s_year", name);
+  ksprintf(&tmp,  "%s_year", name);
   year = addLineEdit(parent, tmp, x+150, y+25, 50, 27, "");
-  sprintf(tmp,  "va_%s_year", name);
+  ksprintf(&tmp,  "va_%s_year", name);
   year->setValidator(new QIntValidator(1970, 2023, parent, name));
 
-  sprintf(tmp, "%s_isempty", name);
+  ksprintf(&tmp, "%s_isempty", name);
   isempty = new QCheckBox(checktitle, parent, tmp);
   isempty->setGeometry(x, y, 200, 20); 
 
-  sprintf(tmp, "%s_title", name);
+  ksprintf(&tmp, "%s_title", name);
   label = addLabel(parent, tmp, x+210, y+25, 50, 27, title);
 
   QObject::connect(isempty, SIGNAL(toggled(bool)), this,

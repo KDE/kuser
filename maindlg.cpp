@@ -3,10 +3,15 @@
 #include "maindlg.moc"
 
 #include "globals.h"
+
 #include <qtooltip.h>
+
 #include <kmsgbox.h>
 #include <ktoolbar.h>
 #include <kiconloader.h>
+#include <knewpanner.h>
+#include <kstring.h>
+
 #include <unistd.h>
 #include <signal.h>
 
@@ -24,7 +29,7 @@
 #include "pwddlg.h"
 #include "editGroup.h"
 
-#include <knewpanner.h>
+#include "editDefaults.h"
 
 mainDlg::mainDlg(QWidget *parent) :
 QWidget(parent)
@@ -162,72 +167,7 @@ void mainDlg::userdel() {
       q->delQuota(uid);
 #endif
 
-    char file[FILENAME_MAX], home[FILENAME_MAX];
-    /*
-     * Save these for later, since contents of pwd may be
-     * invalidated by deletion
-     */
-#ifndef _PATH_MAILDIR
-#define _PATH_MAILDIR "/var/mail"
-#endif
-    snprintf(file, sizeof(file), "%s/%s", _PATH_MAILDIR, (const char*)lbusers->getCurrentUser()->getp_name());
-    strncpy(home, (const char*)lbusers->getCurrentUser()->getp_dir(), sizeof home);
-    home[sizeof home - 1] = '\0';
-
-    /*
-     * Remove crontabs
-     *
-     * TODO: remove at jobs too.
-     */
-    sprintf(file, "/var/cron/tabs/%s", (const char*)lbusers->getCurrentUser()->getp_name());
-    if (access(file, F_OK) == 0) {
-	sprintf(file, "crontab -u %s -r", (const char*)lbusers->getCurrentUser()->getp_name());
-	system(file);
-    }
-
     u->delUser(lbusers->getCurrentUser());
-
-    /*
-     * be paranoid -- kill all processes owned by that user, if not root.
-     */
-    if (uid)
-      switch (fork())
-      {
-        case 0:
-          setuid(uid);
-          kill(-1, 9);
-          break;
-
-        case -1:
-          perror("fork");
-          break;
-      }
-
-    /*
-     * Remove mail file
-     */
-    remove(file);
-
-    /*
-     * Remove home directory and contents
-     */
-    if (KMsgBox::yesNo(0, i18n("WARNING"),
-        i18n("The user has as homedir.\nDo you want to delete it?"),
-        KMsgBox::STOP,
-        i18n("Cancel"), i18n("Delete")) == 2) {
-      struct stat sb;
-      QString tmp;
-
-      if(!stat(home, &sb))
-        if (S_ISDIR(sb.st_mode) && sb.st_uid == uid) {
-#ifdef MINIX
-            tmp.sprintf("/usr/bin/rm -rf -- %s", home);
-#else
-            tmp.sprintf("/bin/rm -rf -- %s", home);
-#endif
-            system(tmp);
-        }
-    }
 
     prev = -1;
 
@@ -375,6 +315,7 @@ void mainDlg::help() {
 }
 
 void mainDlg::properties() {
+/*
   propdlg *editUser;
   KUser *tk;
 
@@ -413,12 +354,14 @@ void mainDlg::properties() {
 
 #ifdef _KU_QUOTA
   if (is_quota != 0) {
+*/
     /*
     tk->quota.at(0)->fsoft = readnumentry("quota.fsoft");
     tk->quota.at(0)->fhard = readnumentry("quota.fhard");
     tk->quota.at(0)->isoft = readnumentry("quota.isoft");
     tk->quota.at(0)->ihard = readnumentry("quota.ihard");
     */
+/*
   }
 #endif
 
@@ -457,12 +400,14 @@ void mainDlg::properties() {
 
 #ifdef _KU_QUOTA
     if (is_quota != 0) {
+*/
       /*
       config->writeEntry("quota.fsoft", tk->quota.at(0)->fsoft);
       config->writeEntry("quota.fhard", tk->quota.at(0)->fhard);
       config->writeEntry("quota.isoft", tk->quota.at(0)->isoft);
       config->writeEntry("quota.ihard", tk->quota.at(0)->ihard);
       */
+/*
     }
 #endif
   }
@@ -472,6 +417,28 @@ void mainDlg::properties() {
   delete tq;
 #endif
   delete editUser;
+*/
+  editDefaults *eddlg;
+
+  eddlg = new editDefaults();
+
+  eddlg->setCaption(i18n("Edit defaults"));
+
+  config->setGroup("template");
+  eddlg->setShell(config->readEntry("shell", ""));
+  eddlg->setHomeBase(config->readEntry("homeBase", "/home"));
+  eddlg->setCreateHomeDir(config->readBoolEntry("createHomeDir", true));
+  eddlg->setCopySkel(config->readBoolEntry("copySkel", true));
+
+  if (eddlg->exec() != 0) {
+    config->setGroup("template");
+    config->writeEntry("shell", eddlg->getShell());
+    config->writeEntry("homeBase", eddlg->getHomeBase());
+    config->writeEntry("createHomeDir", eddlg->getCreateHomeDir());
+    config->writeEntry("copySkel", eddlg->getCopySkel());
+  }
+
+  delete eddlg;
 }
 
 void mainDlg::groupSelected(int i) {
@@ -487,7 +454,7 @@ void mainDlg::groupSelected(int i) {
 
   egdlg = new editGroup(tmpKG);
 
-  egdlg->setCaption("Edit Groups");
+  egdlg->setCaption(i18n("Group properties"));
 
   if (egdlg->exec() != 0)
     changed = TRUE;
@@ -553,8 +520,6 @@ void mainDlg::resizeEvent (QResizeEvent *rse) {
   sz = rse->size();
 
   kp->setGeometry(10, 10, sz.width()-20, sz.height()-20);
-//  lbusers->setGeometry(10, 10, sz.width()-20, sz.height()/2-70);
-//  lbgroups->setGeometry(10, sz.height()/2+60, sz.width()-20, sz.height()/2-70);
 }
 
 void mainDlg::grpadd() {

@@ -1,5 +1,6 @@
 #include "globals.h"
 #include <kmsgbox.h>
+#include <kstring.h>
 #include <kbuttonbox.h>
 #include <qlayout.h>
 #include <qvalidator.h>
@@ -9,8 +10,7 @@
 #include "maindlg.h"
 
 grpnamedlg::grpnamedlg(KGroup *agroup, QWidget* parent, const char* name)
-           :QDialog(parent, name, TRUE)
-{
+           :QDialog(parent, name, TRUE) {
   group = agroup;
   group->setgid(groups->first_free());
 
@@ -95,13 +95,13 @@ void grpnamedlg::ok()
   s.setStr(legid->text());
 
   if (groups->group_lookup(legrpname->text()) != NULL) {
-    tmp.sprintf(i18n("Group with name %s already exists."), legrpname->text());
+    ksprintf(&tmp, i18n("Group with name %s already exists."), legrpname->text());
     KMsgBox::message(0, i18n("Error"), tmp, KMsgBox::STOP);
     return;
   }
   
   if (groups->group_lookup(s.toInt()) != NULL) {
-    tmp.sprintf(i18n("Group with gid %d already exists."), s.toInt());
+    ksprintf(&tmp, i18n("Group with gid %d already exists."), s.toInt());
     KMsgBox::message(0, i18n("Error"), tmp, KMsgBox::STOP);
     return;
   }

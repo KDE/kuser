@@ -1,6 +1,3 @@
-#include <qstring.h>
-#include <kmsgbox.h>
-
 #include <sys/file.h>
 #include <errno.h>
 #include <unistd.h>
@@ -11,6 +8,12 @@
 #include <stdio.h>
 #include <string.h>
 #include <limits.h>
+
+#include <qstring.h>
+
+#include <kstring.h>
+
+#include <kmsgbox.h>
 
 #include "maindlg.h"
 #include "globals.h"
@@ -108,12 +111,29 @@ KGroups::KGroups() {
 
   g.setAutoDelete(TRUE);
 
+  if (!load())
+    err->display();
+}
+
+bool KGroups::load() {
   group *p;
   KGroup *tmpKG = 0;
 
-  setgrent();
+#ifdef _KU_NIS
+  FILE *fgrp = fopen(GROUP_FILE, "r");
+  QString tmp;
+  if (fgrp == 0) {
+    ksprintf(&tmp, i18n("Error opening %s for reading"), GROUP_FILE);
+    err->addMsg(tmp, STOP);
+    return FALSE;
+  }
 
-  while ((p = getgrent())!=NULL) {
+  while ((p = fgetgrent(fgrp)) != NULL) {
+#else
+  setgrent();
+  
+  while ((p = getgrent()) != NULL) {
+#endif
     tmpKG = new KGroup();
     tmpKG->setgid(p->gr_gid);
     tmpKG->setname(p->gr_name);
@@ -129,21 +149,20 @@ KGroups::KGroups() {
     g.append(tmpKG);
   }
 
-  endgrent();
-}
-
-#ifdef _PATH_GROUP
-#define GROUP_FILE _PATH_GROUP
+#ifdef _KU_NIS
+  fclose(fgrp);
 #else
-#define GROUP_FILE "/etc/group"
+  endgrent();
 #endif
-#define GROUP_FILE_MASK S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH
+
+  return TRUE;
+}
 
 bool KGroups::save() {
   FILE *grp;
   QString tmpS;
   QString tmpN;
-  char other[200];
+  QString tmp;
 
   if (!g_saved) {
     backup(GROUP_FILE);
@@ -151,8 +170,8 @@ bool KGroups::save() {
   }
 
   if ((grp = fopen(GROUP_FILE,"w")) == NULL) {
-    sprintf(other, i18n("Error opening %s for writing"), GROUP_FILE);
-    err->addMsg(other, STOP);
+    ksprintf(&tmp, i18n("Error opening %s for writing"), GROUP_FILE);
+    err->addMsg(tmp, STOP);
     return (FALSE);
   }
 
@@ -171,6 +190,12 @@ bool KGroups::save() {
   fclose(grp);
 
   chmod(GROUP_FILE, GROUP_FILE_MASK);
+#ifdef GRMKDB
+  if (system(GRMKDB) != 0) {
+    err->addMsg("Unable to build group database", STOP);
+    return FALSE;
+  }
+#endif
   return (TRUE);
 }
 

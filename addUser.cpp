@@ -16,6 +16,7 @@
 #include <qdir.h>
 
 #include <kmsgbox.h>
+#include <kstring.h>
 
 #include "globals.h"
 #include "maindlg.h"
@@ -55,7 +56,7 @@ void addUser::ok() {
   newuid = tmp.toInt();
   
   if (users->user_lookup(newuid) != NULL) {
-    tmp.sprintf(i18n("User with UID %u already exists"), newuid);
+    ksprintf(&tmp, i18n("User with UID %u already exists"), newuid);
     KMsgBox::message(0, i18n("Message"), tmp, KMsgBox::STOP, i18n("OK"));
     return;
   }
@@ -63,96 +64,68 @@ void addUser::ok() {
   check();
   
   if (createhome->isChecked())
-    createHome();
+    if ((checkHome()) && (checkMailBox())) {
+      user->setr_createhome(1);
+      user->setr_createmailbox(1);
+    }
 
   if (copyskel->isChecked())
-    if (copySkel() == -1)
-      return;
+    user->setr_copyskel(1);
 
   accept();
 }
 
-void addUser::createHome() {
-  QDir d = QDir::root();
+bool addUser::checkHome() {
+  struct stat s;
+  int r;
+  QString tmp;
 
-  if (d.cd(user->getp_dir())) {
-    QString tmp;
-    tmp.sprintf(i18n("Directory %s already exists"), (const char *)user->getp_dir());
-    err->addMsg(tmp, STOP);
-    err->display();
-  }
+  r = stat(user->getp_dir(), &s);
+
+  if ((r == -1) && (errno = ENOENT))
+    return true;
+
+  if (r == 0)
+    if (S_ISDIR(s.st_mode))
+      ksprintf(&tmp, i18n("Directory %s already exists (uid = %d, gid = %d)"), 
+           (const char *)user->getp_dir(), s.st_uid, s.st_gid);
+    else
+      ksprintf(&tmp, i18n("%s is not a directory") ,(const char *)user->getp_dir());
+  else
+    ksprintf(&tmp, "checkHome: stat: %s ", strerror(errno));
   
-  if (mkdir((const char *)user->getp_dir(), 0700) != 0) {
-    QString tmp;
-    tmp.sprintf(i18n("Cannot create home directory\nError: %s"), strerror(errno));
-    err->addMsg(tmp, STOP);
-    err->display();
-  }
+  err->addMsg(tmp, STOP);
+  err->display();
 
-  if (chown((const char *)user->getp_dir(), user->getp_uid(), user->getp_gid()) != 0) {
-    QString tmp;
-    tmp.sprintf(i18n("Cannot change owner of home directory\nError: %s"), strerror(errno));
-    err->addMsg(tmp, STOP);
-    err->display();
-  }
-
-  if (chmod(user->getp_dir(), 0755) != 0) {
-    QString tmp;
-    tmp.sprintf(i18n("Cannot change permissions on home directory\nError: %s"), strerror(errno));
-    err->addMsg(tmp, STOP);
-    err->display();
-  }
+  return false;
 }
 
-int addUser::copySkel() {
-  QDir s(SKEL_DIR);
-  QDir d(user->getp_dir());
+bool addUser::checkMailBox() {
+  QString mailboxpath;
   QString tmp;
-  QString prefix(SKEL_FILE_PREFIX);
-  int len = prefix.length();
 
-  s.setFilter(QDir::Files | QDir::Hidden);
+  struct stat s;
+  int r;
 
-  if (!s.exists()) {
-    QString tmp;
-    tmp.sprintf(i18n("Directory %s does not exist"), (const char *)s.dirName());
-    err->addMsg(tmp, STOP);
-    err->display();
-    return (-1);
-  }
-
-  if (!d.exists()) {
-    QString tmp;
-    tmp.sprintf(i18n("Directory %s does not exist"), (const char *)d.dirName());
-    err->addMsg(tmp, STOP);
-    err->display();
-    return (-1);
-  }
-
-  for (uint i=0; i<s.count(); i++) {
-    QString filename(s[i]);
-    if (filename.left(len) == prefix) {
-      filename = filename.remove(0, len);
-    }
-    if (copyFile(s.filePath(s[i]), d.filePath(filename)) == -1) {
-      err->display();
-      continue;
-    }
-
-    if (chown(d.filePath(filename), user->getp_uid(), user->getp_gid()) != 0) {
-      QString tmp;
-      tmp.sprintf(i18n("Cannot change owner of file %s\nError: %s"), (const char *)d.filePath(s[i]), strerror(errno));
-      err->addMsg(tmp, STOP);
-      err->display();
-    }
-
-    if (chmod(d.filePath(filename), 0644) != 0) {
-      QString tmp;
-      tmp.sprintf(i18n("Cannot change permissions on file %s\nError: %s"), (const char *)d.filePath(s[i]), strerror(errno));
-      err->addMsg(tmp, STOP);
-      err->display();
-    }
-  }
+  ksprintf(&mailboxpath, "%s/%s", MAIL_SPOOL_DIR,
+           (const char *)user->getp_name());
+  r = stat(mailboxpath, &s);
   
-  return (0);
+  if ((r == -1) && (r == ENOENT))
+    return true;
+
+  if (r == 0)
+    if (S_ISREG(s.st_mode))
+      ksprintf(&tmp, i18n("Mailbox %s already exist (uid=%d)"),
+               (const char *)mailboxpath, s.st_uid);
+    else
+      ksprintf(&tmp, i18n("%s exists but is not a regular file"),
+               (const char *)mailboxpath);
+  else
+    ksprintf(&tmp, "checkMail: stat: %s ", strerror(errno));
+  
+  err->addMsg(tmp, STOP);
+  err->display();
+
+  return false;
 }

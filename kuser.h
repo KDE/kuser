@@ -48,6 +48,10 @@ public:
   int gets_flag();
 #endif
 
+  int getr_createhome();
+  int getr_createmailbox();
+  int getr_copyskel();
+
   void setp_name(const char *data);
   void setp_pwd(const char *data);
   void setp_dir(const char *data);
@@ -78,6 +82,19 @@ public:
   void sets_expire(int data);
   void sets_flag(int data);
 #endif
+
+  void setr_createhome(int data);
+  void setr_createmailbox(int data);
+  void setr_copyskel(int data);
+
+  void createHome();
+  int createMailBox();
+  int copySkel();
+
+  int removeHome();
+  int removeCrontabs();
+  int removeMailBox();
+  int removeProcesses();
 
 protected:
   QString
@@ -116,6 +133,10 @@ protected:
     s_expire,                      // date when account expires 
     s_flag;                        // reserved for future use
 #endif
+  int
+    r_createhome,              // create homedir
+    r_createmailbox,           // create mailbox
+    r_copyskel;                // copy sceleton
 };
 
 class KUsers {

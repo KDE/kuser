@@ -17,9 +17,6 @@ KGroupRow::KGroupRow(KGroup *aku, QPixmap *pGroup)
 
 void KGroupRow::paint( QPainter *p, int col, int width )
 {
-  //  printf("KGroupRow::paint(%p, %d, %d)\n", p, col, width);
-  //  printf("ku = %p\n", ku);
-  //  printf("ku->p_name = %s\n", (const char *)ku->p_name);
   int fontpos = (max( p->fontMetrics().lineSpacing(), pmGroup->height()) - p->fontMetrics().lineSpacing())/2;
   switch(col) {
     case 0: {	// pixmap & Filename
@@ -37,7 +34,6 @@ void KGroupRow::paint( QPainter *p, int col, int width )
       p->drawText( 2, fontpos, width-4, p->fontMetrics().lineSpacing(), AlignLeft, ku->getname());
       break;
   }
-  //  printf("KGroupRow::paint end\n");
 }
 
 KGroup *KGroupRow::getData() {

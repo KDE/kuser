@@ -1,0 +1,14 @@
+12/10/98: Simple property dialog added
+
+04/10/98: Use layouts in Edit group dialog (QtArch is rulez!!!)
+
+04/10/98: Patch by Rudolf Weber <rw@weber.ravnet.de> incorporated in part
+          if NIS support.
+          NIS support.
+          It is possible to create homedir when adding user.
+          It is possible to create mailbox when adding user.
+          It is possible to remove homedir when removing user.
+          It is possible to remove processes when removing user.
+          It is possible to remove crontabs when removing user.
+          It is possible to remove mailbox when removing user.
+          Preferences dialog added.

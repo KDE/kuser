@@ -311,6 +311,7 @@ void mainView::properties() {
   eddlg.setCreateHomeDir(config->readBoolEntry("createHomeDir", true));
   eddlg.setCopySkel(config->readBoolEntry("copySkel", true));
   eddlg.setUserPrivateGroup(config->readBoolEntry("userPrivateGroup", KU_USERPRIVATEGROUP));
+  config->setGroup("sources");
   eddlg.setPasswdSrc(config->readEntry("passwdsrc", PASSWORD_FILE)); 
   eddlg.setGroupSrc(config->readEntry("groupsrc", GROUP_FILE));
   eddlg.setNISPasswdSrc(config->readEntry("nispasswdsrc", ""));
@@ -327,6 +328,7 @@ void mainView::properties() {
     config->writeEntry("createHomeDir", eddlg.getCreateHomeDir());
     config->writeEntry("copySkel", eddlg.getCopySkel());
     config->writeEntry("userPrivateGroup", eddlg.getUserPrivateGroup());
+    config->setGroup("sources");
     config->writeEntry("passwdsrc", eddlg.getPasswdSrc());
     config->writeEntry("nispasswdsrc", eddlg.getNISPasswdSrc());
     config->writeEntry("groupsrc", eddlg.getGroupSrc());

@@ -126,10 +126,11 @@ bool KGroups::load() {
   char processing_file = '\0';
   #define GROUP    0x01
   #define NISGROUP 0x02
+  #define MAXFILES 2
 
   // Prepare to read KUser configuration
 
-  config->setGroup("template");
+  config->setGroup("sources");
   group_filename = config->readEntry("groupsrc");
   nisgroup_filename = config->readEntry("nisgroupsrc");
   if(!group_filename.isEmpty()) {
@@ -139,7 +140,7 @@ bool KGroups::load() {
 
   // Start reading group file(s)
 
-  for(int k = 0; k < 2; k++) {
+  for(int k = 0; k < MAXFILES; k++) {
     rc = stat(QFile::encodeName(filename), &st);
     if(rc != 0) {
       err->addMsg(i18n("stat call on file %1 failed: %2\nCheck KUser Settings (Sources)\n").arg(filename).arg(strerror(errno)));
@@ -198,6 +199,8 @@ bool KGroups::load() {
     fclose(fgrp);
 #endif
     if(!nisgroup_filename.isEmpty()) {
+      if(nisgroup_filename == group_filename)
+        break;
       processing_file = processing_file & ~GROUP;
       processing_file = processing_file | NISGROUP;
       filename.truncate(0);
@@ -237,11 +240,11 @@ bool KGroups::save() {
 
   // read KUser configuration info
 
-  config->setGroup("template");
+  config->setGroup("sources");
   group_filename = config->readEntry("groupsrc");
   nisgroup_filename = config->readEntry("nisgroupsrc");
   qs_mingid = config->readEntry("nismingid");
-  if(!qs_mingid.isEmpty()) {
+  if( (!qs_mingid.isEmpty()) && (nisgroup_filename != group_filename) ) {
     c_mingid = qs_mingid.latin1();
     mingid = atoi(c_mingid);
   }
@@ -256,7 +259,7 @@ bool KGroups::save() {
       gr_backuped = TRUE;
     }
   }
-  if(!nisgroup_filename.isEmpty()) {
+  if(!nisgroup_filename.isEmpty() && (nisgroup_filename != group_filename)) {
     if (!gn_backuped) {
       gn_filename = nisgroup_filename.latin1();
       backup(gn_filename);
@@ -271,7 +274,7 @@ bool KGroups::save() {
       err->addMsg(i18n("Error opening %1 for writing").arg(group_filename));
   }  
 
-  if(!nisgroup_filename.isEmpty()) {
+  if(!nisgroup_filename.isEmpty() && (nisgroup_filename != group_filename)) {
     if((nisgroup_fd = fopen(QFile::encodeName(nisgroup_filename), "w")) == NULL)
       err->addMsg(i18n("Error opening %1 for writing").arg(nisgroup_filename));
   }  
@@ -344,7 +347,7 @@ bool KGroups::save() {
   }
 
 #ifdef GRMKDB
-  if(nis_groups_written > 0) {
+  if( (nis_groups_written > 0) || (nisgroup_filename == group_filename) ) {
     if (system(GRMKDB) != 0) {
       err->addMsg(i18n("Unable to build NIS group databases"));
       return FALSE;

@@ -66,11 +66,11 @@ KUser::KUser() : p_pwd("*") {
 #ifdef HAVE_SHADOW   
   s_lstchg  = 0;
   s_min     = 0;
-  s_max     = -1;
+  s_max     = 99999;
   s_warn    = 7;
   s_inact   = -1;
-  s_expire  = 99999;
-  s_flag    = 0;
+  s_expire  = -1;
+//  s_flag    = 0;
 #endif
 
   isCreateHome = false;
@@ -437,23 +437,19 @@ bool KUsers::loadpwd() {
   char processing_file = '\0';			
   #define PASSWD    0x01			
   #define NISPASSWD 0x02			
+  #define MAXFILES 2
 
   // Read KUser configuration	
 
-//  editDefaults eddlg;
-  config->setGroup("template");		
+  config->setGroup("sources");		
   passwd_filename = config->readEntry("passwdsrc");	
   nispasswd_filename = config->readEntry("nispasswdsrc");	
 
   // Handle unconfigured environments
 
   if(passwd_filename.isEmpty() && nispasswd_filename.isEmpty()) {
-//    eddlg.setPasswdSrc(config->readEntry("passwdsrc", PASSWORD_FILE));
-//    eddlg.setGroupSrc(config->readEntry("groupsrc", GROUP_FILE));
-//    if (eddlg.exec() != 0) {
-      config->writeEntry("passwdsrc", PASSWORD_FILE);
-      config->writeEntry("groupsrc", GROUP_FILE);
-//    }
+    config->writeEntry("passwdsrc", PASSWORD_FILE);
+    config->writeEntry("groupsrc", GROUP_FILE);
     passwd_filename = config->readEntry("passwdsrc");	
     err->addMsg(i18n("KUser Sources were not configured.\nLocal passwd source set to %1\nLocal group source set to %2\n").arg(config->readEntry("passwdsrc")).arg(config->readEntry("groupsrc")));
     err->display();
@@ -466,7 +462,7 @@ bool KUsers::loadpwd() {
 
   // Start reading passwd file(s)
 
-  for(int i = 0; i < 2; i++) {
+  for(int i = 0; i < MAXFILES; i++) {
     rc = stat(QFile::encodeName(filename), &st);		
     if(rc != 0) {						
       err->addMsg(i18n("stat call on file %1 failed: %2\nCheck KUser Settings (Sources)\n").arg(filename).arg(strerror(errno)));	
@@ -530,7 +526,7 @@ bool KUsers::loadpwd() {
 #ifdef HAVE_FGETPWENT
     fclose(fpwd);
 #endif
-    if(!nispasswd_filename.isEmpty()) {				
+    if((!nispasswd_filename.isEmpty()) && (nispasswd_filename != passwd_filename)) {
       processing_file = processing_file & ~PASSWD;
       processing_file = processing_file | NISPASSWD;		
       filename.truncate(0);				
@@ -684,11 +680,11 @@ bool KUsers::savepwd() {
 
   // Read KUser configuration info	
 
-  config->setGroup("template");		
+  config->setGroup("sources");		
   passwd_filename = config->readEntry("passwdsrc");		
   nispasswd_filename = config->readEntry("nispasswdsrc");	
   qs_minuid = config->readEntry("nisminuid");			
-  if(!qs_minuid.isEmpty()) {					
+  if( (!qs_minuid.isEmpty()) && (nispasswd_filename != passwd_filename) ) {
     c_minuid = qs_minuid.latin1();				
     minuid = atoi(c_minuid);		
   }
@@ -702,7 +698,7 @@ bool KUsers::savepwd() {
       pw_backuped = TRUE;		
     }
   }
-  if(!nispasswd_filename.isEmpty()) {	
+  if(!nispasswd_filename.isEmpty() && (nispasswd_filename != passwd_filename)){	
     if (!pn_backuped) {			
       pn_filename = nispasswd_filename.latin1();   
       backup(pn_filename);		
@@ -717,7 +713,7 @@ bool KUsers::savepwd() {
       err->addMsg(i18n("Error opening %1 for writing").arg(passwd_filename));
   }					
 
-  if(!nispasswd_filename.isEmpty()) {	
+  if(!nispasswd_filename.isEmpty() && (nispasswd_filename != passwd_filename)){	
     if ((nispasswd_fd = fopen(QFile::encodeName(nispasswd_filename),"w")) == NULL) 
       err->addMsg(i18n("Error opening %1 for writing").arg(nispasswd_filename));
   }					
@@ -826,7 +822,7 @@ bool KUsers::savepwd() {
     return FALSE;
   }
 #else
-  if(nis_users_written > 0) {		
+  if( (nis_users_written > 0) || (nispasswd_filename == passwd_filename) ) {
     if (system(PWMKDB) != 0) {
       err->addMsg(i18n("Unable to build password databases"));
       return FALSE;

@@ -177,11 +177,11 @@ void mainView::useradd()
   bool samba = kug->getUsers().getCaps() & KUsers::Cap_Samba;
 
   if ((uid = kug->getUsers().first_free()) == -1) {
-    KMessageBox::sorry( 0, i18n("You run out of uid space!") );
+    KMessageBox::sorry( 0, i18n("You have run out of uid space.") );
     return;
   }
   if ( samba && (rid = kug->getUsers().first_free_sam()) == 0) {
-    KMessageBox::sorry( 0, i18n("You run out of user RID space!") );
+    KMessageBox::sorry( 0, i18n("You have run out of user RID space.") );
     return;
   }
 
@@ -368,12 +368,12 @@ void mainView::grpadd()
 
   if ( (gid = kug->getGroups().first_free()) == -1 )
   {
-    KMessageBox::sorry( 0, i18n("You run out of the gid space!") );
+    KMessageBox::sorry( 0, i18n("You have run out of gid space.") );
     return;
   }
   if ( samba && (rid = kug->getGroups().first_free_sam()) == 0 )
   {
-    KMessageBox::sorry( 0, i18n("You run out of group RID space!") );
+    KMessageBox::sorry( 0, i18n("You have run out of group RID space.") );
     return;  
   }
 
@@ -416,7 +416,7 @@ void mainView::grpdel()
       KUser *user = kug->getUsers().first();
       while ( user ) {
         if ( user->getGID() == group->getGID() ) {
-          KMessageBox::error( 0, i18n( "The group '%1' is the primary group of one or more users. (For example: '%2'). This group cannot be deleted!" ).arg( group->getName() ).arg( user->getName() ) );
+          KMessageBox::error( 0, i18n( "The group '%1' is the primary group of one or more users (such as '%2'); it cannot be deleted." ).arg( group->getName() ).arg( user->getName() ) );
           return;
         }
         user = kug->getUsers().next();

@@ -56,7 +56,7 @@ void propdlg::addRow(QWidget *parent, QGridLayout *layout, int row,
    else
       layout->addWidget(widget, row, 1);
       
-   QCheckBox *nc = new QCheckBox( i18n("Don't change"), parent );
+   QCheckBox *nc = new QCheckBox( i18n("Do not change"), parent );
    layout->addWidget( nc, row, 3 );
    nc->hide();
    mNoChanges[ widget ] = nc;
@@ -90,7 +90,7 @@ KIntSpinBox *propdlg::addDaysGroup(QWidget *parent, QGridLayout *layout, int row
 
     connect(days, SIGNAL(valueChanged(int)), this, SLOT(changed()));
    
-    QCheckBox *nc = new QCheckBox( i18n("Don't change"), parent );
+    QCheckBox *nc = new QCheckBox( i18n("Do not change"), parent );
     layout->addWidget( nc, row, 3 );
     nc->hide();
     mNoChanges[ days ] = nc;
@@ -438,7 +438,7 @@ void propdlg::selectuser()
     } else {
       if ( leshell->currentText() != shell ) {
         if ( !ismoreshells ) {
-          leshell->insertItem( i18n("Don't change"), 0 );
+          leshell->insertItem( i18n("Do not change"), 0 );
           ismoreshells = true;
         }
         leshell->setCurrentItem( 0 );
@@ -759,30 +759,30 @@ bool propdlg::check()
   bool one = ( mUsers.getFirst() == mUsers.getLast() );
 
   if ( one && leuser->text().isEmpty() ) {
-    KMessageBox::sorry( 0, i18n("You need to specify a name!") );
+    KMessageBox::sorry( 0, i18n("You need to specify a name.") );
     return false;
   }
   
   if ( one && leid->text().isEmpty() ) {
-    KMessageBox::sorry( 0, i18n("You need to specify an UID!") );
+    KMessageBox::sorry( 0, i18n("You need to specify an UID.") );
     return false;
   }
   
   if ( one && lehome->text().isEmpty() ) {
-    KMessageBox::sorry( 0, i18n("You must specify a home directory!") );
+    KMessageBox::sorry( 0, i18n("You must specify a home directory.") );
     return false;
   }
 
   if ( kug->getUsers().getCaps() & KUsers::Cap_InetOrg ) {
     if ( one && lesurname->text().isEmpty() ) {
-      KMessageBox::sorry( 0, i18n("You must fill the surname field!") );
+      KMessageBox::sorry( 0, i18n("You must fill the surname field.") );
       return false;
     }
   }
   
   if ( kug->getUsers().getCaps() & KUsers::Cap_Samba ) {
     if ( one && lerid->text().isEmpty() ) {
-      KMessageBox::sorry( 0, i18n("You need to specify a samba RID!") );
+      KMessageBox::sorry( 0, i18n("You need to specify a samba RID.") );
       return false;
     }
   }

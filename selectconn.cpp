@@ -81,7 +81,7 @@ void SelectConn::slotUser1()
     i18n("Please type the name of the new connection") );
   if ( newconn.isEmpty() ) return;    
   if ( kapp->sharedConfig()->groupList().contains( "connection-" + newconn ) ) {
-    KMessageBox::sorry( 0, i18n("A connection with this name already exists!") );
+    KMessageBox::sorry( 0, i18n("A connection with this name already exists.") );
     return;
   }
   

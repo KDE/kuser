@@ -26,7 +26,7 @@
 #include <qdatetm.h>
 #endif
 
-static void addRow(QWidget *parent, QGridLayout *layout, int row, QWidget *widget, 
+static void addRow(QWidget *parent, QGridLayout *layout, int row, QWidget *widget,
                    const QString &label, const QString &what, bool two_column=true)
 {
    QLabel *lab = new QLabel(widget, label, parent);
@@ -44,7 +44,7 @@ static void addRow(QWidget *parent, QGridLayout *layout, int row, QWidget *widge
       layout->addWidget(widget, row, 1);
 }
 
-KDateWidget *propdlg::addDateGroup(QWidget *parent, QGridLayout *layout, int row, 
+KDateWidget *propdlg::addDateGroup(QWidget *parent, QGridLayout *layout, int row,
 	const QString &title, int days)
 {
     KDateWidget *date;
@@ -61,7 +61,7 @@ KDateWidget *propdlg::addDateGroup(QWidget *parent, QGridLayout *layout, int row
     date = new KDateWidget(QDate(1970,1,1).addDays(days), parent);
     label->setBuddy(date);
     layout->addMultiCellWidget(date, row, row, 1, 2);
-    
+
     QCheckBox *date_disabled = new QCheckBox(parent);
     date_disabled->setText(i18n("Never"));
     layout->addWidget(date_disabled, row, 3);
@@ -74,7 +74,7 @@ KDateWidget *propdlg::addDateGroup(QWidget *parent, QGridLayout *layout, int row
     return date;
 }
 
-KIntSpinBox *propdlg::addDaysGroup(QWidget *parent, QGridLayout *layout, int row, 
+KIntSpinBox *propdlg::addDaysGroup(QWidget *parent, QGridLayout *layout, int row,
 	const QString &title, const QString &title2, int nr_of_days, bool never)
 {
     KIntSpinBox *days;
@@ -97,7 +97,7 @@ KIntSpinBox *propdlg::addDaysGroup(QWidget *parent, QGridLayout *layout, int row
     }
     days->setValue(nr_of_days);
     layout->addWidget(days, row, 1);
-    
+
     label = new QLabel(title2, parent);
     layout->addMultiCellWidget(label, row, row, 2, 3);
 
@@ -111,11 +111,11 @@ propdlg::propdlg(KUser *AUser, Quota *AQuota, QWidget *parent, const char *name,
 #else
 propdlg::propdlg(KUser *AUser, QWidget *parent, const char *name, int)
 #endif
- : KDialogBase(Tabbed, i18n("User Properties"), 
+ : KDialogBase(Tabbed, i18n("User Properties"),
 	Ok | Cancel, Ok, parent, name, true),
  user(AUser)
 #ifdef _KU_QUOTA
- , quota(AQuota) 
+ , quota(AQuota)
 #endif
 #ifdef EXTENDED_GECOS_BSD
  , leexpire(0L)
@@ -184,7 +184,7 @@ propdlg::propdlg(KUser *AUser, QWidget *parent, const char *name, int)
 #ifdef EXTENDED_GECOS_BSD
     // FreeBSD appears to use the comma separated fields in the GECOS entry
     // differently than Linux.
-    leoffice = new QLineEdit(frame);  
+    leoffice = new QLineEdit(frame);
     QObject::connect(leoffice, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
 //    whatstr = i18n("WHAT IS THIS: Office");
     addRow(frame, layout, row++, leoffice, i18n("&Office:"), whatstr);
@@ -228,7 +228,7 @@ propdlg::propdlg(KUser *AUser, QWidget *parent, const char *name, int)
     leslstchg = new QLabel(frame);
     leslstchg->setText(KGlobal::locale()->formatDate(lastChange));
     addRow(frame, layout, row++, leslstchg, i18n("Last password change:"), QString::null, true);
- 
+
     layout->addMultiCellWidget(new KSeparator(KSeparator::HLine, frame), row, row, 0, 3);
     row++;
 
@@ -240,7 +240,7 @@ propdlg::propdlg(KUser *AUser, QWidget *parent, const char *name, int)
     layout->addMultiCellWidget(new KSeparator(KSeparator::HLine, frame), row, row, 0, 3);
     row++;
 
-    lesexpire = addDateGroup(frame, layout, row++, i18n("&Account will expire on:"), user->getExpire()); 
+    lesexpire = addDateGroup(frame, layout, row++, i18n("&Account will expire on:"), user->getExpire());
   }
 #endif
 
@@ -265,7 +265,7 @@ propdlg::propdlg(KUser *AUser, QWidget *parent, const char *name, int)
       QGroupBox *group = new QGroupBox( frame );
       layout->addMultiCellWidget(group, 1, 1, 0, 1);
       group->setTitle(i18n("Disk Space"));
-      QGridLayout *groupLayout = new QGridLayout(group, 6, 2, marginHint(), spacingHint()); 
+      QGridLayout *groupLayout = new QGridLayout(group, 6, 2, marginHint(), spacingHint());
       groupLayout->addRowSpacing(0, group->fontMetrics().lineSpacing());
       groupLayout->setColStretch(0,1);
       int row = 1;
@@ -300,7 +300,7 @@ propdlg::propdlg(KUser *AUser, QWidget *parent, const char *name, int)
       QGroupBox *group = new QGroupBox( frame );
       layout->addMultiCellWidget(group, 2, 2, 0, 1);
       group->setTitle(i18n("Number of Files"));
-      QGridLayout *groupLayout = new QGridLayout(group, 6, 2, marginHint(), spacingHint()); 
+      QGridLayout *groupLayout = new QGridLayout(group, 6, 2, marginHint(), spacingHint());
       groupLayout->addRowSpacing(0, group->fontMetrics().lineSpacing());
       groupLayout->setColStretch(0,1);
       int row = 1;
@@ -344,15 +344,15 @@ propdlg::propdlg(KUser *AUser, QWidget *parent, const char *name, int)
     QObject::connect(cbpgrp, SIGNAL(activated(const QString &)), this, SLOT(setpgroup(const QString &)));
 
     lstgrp = new KListView(frame);
-    lstgrp->setFullWidth(); // Single column, full widget width.
+    lstgrp->setFullWidth(true); // Single column, full widget width.
     lstgrp->addColumn(i18n("Groups User '%1' Belongs To").arg(user->getName()));
 //    QString whatstr = i18n("Select the groups that this user belongs to.");
     QWhatsThis::add(lstgrp, whatstr);
     layout->addMultiCellWidget(lstgrp, row, row, 0, 1);
-    row++;    
-    QObject::connect(lstgrp, SIGNAL(clicked(QListViewItem *)), this, SLOT(gchanged())); 
+    row++;
+    QObject::connect(lstgrp, SIGNAL(clicked(QListViewItem *)), this, SLOT(gchanged()));
   }
-  
+
 #ifdef EXTENDED_GECOS_BSD
   // Tab5: extended BSD tab
   {
@@ -365,7 +365,7 @@ propdlg::propdlg(KUser *AUser, QWidget *parent, const char *name, int)
 //    whatstr = i18n("WHAT IS THIS: Login class");
     addRow(frame, layout, row++, leclass, i18n("Login class:"), whatstr, true);
 
-    leexpire = addDateGroup(frame, layout, row++, i18n("Account will expire after:"), user->getExpire()); 
+    leexpire = addDateGroup(frame, layout, row++, i18n("Account will expire after:"), user->getExpire());
   }
 #endif
 
@@ -450,7 +450,7 @@ void propdlg::gchanged() {
 }
 
 void propdlg::save() {
-  
+
   user->setUID(leid->text().toInt());
   user->setFullName(lefname->text());
 
@@ -463,7 +463,7 @@ void propdlg::save() {
   user->setHomePhone(lehphone->text());
   user->setClass(leclass->text());
 
-  // date() returns days since the epoch if a date is specified	
+  // date() returns days since the epoch if a date is specified
   // which we convert to seconds since the epoch.
   // date() returns 0 if the `never expires' box is checked which
   // ends up being converted to 0 seconds which is what we need.
@@ -686,11 +686,11 @@ void propdlg::slotOk() {
       return;
     }
   }
-  
+
   QString newshell;
   if (leshell->currentItem() != 0)
     newshell = leshell->currentText();
-  
+
   if (oldshell != newshell)
   {
     if (!checkShell(newshell)) {
@@ -704,12 +704,12 @@ void propdlg::slotOk() {
       		i18n("Do &Not Add"));
       	if (result == KMessageBox::Cancel)
       	  return;
-      	
+
       	if (result == KMessageBox::Yes)
       	  addShell(newshell);
     }
   }
-    
+
   if (check())
     accept();
   else

@@ -36,9 +36,12 @@ KGroup::KGroup(KGroup *copy) {
   name    = copy->name;
   pwd     = copy->pwd;
   gid     = copy->gid;
+
+  u.setAutoDelete(TRUE);
 }
 
 KGroup::~KGroup() {
+  u.clear();
 }
 
 QString *KGroup::lookup_user(const char *aname) {
@@ -46,6 +49,21 @@ QString *KGroup::lookup_user(const char *aname) {
     if (aname == (*u.at(i)))
       return (u.at(i));
   return (NULL);
+}
+
+void KGroup::addUser(const char *aname) {
+  u.append(new QString(aname));
+}
+
+bool KGroup::removeUser(const char *aname) {
+  QString *q;
+
+  for (uint i=0;i<u.count();i++)
+    if ((*(q = u.at(i))) == aname) {
+      u.remove(q);
+      return (TRUE);
+    }
+  return (FALSE);
 }
 
 KGroups::KGroups() {

@@ -87,6 +87,9 @@ printf("mainDlg::init()\n");
 }
 
 mainDlg::~mainDlg() {
+  delete lbusers;
+  delete lbgroups;
+
   delete u;
   delete g;
 

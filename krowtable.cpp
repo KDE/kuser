@@ -1,16 +1,16 @@
 #include "krowtable.moc"
 #include "qkeycode.h"
 
-KRowTable::KRowTable( Flags flags, QWidget *parent, const char *name )
+KRowTable::KRowTable( Flags aflags, QWidget *parent, const char *name )
 	: QTableView( parent, name )
 {
-	init(flags);
+	init(aflags);
 }
 
-KRowTable::KRowTable( int rows, int cols, Flags flags, QWidget *parent, const char *name )
+KRowTable::KRowTable( int rows, int cols, Flags aflags, QWidget *parent, const char *name )
 	: QTableView( parent, name )
 {
-	init(flags);
+	init(aflags);
 	setNumRows( rows );
 	setNumCols( cols );
 }
@@ -20,11 +20,11 @@ KRowTable::~KRowTable()
 	clear();
 }
 
-void KRowTable::init(Flags flags)
+void KRowTable::init(Flags aflags)
 {
-	m_flags = flags;
+	m_flags = aflags;
 	current_row = -1;
-	if( flags == SelectRow )
+	if( aflags == SelectRow )
 		current_col = -1;
 	else
 		current_col = 0;

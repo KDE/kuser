@@ -1,7 +1,6 @@
 #ifndef _KU_MAINDLG_H
 #define _KU_MAINDLG_H
 
-#include <ktablistbox.h>
 #include <qevent.h>
 #include <qlist.h>
 #include <qpushbt.h>
@@ -83,6 +82,7 @@ extern mainDlg *md;
 #endif
 
 #define users  md->getUsers()
+#define groups  md->getGroups()
 #endif
 
 #endif // _KU_MAINDLG_H

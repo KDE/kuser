@@ -18,12 +18,14 @@ editGroup::editGroup(KGroup *akg,
 		       const char* name)
   :Inherited( parent, name )
 {
+  uint i;
+
   kg = akg;
 
-  for (uint i = 0; i<kg->u.count(); i++)
+  for (i = 0; i<kg->u.count(); i++)
     m_Group->insertItem(*kg->u.at(i));
 
-  for (uint i = 0; i<users->getUsersNumber(); i++)
+  for (i = 0; i<users->getUsersNumber(); i++)
     if (kg->lookup_user(users->getUser(i)->p_name) == 0)
       m_Users->insertItem(users->getUser(i)->p_name);
 

@@ -7,7 +7,7 @@
 
 class KHeaderItem {
 public:
-    KHeaderItem( QWidget *parent, int flags,
+    KHeaderItem( QWidget *parent, int aflags,
 				 int size = 0, QString *label = 0,
                  int alignment = AlignCenter );
 	virtual ~KHeaderItem();
@@ -15,7 +15,7 @@ public:
     int size();
 	void setText( QString label, int alignment = AlignCenter );
 	QString text();
-	void setFlags( int flags );
+	void setFlags( int aflags );
 	int flags();
 	virtual void paint(QPainter *paint, QColorGroup *g, int style, int pos, int width, int height, int sunken);
 
@@ -27,13 +27,13 @@ private:
 	QWidget *m_parent;
 };
 
-KHeaderItem::KHeaderItem( QWidget *parent, int flags,
+KHeaderItem::KHeaderItem( QWidget *parent, int aflags,
 						  int size, QString *label, int alignment )
 {
 	m_size = size;
 	if( label != 0 ) m_label = *label;
 	m_labelAlignment = alignment;
-	m_flags = flags;
+	m_flags = aflags;
 	m_parent = parent;
 }
 
@@ -62,9 +62,9 @@ QString KHeaderItem::text()
 	return m_label;
 }
 
-void KHeaderItem::setFlags( int flags )
+void KHeaderItem::setFlags( int aflags )
 {
-	m_flags = ( m_flags & KHeader::Vertical ) | ( flags & ~KHeader::Vertical );
+	m_flags = ( m_flags & KHeader::Vertical ) | ( aflags & ~KHeader::Vertical );
 }
 
 int KHeaderItem::flags()
@@ -100,19 +100,19 @@ void KHeaderItem::paint(QPainter *paint, QColorGroup *g, int style, int pos, int
 
 //=======================================================================
 
-KHeader::KHeader( QWidget *parent, const char *name, int numHeaders, int flags )
+KHeader::KHeader( QWidget *parent, const char *name, int numHeaders, int aflags )
 	: QFrame( parent, name )
 {
 	labels.resize( 0 );
 	m_offset = 0;
 	m_selected = -1;
 	m_temp_sel = -1;
-	m_flags = flags;
+	m_flags = aflags;
 	divider = -1;
 	m_resizing = FALSE;
 	if( numHeaders != 0 )
         setNumHeaders( numHeaders );
-	if( flags & Resizable )
+	if( aflags & Resizable )
 	{
 		installEventFilter(this);
 		setMouseTracking(TRUE);
@@ -175,11 +175,11 @@ bool KHeader::eventFilter( QObject *obj, QEvent *ev )
 		else if( mev->button()==NoButton ) {
 			// search labels to see if we are in range of a divider
 			int pos = m_offset;
-			int curs = m_flags&Vertical ? mev->y()+3 : mev->x()+3;
+			int cur = m_flags&Vertical ? mev->y()+3 : mev->x()+3;
 			divider = -1;
 			for( uint i=0 ; i<labels.size() ; i++ ) {
 				pos += labels[i]->size();
-				if( curs>=pos && curs<pos+6 ) {
+				if( cur>=pos && cur<pos+6 ) {
 					setCursor(m_flags&Vertical ? sizeVerCursor : sizeHorCursor);
 					divider = i;
 					divstart = pos;
@@ -228,12 +228,12 @@ void KHeader::setNumHeaders( int numHeaders )
 }
 
 
-void KHeader::setHeaderFlags( int header, int flags )
+void KHeader::setHeaderFlags( int header, int aflags )
 {
 	ASSERT( header >= 0 );
 	ASSERT( header < (int)labels.size() );
 
-	labels[header]->setFlags( flags );
+	labels[header]->setFlags( aflags );
 }
 
 
@@ -292,16 +292,16 @@ void KHeader::paintEvent( QPaintEvent *pev )
 
 void KHeader::mousePressEvent( QMouseEvent *mev )
 {
-	int curs;
+	int cur;
 	if( m_flags & Vertical )
-		curs = mev->y();
+		cur = mev->y();
 	else
-		curs = mev->x();
+		cur = mev->x();
 	int pos = m_offset;
 	for( uint i=0 ; i<labels.size() ; i++ )
 	{
 		pos += labels[i]->size();
-		if( pos >= curs )
+		if( pos >= cur )
 		{
 			if( !(labels[i]->flags() & Buttons) )
 				return;

@@ -2,4 +2,5 @@ DlgEdit:v1.2:Project:
 Project {
 Name {}
 Dialog {editgroup.dlg}
+Dialog {/home/dyp/src/cpp/kde/kdeadmin/kuser/editUser.dlg}
 }

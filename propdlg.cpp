@@ -1,5 +1,7 @@
 #include <qvalidator.h>
 
+#include <stdio.h>
+#include <stdlib.h>
 #include "globals.h"
 #include "propdlg.h"
 #include "propdlg.moc"
@@ -196,8 +198,50 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
   }
 #endif
 
+  w4 = new QWidget(this, "wd_Groups");
+
+  m_Other = new QListBox( w4, "m_Other" );
+  m_Other->setGeometry( 15, 30, 160, 130 );
+  m_Other->setFrameStyle( 51 );
+  m_Other->setLineWidth( 2 );
+
+  QLabel* tmpQLabel;
+  tmpQLabel = new QLabel( w4, "Label_1" );
+  tmpQLabel->setGeometry( 20, 10, 100, 20 );
+  tmpQLabel->setText( "Users" );
+  tmpQLabel->setAlignment( 289 );
+  tmpQLabel->setMargin( -1 );
+
+  m_Group = new QListBox( w4, "m_Group" );
+  m_Group->setGeometry( 250, 30, 160, 130 );
+  m_Group->setFrameStyle( 51 );
+  m_Group->setLineWidth( 2 );
+
+  pbadd = new QPushButton( w4, "pbadd" );
+  pbadd->setGeometry( 195, 50, 40, 30 );
+  connect( pbadd, SIGNAL(clicked()), SLOT(add()) );
+  pbadd->setText( "->" );
+  pbadd->setAutoRepeat( FALSE );
+  pbadd->setAutoResize( FALSE );
+
+  pbdel = new QPushButton( w4, "pbdel" );
+  pbdel->setGeometry( 195, 100, 40, 30 );
+  connect( pbdel, SIGNAL(clicked()), SLOT(del()) );
+  pbdel->setText( "<-" );
+  pbdel->setAutoRepeat( FALSE );
+  pbdel->setAutoResize( FALSE );
+
+  tmpQLabel = new QLabel( w4, "Label_2" );
+  tmpQLabel->setGeometry( 300, 10, 100, 20 );
+  tmpQLabel->setText( "Groups" );
+  tmpQLabel->setAlignment( 289 );
+  tmpQLabel->setMargin( -1 );
+
+  addTab(w4, _("Groups"));
+
+  loadgroups();
   selectuser();
-  resize(450, 470);
+  setFixedSize(450, 470);
 
   ischanged = FALSE;
 #ifdef _KU_QUOTA
@@ -208,7 +252,62 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
 propdlg::~propdlg() {
 }
 
+void propdlg::loadgroups() {
+  uint i;
+
+  for (i = 0; i<groups->getGroupsNumber(); i++)
+    if (groups->getGroup(i)->lookup_user(user->p_name)!=0)
+      m_Group->insertItem(groups->getGroup(i)->name);
+    else
+      m_Other->insertItem(groups->getGroup(i)->name);
+
+  if (m_Other->count() != 0)
+    m_Other->setCurrentItem(0);
+  if (m_Group->count() != 0)
+    m_Group->setCurrentItem(0);
+}
+
 void propdlg::changed() {
+  ischanged = TRUE;
+}
+
+void propdlg::add() {
+  int cur = m_Other->currentItem();
+
+  if (cur == -1)
+    return;
+
+  m_Group->insertItem(m_Other->text(cur));
+  m_Other->removeItem(cur);
+
+  if (((uint)cur) == m_Other->count())
+    m_Other->setCurrentItem(cur-1);
+  else
+    m_Other->setCurrentItem(cur);
+
+  m_Group->setCurrentItem(m_Group->count()-1);
+  m_Group->centerCurrentItem();
+
+  ischanged = TRUE;
+}
+
+void propdlg::del() {
+  int cur = m_Group->currentItem();
+
+  if (cur == -1)
+    return;
+
+  m_Other->insertItem(m_Group->text(cur));
+  m_Group->removeItem(cur);
+
+  if (((uint)cur) == m_Group->count())
+    m_Group->setCurrentItem(cur-1);
+  else
+    m_Group->setCurrentItem(cur);
+  
+  m_Other->setCurrentItem(m_Other->count()-1);
+  m_Other->centerCurrentItem();
+
   ischanged = TRUE;
 }
 
@@ -236,6 +335,18 @@ void propdlg::save() {
     user->s_expire = lesexpire->getDate()-user->s_lstchg;
   }
 #endif
+}
+
+void propdlg::saveg() {
+  uint i;
+
+  for (i=0;i<m_Group->count();i++)
+    if (groups->group_lookup(m_Group->text(i))->lookup_user(user->p_name) == NULL)
+      groups->group_lookup(m_Group->text(i))->addUser(user->p_name);
+  
+  for (i=0;i<m_Other->count();i++)
+    if (groups->group_lookup(m_Other->text(i))->lookup_user(user->p_name) != NULL)
+      groups->group_lookup(m_Other->text(i))->removeUser(user->p_name);
 }
 
 #ifdef _KU_QUOTA
@@ -266,6 +377,7 @@ void propdlg::saveq() {
 #else
 void propdlg::qcharchanged(const char *) {
 }
+
 void propdlg::mntsel(int) {
 }
 #endif
@@ -281,6 +393,7 @@ bool propdlg::check() {
 
   if (ischanged == TRUE) {
     save();
+    saveg();
     ret = TRUE;
   }
 
@@ -354,10 +467,11 @@ void propdlg::selectuser() {
 }
 
 void propdlg::setpwd() {
-  pwddlg *d;
+  pwddlg *pd;
 
-  d = new pwddlg(user, this, "pwddlg");
-  d->exec();
+  pd = new pwddlg(user, this, "pwddlg");
+  pd->exec();
+  delete pd;
 }
 
 void propdlg::ok() {

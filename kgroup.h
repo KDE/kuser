@@ -23,6 +23,9 @@ public:
   KGroup();
   KGroup(KGroup *copy);
   ~KGroup();
+
+  void addUser(const char *aname);
+  bool removeUser(const char *aname);
 };
 
 class KGroups {

@@ -24,12 +24,12 @@ private:    // Disabled copy constructor and operator=
 class KRowTable : public QTableView
 {
 	Q_OBJECT
-
+protected:
 	enum Flags {SelectRow, SelectCell, SelectFixed};
 
 public:
-	KRowTable( Flags flags=SelectRow, QWidget *parent = 0, const char *name = 0 );
-	KRowTable( int rows, int cols, Flags flags=SelectRow, QWidget *parent = 0, const char *name = 0 );
+	KRowTable( Flags aflags=SelectRow, QWidget *parent = 0, const char *name = 0 );
+	KRowTable( int rows, int cols, Flags aflags=SelectRow, QWidget *parent = 0, const char *name = 0 );
 	~KRowTable();
 
 	KRow *selectedRow();
@@ -76,7 +76,7 @@ private slots:
 	void vSliderMovedSlot(int value);
 
 private:
-	void init(Flags flags);
+	void init(Flags aflags);
 	QArray<KRow *> m_rows;
 	QArray<int> m_colWidths;
 	QArray<int> m_rowHeights;

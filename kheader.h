@@ -33,7 +33,7 @@ public:
 	* \end{itemize}
 	*/
 	KHeader( QWidget *parent = 0, const char *name = 0,
-			 int numHeaders = 0, int flags = 0 );
+			 int numHeaders = 0, int aflags = 0 );
 
 	virtual ~KHeader();
 

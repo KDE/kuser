@@ -35,11 +35,15 @@ protected slots:
   void shactivated(const char *text);
   void changed();
   void charchanged(const char *);
+  void add();
+  void del();
 
 private:
   void selectuser();
   void save();
+  void saveg();
   bool check();
+  void loadgroups();
 
 #ifdef _KU_QUOTA
   void saveq();
@@ -56,6 +60,12 @@ private:
   QWidget *w1;
   QWidget *w2;
   QWidget *w3;
+  QWidget *w4;
+
+  QListBox* m_Other;
+  QListBox* m_Group;
+  QPushButton* pbadd;
+  QPushButton* pbdel;
 
   QLabel *l1;
   QLabel *l2;

@@ -1,3 +1,4 @@
+#include "globals.h"
 #include <kmsgbox.h>
 #include <kbuttonbox.h>
 #include <qlayout.h>

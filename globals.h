@@ -7,8 +7,8 @@
 #undef _KU_SHADOW
 #endif
 
-#include <kconfig.h>
 #include "../config.h"
+#include <kconfig.h>
 
 extern int is_quota;
 extern int is_shadow;

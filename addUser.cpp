@@ -30,6 +30,7 @@ addUser::addUser(KUser *auser, Quota *aquota, QWidget *parent, const char *name,
   createhome = new QCheckBox(w1, "createHome");
   createhome->setText(i18n("Create home directory"));
   createhome->setGeometry(200, 70, 200, 30);
+  createhome->setChecked(true);
   connect(createhome, SIGNAL(toggled(bool)), this, SLOT(createHomeChecked(bool)));
 
   copyskel = new QCheckBox(w1, "copySkel");
@@ -49,6 +50,7 @@ addUser::addUser(KUser *auser, QWidget *parent = 0, const char *name = 0, int is
   createhome = new QCheckBox(w1, "createHome");
   createhome->setText(i18n("Create home directory"));
   createhome->setGeometry(200, 70, 200, 30);
+  createhome->setChecked(true);
   connect(createhome, SIGNAL(toggled(bool)), this, SLOT(createHomeChecked(bool)));
 
   copyskel = new QCheckBox(w1, "copySkel");

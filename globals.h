@@ -3,6 +3,10 @@
 
 #define _KU_VERSION "0.3"
 
+#ifdef HAVE_SYS_PARAM_H
+#include <sys/param.h>
+#endif
+
 #ifdef BSD
 #undef _KU_SHADOW
 #endif

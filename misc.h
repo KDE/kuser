@@ -18,8 +18,8 @@
  *  Boston, MA 02111-1307, USA.
  **/
 
-#ifndef _KU_MISC_H
-#define _KU_MISC_H
+#ifndef _KU_MISC_H_
+#define _KU_MISC_H_
 
 #include <sys/time.h>
 
@@ -42,4 +42,4 @@ void addShell(const QString &shell);
 int timeToDays(time_t time);
 time_t daysToTime(int days);
 
-#endif // _KU_MISC_H
+#endif // _KU_MISC_H_

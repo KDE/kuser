@@ -38,7 +38,7 @@
 bool backup(const QString & name)
 {
   QString tmp = name + QString::fromLatin1(KU_BACKUP_EXT);
-  unlink(QFile::encodeName(tmp));
+  QFile::remove( tmp );
 
   if (copyFile(QFile::encodeName(name), QFile::encodeName(tmp)) == -1)
   {

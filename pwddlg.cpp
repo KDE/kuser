@@ -38,7 +38,7 @@ pwddlg::pwddlg( QWidget* parent, const char* name )
   lepw1 = new KLineEdit(page, "LineEdit_1");
 
   // ensure it fits at least 12 characters
-  lepw1->setText(QString::fromLatin1("XXXXXXXXXXXX"));
+  lepw1->setText( "XXXXXXXXXXXX" );
   lepw1->setMinimumSize(lepw1->sizeHint());
 
   // clear text
@@ -54,7 +54,7 @@ pwddlg::pwddlg( QWidget* parent, const char* name )
   lepw2 = new KLineEdit(page, "LineEdit_2");
 
   // ensure it fits at least 12 characters
-  lepw2->setText(QString::fromLatin1("XXXXXXXXXXXX"));
+  lepw2->setText( "XXXXXXXXXXXX" );
   lepw2->setMinimumSize(lepw2->sizeHint());
 
   // clear text

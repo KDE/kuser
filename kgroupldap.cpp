@@ -116,24 +116,24 @@ void KGroupLDAP::data( KIO::Job*, const QByteArray& data )
         name = mParser.attr().lower();
         value = mParser.val();
         val = QString::fromUtf8( value, value.size() );
-        if ( name == QString::fromLatin1("objectclass") ) {
+        if ( name == "objectclass" ) {
           if ( val.lower() == "sambagroupmapping" ) 
             mGroup->setCaps( KGroup::Cap_Samba );
-        } else if ( name == QString::fromLatin1("gidnumber") )
+        } else if ( name == "gidnumber" )
           mGroup->setGID( val.toLong() );
-        else if ( name == QString::fromLatin1("cn") )
+        else if ( name == "cn" )
           mGroup->setName( val );
-        else if ( name == QString::fromLatin1("userpassword") )
+        else if ( name == "userpassword" )
           mGroup->setPwd( val );
-        else if ( name == QString::fromLatin1("memberuid") )
+        else if ( name == "memberuid" )
           mGroup->addUser( val );
-        else if ( name == QString::fromLatin1("sambasid") )
+        else if ( name == "sambasid" )
           mGroup->setSID( val );
-        else if ( name == QString::fromLatin1("sambagrouptype") )
+        else if ( name == "sambagrouptype" )
           mGroup->setType( val.toInt() );
-        else if ( name == QString::fromLatin1("displayname") )
+        else if ( name == "displayname" )
           mGroup->setDisplayName( val );
-        else if ( name == QString::fromLatin1("description") )
+        else if ( name == "description" )
           mGroup->setDesc( val );
         break;
       case KABC::LDIF::EndEntry: {
@@ -291,8 +291,7 @@ void KGroupLDAP::modData( KGroup *group )
     KABC::LDIF::assembleLine( "userpassword", group->getPwd() ) +
     "\n-\nreplace: memberuid\n";
   for ( uint i=0; i < group->count(); i++ ) {
-    ldif += KABC::LDIF::assembleLine(QString::fromLatin1("memberuid"),
-      group->user(i)) + "\n";
+    ldif += KABC::LDIF::assembleLine( "memberuid", group->user(i)) + "\n";
   }
   if ( getCaps() & Cap_Samba ) {
     if ( group->getCaps() & KGroup::Cap_Samba ) {

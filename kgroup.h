@@ -18,8 +18,8 @@
  *  Boston, MA 02111-1307, USA.
  **/
 
-#ifndef _KGROUP_H_
-#define _KGROUP_H_
+#ifndef _KU_GROUP_H_
+#define _KU_GROUP_H_
 
 #include <sys/types.h>
 
@@ -143,4 +143,4 @@ protected:
   QString domsid;
 };
 
-#endif // _KGROUP_H_
+#endif // _KU_GROUP_H_

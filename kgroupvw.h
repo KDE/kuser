@@ -18,8 +18,8 @@
  *  Boston, MA 02111-1307, USA.
  **/
 
-#ifndef _KU_GROUPVW_H
-#define _KU_GROUPVW_H
+#ifndef _KU_GROUPVW_H_
+#define _KU_GROUPVW_H_
 
 #include <qwidget.h>
 
@@ -54,4 +54,4 @@ public:
   void init();
 };
 
-#endif // _KGROUPVW_H
+#endif // _KGROUPVW_H_

@@ -18,8 +18,8 @@
  *  Boston, MA 02111-1307, USA.
  **/
 
-#ifndef _EDITDEFAULTS_H_
-#define _EDITDEFAULTS_H_
+#ifndef _KU_EDITDEFAULTS_H_
+#define _KU_EDITDEFAULTS_H_
 
 #include <qmemarray.h>
 #include <kconfigdialog.h>
@@ -55,4 +55,4 @@ private slots:
   void loadResult( KIO::Job* job);
 };
 
-#endif // _EDITDEFAULTS_H_
+#endif // _KU_EDITDEFAULTS_H_

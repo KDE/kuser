@@ -63,7 +63,7 @@ QString KUserViewItem::text(int num) const
   switch(num)
   {
      case 0: return mUser->getCaps() & KUser::Cap_POSIX ? 
-      QString::fromLatin1("%1 ").arg(mUser->getUID(),6) : QString::null;
+      QString::number( mUser->getUID() ) : QString::null;
      case 1: return mUser->getName();
      case 2: return mUser->getFullName();
      case 3: return mUser->getHomeDir();

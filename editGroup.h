@@ -19,8 +19,8 @@
  **/
 
 
-#ifndef _EDITGROUP_H_
-#define _EDITGROUP_H_
+#ifndef _KU_EDITGROUP_H_
+#define _KU_EDITGROUP_H_
 
 #include <qcheckbox.h>
 #include <kdialogbase.h>
@@ -67,4 +67,4 @@ private:
   } RID;
   QValueList<RID> mRids;
 };
-#endif // _EDITGROUP_H_
+#endif // _KU_EDITGROUP_H_

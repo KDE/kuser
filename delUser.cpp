@@ -20,6 +20,7 @@
 
 #include <qlabel.h>
 #include <qvbox.h>
+#include <qfile.h>
 
 #include <klocale.h>
 
@@ -32,7 +33,7 @@ delUser::delUser(KUser *AUser, QWidget *parent, const char *name)
                    "<p>Also perform the following actions:").arg(AUser->getName()),
               page);
   m_deleteHomeDir = new QCheckBox(i18n("Delete &home folder: %1").arg(AUser->getHomeDir()), page);
-  QString mailboxpath = QString::fromLatin1("%1/%2").arg(QString::fromLatin1(MAIL_SPOOL_DIR)).arg(AUser->getName());
+  QString mailboxpath = QFile::decodeName(MAIL_SPOOL_DIR) + "/" + AUser->getName();
   m_deleteMailBox = new QCheckBox(i18n("Delete &mailbox: %1").arg(mailboxpath), page);
   setButtonGuiItem(KDialogBase::Ok, KStdGuiItem::del());
 }

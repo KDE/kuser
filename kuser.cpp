@@ -614,7 +614,7 @@ int KUser::createMailBox()
 {
   QString mailboxpath;
   int fd;
-  mailboxpath = QString::fromLatin1("%1/%2").arg(QFile::decodeName(MAIL_SPOOL_DIR)).arg(p_name);
+  mailboxpath = QFile::decodeName(MAIL_SPOOL_DIR) + "/" + p_name;
   if((fd = open(QFile::encodeName(mailboxpath), O_CREAT|O_EXCL|O_WRONLY,
                 S_IRUSR|S_IWUSR)) < 0) {
     if (errno != EEXIST)
@@ -778,7 +778,7 @@ int KUser::removeCrontabs()
   QString file;
   QString command;
 
-  file = QString::fromLatin1("/var/cron/tabs/%1").arg(p_name);
+  file = QFile::decodeName(CRONTAB_DIR) + "/" + p_name;
   if ( access(QFile::encodeName(file), F_OK) == 0 ) {
     command = QString::fromLatin1("crontab -u %1 -r").arg(KProcess::quote(p_name));
     if ( system(QFile::encodeName(command)) != 0 ) {
@@ -794,7 +794,7 @@ int KUser::removeMailBox()
 {
   QString file;
 
-  file = QString::fromLatin1("%1/%2").arg(QFile::decodeName(MAIL_SPOOL_DIR)).arg(p_name);
+  file = QFile::decodeName(MAIL_SPOOL_DIR) + "/" + p_name;
   if (remove(QFile::encodeName(file)) != 0) {
     KMessageBox::error( 0, i18n("Cannot remove mailbox %1.\nError: %2")
                 .arg(file).arg(QString::fromLocal8Bit(strerror(errno))) );

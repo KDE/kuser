@@ -16,8 +16,8 @@
  *  Boston, MA 02111-1307, USA.
  **/
 
-#ifndef _KGROUPLDAP_H_
-#define _KGROUPLDAP_H_
+#ifndef _KU_GROUPLDAP_H_
+#define _KU_GROUPLDAP_H_
 
 #include <sys/types.h>
 
@@ -62,5 +62,5 @@ private:
   void modData( KGroup *group );
 };
 
-#endif // _KGROUP_H_
+#endif // _KU_GROUPLDAP_H_
 

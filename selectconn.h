@@ -16,8 +16,8 @@
  *  Boston, MA 02111-1307, USA.
  **/
 
-#ifndef _SELECTCONN_H_
-#define _SELECTCONN_H_
+#ifndef _KU_SELECTCONN_H_
+#define _KU_SELECTCONN_H_
 
 #include <kdialogbase.h>
 #include <kcombobox.h>
@@ -40,4 +40,4 @@ protected:
   QString conn, newconn, mSelected;
 };
 
-#endif // selectconn_included
+#endif // _KU_SELECTCONN_H_

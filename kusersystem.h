@@ -18,8 +18,8 @@
  *  Boston, MA 02111-1307, USA.
  **/
 
-#ifndef _KUSERSYSTEM_H_
-#define _KUSERSYSTEM_H_
+#ifndef _KU_USERSYSTEM_H_
+#define _KU_USERSYSTEM_H_
 
 #include <sys/types.h>
 
@@ -42,5 +42,5 @@ private:
   bool loadpwd();
   bool loadsdw();
 };
-#endif // _KUSER_H_
+#endif // _KU_USERSYSTEM_H_
 

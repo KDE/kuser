@@ -58,8 +58,8 @@ editGroup::editGroup(KGroup *akg, bool samba, bool add,
   lb->setText(i18n("Group number:"));
   legid = new KLineEdit(page);
   // ensure it fits at least 20 characters
-  legid->setText(QString::fromLatin1("XXXXXXXXXXXXXXXXXXX"));
-  legid->setText(QString::fromLatin1("%1").arg(kg->getGID()));
+  legid->setText( "XXXXXXXXXXXXXXXXXXX" );
+  legid->setText( QString::number(kg->getGID()) );
   legid->setValidator( new QIntValidator(this) );
   legid->setEnabled( mAdd );
   legid->setReadOnly( ro );
@@ -91,7 +91,7 @@ editGroup::editGroup(KGroup *akg, bool samba, bool add,
 
   legrpname = new KLineEdit( page );
   // ensure it fits at least 20 characters
-  legrpname->setText(QString::fromLatin1("XXXXXXXXXXXXXXXXXXX"));
+  legrpname->setText( "XXXXXXXXXXXXXXXXXXX" );
   legrpname->setText( kg->getName() );
   legrpname->setReadOnly( ro );
   legrpname->setFocus();

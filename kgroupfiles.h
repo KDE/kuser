@@ -18,8 +18,8 @@
  *  Boston, MA 02111-1307, USA.
  **/
 
-#ifndef _KGROUPFILES_H_
-#define _KGROUPFILES_H_
+#ifndef _KU_GROUPFILES_H_
+#define _KU_GROUPFILES_H_
 
 #include <sys/types.h>
 
@@ -49,5 +49,5 @@ private:
   bool save();
 };
 
-#endif // _KGROUP_H_
+#endif // _KU_GROUPFILES_H_
 

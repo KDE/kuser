@@ -136,7 +136,7 @@ bool addUser::checkMailBox()
   struct stat s;
   int r;
 
-  mailboxpath = QString::fromLatin1("%1/%2").arg(QFile::decodeName(MAIL_SPOOL_DIR)).arg(user->getName());
+  mailboxpath = QFile::decodeName(MAIL_SPOOL_DIR) + "/" + user->getName();
   r = stat(QFile::encodeName(mailboxpath), &s);
 
   if ((r == -1) && (errno == ENOENT))

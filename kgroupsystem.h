@@ -18,8 +18,8 @@
  *  Boston, MA 02111-1307, USA.
  **/
 
-#ifndef _KGROUPSYSTEM_H_
-#define _KGROUPSYSTEM_H_
+#ifndef _KU_GROUPSYSTEM_H_
+#define _KU_GROUPSYSTEM_H_
 
 #include <sys/types.h>
 
@@ -38,5 +38,5 @@ public:
   virtual bool dbcommit() { return true; }
 };
 
-#endif // _KGROUPSYSTEM_H_
+#endif // _KU_GROUPSYSTEM_H_
 

@@ -18,8 +18,8 @@
  *  Boston, MA 02111-1307, USA.
  **/
 
-#ifndef _KU_PWDDLG
-#define _KU_PWDDLG
+#ifndef _KU_PWDDLG_H_
+#define _KU_PWDDLG_H_
 
 #include <qstring.h>
 #include <klineedit.h>
@@ -41,4 +41,4 @@ private:
   KLineEdit   *lepw2;
 };
 
-#endif // _KU_PWDDLG
+#endif // _KU_PWDDLG_H_

@@ -18,8 +18,8 @@
  *  Boston, MA 02111-1307, USA.
  **/
 
-#ifndef __KGLOBAL_H__
-#define __KGLOBAL_H__
+#ifndef _KU_GLOBAL_H_
+#define _KU_GLOBAL_H_
 
 #include "kuser.h"
 #include "kgroup.h"
@@ -45,4 +45,4 @@ private:
 
 extern KUserGlobals *kug;
 
-#endif
+#endif //_KU_GLOBAL_H_

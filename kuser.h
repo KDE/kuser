@@ -18,8 +18,8 @@
  *  Boston, MA 02111-1307, USA.
  **/
 
-#ifndef _KUSER_H_
-#define _KUSER_H_
+#ifndef _KU_USER_H_
+#define _KU_USER_H_
 
 #include <sys/types.h>
 
@@ -298,4 +298,4 @@ protected:
   
 };
 
-#endif // _KUSER_H_
+#endif // _KU_USER_H_

@@ -18,8 +18,8 @@
  *  Boston, MA 02111-1307, USA.
  **/
 
-#ifndef _KU_MAINWIDGET_H
-#define _KU_MAINWIDGET_H
+#ifndef _KU_MAINWIDGET_H_
+#define _KU_MAINWIDGET_H_
 
 #include <kmainwindow.h>
 
@@ -53,4 +53,4 @@ private:
 
 };
 
-#endif // _KU_MAINWIDGET_H
+#endif // _KU_MAINWIDGET_H_

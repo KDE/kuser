@@ -28,7 +28,7 @@ int is_shadow = 0;
 #endif
 
 void initmain() {
-  config = kapp->getConfig();
+  config = kapp->config();
   err = new KError();
 }
 

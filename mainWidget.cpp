@@ -42,7 +42,7 @@ mainWidget::mainWidget(const char *name) : KTMainWindow(name) {
 		"Denis Pershin\n"
 		"dyp@inetlab.com\n"
 		"Copyright 1997, 1998, 1999 (c)").arg(_KU_VERSION);
-  QPopupMenu *help = kapp->getHelpMenu(true, tmp);
+  QPopupMenu *help = kapp->helpMenu(true, tmp);
 
   menubar = new KMenuBar( this );
   CHECK_PTR( menubar );
@@ -79,7 +79,7 @@ mainWidget::mainWidget(const char *name) : KTMainWindow(name) {
   resize(500, 400);
 
   // restore geometry settings
-  KConfig *config = kapp->getConfig();
+  KConfig *config = kapp->config();
   config->setGroup( "Appearance" );
   QString geom = config->readEntry( "Geometry" );
   if (!geom.isEmpty()) {
@@ -106,7 +106,7 @@ mainWidget::~mainWidget() {
 
 void mainWidget::resizeEvent (QResizeEvent *) {
   // save size of the application window
-  KConfig *config = kapp->getConfig();
+  KConfig *config = kapp->config();
   config->setGroup( "Appearance" );
   QString geom;
   geom = QString( "%1x%2").arg(geometry().width()).arg(geometry().height());

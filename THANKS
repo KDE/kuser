@@ -15,3 +15,5 @@ Clemens Drews <clemens.drews@hamburg.snafu.de> (for small password fix)
 Kevin Street <street@iname.com> (for big FreeBSD patch)
 Rudolf Weber <rw@weber.ravnet.de> (for NIS-related patch and some other futures)
 Duncan Haldane <f.d.m.haldane@cwix.com> (for RedHat specific issues and testing)
+Hans Petter Bieker <zerium@traad.lavvu.no> (for FreeBSD fgetpwent/getpwent/fgetr
+gent/getgrent fixes)

@@ -15,6 +15,7 @@ BUILTSOURCE	=       kdatectl.moc maindlg.moc propdlg.moc usernamedlg.moc pwddlg.
 noinst_HEADERS	=       kdatectl.h kuser.h maindlg.h   propdlg.h  mnt.h quotatool.h sdwtool.h pwdtool.h includes.h misc.h usernamedlg.h pwddlg.h mrqpasswdlined.h
 DISTFILES 	=	README AUTHORS
 DISTCLEANFILES	= 	$(BUILTSOURCE) 
+EDITABLE	=	$(DISTFILES) $(noinst_HEADERS) $(kuser_SOURCES)
 
 # the programs get installed in $(prefix)/bin
 bin_PROGRAMS = kuser

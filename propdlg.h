@@ -14,6 +14,7 @@
 #include "kdatectl.h"
 #include "kuser.h"
 #include "quota.h"
+#include "globals.h"
 
 class propdlg : public QDialog
 {
@@ -132,10 +133,14 @@ protected:
   QComboBox   *leqmnt;
   QLineEdit   *leqfs;
   QLineEdit   *leqfh;
+#ifndef BSD
   QLineEdit   *leqft;
+#endif
   QLineEdit   *leqis;
   QLineEdit   *leqih;
+#ifndef BSD
   QLineEdit   *leqit;
+#endif
   QLabel      *leqfcur;
   QLabel      *leqicur;
 #endif

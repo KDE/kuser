@@ -78,7 +78,7 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
   leshell->clear();
   leshell->insertItem(_("<Empty>"));
 
-  FILE *f = fopen("/etc/shells","r");
+  FILE *f = fopen(SHELL_FILE,"r");
   if (f) {
     while (!feof(f)) {
       char s[200];
@@ -269,11 +269,13 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
     QToolTip::add(leqfcur, _("File usage"));
     l14 = addLabel(w3, "ml14", 95, 160, 50, 20, _("File usage"));
 
+#ifndef BSD
     leqft = addLineEdit(w3, "leqft", 10, 190, 70, 22, "");
     leqft->setValidator(new QIntValidator(w3, "vaqft"));
     QObject::connect(leqft, SIGNAL(textChanged(const char *)), this, SLOT(qcharchanged(const char *)));
     QToolTip::add(leqft, _("File time limit"));
     l18 = addLabel(w3, "ml18", 95, 195, 50, 20, _("File time limit"));
+#endif
 
     leqis = addLineEdit(w3, "leqis", 10, 235, 70, 22, "");
     leqis->setValidator(new QIntValidator(w3, "vaqis"));
@@ -291,11 +293,13 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
     QToolTip::add(leqicur, _("iNode usage"));
     l15 = addLabel(w3, "ml15", 95, 315, 50, 20, _("iNode usage"));
 
+#ifndef BSD
     leqit = addLineEdit(w3, "leqit", 10, 345, 70, 22, "");
     leqit->setValidator(new QIntValidator(w3, "vaqit"));
     QObject::connect(leqit, SIGNAL(textChanged(const char *)), this, SLOT(qcharchanged(const char *)));
     QToolTip::add(leqit, _("iNode time limit"));
     l17 = addLabel(w3, "ml17", 95, 350, 50, 20, _("iNode time limit"));
+#endif
 
     tw->addTab(w3, _("Quota"));
   }
@@ -542,10 +546,14 @@ void propdlg::saveq() {
 
   tmpq->setfhard(atol(leqfh->text()));
   tmpq->setfsoft(atol(leqfs->text()));
+#ifndef BSD
   tmpq->setftime(atol(leqft->text()));
+#endif
   tmpq->setihard(atol(leqih->text()));
   tmpq->setisoft(atol(leqis->text()));
+#ifndef BSD
   tmpq->setitime(atol(leqit->text()));
+#endif
 }
 #else
 void propdlg::qcharchanged(const char *) {
@@ -645,11 +653,13 @@ void propdlg::selectuser() {
     sprintf(uname,"%li",quota->getQuotaMnt(q)->geticur());
     leqicur->setText(uname);
 
+#ifndef BSD
     sprintf(uname,"%li",quota->getQuotaMnt(q)->getftime());
     leqft->setText(uname);
 
     sprintf(uname,"%li",quota->getQuotaMnt(q)->getitime());
     leqit->setText(uname);
+#endif
   }
 #endif
 }

@@ -33,13 +33,13 @@ protected slots:
   void cancel();
   void setpwd();
   void mntsel(int index);
-  void qcharchanged(const char *);
-  void shactivated(const char *text);
+  void qcharchanged(const QString &);
+  void shactivated(const QString &);
   void changed();
-  void charchanged(const char *);
+  void charchanged(const QString &);
   void add();
   void del();
-  void setpgroup(const char *text);
+  void setpgroup(const QString &);
 
 protected:
   void selectuser();

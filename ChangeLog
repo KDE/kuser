@@ -1,6 +1,8 @@
 1999-03-15 Mario Weilguni <mweilguni@kde.org>
 
+	* made it work with Qt 2.0
 	* fixed the broken QtArch layout and replaced with a working one
+	* reworked the layout of many widgets
 	
 
 22/12/98: RedHat awared issues added.

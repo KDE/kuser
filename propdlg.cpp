@@ -43,10 +43,10 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
   pbok = new QPushButton(i18n("OK"), this, "pbok");
   pbok->setGeometry(200, 425, 100, 30);
   pbok->setDefault(TRUE);
-  QObject::connect(pbok, SIGNAL(pressed()), this, SLOT(ok()));
+  QObject::connect(pbok, SIGNAL(clicked()), this, SLOT(ok()));
   pbcancel = new QPushButton(i18n("Cancel"), this, "pbcancel");
   pbcancel->setGeometry(320, 425, 100, 30);
-  QObject::connect(pbcancel, SIGNAL(pressed()), this, SLOT(cancel()));
+  QObject::connect(pbcancel, SIGNAL(clicked()), this, SLOT(cancel()));
 
   w1 = new QWidget(this, "wd_Password");
 
@@ -54,7 +54,8 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
   QToolTip::add(leuser, i18n("User name"));
   l1 = addLabel(w1, "ml1", 10, 10, 50, 20, i18n("User login"));
   leid = addLineEdit(w1, "leid", 200, 30, 70, 22, "");
-  QObject::connect(leid, SIGNAL(textChanged(const char *)), this, SLOT(charchanged(const char *)));
+  QObject::connect(leid, SIGNAL(textChanged(const QString &)), 
+		   this, SLOT(charchanged(const QString &)));
   QToolTip::add(leid, i18n("User identificator"));
   l2 = addLabel(w1, "ml2", 200, 10, 50, 20, i18n("User id"));
 
@@ -69,7 +70,8 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
   QObject::connect(pbsetpwd, SIGNAL(clicked()), this, SLOT(setpwd()));
 
   lefname = addLineEdit(w1, "lefname", 10, 80, 160, 22, "");
-  QObject::connect(lefname, SIGNAL(textChanged(const char *)), this, SLOT(charchanged(const char *)));
+  QObject::connect(lefname, SIGNAL(textChanged(const QString &)), 
+		   this, SLOT(charchanged(const QString &)));
   QToolTip::add(lefname, i18n("Full name"));
   l4 = addLabel(w1, "ml4", 10, 60, 50, 20, i18n("Full name"));
 
@@ -95,12 +97,14 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
   }
 
   leshell->setGeometry(10, 122, 160, 27);
-  QObject::connect(leshell, SIGNAL(activated(const char *)), this, SLOT(shactivated(const char *)));
+  QObject::connect(leshell, SIGNAL(activated(const QString &)), 
+		   this, SLOT(shactivated(const QString &)));
 
   l5 = addLabel(w1, "ml5", 10, 105, 50, 20, i18n("Login shell"));
 
   lehome = addLineEdit(w1, "lehome", 10, 175, 160, 22, "");
-  QObject::connect(lehome, SIGNAL(textChanged(const char *)), this, SLOT(charchanged(const char *)));
+  QObject::connect(lehome, SIGNAL(textChanged(const QString &)), 
+		   this, SLOT(charchanged(const QString &)));
 
   QToolTip::add(lehome, i18n("Home directory"));
   l6 = addLabel(w1, "ml6", 10, 155, 50, 20, i18n("Home directory"));
@@ -109,21 +113,24 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
   // FreeBSD appears to use the comma separated fields in the GECOS entry
   // differently than Linux.
   leoffice = addLineEdit(w1, "leoffice", 10, 220, 160, 22, "");
-  QObject::connect(leoffice, SIGNAL(textChanged(const char *)), this, SLOT(charchanged(const char *)));
+  QObject::connect(leoffice, SIGNAL(textChanged(const QString &)), 
+		   this, SLOT(charchanged(const QString &)));
   QToolTip::add(leoffice, i18n("Office"));
   l7 = addLabel(w1, "ml7", 10, 200, 50, 20, i18n("Office"));
 
   ld7 = addLabel(w1, "mld7", 190, 225, 50, 20, i18n("Office description"));
 
   leophone = addLineEdit(w1, "leophone", 10, 265, 160, 22, "");
-  QObject::connect(leophone, SIGNAL(textChanged(const char *)), this, SLOT(charchanged(const char *)));
+  QObject::connect(leophone, SIGNAL(textChanged(const QString &)), 
+		   this, SLOT(charchanged(const QString &)));
   QToolTip::add(leophone, i18n("Office phone"));
   l8 = addLabel(w1, "ml8", 10, 245, 50, 20, i18n("Office phone"));
 
   ld8 = addLabel(w1, "mld8", 190, 270, 50, 20, i18n("Office phone number"));
 
   lehphone = addLineEdit(w1, "lehphone", 10, 310, 160, 22, "");
-  QObject::connect(lehphone, SIGNAL(textChanged(const char *)), this, SLOT(charchanged(const char *)));
+  QObject::connect(lehphone, SIGNAL(textChanged(const QString &)), 
+		   this, SLOT(charchanged(const QString &)));
   QToolTip::add(lehphone, i18n("Home phone"));
   l9 = addLabel(w1, "ml9", 10, 290, 50, 20, i18n("Home phone"));
 
@@ -135,7 +142,8 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
   w5 = new QWidget(this, "wd_Extended");
 
   leclass = addLineEdit(w5, "leclass", 10, 80, 160, 22, "");
-  QObject::connect(leclass, SIGNAL(textChanged(const char *)), this, SLOT(charchanged(const char *)));
+  QObject::connect(leclass, SIGNAL(textChanged(const QString &)), 
+		   this, SLOT(charchanged(const QString &)));
   QToolTip::add(leclass, i18n("Login class"));
   l19 = addLabel(w5, "ml19", 10, 60, 50, 20, i18n("Login class"));
 
@@ -169,20 +177,23 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
 #else
 
   leoffice1 = addLineEdit(w1, "leoffice1", 10, 220, 160, 22, "");
-  QObject::connect(leoffice1, SIGNAL(textChanged(const char *)), this, SLOT(charchanged(const char *)));
+  QObject::connect(leoffice1, SIGNAL(textChanged(const QString &)), 
+		   this, SLOT(charchanged(const QString &)));
   QToolTip::add(leoffice1, i18n("The first office"));
   l7 = addLabel(w1, "ml7", 10, 200, 50, 20, i18n("Office1"));
 
   ld7 = addLabel(w1, "mld7", 190, 225, 50, 20, i18n("First office description"));
 
   leoffice2 = addLineEdit(w1, "leoffice2", 10, 265, 160, 22, "");
-  QObject::connect(leoffice2, SIGNAL(textChanged(const char *)), this, SLOT(charchanged(const char *)));
+  QObject::connect(leoffice2, SIGNAL(textChanged(const QString &)), 
+		   this, SLOT(charchanged(const QString &)));
   QToolTip::add(leoffice2, i18n("The second office"));
   l8 = addLabel(w1, "ml8", 10, 245, 50, 20, i18n("Office2"));
 
   ld8 = addLabel(w1, "mld8", 190, 270, 50, 20, i18n("Second office description"));
   leaddress = addLineEdit(w1, "leaddress", 10, 310, 160, 22, "");
-  QObject::connect(leaddress, SIGNAL(textChanged(const char *)), this, SLOT(charchanged(const char *)));
+  QObject::connect(leaddress, SIGNAL(textChanged(const QString &)), 
+		   this, SLOT(charchanged(const QString &)));
   QToolTip::add(leaddress, i18n("Postal address"));
   l9 = addLabel(w1, "ml9", 10, 290, 50, 20, i18n("Address"));
   ld9 = addLabel(w1, "mld9", 190, 315, 50, 20, i18n("Full postal address"));
@@ -201,35 +212,40 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
                i18n("Date until change allowed"),
                   user->gets_lstchg()+user->gets_min(), 
                   user->gets_lstchg(), 10, 70);
-    QObject::connect(lesmin, SIGNAL(textChanged()), this, SLOT(changed()));
+    QObject::connect(lesmin, SIGNAL(textChanged()), 
+		     this, SLOT(changed()));
 //    QToolTip::add(lesmin, i18n("Date until change allowed"));
 
     lesmax = new KDateCtl(w2, "lesmax", i18n("Change does not required"),
                           i18n("Date before change required"),
                           user->gets_lstchg()+user->gets_max(),
                           user->gets_lstchg(), 10, 130);
-    QObject::connect(lesmax, SIGNAL(textChanged()), this, SLOT(changed()));
+    QObject::connect(lesmax, SIGNAL(textChanged()), 
+		     this, SLOT(changed()));
 //    QToolTip::add(lesmax, i18n("Date before change required"));
 
     leswarn = new KDateCtl(w2, "leswarn", i18n("User will never be warned"),
                            i18n("Date user will be warned about\nexpiration"),
                            user->gets_lstchg()+user->gets_warn(),
                            user->gets_lstchg(), 10, 190);
-    QObject::connect(leswarn, SIGNAL(textChanged()), this, SLOT(changed()));
+    QObject::connect(leswarn, SIGNAL(textChanged()), 
+		     this, SLOT(changed()));
 //    QToolTip::add(leswarn, i18n("Date user will be warned about expiration"));
 
     lesinact = new KDateCtl(w2, "lesinact", i18n("Account is active from the day of creation"),
                             i18n("Date before account inactive"),
                             user->gets_lstchg()+user->gets_inact(),
                             user->gets_lstchg(), 10, 250);
-    QObject::connect(lesinact, SIGNAL(textChanged()), this, SLOT(changed()));
+    QObject::connect(lesinact, SIGNAL(textChanged()), 
+		     this, SLOT(changed()));
 //    QToolTip::add(lesinact, i18n("Date before account inactive"));
 
     lesexpire = new KDateCtl(w2, "lesexpire", i18n("Account never expires"),
                              i18n("Date when account expires"),
                              user->gets_lstchg()+user->gets_expire(),
                              user->gets_lstchg(), 10, 310);
-    QObject::connect(lesexpire, SIGNAL(textChanged()), this, SLOT(changed()));
+    QObject::connect(lesexpire, SIGNAL(textChanged()), 
+		     this, SLOT(changed()));
 //    QToolTip::add(lesexpire, i18n("Date when account expires"));
 
     tw->addTab(w2, i18n("Extended"));
@@ -255,13 +271,15 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
 
     leqfs = addLineEdit(w3, "leqfs", 10, 80, 70, 22, "");
     leqfs->setValidator(new QIntValidator(w3, "vaqfs"));
-    QObject::connect(leqfs, SIGNAL(textChanged(const char *)), this, SLOT(qcharchanged(const char *)));
+    QObject::connect(leqfs, SIGNAL(textChanged(const QString &)), 
+		     this, SLOT(qcharchanged(const QString &)));
     QToolTip::add(leqfs, i18n("File soft quota"));
     l10 = addLabel(w3, "ml10", 95, 85, 50, 20, i18n("File soft quota"));
 
     leqfh = addLineEdit(w3, "leqfh", 10, 120, 70, 22, "");
     leqfh->setValidator(new QIntValidator(w3, "vaqfh"));
-    QObject::connect(leqfh, SIGNAL(textChanged(const char *)), this, SLOT(qcharchanged(const char *)));
+    QObject::connect(leqfh, SIGNAL(textChanged(const QString &)), 
+		     this, SLOT(qcharchanged(const QString &)));
     QToolTip::add(leqfh, i18n("File hard quota"));
     l11 = addLabel(w3, "ml11", 95, 125, 50, 20, i18n("File hard quota"));
 
@@ -272,20 +290,23 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
 #ifndef BSD
     leqft = addLineEdit(w3, "leqft", 10, 190, 70, 22, "");
     leqft->setValidator(new QIntValidator(w3, "vaqft"));
-    QObject::connect(leqft, SIGNAL(textChanged(const char *)), this, SLOT(qcharchanged(const char *)));
+    QObject::connect(leqft, SIGNAL(textChanged(const QString &)), 
+		     this, SLOT(qcharchanged(const QString &)));
     QToolTip::add(leqft, i18n("File time limit"));
     l18 = addLabel(w3, "ml18", 95, 195, 50, 20, i18n("File time limit"));
 #endif
 
     leqis = addLineEdit(w3, "leqis", 10, 235, 70, 22, "");
     leqis->setValidator(new QIntValidator(w3, "vaqis"));
-    QObject::connect(leqis, SIGNAL(textChanged(const char *)), this, SLOT(qcharchanged(const char *)));
+    QObject::connect(leqis, SIGNAL(textChanged(const QString &)), 
+		     this, SLOT(qcharchanged(const QString &)));
     QToolTip::add(leqis, i18n("iNode soft quota"));
     l12 = addLabel(w3, "ml12", 95, 240, 50, 20, i18n("iNode soft quota"));
 
     leqih = addLineEdit(w3, "leqih", 10, 275, 70, 22, "");
     leqih->setValidator(new QIntValidator(w3, "vaqih"));
-    QObject::connect(leqih, SIGNAL(textChanged(const char *)), this, SLOT(qcharchanged(const char *)));
+    QObject::connect(leqih, SIGNAL(textChanged(const QString &)), 
+		     this, SLOT(qcharchanged(const QString &)));
     QToolTip::add(leqih, i18n("iNode hard quota"));
     l13 = addLabel(w3, "ml13", 95, 280, 50, 20, i18n("iNode hard quota"));
 
@@ -296,7 +317,8 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
 #ifndef BSD
     leqit = addLineEdit(w3, "leqit", 10, 345, 70, 22, "");
     leqit->setValidator(new QIntValidator(w3, "vaqit"));
-    QObject::connect(leqit, SIGNAL(textChanged(const char *)), this, SLOT(qcharchanged(const char *)));
+    QObject::connect(leqit, SIGNAL(textChanged(const QString &)), 
+		     this, SLOT(qcharchanged(const QString &)));
     QToolTip::add(leqit, i18n("iNode time limit"));
     l17 = addLabel(w3, "ml17", 95, 350, 50, 20, i18n("iNode time limit"));
 #endif
@@ -346,7 +368,8 @@ propdlg::propdlg(KUser *auser, QWidget *parent, const char *name, int)
 
   cbpgrp = new QComboBox(FALSE, w4, "cbpgrp");
   cbpgrp->setGeometry(250, 30, 160, 30);
-  QObject::connect(cbpgrp, SIGNAL(activated(const char *)), this, SLOT(setpgroup(const char *)));
+  QObject::connect(cbpgrp, SIGNAL(activated(const QString &)), 
+		   this, SLOT(setpgroup(const QString &)));
 
   tmpQLabel = new QLabel(w4, "Label_3");
   tmpQLabel->setGeometry(100, 35, 140, 20);
@@ -404,7 +427,7 @@ void propdlg::loadgroups() {
     m_Group->setCurrentItem(0);
 }
 
-void propdlg::setpgroup(const char *) {
+void propdlg::setpgroup(const QString &) {
   ischanged = TRUE;
 }
 
@@ -452,7 +475,7 @@ void propdlg::del() {
   ischanged = TRUE;
 }
 
-void propdlg::charchanged(const char *) {
+void propdlg::charchanged(const QString &) {
   ischanged = TRUE;
 }
 
@@ -537,7 +560,7 @@ void propdlg::mntsel(int index) {
   selectuser();
 }
 
-void propdlg::qcharchanged(const char *) {
+void propdlg::qcharchanged(const QString &) {
   isqchanged = TRUE;
 }
 
@@ -556,14 +579,14 @@ void propdlg::saveq() {
 #endif
 }
 #else
-void propdlg::qcharchanged(const char *) {
+void propdlg::qcharchanged(const QString &) {
 }
 
 void propdlg::mntsel(int) {
 }
 #endif
 
-void propdlg::shactivated(const char *text) { 
+void propdlg::shactivated(const QString &text) { 
   int id = leshell->currentItem();
   leshell->changeItem(text, id);
   changed();
@@ -679,8 +702,6 @@ void propdlg::ok() {
   tmp = leid->text();
   newuid = tmp.toInt();
 
-printf("propdlg::ok\n");
-  
   if (olduid != newuid)
     if (users->lookup(newuid) != NULL) {
       tmp.sprintf(i18n("User with UID %u already exists"), newuid);

@@ -7,16 +7,12 @@
 
  *********************************************************************/
 
-#include "userDefaultsPage.h"
-
-#define Inherited userDefaultsPageData
-
-#include "userDefaultsPage.moc"
-#include "userDefaultsPageData.moc"
 
 #include <kapp.h>
-
+#include <qlayout.h>
+#include <qlabel.h>
 #include "globals.h"
+#include "userDefaultsPage.h"
 
 userDefaultsPage::userDefaultsPage
 (
@@ -24,8 +20,16 @@ userDefaultsPage::userDefaultsPage
 	const char* name
 )
 	:
-	Inherited( parent, name )
+	QWidget( parent, name)
 {
+  QVBoxLayout *tl = new QVBoxLayout(this, 10, 10);
+
+  QLabel *l;
+  l = new QLabel(i18n("Shell"), this);
+  l->setFixedSize(l->sizeHint());
+  tl->addWidget(l, 0, AlignLeft);
+  shell = new QComboBox(this);  
+  
   shell->clear();
   shell->insertItem(i18n("<Empty>"));
 
@@ -44,6 +48,32 @@ userDefaultsPage::userDefaultsPage
     }
     fclose(f);
   }
+  shell->setMinimumSize(shell->sizeHint());
+  tl->addWidget(shell, 0, AlignLeft);
+
+  tl->addStretch(1);
+
+  l = new QLabel(i18n("Base of home directories"), this);
+  l->setFixedSize(l->sizeHint());
+  tl->addWidget(l, 0, AlignLeft);
+  home=new QLineEdit(this);
+  home->setFixedSize(home->sizeHint());
+  tl->addWidget(home, 0, AlignLeft);
+
+  tl->addStretch(2);
+
+  createHomeDir = new QCheckBox(i18n("Create home dir"), this);
+  createHomeDir->setFixedSize(createHomeDir->sizeHint());
+  tl->addWidget(createHomeDir, 0, AlignLeft);
+
+  copySkel = new QCheckBox(i18n("Copy skeleton to home dir"), this);
+  copySkel->setFixedSize(copySkel->sizeHint());
+  tl->addWidget(copySkel, 0, AlignLeft);
+
+  usePrivateGroup = new QCheckBox(i18n("Use Private Group"), this);
+  usePrivateGroup->setFixedSize(usePrivateGroup->sizeHint());
+  tl->addWidget(usePrivateGroup, 0, AlignLeft);
+  tl->activate();
 }
 
 
@@ -98,3 +128,4 @@ void userDefaultsPage::setUsePrivateGroup(bool data) {
   usePrivateGroup->setChecked(data);
 }
 
+#include "userDefaultsPage.moc"

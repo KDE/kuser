@@ -45,8 +45,10 @@ int main( int argc, char **argv )
 
   KApplication a(argc, argv, "kuser");
 
-  if (!getuid()) {
-    KMsgBox::message(0, i18n("Error"), i18n("Only root is allowed to manage users."), KMsgBox::STOP);
+  if (getuid()) {
+    KMsgBox::message(0, i18n("Error"), 
+		     i18n("Only root is allowed to manage users."), 
+		     KMsgBox::STOP);
     exit(1);
   }
 

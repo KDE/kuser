@@ -32,7 +32,7 @@
 #include "editDefaults.h"
 
 mainDlg::mainDlg(QWidget *parent) :
-QWidget(parent)
+  QWidget(parent)
 {
   changed = FALSE;
   prev = 0;
@@ -54,18 +54,19 @@ void mainDlg::init() {
   kp->setGeometry(10, 80, 380, 416);
   
   lbusers = new KUserView(kp, "lbusers");
-  //  lbusers->setGeometry(10,80,380,208);
-
   lbgroups = new KGroupView(kp, "lbgroups");
-  //  lbgroups->setGeometry(10,400,380,208);
 
   kp->activate(lbusers, lbgroups);
   
-  QObject::connect(lbusers, SIGNAL(headerClicked(int)), this, SLOT(setUsersSort(int)));
-  QObject::connect(lbusers, SIGNAL(selected(int)), this, SLOT(userSelected(int)));
+  connect(lbusers, SIGNAL(headerClicked(int)), 
+		   this, SLOT(setUsersSort(int)));
+  connect(lbusers, SIGNAL(selected(int)), 
+		   this, SLOT(userSelected(int)));
 
-  QObject::connect(lbgroups, SIGNAL(headerClicked(int)), this, SLOT(setGroupsSort(int)));
-  QObject::connect(lbgroups, SIGNAL(selected(int)), this, SLOT(groupSelected(int)));
+  connect(lbgroups, SIGNAL(headerClicked(int)), 
+		   this, SLOT(setGroupsSort(int)));
+  connect(lbgroups, SIGNAL(selected(int)), 
+		   this, SLOT(groupSelected(int)));
 
   reloadUsers(0);
   reloadGroups(0);
@@ -153,8 +154,7 @@ void mainDlg::userdel() {
 
   if (KMsgBox::yesNo(0, i18n("WARNING"),
                      i18n("Do you really want to delete user ?"),
-                     KMsgBox::STOP,
-                     i18n("Cancel"), i18n("Delete")) == 2) {
+                     KMsgBox::STOP | KMsgBox::DB_SECOND) == 1) {
 
     i = lbusers->currentItem();
     if (i == u->getNumber()-1)
@@ -188,8 +188,7 @@ void mainDlg::userdel() {
 			if (!found)
 				if (KMsgBox::yesNo(0, i18n("WARNING"),
 													 i18n("You are using private groups.\nDo you want delete user's private group ?"),
-													 KMsgBox::STOP,
-													 i18n("Cancel"), i18n("Delete")) == 2) {
+													 KMsgBox::STOP|KMsgBox::DB_SECOND) == 1) {
 					uint oldc = lbgroups->currentItem();
 					g->del(g->lookup(gid));
 					if (oldc == g->count())
@@ -493,8 +492,8 @@ void mainDlg::grpdel() {
 
   if (KMsgBox::yesNo(0, i18n("WARNING"),
                      i18n("Do you really want to delete group ?"),
-                     KMsgBox::STOP,
-                     i18n("Cancel"), i18n("Delete")) == 2) {
+                     KMsgBox::STOP | KMsgBox::DB_SECOND
+                     ) == 1) {
 
     i = lbgroups->currentItem();
     if (i == g->getNumber()-1)

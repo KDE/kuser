@@ -9,7 +9,6 @@
 
 #include "maindlg.h"
 #include "editGroup.moc"
-#include "editGroupData.moc"
 #include <kapp.h>
 #include <kbuttonbox.h>
 #include <qlayout.h>

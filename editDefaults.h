@@ -1,11 +1,11 @@
 #ifndef editDefaults_included
 #define editDefaults_included
 
-#include <qdialog.h>
+#include <qtabdialog.h>
 
 #include "userDefaultsPage.h"
 
-class editDefaults : public QDialog {
+class editDefaults : public QTabDialog {
   Q_OBJECT
 public:
   editDefaults(QWidget* parent = NULL, const char* name = NULL);
@@ -25,10 +25,6 @@ public:
 
 protected:
   userDefaultsPage *page1;
-
-protected slots:
-  virtual void ok();
-  virtual void cancel();
 };
 
 #endif // editDefaults_included

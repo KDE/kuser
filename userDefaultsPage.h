@@ -10,9 +10,11 @@
 #ifndef userDefaultsPage_included
 #define userDefaultsPage_included
 
-#include "userDefaultsPageData.h"
+#include <qlineedit.h>
+#include <qcombobox.h>
+#include <qcheckbox.h>
 
-class userDefaultsPage : public userDefaultsPageData
+class userDefaultsPage : public QWidget
 {
     Q_OBJECT
 
@@ -24,7 +26,7 @@ public:
         const char* name = NULL
     );
 
-    virtual ~userDefaultsPage();
+  ~userDefaultsPage();
 
   const char *getShell() const;
   const char *getHomeBase() const;
@@ -37,5 +39,12 @@ public:
   void setCreateHomeDir(bool data);
   void setCopySkel(bool data);
   void setUsePrivateGroup(bool data);
+
+private:
+  QComboBox *shell;
+  QLineEdit *home;
+  QCheckBox* createHomeDir;
+  QCheckBox* copySkel;
+  QCheckBox* usePrivateGroup;
 };
 #endif // userDefaultsPage_included

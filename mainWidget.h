@@ -25,10 +25,11 @@
 #include <qpixmap.h>
 
 #include <kmainwindow.h>
-#include <kaction.h>
-#include <kstatusbar.h>
 
 #include "mainView.h"
+
+class KToggleAction;
+class KStatusBar;
 
 class mainWidget : public KMainWindow {
 Q_OBJECT
@@ -47,6 +48,8 @@ protected slots:
   void toggleToolBar();
   void toggleStatusBar();
   void showSys();
+    void slotConfigureToolbars();
+    void saveToolbarConfig();
 
 private:
 //  KMenuBar   *menubar;

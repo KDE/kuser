@@ -27,6 +27,9 @@
 #include <kstdaction.h>
 
 #include <kdebug.h>
+#include <kaction.h>
+#include <kstatusbar.h>
+#include <kedittoolbar.h>
 
 #include "kglobal_.h"
 #include "mainWidget.h"
@@ -64,10 +67,13 @@ bool mainWidget::queryClose()
 void mainWidget::setupActions()
 {
   KStdAction::quit(this, SLOT(close()), actionCollection());
+  KStdAction::keyBindings(guiFactory(), SLOT(configureShortcuts()), actionCollection());
+  KStdAction::configureToolbars(this, SLOT(slotConfigureToolbars()), actionCollection());
 
   KStdAction::preferences(md, SLOT(properties()), actionCollection());
   mActionToolbar = KStdAction::showToolbar(this, SLOT(toggleToolBar()), actionCollection());
   mActionStatusbar = KStdAction::showStatusbar(this, SLOT(toggleStatusBar()), actionCollection());
+
 //  KStdAction::saveOptions(md, SLOT(writeSettings()), actionCollection());
 
   KAction *action;
@@ -109,6 +115,23 @@ void mainWidget::setupActions()
   mShowSys->setCheckedState(i18n("Hide System Users/Groups"));
 
   createGUI(QString::fromLatin1("kuserui.rc"));
+}
+
+void mainWidget::slotConfigureToolbars()
+{
+    saveMainWindowSettings(KGlobal::config(), "MainWindow");
+    KEditToolbar dlg( actionCollection(),"kuserui.rc" );
+    connect(&dlg, SIGNAL(newToolbarConfig()), SLOT(saveToolbarConfig()));
+    dlg.exec();
+}
+
+/**
+ * Save new toolbarconfig.
+ */
+void mainWidget::saveToolbarConfig()
+{
+    createGUI("kuserui.rc");
+    applyMainWindowSettings(KGlobal::config(), "MainWindow");
 }
 
 void mainWidget::readSettings()

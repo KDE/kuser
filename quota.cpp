@@ -159,6 +159,7 @@ Quota::Quota(unsigned int auid, bool doget) {
                             dq.dqb_ftimelimit));
   }
 #endif
+
 #ifdef __FreeBSD__
   int qcmd = QCMD(Q_GETQUOTA, USRQUOTA);
 
@@ -182,6 +183,40 @@ Quota::Quota(unsigned int auid, bool doget) {
 			  dq.dqb_btime));
   }
 #endif
+
+#ifdef _KU_HPUX_QUOTA
+  for (uint i=0; i<mounts->getMountsNumber(); i++) {
+    
+    if ((dd = quotactl(Q_GETQUOTA, (const char *)mounts->getMount(i)->quotafilename, uid, &dq)) != 0)
+      if (errno == ESRCH) {
+        q.append(new QuotaMnt());
+        close(fd);
+        continue;
+      }
+      else {
+/*
+        if ((errno == EOPNOTSUPP || errno == ENOSYS) && !warned) {
+*/
+	warned++;
+	KMsgBox::message(0, _("Error"), _("Quotas are not compiled into this kernel."), KMsgBox::STOP);
+	printf("errno: %i, ioctl: %i\n", errno, dd);
+	sleep(3);
+	is_quota = 0;
+	close(fd);
+	break;
+      }
+    q.append(new QuotaMnt(dbtob(dq.dqb_curblocks)/1024,
+                          dbtob(dq.dqb_bsoftlimit)/1024,
+                          dbtob(dq.dqb_bhardlimit)/1024,
+                          dq.dqb_curfiles,
+                          dq.dqb_fsoftlimit,
+                          dq.dqb_fhardlimit,
+                          dq.dqb_btimelimit,
+                          dq.dqb_ftimelimit));
+    close(fd);
+  }
+#endif
+
 }
 
 Quota::~Quota() {
@@ -295,6 +330,25 @@ void Quota::save() {
       printf("Quotactl returned: %d\n", dd);
       continue;
     }
+#endif
+
+#ifdef _KU_HPUX_QUOTA
+  int dd = 0;
+  for (uint i=0; i<mounts->getMountsNumber(); i++) {
+    dq.dqb_curblocks  = btodb(q.at(i)->fcur*1024);
+    dq.dqb_bsoftlimit = btodb(q.at(i)->fsoft*1024);
+    dq.dqb_bhardlimit = btodb(q.at(i)->fhard*1024);
+    dq.dqb_curfiles  = q.at(i)->icur;
+    dq.dqb_fsoftlimit = q.at(i)->isoft;
+    dq.dqb_fhardlimit = q.at(i)->ihard;
+    dq.dqb_btimelimit = q.at(i)->ftime;
+    dq.dqb_ftimelimit = q.at(i)->itime;
+
+    if ((dd =quotactl(Q_SETQUOTA, (const char *)mounts->getMount(i)->fsname, uid, &dq)) != 0) {
+      printf("Quotactl returned: %d\n", dd);
+      continue;
+    }
+  }
 #endif
 }
 

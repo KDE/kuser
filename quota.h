@@ -70,7 +70,14 @@
 /* Assuming all we're supporting is USER based quotas, not GROUP based ones */
 #      define _KU_QUOTAFILENAME "quota.user"
 #      else
-#        error "Your platform is not supported"
+#        ifdef __hpux
+#        include <sys/quota.h>
+#        define CORRECT_FSTYPE(type) (!strcmp(type,MNTTYPE_HFS))
+#        define _KU_QUOTAFILENAME "quotas"
+#        define _KU_HPUX_QUOTA
+#        else
+#          error "Your platform is not supported"
+#        endif // HPUX
 #      endif // FreeBSD
 #    endif // HAVE_IRIX
 #  endif // HAVE_LINUX_QUOTA_H

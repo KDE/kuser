@@ -106,10 +106,12 @@ void mainWidget::setupActions()
     0, 0, this,
     SLOT(showSys()), actionCollection(), "show_sys");
   mShowSys->setCheckedState(i18n("Hide System Users/Groups"));
+  mShowSys->setChecked( kug->kcfg()->showsys() );
 }
 
 void mainWidget::showSys()
 {
+  kug->kcfg()->setShowsys( mShowSys->isChecked() );
   md->setShowSys( mShowSys->isChecked() );
   md->reloadUsers();
   md->reloadGroups();

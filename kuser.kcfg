@@ -9,15 +9,13 @@
   <kcfgfile arg="true">
     <parameter name="connection"/>
   </kcfgfile>
-  <group name="Appearance">
-    <entry name="Geometry" type="IntList">
-    <label>Main window geometry</label>
-    </entry>
-  </group>
   <group name="general">
     <entry name="connection" type="String">
     <default>default</default>
     <label>Default connection</label>
+    </entry>
+    <entry name="showsys" type="Bool">
+    <default>true</default>
     </entry>
   </group>
   <group name="connection-$(connection)">

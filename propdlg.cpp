@@ -313,7 +313,7 @@ propdlg::propdlg( const QPtrList<KUser> &users,
 {
   mUsers = users;
   if ( mUsers.getFirst() != mUsers.getLast() )
-    setCaption( i18n("User Properties - %1 selected users").arg( mUsers.count() ) );
+    setCaption( i18n("User Properties - %1 Selected Users").arg( mUsers.count() ) );
   initDlg();
   loadgroups( false );
   selectuser();

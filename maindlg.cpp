@@ -413,7 +413,7 @@ void mainDlg::userSelected(int i) {
   }
 
 #ifdef _KU_QUOTA
-  Quota *tmpQ;
+  Quota *tmpQ = 0;
 
   if (is_quota != 0) {
     tmpQ = q->getQuota(tmpKU->getp_uid());

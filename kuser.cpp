@@ -47,7 +47,7 @@ KUser::KUser() {
   s_max     = -1;
   s_warn    = 7;
   s_inact   = -1;
-  s_expire  = -1;
+  s_expire  = 99999;
   s_flag    = 0;
 #endif
 }

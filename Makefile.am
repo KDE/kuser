@@ -36,7 +36,7 @@ bin_PROGRAMS = kuser
 # the subdirs we have. Better would be to include pic here too
 SUBDIRS = pic toolbar icon lsm
 
-appsdir   = $(kde_appsdir)/Programs/System
+appsdir   = $(kde_appsdir)/System
 apps_DATA = kuser.desktop
 
 edit::

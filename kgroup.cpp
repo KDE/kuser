@@ -31,8 +31,8 @@
 
 // This is to simplify compilation for Red Hat Linux systems, where
 // gid's for regular users' private groups start at 500 <duncan@kde.org>
-#ifdef _KU_FIRST_USER
-#define _KU_FIRST_GID _KU_FIRST_USER
+#ifdef KU_FIRST_USER
+#define _KU_FIRST_GID KU_FIRST_USER
 #else 
 #define _KU_FIRST_GID 1001 
 #endif

@@ -1,3 +1,5 @@
+24/04/1999 change _KU_FIRST_USER to KU_FIRST_USER, and put a define for it into
+	 globals.h  <duncan@kde.org>
 24/04/1999: Bug 'Group properties did show nothing in 'Other Users' listbox.'
             fixed, documentation in SGML created.
 23/04/1999: User create and delete postpone logic implemented.

@@ -71,4 +71,6 @@ extern "C" int unlink(const char *);
 
 #define KU_MAILBOX_GID 0
 
+#define KU_FIRST_USER 1001
+
 #endif // _KU_GLOBALS_H_

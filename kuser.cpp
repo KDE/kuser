@@ -44,8 +44,8 @@
 
 // This is to simplify compilation for Red Hat Linux systems, where
 // uid's for regular users start at 500 <duncan@kde.org>
-#ifdef _KU_FIRST_USER
-#define _KU_FIRST_UID _KU_FIRST_USER
+#ifdef KU_FIRST_USER
+#define _KU_FIRST_UID KU_FIRST_USER
 #else 
 #define _KU_FIRST_UID 1001 
 #endif

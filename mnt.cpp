@@ -88,18 +88,20 @@ Mounts::Mounts() {
     if (!CORRECT_FSTYPE((const char *)mt->mnt_fstype))
       continue;
 
-    quotafilename.sprintf("%s%s%s", mt->mnt_mountp,
-                          (mt->mnt_mountp[strlen(mt->mnt_mountp) - 1] == '/') ? "" : "/",
-                          _KU_QUOTAFILENAME);
+    quotafilename = QString("%1%2%3")
+                          .arg(mt->mnt_mountp)
+                          .arg((mt->mnt_mountp[strlen(mt->mnt_mountp) - 1] == '/') ? "" : "/")
+                          .arg(_KU_QUOTAFILENAME);
 #elif BSD /* Heh, heh, so much for standards, eh Bezerkely? */
   while ((mt=getfsent()) != NULL) {
     if (strstr(mt->fs_mntops,"quota")==NULL)
       continue;
     if (strcasecmp(mt->fs_vfstype,"ufs") != 0)
       continue;
-    quotafilename.sprintf("%s%s%s",mt->fs_file,
- 	                  (mt->fs_file[strlen(mt->fs_file) -1] == '/') ? "" : "/",
- 		          _KU_QUOTAFILENAME);
+    quotafilename = QString("%1%2%3")
+                          .arg(mt->fs_file)
+ 	                  .arg((mt->fs_file[strlen(mt->fs_file) -1] == '/') ? "" : "/")
+ 		          .arg(_KU_QUOTAFILENAME);
 #else
   fp = setmntent(MNTTAB, "r");
   while ((mt = getmntent(fp)) != (struct mntent *)0) {
@@ -109,9 +111,10 @@ Mounts::Mounts() {
     if (!CORRECT_FSTYPE((const char *)mt->mnt_type))
       continue;
 
-    quotafilename.sprintf("%s%s%s", mt->mnt_dir,
-                          (mt->mnt_dir[strlen(mt->mnt_dir) - 1] == '/') ? "" : "/",
-                          _KU_QUOTAFILENAME);
+    quotafilename = QString("%1%2%3")
+                          .arg(mt->mnt_dir)
+                          .arg((mt->mnt_dir[strlen(mt->mnt_dir) - 1] == '/') ? "" : "/")
+                          .arg(_KU_QUOTAFILENAME);
 
 #endif
 

@@ -95,13 +95,13 @@ void grpnamedlg::ok()
   s = legid->text();
 
   if (groups->lookup(legrpname->text()) != NULL) {
-    tmp.sprintf(i18n("Group with name %s already exists."), legrpname->text().data());
+    tmp = i18n("Group with name %1 already exists.").arg(legrpname->text());
     KMsgBox::message(0, i18n("Error"), tmp, KMsgBox::STOP);
     return;
   }
   
   if (groups->lookup(s.toInt()) != NULL) {
-    tmp.sprintf(i18n("Group with gid %d already exists."), s.toInt());
+    tmp = i18n("Group with gid %1 already exists.").arg(s.toInt());
     KMsgBox::message(0, i18n("Error"), tmp, KMsgBox::STOP);
     return;
   }

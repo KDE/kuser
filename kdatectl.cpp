@@ -16,12 +16,12 @@ KDateCtl::KDateCtl(QWidget *parent, const char *name,
 
   x = ax; y = ay;
 
-  tmp.sprintf("%s_day", name);
+  tmp = QString("%1_day").arg(name);
   day = addLineEdit(parent, tmp, x, y+25, 30, 27, "");
-  tmp.sprintf( "va_%s_day", name);
+  tmp = QString("va_%1_day").arg(name);
   day->setValidator(new QIntValidator(1, 31, parent, name));
 
-  tmp.sprintf("%s_month", name);
+  tmp = QString("%1_month").arg(name);
   month = new KCombo(FALSE, parent, tmp);
   month->clear();
   month->insertItem(i18n("January"));
@@ -39,16 +39,16 @@ KDateCtl::KDateCtl(QWidget *parent, const char *name,
 
   month->setGeometry(x+40, y+25, 100, 27);
 
-  tmp.sprintf( "%s_year", name);
+  tmp = QString("%1_year").arg(name);
   year = addLineEdit(parent, tmp, x+150, y+25, 50, 27, "");
-  tmp.sprintf( "va_%s_year", name);
+  tmp = QString("va_%1_year").arg(name);
   year->setValidator(new QIntValidator(1970, 2023, parent, name));
 
-  tmp.sprintf("%s_isempty", name);
+  tmp = QString("%1_isempty").arg(name);
   isempty = new QCheckBox(checktitle, parent, tmp);
   isempty->setGeometry(x, y, 200, 20); 
 
-  tmp.sprintf("%s_title", name);
+  tmp = QString("%1_title").arg(name);
   label = addLabel(parent, tmp, x+210, y+25, 50, 27, title);
 
   QObject::connect(isempty, SIGNAL(toggled(bool)), this,

@@ -47,7 +47,8 @@ void backup(char const *name)
 
   if (rename(name, tmp) == -1)
   {
-    sprintf(tmp, i18n("Can't create backup file for %s"), name);
+    QString str;
+    str = i18n("Can't create backup file for %1").arg(name);
     KMsgBox::message(0, i18n("Error"), tmp, KMsgBox::STOP);
     exit (1);
   }
@@ -160,7 +161,7 @@ int copyFile(QString from, QString to) {
   if (!fi.exists()) {
     QString tmp;
     
-    tmp.sprintf(i18n("File %s does not exist."), (const char *)from);
+    tmp = i18n("File %1 does not exist.").arg(from);
     err->addMsg(tmp, STOP);
     return (-1);
   }
@@ -168,7 +169,7 @@ int copyFile(QString from, QString to) {
   if (!fi.open(IO_ReadOnly)) {
     QString tmp;
     
-    tmp.sprintf(i18n("Can not open file %s for reading."), (const char *)from);
+    tmp = i18n("Can not open file %1 for reading.").arg(from);
     err->addMsg(tmp, STOP);
     return (-1);
   }
@@ -176,7 +177,7 @@ int copyFile(QString from, QString to) {
   if (!fo.open(IO_Raw | IO_WriteOnly | IO_Truncate)) {
     QString tmp;
     
-    tmp.sprintf(i18n("Can not open file %s for writing."), (const char *)to);
+    tmp = i18n("Can not open file %1 for writing.").arg(to);
     err->addMsg(tmp, STOP);
     return (-1);
   }

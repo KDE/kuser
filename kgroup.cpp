@@ -129,7 +129,7 @@ bool KGroups::load() {
   FILE *fgrp = fopen(GROUP_FILE, "r");
   QString tmp;
   if (fgrp == 0) {
-    ksprintf(&tmp, i18n("Error opening %s for reading"), GROUP_FILE);
+    tmp = i18n("Error opening %1 for reading").arg(GROUP_FILE);
     err->addMsg(tmp, STOP);
     return FALSE;
   }
@@ -176,7 +176,7 @@ bool KGroups::save() {
   }
 
   if ((grp = fopen(GROUP_FILE,"w")) == NULL) {
-    tmp.sprintf(i18n("Error opening %s for writing"), GROUP_FILE);
+    tmp = i18n("Error opening %1 for writing").arg(GROUP_FILE);
     err->addMsg(tmp, STOP);
     return (FALSE);
   }

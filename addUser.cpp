@@ -84,7 +84,7 @@ void addUser::ok() {
   newuid = tmp.toInt();
   
   if (users->lookup(newuid) != NULL) {
-    tmp.sprintf(i18n("User with UID %u already exists"), newuid);
+    tmp = i18n("User with UID %1 already exists").arg(newuid);
     KMsgBox::message(0, i18n("Message"), tmp, KMsgBox::STOP, i18n("OK"));
     return;
   }
@@ -123,12 +123,14 @@ bool addUser::checkHome() {
 
   if (r == 0)
     if (S_ISDIR(s.st_mode))
-      tmp.sprintf(i18n("Directory %s already exists (uid = %d, gid = %d)"), 
-           (const char *)user->getp_dir(), s.st_uid, s.st_gid);
+      tmp = i18n("Directory %1 already exists (uid = %2, gid = %3)") 
+                 .arg(user->getp_dir())
+                 .arg(s.st_uid)
+                 .arg(s.st_gid);
     else
-      tmp.sprintf(i18n("%s is not a directory") ,(const char *)user->getp_dir());
+      tmp = i18n("%1 is not a directory").arg(user->getp_dir());
   else
-    tmp.sprintf("checkHome: stat: %s ", strerror(errno));
+    tmp = QString("checkHome: stat: %1 ").arg(strerror(errno));
   
   err->addMsg(tmp, STOP);
   err->display();
@@ -143,8 +145,9 @@ bool addUser::checkMailBox() {
   struct stat s;
   int r;
 
-  mailboxpath.sprintf("%s/%s", MAIL_SPOOL_DIR,
-           (const char *)user->getp_name());
+  mailboxpath = QString("%s/%s")
+	.arg(MAIL_SPOOL_DIR)
+	.arg(user->getp_name());
   r = stat(mailboxpath, &s);
   
   if ((r == -1) && (errno == ENOENT))
@@ -152,13 +155,14 @@ bool addUser::checkMailBox() {
 
   if (r == 0)
     if (S_ISREG(s.st_mode))
-      tmp.sprintf(i18n("Mailbox %s already exist (uid=%d)"),
-               (const char *)mailboxpath, s.st_uid);
+      tmp = i18n("Mailbox %1 already exist (uid=%2)")
+                 .arg(mailboxpath)
+                 .arg(s.st_uid);
     else
-      tmp.sprintf(i18n("%s exists but is not a regular file"),
-               (const char *)mailboxpath);
+      tmp = i18n("%1 exists but is not a regular file")
+                 .arg(mailboxpath);
   else
-    tmp.sprintf("checkMail: stat: %s ", strerror(errno));
+    tmp = QString("checkMail: stat: %s ").arg(strerror(errno));
   
   err->addMsg(tmp, STOP);
   err->display();

@@ -37,12 +37,12 @@ KTopLevelWidget(name)
   group->insertItem(i18n("&Add..."), md, SLOT(grpadd()) );
 
   QString tmp;
-  tmp.sprintf(i18n("KUser version %s\n"
+  tmp = i18n("KUser version %1\n"
 		"KDE project\n"
 		"This program was created by\n"
 		"Denis Y. Pershin\n"
 		"dyp@inetlab.com\n"
-		"Copyright 1997(c)"), _KU_VERSION);
+		"Copyright 1997(c)").arg(_KU_VERSION);
   QPopupMenu *help = kapp->getHelpMenu(true, tmp);
 
   menubar = new KMenuBar( this );
@@ -117,7 +117,7 @@ void mainWidget::resizeEvent (QResizeEvent *) {
   KConfig *config = KApplication::getKApplication()->getConfig();
   config->setGroup( "Appearance" );
   QString geom;
-  geom.sprintf( "%dx%d", geometry().width(), geometry().height() );
+  geom = QString( "%1x%2").arg(geometry().width()).arg(geometry().height());
   config->writeEntry( "Geometry", geom );
   updateRects();
 }

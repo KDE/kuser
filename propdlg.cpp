@@ -704,7 +704,7 @@ void propdlg::ok() {
 
   if (olduid != newuid)
     if (users->lookup(newuid) != NULL) {
-      tmp.sprintf(i18n("User with UID %u already exists"), newuid);
+      tmp = i18n("User with UID %1 already exists").arg(newuid);
       KMsgBox::message(0, i18n("Message"), tmp, KMsgBox::STOP, i18n("OK"));
       return;
     }

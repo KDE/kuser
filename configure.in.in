@@ -7,9 +7,6 @@ AC_DEFUN([KUSER_CRYPT_TESTS], [
  
 KUSER_CRYPT_TESTS
 
-AC_CHECK_LIB(c, quotactl, [QUOTACTL="-DQUOTACTL_IN_LIBC"]) dnl for FreeBSD
-AC_SUBST(QUOTACTL)
-
 dnl Checks for header files.
 AC_HEADER_DIRENT
 AC_HEADER_STDC
@@ -25,22 +22,18 @@ case "$host" in
        ;;
 esac
 
-AC_ARG_WITH(quota, [  --without-quota         Compile without quota support], enable_quota="$withval", enable_quota="yes")
-if test "$enable_quota" = "yes"; then
-  KU_QUOTA="-D_KU_QUOTA"
-fi
-AC_SUBST(KU_QUOTA)
+AC_ARG_WITH(hometemplate, [  --with-hometemplate     use specified prefix for homedir [default=/home/%U] ], ku_hometemplate="$withval", ku_hometemplate="/home/%U")
+AC_DEFINE_UNQUOTED(KU_HOMETEMPLATE, "$ku_hometemplate",[default template for homedir])
 
-AC_ARG_WITH(nis, [  --with-nis              Compile with NIS support], enable_nis="$withval", enable_nis="no")
-if test "$enable_nis" = "yes"; then
-  KU_NIS="-D_KU_NIS"
-fi
-AC_SUBST(KU_NIS)
+AC_ARG_WITH(first-uid, [  --with-first-uid        first normal user ID [default=500] ], ku_firstuid="$withval", ku_firstuid="500")
+AC_DEFINE_UNQUOTED(KU_FIRSTUID, $ku_firstuid, [first user ID])
+AC_SUBST(KU_FIRSTUID)
 
-AC_ARG_WITH(homeprefix, [ --with-homeprefix        use specified prefix for homedir [default=/home] ], ku_homeprefix="$withval", ku_homeprefix="/home")
-AC_DEFINE_UNQUOTED(KU_HOMEPREFIX, "$ku_homeprefix",[default prefix for homedir])
+AC_ARG_WITH(first-gid, [  --with-first-gid        first normal group ID [default=500] ], ku_firstgid="$withval", ku_firstgid="500")
+AC_DEFINE_UNQUOTED(KU_FIRSTGID, $ku_firstgid, [first group ID])
+AC_SUBST(KU_FIRSTGID)
 
-AC_ARG_WITH(private-groups, [ --with-private-groups   user private groups [default=no] ], ku_userprivategroup="$withval", ku_userprivategroup="no")
+AC_ARG_WITH(private-groups, [  --with-private-groups   user private groups [default=no] ], ku_userprivategroup="$withval", ku_userprivategroup="no")
 if test "$ku_userprivategroup" = "yes"; then
   ku_userprivategroup="true"
 else
@@ -48,18 +41,12 @@ else
 fi
 AC_DEFINE_UNQUOTED(KU_USERPRIVATEGROUP, $ku_userprivategroup, [private groups])
 
-AC_CHECK_FUNCS(fgetpwent fgetgrent)
+AC_CHECK_FUNCS(fgetpwent fgetgrent fgetspent)
 
-if test $enable_quota = "yes"; then
-  AC_CHECK_TYPE([struct if_dqblk],
-[
-  AC_DEFINE_UNQUOTED(HAVE_IF_DQBLK, 1, [define if you have a struct if_dqblk])
-], ,
-[
-#ifdef HAVE_SYS_QUOTA_H
-#  include <sys/quota.h>
-#elif defined(HAVE_LINUX_QUOTA_H)
-#  include <linux/quota.h>
-#endif
-])
-fi
+
+AC_LANG_SAVE
+AC_LANG_C
+dnl AC_C_BIGENDIAN has a bug (one of its tests uses "main()" instead of
+dnl "int main()") so C++ compilers would break. Thats why we switch languages
+AC_C_BIGENDIAN
+AC_LANG_RESTORE

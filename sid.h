@@ -1,6 +1,5 @@
 /*
- *  Copyright (c) 1998 Denis Perchine <dyp@perchine.com>
- *  Maintained by Adriaan de Groot <groot@kde.org>
+ *  Copyright (c) 2004 Szombathelyi György <gyurco@freemail.hu>
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public
@@ -16,31 +15,35 @@
  *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  *  Boston, MA 02111-1307, USA.
  **/
+ 
+#ifndef _SID_H_
+#define _SID_H_
 
-#ifndef _KU_GRPNAMEDLG_H
-#define _KU_GRPNAMEDLG_H
-
-#include <qlineedit.h>
-
-#include <kdialogbase.h>
-
-#include "kgroup.h"
-
-class grpnamedlg : public KDialogBase {
-  Q_OBJECT
+#include <qstring.h>
+ 
+class SID {
+    
 public:
-  grpnamedlg(KGroup &AGroup, QWidget* parent = NULL, const char* name = NULL);
-  ~grpnamedlg();
+  SID();
+  SID( const QString &sid );
+  SID( const SID &sid );
+  ~SID();
 
-protected slots:
-  void slotOk();
+  bool operator== ( const SID &sid ) const;
+  bool operator!= ( const SID &sid ) const;
+  bool isEmpty() const;
+  void setSID( const QString &sid );
+  void setRID( const QString &rid );
+  void setRID( uint rid );
+  void setDOM( const QString &dom );
+  QString getSID() const;
+  uint getRID() const ;
+  QString getDOM() const;
 
-protected:
-  KGroup &group;
-
-  QLineEdit   *legrpname;
-  QLineEdit   *legid;
+private:
+  void updateSID();
+  QString mSid, mDom;
+  uint mRid;
 };
 
-#endif // _KU_GRPNAMEDLG_H
-
+#endif //_SID_H_

@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE kcfg SYSTEM "http://www.kde.org/standards/kcfg/1.0/kcfg.dtd">
+<kcfg>
+  <kcfgfile name="kuserrc"/>
+  
+  <include>qfile.h</include>
+  <include>kapplication.h</include>
+  <include>config.h</include>
+  <kcfgfile arg="true">
+    <parameter name="connection"/>
+  </kcfgfile>
+  <group name="Appearance">
+    <entry name="Geometry" type="IntList">
+    <label>Main window geometry</label>
+    </entry>
+  </group>
+  <group name="general">
+    <entry name="connection" type="String">
+    <default>default</default>
+    <label>Default connection</label>
+    </entry>
+  </group>
+  <group name="connection-$(connection)">
+    <entry name="source" type="Enum">
+    <choices>
+      <choice name="Files"/>
+      <choice name="LDAP"/>
+    </choices>
+    <default>Files</default>
+    </entry>
+    <entry name="manageinetorg" type="Bool">
+      <label>Manage extended user info</label>
+      <default>false</default>
+    </entry>
+    <entry name="shell" type="String">
+      <label>Shell</label>
+    </entry>
+    <entry name="homepath" type="String">
+      <label>Home path template</label>
+      <default code="true">QFile::decodeName(KU_HOMETEMPLATE)</default>
+    </entry>
+    <entry name="firstUID" type="Int">
+      <label>First UID</label>
+      <default code="true">KU_FIRSTUID</default>
+    </entry>
+    <entry name="firstGID" type="Int">
+      <label>First GID</label>
+      <default code="true">KU_FIRSTGID</default>
+    </entry>
+    <entry name="createHomeDir" type="Bool">
+      <label>Create home folder</label>
+      <default>true</default>
+    </entry>
+    <entry name="copySkel" type="Bool">
+      <label>Copy skeleton to home folder</label>
+      <default>true</default>
+    </entry>
+    <entry name="userPrivateGroup" type="Bool">
+      <label>User private groups</label>
+      <default code="true">KU_USERPRIVATEGROUP</default>
+    </entry>
+    <entry name="passwdsrc" type="String">
+      <label>Password file</label>
+      <default>/etc/passwd</default>
+    </entry>
+    <entry name="groupsrc" type="String">
+      <label>Group file</label>
+      <default>/etc/group</default>
+    </entry>
+    <entry name="md5shadow" type="Bool">
+      <label>MD5 Shadow passwords</label>
+    </entry>
+    <entry name="shadowsrc" type="String">
+      <label>Shadow password file</label>
+      <default>/etc/shadow</default>
+    </entry>
+    <entry name="gshadowsrc" type="String">
+      <label>Group shadow file</label>
+      <default>/etc/gshadow</default>
+    </entry>
+    <entry name="nispasswdsrc" type="String">
+      <label>NIS password source</label>
+    </entry>
+    <entry name="nisminuid" type="Int">
+      <label>NIS minimum UID</label>
+    </entry>
+    <entry name="nisgroupsrc" type="String">
+      <label>NIS group source</label>
+    </entry>
+    <entry name="nismingid" type="Int">
+      <label>NIS minimum GID</label>
+    </entry>
+    <entry name="ldapuser" type="String">
+      <label>LDAP User</label>
+    </entry>
+    <entry name="ldappassword" type="Password">
+      <label>LDAP Password</label>
+    </entry>
+    <entry name="ldaprealm" type="String">
+      <label>LDAP SASL Realm</label>
+    </entry>
+    <entry name="ldapbinddn" type="String">
+      <label>LDAP Bind DN</label>
+    </entry>
+    <entry name="ldaphost" type="String">
+      <label>LDAP Host</label>
+    </entry>
+    <entry name="ldapport" type="Int">
+      <label>LDAP Port</label>
+      <default>389</default>
+    </entry>
+    <entry name="ldapver" type="Int">
+      <label>LDAP Version</label>
+      <default>3</default>
+    </entry>
+    <entry name="ldapsizelimit" type="Int">
+      <label>LDAP Size limit</label>
+      <default>0</default>
+    </entry>
+    <entry name="ldaptimelimit" type="Int">
+      <label>LDAP Time limit</label>
+      <default>0</default>
+    </entry>
+    <entry name="ldapdn" type="String">
+      <label>LDAP Base DN</label>
+    </entry>
+    <entry name="ldapfilter" type="String">
+      <label>LDAP Filter</label>
+    </entry>
+    <entry name="ldapnosec" type="Bool">
+      <label>LDAP no encryption</label>
+      <default>false</default>
+    </entry>
+    <entry name="ldaptls" type="Bool">
+      <label>LDAP TLS</label>
+      <default>true</default>
+    </entry>
+    <entry name="ldapssl" type="Bool">
+      <label>LDAP SSL</label>
+      <default>false</default>
+    </entry>
+    <entry name="ldapanon" type="Bool">
+      <label>LDAP Anonymous</label>
+      <default>false</default>
+    </entry>
+    <entry name="ldapsimple" type="Bool">
+      <label>LDAP Simple auth</label>
+      <default>true</default>
+    </entry>
+    <entry name="ldapsasl" type="Bool">
+      <label>LDAP SASL auth</label>
+      <default>false</default>
+    </entry>
+    <entry name="ldapsaslmech" type="String">
+      <label>LDAP SASL mechanism</label>
+      <default>LOGIN</default>
+    </entry>
+    <entry name="ldapuserbase" type="String">
+      <label>LDAP User container</label>
+      <default>ou=People</default>
+    </entry>
+    <entry name="ldapgroupbase" type="String">
+      <label>LDAP Group container</label>
+      <default>ou=Group</default>
+    </entry>
+    <entry name="ldapuserrdn" type="Enum">
+      <label>LDAP User RDN prefix</label>
+      <choices>
+        <choice name="uid"/>
+        <choice name="uidNumber"/>
+      </choices>
+      <default>uid</default>
+    </entry>
+    <entry name="ldapshadow" type="Bool">
+      <label>Manage LDAP shadowAccount objectclass</label>
+      <default>true</default>
+    </entry>
+    <entry name="ldapstructural" type="Enum">
+      <label>LDAP Structural objectclass</label>
+      <choices>
+        <choice name="account"/>
+        <choice name="inetOrgPerson"/>
+      </choices>
+      <default>account</default>
+    </entry>
+    <entry name="ldapgrouprdn" type="Enum">
+      <label>LDAP Group RDN prefix</label>
+      <choices>
+        <choice name="cn"/>
+        <choice name="gidNumber"/>
+      </choices>
+      <default>cn</default>
+    </entry>
+    <entry name="ldappasswordhash" type="Enum">
+      <label>LDAP Password hash method</label>
+      <choices>
+        <choice name="Clear"/>
+        <choice name="CRYPT"/>
+        <choice name="MD5"/>
+        <choice name="SMD5"/>
+        <choice name="SHA"/>
+        <choice name="SSHA"/>
+      </choices>
+      <default>SSHA</default>
+    </entry>
+    <entry name="ldapsam" type="Bool">
+      <label>Enable samba account management</label>
+    </entry>
+    <entry name="samdomsid" type="String">
+      <label>Samba domain SID</label>
+    </entry>
+    <entry name="samloginscript" type="String">
+      <label>Samba login script</label>
+    </entry>
+    <entry name="samhomedrive" type="String">
+      <label>Samba home drive</label>
+    </entry>
+    <entry name="samprofilepath" type="String">
+      <label>Samba profile path template</label>
+    </entry>
+    <entry name="samhomepath" type="String">
+      <label>Samba home path template</label>
+    </entry>
+    
+  </group>
+</kcfg>

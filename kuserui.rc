@@ -1,6 +1,9 @@
 <!DOCTYPE kpartgui>
 <kpartgui name="kuser">
 	<MenuBar>
+    <Menu name="file"><text>&amp;File</text>
+      <Action name="select_conn"/>
+    </Menu>
 		<Menu name="user"><text>&amp;User</text>
 			<Action name="add_user"/>
 			<Action name="edit_user"/>

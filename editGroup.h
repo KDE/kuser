@@ -1,5 +1,6 @@
 /*
  *  Copyright (c) 1998 Denis Perchine <dyp@perchine.com>
+ *  Copyright (c) 2004 Szombathelyi György <gyurco@freemail.hu>
  *  Maintained by Adriaan de Groot <groot@kde.org>
  *
  *  This program is free software; you can redistribute it and/or
@@ -18,11 +19,13 @@
  **/
 
 
-#ifndef editGroup_included
-#define editGroup_included
+#ifndef _EDITGROUP_H_
+#define _EDITGROUP_H_
 
 #include <kdialogbase.h>
 #include <klistview.h>
+#include <kcombobox.h>
+#include <klineedit.h>
 
 #include "kgroup.h"
 
@@ -31,17 +34,28 @@ class editGroup : public KDialogBase
   Q_OBJECT
 public:
 
-  editGroup(KGroup *akg,
-	     QWidget* parent = NULL,
-	     const char* name = NULL);
+  editGroup(KGroup *akg, bool samba, bool add, 
+    QWidget* parent = NULL, const char* name = NULL);
 
   virtual ~editGroup();
 
 protected slots:
-  virtual void okClicked();
-
-protected:
+  virtual void slotOk();
+  void addClicked();
+  void delClicked();
+  
+private:
+  bool mSamba, mAdd;
   KGroup *kg;
-  KListView *m_list;
+  KListView *m_list_in,*m_list_notin;
+  KLineEdit   *legrpname;
+  KLineEdit   *legid;
+  KLineEdit   *lerid;
+  KLineEdit   *ledom;
+  KLineEdit   *ledispname;
+  KLineEdit   *ledesc;
+  KLineEdit   *ledomsid;
+  KComboBox   *letype;  
+  QString mOldName;
 };
-#endif // editGroup_included
+#endif // _EDITGROUP_H_

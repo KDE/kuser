@@ -1,5 +1,6 @@
 /*
  *  Copyright (c) 1998 Denis Perchine <dyp@perchine.com>
+ *  Copyright (c) 2004 Szombathelyi György <gyurco@freemail.hu>
  *  Maintained by Adriaan de Groot <groot@kde.org>
  *
  *  This program is free software; you can redistribute it and/or
@@ -20,133 +21,126 @@
 #ifndef _KU_PROPDLG_H_
 #define _KU_PROPDLG_H_
 
-// FreeBSD and BSDI have slightly different GECOS handling
-// from Linux systems. Define this to distinguish flavors of
-// handling (still not nice, but hey ...)
-//
-#if defined(__FreeBSD__) || defined(__bsdi__)
-#define EXTENDED_GECOS_BSD
-#endif
-
-
-#include <qlineedit.h>
 #include <qlabel.h>
-#include <qcombobox.h>
 #include <qpushbutton.h>
 #include <qwidget.h>
 #include <qlistbox.h>
 #include <qtooltip.h>
 #include <qcheckbox.h>
 #include <qlayout.h>
+#include <qmap.h>
 
-#include <kdatewidget.h>
+#include <klineedit.h>
+#include <kdatetimewidget.h>
 #include <knuminput.h>
 #include <kdialogbase.h>
 #include <klistview.h>
+#include <kcombobox.h>
 
 #include "kuser.h"
-#include "quota.h"
-#include "globals.h"
 
 class propdlg : public KDialogBase
 {
   Q_OBJECT
 
 public:
-#ifdef _KU_QUOTA
-  propdlg(KUser *AUser, Quota *AQuota, QWidget *parent = 0, const char *name = 0, int isprep = false);
-#else
-  propdlg(KUser *AUser, QWidget *parent = 0, const char *name = 0, int isprep = false);
-#endif
+  propdlg( const QPtrList<KUser> &users,
+    QWidget *parent = 0, const char *name = 0 );
+  propdlg( KUser *AUser, bool fixedprivgroup, 
+    QWidget *parent = 0, const char *name = 0 );
   ~propdlg();
+  
+  void mergeUser( KUser *user, KUser *newuser );
 
 protected slots:
   virtual void slotOk();
   void setpwd();
-  void mntsel(int index);
-  void qchanged(); // Change to quota settings
   void changed(); // Change to misc settings
   void gchanged(); // Change to group settings
-  void setpgroup(const QString &); // Change in primary group
+  void setpgroup(); // Change in primary group
 
 protected:
+  void initDlg();
   void selectuser();
   void save();
-  void saveg();
+  bool saveg();
   bool check();
-  void loadgroups();
+  void loadgroups( bool fixedprivgroup );
   bool checkShell(const QString &shell);
+  void addRow( QWidget *parent, QGridLayout *layout, int row, 
+  QWidget *widget, const QString &label, const QString &what, 
+  bool two_column=true );
+  void setLE( KLineEdit *le, const QString &val, bool first );
+  void setCB( QCheckBox *cb, bool val, bool first );
+  void setSB( KIntSpinBox *sb, int val, bool first );
+  QString mergeLE( KLineEdit *le, const QString &val, bool one );
+  int mergeSB( KIntSpinBox *sb, int val, bool one );
+  
 
-#ifdef _KU_QUOTA
-  void saveq();
-  int chquota;
-  bool isqchanged;
-#endif
-  KDateWidget *addDateGroup(QWidget  *parent, QGridLayout *layout, int row, const QString &title, int days);
-  KIntSpinBox *addDaysGroup(QWidget  *parent, QGridLayout *layout, int row, const QString &title, const QString &title2, int days, bool never=true);
+//  KDateTimeWidget *addDateGroup( QWidget *parent, QGridLayout *layout,
+//    int row, const QString &title );
+  KIntSpinBox *addDaysGroup( QWidget  *parent, QGridLayout *layout, int row, 
+    const QString &title, const QString &title2, bool never=true );
 
   QFrame *frontpage;
   QGridLayout *frontlayout;
   int frontrow;
 
-  KUser *user;
-#ifdef _KU_QUOTA
-  Quota *quota;
-#endif
+  QPtrList<KUser> mUsers;
+  QMap<QWidget*, QCheckBox*> mNoChanges;
+  bool ismoreshells;
   bool ischanged;
   bool isgchanged;
   uid_t olduid;
+  uint oldrid;
   QString oldshell;
+  QString  primaryGroup;
+  bool  primaryGroupWasOn;
+  
+  QString newpass;
+  time_t lstchg;
 
   KListView *lstgrp;
 
   QPushButton *pbsetpwd;
 
-  QLabel      *leuser;
-  QLineEdit   *leid;
-  QLineEdit   *lefname;
-  QComboBox   *leshell;
-  QLineEdit   *lehome;
-#ifdef EXTENDED_GECOS_BSD
-  QLineEdit   *leoffice;
-  QLineEdit   *leophone;
-  QLineEdit   *lehphone;
-  QLineEdit   *leclass;
-  KDateWidget *lechange;
-  KDateWidget *leexpire;
-#else
-  QLineEdit   *leoffice1;
-  QLineEdit   *leoffice2;
-  QLineEdit   *leaddress;
-#endif
+  KLineEdit   *leuser;
+  KLineEdit   *leid;
+  KLineEdit   *lefname;
+  KLineEdit   *lesurname;
+  KLineEdit   *lemail;
+  
+  KComboBox   *leshell;
+  KLineEdit   *lehome;
 
-  QComboBox   *cbpgrp;
-  QString      primaryGroup;
-  bool	       primaryGroupWasOn;
-#ifdef _KU_QUOTA
-  QComboBox   *leqmnt;
-  QLineEdit   *leqfs;
-  QLineEdit   *leqfh;
-#ifndef BSD
-  QLineEdit   *leqft;
-#endif
-  QLineEdit   *leqis;
-  QLineEdit   *leqih;
-#ifndef BSD
-  QLineEdit   *leqit;
-#endif
-  QLabel      *leqfcur;
-  QLabel      *leqicur;
-#endif
-
-#ifdef HAVE_SHADOW
+  KLineEdit   *leoffice;
+  KLineEdit   *leophone;
+  KLineEdit   *lehphone;
+  KLineEdit   *leclass;
+  
+  KLineEdit   *leoffice1;
+  KLineEdit   *leoffice2;
+  KLineEdit   *leaddress;
+  
+  QCheckBox   *ledisabled;
+  QLabel      *leprigr;
+  QPushButton *pbprigr;
+  
   QLabel *leslstchg;
   KIntSpinBox *lesmin;
   KIntSpinBox *lesmax;
   KIntSpinBox *leswarn;
   KIntSpinBox *lesinact;
-  KDateWidget  *lesexpire;
-#endif
+  KDateTimeWidget  *lesexpire;
+  QCheckBox *never_expire;
+
+//samba specific:  
+  KLineEdit   *lerid;
+  KLineEdit   *leliscript;
+  KLineEdit   *leprofile;
+  KLineEdit   *lehomedrive;
+  KLineEdit   *lehomepath;
+  KLineEdit   *ledomsid;
 };
 
 #endif // _KU_PROPDLG_H_

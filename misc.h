@@ -1,5 +1,6 @@
 /*
  *  Copyright (c) 1998 Denis Perchine <dyp@perchine.com>
+ *  Copyright (c) 2004 Szombathelyi György <gyurco@freemail.hu>
  *  Maintained by Adriaan de Groot <groot@kde.org>
  *
  *  This program is free software; you can redistribute it and/or
@@ -20,6 +21,8 @@
 #ifndef _KU_MISC_H
 #define _KU_MISC_H
 
+#include <sys/time.h>
+
 #include <klocale.h>
 #include <kapplication.h>
 #include <qstring.h>
@@ -29,14 +32,14 @@
 
 class KUser;
 
-void backup(const QString & name);
-char *updateString(char *d, const char *t);
-int getValue(long int &data, const QString & text, const QString & msg);
-int getValue(int &data, const QString & text, const QString & msg);
-int getValue(unsigned int &data, const QString & text, const QString & msg);
-long today();
+bool backup(const QString & name);
+QCString genSalt( int len );
+QString encryptPass( const QString &pass, bool md5 );
+time_t now();
 int copyFile(const QString & from, const QString & to);
 QStringList readShells();
 void addShell(const QString &shell);
+int timeToDays(time_t time);
+time_t daysToTime(int days);
 
 #endif // _KU_MISC_H

@@ -1,6 +1,7 @@
 /*
  *  Copyright (c) 1998 Denis Perchine <dyp@perchine.com>
- *  Maintained by Adriaan de Groot <groot@kde.org>
+ *  Copyright (c) 2004 Szombathelyi György <gyurco@freemail.hu>
+ *  Former maintainer: Adriaan de Groot <groot@kde.org>
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public
@@ -19,131 +20,42 @@
 
 #include <qpixmap.h>
 #include <qlayout.h>
-
 #include <qlabel.h>
-#include <qpushbutton.h>
-#include <qtabbar.h>
+#include <qgrid.h>
 
 #include <kapplication.h>
-#include <ktabctl.h>
+#include <ktabwidget.h>
+#include <klocale.h>
+#include <kcombobox.h>
+#include <kabc/ldapconfigwidget.h>
 
 #include "editDefaults.h"
-#include <klocale.h>
+#include "generalsettings.h"
+#include "filessettings.h"
+#include "ldapsettings.h"
+#include "misc.h"
 
-editDefaults::editDefaults(QWidget* parent, const char * name)
-  : QTabDialog(parent, name, TRUE, 184320) {
-  page1 = new userDefaultsPage(this, "user_page");
-  addTab(page1, i18n("User"));
-  resize(330, 300);
-  setOKButton(i18n("&OK"));
-  setCancelButton(i18n("&Cancel"));
-  page2 = new nisDefaultsPage(this, "nis_page");	
-  addTab(page2, i18n("Sources"));				
-  resize(330, 300);					
-  setOKButton(i18n("&OK"));				
-  setCancelButton(i18n("&Cancel"));			
-}
+editDefaults::editDefaults( KConfigSkeleton *config, QWidget *parent, const char *name ) :
+  KConfigDialog( parent, name, config, IconList,
+  Default|Ok|Apply|Cancel|Help, Ok, true )
+{
+  GeneralSettings *page1 = new GeneralSettings( this );
+  addPage( page1, i18n("General"), "", i18n("General settings") );
+  page1->kcfg_shell->insertItem( i18n("<Empty>" ) );
+  page1->kcfg_shell->insertStringList( readShells() );
+    
+  FilesSettings *page2 = new FilesSettings( this );
+  addPage( page2, i18n("Files"), "", i18n("File source settings") );
+    
+  KTabWidget *page3 = new KTabWidget( this );
+  page3->setMargin( KDialog::marginHint() );
+  KABC::LdapConfigWidget *ldconf = 
+    new KABC::LdapConfigWidget( KABC::LdapConfigWidget::W_ALL &
+    ~(KABC::LdapConfigWidget::W_FILTER), page3 );
+  page3->addTab( ldconf, i18n("Connection") );
 
-
-editDefaults::~editDefaults() {
-}
-
-QString editDefaults::getShell() const {
-  return page1->getShell();
-}
-
-QString editDefaults::getPasswdSrc() const {	
-  return page2->getPasswdSrc();			
-}						
-
-QString editDefaults::getNISPasswdSrc() const {		
-  return page2->getNISPasswdSrc();			
-}							
-
-QString editDefaults::getGroupSrc() const {	
-  return page2->getGroupSrc();			
-}						
-
-QString editDefaults::getNISGroupSrc() const {	
-  return page2->getNISGroupSrc();		
-}						
-
-QString editDefaults::getMINUID() const {	
-  return page2->getMINUID();			
-}						
-
-QString editDefaults::getMINGID() const {	
-  return page2->getMINGID();			
-}						
-
-QString editDefaults::getHomeBase() const {
-  return page1->getHomeBase();
-}
-
-bool editDefaults::getCreateHomeDir() const {
-  return page1->getCreateHomeDir();
-}
-
-bool editDefaults::getEnableNIS() const {	
-  return page2->getEnableNIS();			
-}						
-
-bool editDefaults::getCopySkel() const {
-  return page1->getCopySkel();
-}
-
-bool editDefaults::getUserPrivateGroup() const {
-  return page1->getUserPrivateGroup();
-}
-
-void editDefaults::setShell(const QString &data) {
-  page1->setShell(data);
-}
-
-void editDefaults::setPasswdSrc(const QString &data) {	
-  page2->setPasswdSrc(data);				
-}							
-
-void editDefaults::setNISPasswdSrc(const QString &data) {	
-  page2->setNISPasswdSrc(data);					
-}								
-
-void editDefaults::setGroupSrc(const QString &data) {	
-  page2->setGroupSrc(data);				
-}							
-
-void editDefaults::setNISGroupSrc(const QString &data) {  
-  page2->setNISGroupSrc(data);				
-}							
-
-void editDefaults::setMINUID(const QString &data) {  	
-  page2->setMINUID(data);				
-}							
-
-void editDefaults::setMINGID(const QString &data) {  	
-  page2->setMINGID(data);				
-}							
-
-void editDefaults::setHomeBase(const QString &data) {
-  page1->setHomeBase(data);
-}
-
-void editDefaults::setCreateHomeDir(bool data) {
-  page1->setCreateHomeDir(data);
-}
-
-void editDefaults::setEnableNIS(bool data) {	
-  page2->setEnableNIS(data);			
-}						
-
-void editDefaults::sourcesHelp() {		
-}						
-
-void editDefaults::setCopySkel(bool data) {
-  page1->setCopySkel(data);
-}
-
-void editDefaults::setUserPrivateGroup(bool data) {
-  page1->setUserPrivateGroup(data);
+  LdapSettings *page3b = new LdapSettings( this );
+  page3->addTab( page3b, i18n("Settings") );
+  addPage( page3, i18n("LDAP"), "", i18n("LDAP source settings") );
 }
 #include "editDefaults.moc"

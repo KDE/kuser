@@ -1,5 +1,6 @@
 /*
  *  Copyright (c) 1998 Denis Perchine <dyp@perchine.com>
+ *  Copyright (c) 2004 Szombathelyi György <gyurco@freemail.hu>
  *  Maintained by Adriaan de Groot <groot@kde.org>
  *
  *  This program is free software; you can redistribute it and/or
@@ -26,6 +27,19 @@
 
 #include "kuser.h"
 
+class KUserViewItem : public KListViewItem
+{
+public:
+  KUserViewItem(KListView *parent, KUser *aku);
+  KUser *user() { return mUser; }
+private:  
+  virtual QString text ( int ) const;
+  virtual void paintCell( QPainter *p, const QColorGroup &cg,
+    int column, int width, int alignment );
+  virtual int compare( QListViewItem *i, int col, bool ascending ) const;
+  KUser *mUser;
+};
+
 class KUserView : public KListView
 {
     Q_OBJECT
@@ -38,8 +52,6 @@ public:
   void insertItem(KUser *aku);
   void removeItem(KUser *aku);
   KUser *getCurrentUser();
-
-private:
   void init();
 };
 

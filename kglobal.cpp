@@ -1,6 +1,7 @@
 /*
  *  Copyright (c) 1998 Denis Perchine <dyp@perchine.com>
- *  Maintained by Adriaan de Groot <groot@kde.org>
+ *  Copyright (c) 2004 Szombathelyi György <gyurco@freemail.hu>
+ *  Former maintainer: Adriaan de Groot <groot@kde.org>
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public
@@ -17,46 +18,60 @@
  *  Boston, MA 02111-1307, USA.
  **/
 
+#include <kapplication.h>
+ 
 #include "kglobal_.h"
+#include "kuserfiles.h"
+#include "kgroupfiles.h"
+#include "kuserldap.h"
+#include "kgroupldap.h"
 
-KUserGlobals::KUserGlobals() {
-}
-
-void KUserGlobals::init() {
-#ifdef _KU_QUOTA
-  mounts = new Mounts;
-  quotas = new Quotas;
-#endif
+KUserGlobals::KUserGlobals() 
+{
+  cfg = 0;
   
-  users = new KUsers;
-  groups = new KGroups;
+  users = 0;
+  groups = 0;
 }
 
-KUserGlobals::~KUserGlobals() {
-  // FIXME: If the KUserGlobals object is deleted without having called init() before the following code is very likely to segfault.
-#ifdef _KU_QUOTA
-  delete mounts;
-  delete quotas;
-#endif
+void KUserGlobals::initCfg( const QString &connection )
+{
+  if ( cfg ) {
+    cfg->writeConfig();
+    delete cfg;
+  }    
+  cfg = new KUserPrefsBase( kapp->sharedConfig(), connection );
+  cfg->readConfig();
+}
+
+void KUserGlobals::init() 
+{
+  if ( users ) delete users;
+  if ( groups ) delete groups;
+  switch ( cfg->source() ) {
+    case KUserPrefsBase::EnumSource::Files:
+      users = new KUserFiles( cfg );
+      groups = new KGroupFiles( cfg );
+      break;
+    case KUserPrefsBase::EnumSource::LDAP:
+      users = new KUserLDAP( cfg );
+      groups = new KGroupLDAP( cfg );
+      break;
+  }
+}
+
+KUserGlobals::~KUserGlobals() 
+{
   delete users;
   delete groups;
 }
 
-KUsers &KUserGlobals::getUsers() {
+KUsers &KUserGlobals::getUsers() 
+{
   return (*users);
 }
 
-KGroups &KUserGlobals::getGroups() {
+KGroups &KUserGlobals::getGroups() 
+{
   return (*groups);
 }
-
-#ifdef _KU_QUOTA
-Mounts &KUserGlobals::getMounts() {
-  return (*mounts);
-}
-
-Quotas &KUserGlobals::getQuotas() {
-  return (*quotas);
-}
-#endif
-

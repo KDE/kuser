@@ -1,5 +1,6 @@
 /*
  *  Copyright (c) 1998 Denis Perchine <dyp@perchine.com>
+ *  Copyright (c) 2004 Szombathelyi György <gyurco@freemail.hu>
  *  Maintained by Adriaan de Groot <groot@kde.org>
  *
  *  This program is free software; you can redistribute it and/or
@@ -17,51 +18,36 @@
  *  Boston, MA 02111-1307, USA.
  **/
 
-#ifndef _KU_MNT_H_
-#define _KU_MNT_H_
+#ifndef _KGROUPFILES_H_
+#define _KGROUPFILES_H_
+
+#include <sys/types.h>
 
 #include <qstring.h>
+#include <qstringlist.h>
 #include <qptrlist.h>
 
-class MntEnt {
+#include "kgroup.h"
+
+class KGroupFiles : public KGroups {
 public:
-  MntEnt() {
-  }
+  KGroupFiles( KUserPrefsBase *cfg );
+  virtual ~KGroupFiles();
+
+  virtual bool reload();
+  virtual bool dbcommit();
+
+private:
+  int gr_backuped;
+  int gn_backuped;
+  int gs_backuped;
+
+  int mode, smode;
+  uid_t uid;
+  gid_t gid;
   
-  MntEnt(const QString &afsname, const QString &adir,
-         const QString &atype, const QString &aopts,
-         const QString &aquotafilename);
-  ~MntEnt();
-
-  QString getfsname() const;
-  QString getdir() const;
-  QString gettype() const;
-  QString getopts() const;
-  QString getquotafilename() const;
-
-  void setfsname(const QString &data);
-  void setdir(const QString &data);
-  void settype(const QString &data);
-  void setopts(const QString &data);
-  void setquotafilename(const QString &data);
-
-public:
-  QString fsname;
-  QString dir;
-  QString type;
-  QString opts;
-  QString quotafilename;
+  bool save();
 };
 
-class Mounts {
-public:
-  Mounts();
-  ~Mounts();
+#endif // _KGROUP_H_
 
-  MntEnt *operator[](uint num);
-  uint getMountsNumber();
-protected:
-  QPtrList<MntEnt> m;
-};
-
-#endif // _KU_MNT_H_

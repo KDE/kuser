@@ -1,20 +1,22 @@
 INCLUDES	= -I.. -I$(top_srcdir)/kuser $(all_includes)
 
 # May be -D_XU_QUOTA -D_XU_SHADOW
-AM_CXXFLAGS = 	$(KU_NIS) $(KU_QUOTA) $(QUOTACTL) -D_KU_DEBUG -D_SVID_SOURCE -D_GNU_SOURCE -DQT_NO_ASCII_CAST -DQT_NO_CAST_ASCII
+#AM_CXXFLAGS = 	$(KU_NIS) $(KU_QUOTA) $(QUOTACTL) -D_KU_DEBUG
 
 kuser_LDFLAGS	=	$(all_libraries) $(KDE_RPATH)
-kuser_LDADD	=	$(LIB_KDEUI) $(LIBCRYPT) $(LIBSHADOW) $(LIBGEN)
+kuser_LDADD	=	$(LIB_KDEUI) $(LIBCRYPT) $(LIBSHADOW) $(LIBGEN) $(LIB_KABC)
 
 ####### Files
 
 kuser_SOURCES	=	\
 	mainWidget.cpp editGroup.cpp kuservw.cpp \
 	kgroupvw.cpp delUser.cpp \
-	kuser.cpp kgroup.cpp main.cpp mainView.cpp mnt.cpp \
-	propdlg.cpp quota.cpp misc.cpp pwddlg.cpp \
-	grpnamedlg.cpp kerror.cpp addUser.cpp editDefaults.cpp \
-	nisDefaultsPage.cpp userDefaultsPage.cpp kglobal.cpp kcontainer.cpp
+	kuser.cpp kgroup.cpp main.cpp mainView.cpp \
+	propdlg.cpp misc.cpp pwddlg.cpp \
+	addUser.cpp editDefaults.cpp \
+	kglobal.cpp sid.cpp\
+	kuserfiles.cpp kgroupfiles.cpp kuserldap.cpp kgroupldap.cpp selectconn.cpp\
+	sha1.cpp md4.cpp kuserprefs.kcfgc filessettings.ui generalsettings.ui ldapsettings.ui
 
 kuser_METASOURCES = AUTO
 
@@ -22,10 +24,12 @@ kuser_METASOURCES = AUTO
 noinst_HEADERS	=	\
 	mainWidget.h editGroup.h kuservw.h \
 	kuser.h mainView.h kgroup.h delUser.h \
-	kgroupvw.h propdlg.h mnt.h quota.h globals.h misc.h \
-	pwddlg.h grpnamedlg.h kerror.h addUser.h \
-	nisDefaultsPage.h userDefaultsPage.h editDefaults.h \
-	kglobal_.h
+	kgroupvw.h propdlg.h globals.h misc.h \
+	pwddlg.h addUser.h \
+	editDefaults.h selectconn.h sha1.h md4.h sid.h\
+	kglobal_.h kuserfiles.h kgroupfiles.h kuserldap.h kgroupldap.h
+
+kde_kcfg_DATA = kuser.kcfg
 
 EDITABLE	=	$(noinst_HEADERS) $(kuser_SOURCES) Makefile.am
 

@@ -1,5 +1,6 @@
 /*
  *  Copyright (c) 1998 Denis Perchine <dyp@perchine.com>
+ *  Copyright (c) 2004 Szombathelyi György <gyurco@freemail.hu>
  *  Maintained by Adriaan de Groot <groot@kde.org>
  *
  *  This program is free software; you can redistribute it and/or
@@ -26,26 +27,35 @@
 #include <qstringlist.h>
 #include <qptrlist.h>
 
-#ifdef _KU_QUOTA
-#include "quota.h"
-#endif
+#include "kuserprefs.h"
+#include "sid.h"
 
 class KGroup {
 public:
   KGroup();
-  KGroup(KGroup *copy);
+  KGroup(KGroup *group);
   ~KGroup();
+
+  void copy(const KGroup *group);
 
   const QString &getName() const;
   const QString &getPwd() const;
   gid_t getGID() const;
-
+  const SID &getSID() const;
+  int getType() const;
+  const QString &getDisplayName() const;
+  const QString &getDesc() const;
+  
   void setName(const QString &data);
   void setPwd(const QString &data);
   void setGID(gid_t data);
-
-  void addUser(const QString &name);
-  void removeUser(const QString &name);
+  void setSID(const SID &data);
+  void setType(int data);
+  void setDisplayName(const QString &data);
+  void setDesc(const QString &data);
+  
+  bool addUser(const QString &name);
+  bool removeUser(const QString &name);
   bool lookup_user(const QString &name);
   uint count() const;
   QString user(uint i);
@@ -57,39 +67,68 @@ protected:
     pwd;
   gid_t gid;
 
+//samba attributes  
+  SID sid;
+  int type;
+  QString displayname;
+  QString desc;
+  
   QStringList u;
 };
 
 class KGroups {
 public:
-  KGroups();
-  ~KGroups();
+  enum Cap {
+    Cap_Passwd = 1,
+    Cap_Shadow = 2,
+    Cap_Samba = 4
+  };
 
-  KGroup *lookup(const QString &name);
-  KGroup *lookup(gid_t gid);
-  int first_free();
+  typedef QPtrListIterator<KGroup> DelIt;
+  typedef QPtrListIterator<KGroup> AddIt;
+  typedef QMapIterator<KGroup*, KGroup> ModIt;
+  
+  QPtrList<KGroup> mDelSucc;
+  QPtrList<KGroup> mAddSucc;
+  QMap<KGroup*, KGroup> mModSucc;
+  
+  KGroups( KUserPrefsBase *cfg );
+  virtual ~KGroups();
+  
+  int getCaps() const { return caps; }
+  QString getDOMSID() const;
 
-  bool save();
-  bool load();
-
+  KGroup *lookup( const QString &name );
+  KGroup *lookup( gid_t gid );
+  KGroup *lookup_sam( const SID &sid );
+  KGroup *lookup_sam( const QString &sid );
+  KGroup *lookup_sam( uint rid );
+  
   KGroup *first();
   KGroup *next();
   KGroup *operator[](uint num);
-
-  void add(KGroup *ku);
-  void del(KGroup *au);
-
   uint count() const;
 
-protected:
-  int gr_backuped;
-  int gn_backuped;
-  QPtrList<KGroup> g;
+  void add(KGroup *group);
+  void del(KGroup *group);
+  void mod(KGroup *gold, const KGroup &gnew);
+  void commit();
+  void cancelMods();
+  
+  virtual int first_free();
+  virtual uint first_free_sam();
+  virtual bool reload() = 0;
+  virtual bool dbcommit() = 0;
 
-  int mode;
-  uid_t uid;
-  gid_t gid;
+protected:
+  KUserPrefsBase *mCfg;
+  QPtrList<KGroup> mGroups;
+  
+  QPtrList<KGroup> mDel;
+  QPtrList<KGroup> mAdd;
+  QMap<KGroup*, KGroup> mMod;
+  int caps;
+  QString domsid;
 };
 
 #endif // _KGROUP_H_
-

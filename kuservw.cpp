@@ -1,6 +1,7 @@
 /*
  *  Copyright (c) 1998 Denis Perchine <dyp@perchine.com>
- *  Maintained by Adriaan de Groot <groot@kde.org>
+ *  Copyright (c) 2004 Szombathelyi György <gyurco@freemail.hu>
+ *  Former maintainer: Adriaan de Groot <groot@kde.org>
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public
@@ -17,39 +18,69 @@
  *  Boston, MA 02111-1307, USA.
  **/
 
+#include "kglobal_.h"
 #include "misc.h"
 
 #include "kuservw.h"
 
-class KListViewUser : public QListViewItem
-{
-public:
-  KListViewUser(QListView *parent, KUser *aku);
-  virtual QString text ( int ) const;
 
-  KUser *user;
-};
-
-KListViewUser::KListViewUser(QListView *parent, KUser *aku)
- : QListViewItem(parent), user(aku)
+KUserViewItem::KUserViewItem(KListView *parent, KUser *aku)
+ : KListViewItem(parent), mUser(aku)
 {
 }
 
-QString KListViewUser::text(int num) const
+int KUserViewItem::compare( QListViewItem *i, int col, bool ascending ) const
+{
+  if ( col == 0 ) {
+    uid_t uid1, uid2;
+
+    uid1 = mUser->getUID();
+    uid2 = ((KUserViewItem*) i)->mUser->getUID();
+    
+    if ( uid1 == uid2 ) return 0;
+    return ( uid1 < uid2) ? -1: 1;
+  } else {
+    return QListViewItem::compare( i, col, ascending );
+  }
+}
+
+void KUserViewItem::paintCell( QPainter *p, const QColorGroup &cg,
+                               int column, int width, int alignment )
+{
+    QColorGroup _cg( cg );
+    QColor c = _cg.text();
+
+    if ( mUser->getDisabled() )
+        _cg.setColor( QColorGroup::Text, KGlobalSettings::visitedLinkColor() );
+
+    KListViewItem::paintCell( p, _cg, column, width, alignment );
+
+    _cg.setColor( QColorGroup::Text, c );
+}
+
+QString KUserViewItem::text(int num) const
 {
   switch(num)
   {
-     case 0: return QString::fromLatin1("%1 ").arg(user->getUID(),6);
-     case 1: return user->getName();
-     case 2: return user->getFullName();
+     case 0: return QString::fromLatin1("%1 ").arg(mUser->getUID(),6);
+     case 1: return mUser->getName();
+     case 2: return mUser->getFullName();
+     case 3: return mUser->getHomeDir();
+     case 4: return mUser->getShell();
+     case 5: return QString::number( mUser->getSID().getRID() );
+     case 6: return mUser->getLoginScript();
+     case 7: return mUser->getProfilePath();
+     case 8: return mUser->getHomeDrive();
+     case 9: return mUser->getHomePath();
   }
+  
   return QString::null;
 }
 
 KUserView::KUserView(QWidget *parent, const char *name) 
   : KListView( parent, name )
 {
-  init();
+  setSelectionMode( QListView::Extended );
 }
 
 KUserView::~KUserView()
@@ -57,39 +88,54 @@ KUserView::~KUserView()
 }
 
 void KUserView::insertItem(KUser *aku) {
-  KListViewUser *userItem = new KListViewUser(this, aku);
+  KUserViewItem *userItem = new KUserViewItem(this, aku);
   KListView::insertItem(userItem);
-  setSelected(userItem, true);
 }
 
 void KUserView::removeItem(KUser *aku) {
-  KListViewUser *userItem = (KListViewUser *)firstChild();
+  KUserViewItem *userItem = (KUserViewItem *)firstChild();
   
   while(userItem)
   {
-     if (userItem->user == aku)
+     if (userItem->user() == aku)
      {
         delete userItem;
         return;
      }
-     userItem = (KListViewUser*) userItem->nextSibling();
+     userItem = (KUserViewItem*) userItem->nextSibling();
   }
 }
 
 void KUserView::init()
 {
+  while ( columns() > 5 ) {
+    removeColumn( 5 );
+  }
+  
   setAllColumnsShowFocus(true);
-  addColumn(i18n("UID"));
-  setColumnAlignment(0, AlignRight);
-  addColumn(i18n("User Login"));
-  addColumn(i18n("Full Name"));
+  if ( columns() < 5 ) {
+    addColumn(i18n("UID"));
+    setColumnAlignment(0, AlignRight);
+    addColumn(i18n("User Login"));
+    addColumn(i18n("Full Name"));
+    addColumn(i18n("Home directory"));
+    addColumn(i18n("Login shell"));
+  }
+  
+  if ( kug->getUsers().getCaps() & KUsers::Cap_Samba ) {
+    addColumn(i18n("RID"));
+    addColumn(i18n("Samba login script"));
+    addColumn(i18n("Samba profile path"));
+    addColumn(i18n("Samba home drive"));
+    addColumn(i18n("Samba home path"));
+  }
 }
 
 KUser *KUserView::getCurrentUser() {
-  KListViewUser *userItem = (KListViewUser *)currentItem();
+  KUserViewItem *userItem = (KUserViewItem *)currentItem();
   if (!userItem) return 0;
   
-  return userItem->user;
+  return userItem->user();
 }
 
 #include "kuservw.moc"

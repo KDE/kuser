@@ -1,5 +1,6 @@
 /*
  *  Copyright (c) 1998 Denis Perchine <dyp@perchine.com>
+ *  Copyright (c) 2004 Szombathelyi György <gyurco@freemail.hu>
  *  Maintained by Adriaan de Groot <groot@kde.org>
  *
  *  This program is free software; you can redistribute it and/or
@@ -38,8 +39,6 @@ public:
   bool queryClose();
 
 protected:
-  virtual void resizeEvent (QResizeEvent *event);
-  
   void setupActions();
   void readSettings();
   void writeSettings();

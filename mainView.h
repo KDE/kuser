@@ -1,5 +1,6 @@
 /*
  *  Copyright (c) 1998 Denis Perchine <dyp@perchine.com>
+ *  Copyright (c) 2004 Szombathelyi György <gyurco@freemail.hu>
  *  Maintained by Adriaan de Groot <groot@kde.org>
  *
  *  This program is free software; you can redistribute it and/or
@@ -30,6 +31,7 @@
 
 #include "kuservw.h"
 #include "kgroupvw.h"
+#include "selectconn.h"
 
 class mainView : public QTabWidget {
 Q_OBJECT
@@ -46,7 +48,7 @@ public:
 public slots:
   void slotTabChanged();
 
-  void save();
+//  void save();
   void properties();
   void userSelected();
   void groupSelected();
@@ -60,7 +62,10 @@ public slots:
   void grpdel();
 
   void setpwd();
-
+  void selectconn();
+  void slotApplySettings();
+  void slotApplyConnection();
+  
 signals:
   void userSelected(bool);
   void groupSelected(bool);
@@ -68,11 +73,12 @@ signals:
 protected:
   void reloadUsers();
   void reloadGroups();
+  bool updateUsers();  
+  bool updateGroups();  
 
   KUserView *lbusers;
   KGroupView *lbgroups;
-private:
-  bool changed;
+  SelectConn *sc;  
 };
 
 #endif // _KU_MAINDLG_H

@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Name=KUser
 Name[af]=Kuser
+Name[ar]=برنامج KUser
 Name[eo]=Uzantoadministrilo
 Name[fo]=KNýtari
 Name[hi]=के-यूज़र
@@ -18,6 +19,7 @@ Name[uz]=Фойдаланувчилар
 Name[xx]=xxKUserxx
 GenericName=User Manager
 GenericName[af]=Gebruiker Bestuurder
+GenericName[ar]=مدير المستخدمين
 GenericName[bg]=Управление на потребителите
 GenericName[bs]=Upravljanje korisnicima
 GenericName[ca]=Gestor d'usuaris

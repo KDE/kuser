@@ -1,5 +1,6 @@
 /*
  *  Copyright (c) 1998 Denis Perchine <dyp@perchine.com>
+ *  Copyright (c) 2004 Szombathelyi György <gyurco@freemail.hu>
  *  Maintained by Adriaan de Groot <groot@kde.org>
  *
  *  This program is free software; you can redistribute it and/or
@@ -26,6 +27,18 @@
 
 #include "kgroup.h"
 
+class KGroupViewItem : public KListViewItem
+{
+public:
+  KGroupViewItem(KListView *parent, KGroup *aku);
+  KGroup *group() { return mGroup; }
+private:  
+  virtual QString text ( int ) const;
+  virtual int compare( QListViewItem *i, int col, bool ascending ) const;
+  
+  KGroup *mGroup;
+};
+
 class KGroupView : public KListView
 {
     Q_OBJECT
@@ -38,8 +51,6 @@ public:
   void insertItem(KGroup *aku);
   void removeItem(KGroup *aku);
   KGroup *getCurrentGroup();
-
-private:
   void init();
 };
 

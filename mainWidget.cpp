@@ -1,6 +1,7 @@
 /*
  *  Copyright (c) 1998 Denis Perchine <dyp@perchine.com>
- *  Maintained by Adriaan de Groot <groot@kde.org>
+ *  Copyright (c) 2004 Szombathelyi György <gyurco@freemail.hu>
+ *  Former maintainer: Adriaan de Groot <groot@kde.org>
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public
@@ -17,21 +18,21 @@
  *  Boston, MA 02111-1307, USA.
  **/
 
-#include "globals.h"
-
 #include <qtooltip.h>
 
 #include <ktoolbar.h>
-#include <kglobal.h>
 #include <kiconloader.h>
 #include <kaction.h>
-#include <stdio.h>
+#include <klocale.h>
 #include <kstdaction.h>
 
-#include "mainWidget.h"
-#include "misc.h"
+#include <kdebug.h>
 
-mainWidget::mainWidget(const char *name) : KMainWindow(0,name) {
+#include "kglobal_.h"
+#include "mainWidget.h"
+
+mainWidget::mainWidget(const char *name) : KMainWindow(0,name) 
+{
   md = new mainView(this);
 
   setupActions();
@@ -49,6 +50,7 @@ mainWidget::mainWidget(const char *name) : KMainWindow(0,name) {
 
 mainWidget::~mainWidget() 
 {
+  writeSettings();
   delete md;
   delete sbar;
 }
@@ -58,8 +60,9 @@ bool mainWidget::queryClose()
   return md->queryClose();
 }
 
-void mainWidget::setupActions() {
-  KStdAction::save(md, SLOT(save()), actionCollection());
+void mainWidget::setupActions() 
+{
+//  KStdAction::save(md, SLOT(save()), actionCollection());
   KStdAction::quit(this, SLOT(close()), actionCollection());
 
   KStdAction::preferences(md, SLOT(properties()), actionCollection());
@@ -95,45 +98,43 @@ void mainWidget::setupActions() {
   action = new KAction(i18n("&Delete"), QIconSet(BarIconC("delete_group")), 0, md,
     SLOT(grpdel()), actionCollection(), "delete_group");
   connect(md, SIGNAL(groupSelected(bool)), action, SLOT(setEnabled(bool)));
+  
+  action = new KAction(i18n("&Select connection"), 
+    QIconSet(BarIconC("select_conn")), 0, md,
+    SLOT(selectconn()), actionCollection(), "select_conn");
 
   createGUI(QString::fromLatin1("kuserui.rc"));
 }
 
-void mainWidget::readSettings() {
-  // restore geometry settings
-  KConfig *config = kapp->config();
-  config->setGroup( "Appearance" );
-  QString geom = config->readEntry("Geometry");
-  if (!geom.isEmpty()) {
-    int width, height;
-    // #### use readSizeEntry instead
-    sscanf(geom.ascii(), "%dx%d", &width, &height);
-    resize(width, height);
-  }
+void mainWidget::readSettings() 
+{
+  QValueList<int> geom = kug->kcfg()->geometry();
+  if ( geom.size() < 2 ) return;
+  int width = geom[0];
+  int height = geom[1];
+  if ( width && height ) resize(width, height);
 }
 
-void mainWidget::writeSettings() {
-  // save size of the application window
-  KConfig *config = kapp->config();
-  config->setGroup("Appearance");
-  QString geom;
-  // #### use readSizeEntry instead
-  geom = QString::fromLatin1("%1x%2").arg(geometry().width()).arg(geometry().height());
-  config->writeEntry("Geometry", geom);
+void mainWidget::writeSettings() 
+{
+  kdDebug() << "mainWidget::writeSettings() width=" << width() << " height: " << height() << endl;
+  QValueList<int> geom;
+  geom.append( width() );
+  geom.append( height() );
+
+  kug->kcfg()->setGeometry( geom );
 }
 
-void mainWidget::resizeEvent(QResizeEvent *) {
-  writeSettings();
-}
-
-void mainWidget::toggleToolBar() {
+void mainWidget::toggleToolBar() 
+{
   if (mActionToolbar->isChecked())
     toolBar("mainToolBar")->show();
   else
     toolBar("mainToolBar")->hide();
 }
 
-void mainWidget::toggleStatusBar() {
+void mainWidget::toggleStatusBar() 
+{
   if (mActionStatusbar->isChecked())
     statusBar()->show();
   else

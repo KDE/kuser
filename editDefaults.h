@@ -1,6 +1,7 @@
 /*
  *  Copyright (c) 1998 Denis Perchine <dyp@perchine.com>
- *  Maintained by Adriaan de Groot <groot@kde.org>
+ *  Copyright (c) 2004 Szombathelyi György <gyurco@freemail.hu>
+ *  Former maintainer: Adriaan de Groot <groot@kde.org>
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public
@@ -17,50 +18,19 @@
  *  Boston, MA 02111-1307, USA.
  **/
 
-#ifndef editDefaults_included
-#define editDefaults_included
+#ifndef _EDITDEFAULTS_H_
+#define _EDITDEFAULTS_H_
 
 #include <qtabdialog.h>
 
-#include "userDefaultsPage.h"
-#include "nisDefaultsPage.h"		
+#include "kconfigdialog.h"
 
-class editDefaults : public QTabDialog {
+class LdapSettings;
+
+class editDefaults : public KConfigDialog {
   Q_OBJECT
 public:
-  editDefaults(QWidget* parent = 0, const char * name = 0);
-  virtual ~editDefaults();
-
-  QString getShell() const;
-  QString getHomeBase() const;
-  bool getCreateHomeDir() const;
-  bool getCopySkel() const;
-  bool getUserPrivateGroup() const;
-  QString getPasswdSrc() const;		
-  QString getNISPasswdSrc() const;	
-  QString getGroupSrc() const;		
-  QString getNISGroupSrc() const;	
-  QString getMINUID() const;		
-  QString getMINGID() const;		
-  bool getEnableNIS() const;		
-
-  void setShell(const QString &data);
-  void setHomeBase(const QString &data);
-  void setCreateHomeDir(bool data);
-  void setCopySkel(bool data);
-  void setUserPrivateGroup(bool data);
-  void setPasswdSrc(const QString &data);	
-  void setNISPasswdSrc(const QString &data);	
-  void setGroupSrc(const QString &data);	
-  void setNISGroupSrc(const QString &data);	
-  void setMINUID(const QString &data);		
-  void setMINGID(const QString &data);		
-  void setEnableNIS(bool data);			
-  void sourcesHelp();				
-
-protected:
-  userDefaultsPage *page1;
-  nisDefaultsPage *page2;		
+  editDefaults( KConfigSkeleton *config, QWidget* parent, const char * name = 0 );
 };
 
-#endif // editDefaults_included
+#endif // _EDITDEFAULTS_H_

@@ -1,5 +1,6 @@
 /*
  *  Copyright (c) 1998 Denis Perchine <dyp@perchine.com>
+ *  Copyright (c) 2004 Szombathelyi György <gyurco@freemail.hu>
  *  Maintained by Adriaan de Groot <groot@kde.org>
  *
  *  This program is free software; you can redistribute it and/or
@@ -26,14 +27,7 @@
 #include <qptrlist.h>
 
 #include "globals.h"
-
-#ifdef _KU_QUOTA
-#include "quota.h"
-#endif
-
-#if defined(__FreeBSD__) || defined(__bsdi__)
-#undef HAVE_SHADOW
-#endif
+#include "sid.h"
 
 class KUsers;
 
@@ -46,6 +40,8 @@ public:
   void copy(const KUser *user);
 
   QString getName() const;
+  QString getSurname() const;
+  QString getEmail() const;
   QString getPwd() const;
   QString getHomeDir() const;
   QString getShell() const;
@@ -53,49 +49,39 @@ public:
 
   uid_t getUID() const;
   uid_t getGID() const;
-
-#if defined(__FreeBSD__) || defined(__bsdi__)
+  bool getDisabled() const;
+//BSD
   QString getOffice() const;
   QString getWorkPhone() const;
   QString getHomePhone() const;
   QString getClass() const;
-  time_t getLastChange() const;
-
-
-#else
+//BSD end
   QString getOffice1() const;
   QString getOffice2() const;
   QString getAddress() const;
 
-#endif
-
-#ifdef HAVE_SHADOW
   QString getSPwd() const;
-  long getLastChange() const;
+  time_t getExpire() const;
+  time_t getLastChange() const;
   int getMin() const;
   int getMax() const;
   int getWarn() const;
   int getInactive() const;
 
   int getFlag() const;
-#endif
 
-  /**
-  * 
-  * Returns the time at which the user's password expires,
-  * in _days_ from the Epoch (ie. from midnight january 1st, 1970).
-  *
-  * This is of course hopelessly inaccurate compared to the
-  * time_t FreeBSD really stores, but for compatibility with
-  * Linux we need to have days.
-  *
-  * On systems without an expiry date, returns 0.
-  *
-  */
-  int getExpire() const;
-
+  QString getLMPwd() const; //  sam_lmpwd,
+  QString getNTPwd() const; //sam_ntpwd,
+  QString getLoginScript() const; //sam_loginscript,
+  QString getProfilePath() const; //  sam_profile,
+  QString getHomeDrive() const; //sam_homedrive,
+  QString getHomePath() const; //sam_homepath;
+  SID getSID() const; //sid,
+  SID getPGSID() const; //pgroup_sid;
 
   void setName(const QString &data);
+  void setSurname(const QString &data);
+  void setEmail(const QString &data);
   void setPwd(const QString &data);
   void setHomeDir(const QString &data);
   void setShell(const QString &data);
@@ -103,42 +89,51 @@ public:
 
   void setUID(uid_t data);
   void setGID(uid_t data);
+  void setDisabled(bool data);
 
-#if defined(__FreeBSD__) || defined(__bsdi__)
+//BSD
   void setOffice(const QString &data);
   void setWorkPhone(const QString &data);
   void setHomePhone(const QString &data);
   void setClass(const QString &data);
-  void setExpire(time_t data);
-  void setLastChange(time_t data);
-#else
+//BSD end
   void setOffice1(const QString &data);
   void setOffice2(const QString &data);
   void setAddress(const QString &data);
-#endif
 
-#ifdef HAVE_SHADOW
   void setSPwd(const QString &data);
-  void setLastChange(long data);
+  void setLastChange(time_t data);
   void setMin(int data);
   void setMax(int data);
   void setWarn(int data);
   void setInactive(int data);
-  void setExpire(int data);
+  void setExpire(time_t data);
   void setFlag(int data);
-#endif
 
+  void setLMPwd( const QString &data ); //  sam_lmpwd,
+  void setNTPwd( const QString &data ); //sam_ntpwd,
+  void setLoginScript( const QString &data ); //sam_loginscript,
+  void setProfilePath( const QString &data); //  sam_profile,
+  void setHomeDrive( const QString &data ); //sam_homedrive,
+  void setHomePath( const QString &data ); //sam_homepath;
+  void setSID( const SID &data ); //sid,
+  void setPGSID( const SID &data ); //pgroup_sid;
+  
   bool getCreateHome();
   bool getCreateMailBox();
   bool getCopySkel();
+  bool getDeleteHome();
+  bool getDeleteMailBox();
 
   void setCreateHome(bool data);
   void setCreateMailBox(bool data);
   void setCopySkel(bool data);
+  void setDeleteHome(bool data);
+  void setDeleteMailBox(bool data);
 
 protected:
   friend class KUsers;
-
+  
   int createHome();
   int createKDE();
   bool findKDE(const QString &dir);
@@ -155,11 +150,16 @@ protected:
 
   QString
     p_name,                        // parsed pw information
+    p_surname,
+    p_email,
     p_pwd,
     p_dir,
     p_shell,
     p_fname,                        // parsed comment information
-#if defined(__FreeBSD__) || defined(__bsdi__)
+    p_office1,
+    p_office2,
+    p_address,
+//BSD  
     p_office,
     p_ophone,
     p_hphone,
@@ -167,28 +167,29 @@ protected:
   time_t
     p_change,
     p_expire;
-#else
-    p_office1,
-    p_office2,
-    p_address;
-#endif
+//BSD end
   uid_t p_uid;
   gid_t p_gid;
 
-#ifdef HAVE_SHADOW
   QString
-    s_pwd;                         // parsed shadow information
-  long
-    s_lstchg;                      // last password change
+    s_pwd,                         // parsed shadow password
+    sam_lmpwd,
+    sam_ntpwd,
+    sam_loginscript,
+    sam_profile,
+    sam_homedrive,
+    sam_homepath;
+  SID 
+    sid,
+    pgroup_sid;
   signed int
     s_min,                         // days until pwchange allowed.
     s_max,                         // days before change required
     s_warn,                        // days warning for expiration
     s_inact,                       // days before  account  inactive
-    s_expire,                      // date when account expires
     s_flag;                        // reserved for future use
-#endif
   bool
+    isDisabled,                // account disabled?
     isCreateHome,              // create homedir
     isCreateMailBox,           // create mailbox
     isCopySkel,                // copy skeleton
@@ -198,50 +199,83 @@ protected:
 
 class KUsers {
 public:
-  KUsers();
-  ~KUsers();
+  enum Cap {
+    Cap_Passwd = 1,
+    Cap_Shadow = 2,
+    Cap_InetOrg = 4,
+    Cap_Samba = 8,
+    Cap_BSD = 16
+  };
+  typedef QPtrListIterator<KUser> DelIt;
+  typedef QPtrListIterator<KUser> AddIt;
+  typedef QMapIterator<KUser*, KUser> ModIt;
+  
+  QPtrList<KUser> mDelSucc;
+  QPtrList<KUser> mAddSucc;
+  QMap<KUser*, KUser> mModSucc;
+  
+  KUsers(KUserPrefsBase *cfg);
+  virtual ~KUsers();
   KUser *lookup(const QString & name);
   KUser *lookup(uid_t uid);
-  int first_free();
-
-  bool load();
-
-  bool save();
-
+  KUser *lookup_sam( const SID &sid );
+  KUser *lookup_sam( const QString &sid );
+  KUser *lookup_sam( uint rid );
+  
+  int getCaps() { return caps; }
+  QString getDOMSID() const;
+  
   KUser *first();
   KUser *next();
   uint count() const;
   KUser *operator[](uint num);
 
-  void add(KUser *ku);
-  void del(KUser *au, bool deleteHome, bool deleteMailBox);
-
+  void add( KUser *user );
+  void del( KUser *user );
+  void mod( KUser *uold, const KUser &unew );
+  void commit();
+  void cancelMods();
+  
+  /**
+  * May be reimplemented in descendant classes. 
+  * It should return the first available UID, or -1 if no more UID.
+  */
+  virtual int first_free();
+  /**
+  * May be reimplemented in descendant classes. 
+  * It should return the first available user RID, or 0 if no more RID.
+  */
+  virtual uint first_free_sam();
+  /**
+  * Must be reimplemented in various backends. It should encode @param password 
+  * into the appropriate fields in @param user.
+  */
+  virtual void createPassword( KUser *user, const QString &password ) = 0;
+  /**
+  * Must load the users from the storage backend.
+  */
+  virtual bool reload() = 0;
+  /**
+  * Must write changes (in mDel, mAdd and mMod) to the storage backend. It must
+  * write successful modifications into mDelSucc, mAddSucc and mModSucc.
+  */
+  virtual bool dbcommit() = 0;
+  
 protected:
-  bool pw_backuped;
-  bool pn_backuped;
-  bool s_backuped;
+  QPtrList<KUser> mUsers;
+  int caps;
+  KUserPrefsBase *mCfg;
+  
+  QPtrList<KUser> mDel;
+  QPtrList<KUser> mAdd;
+  QMap<KUser*, KUser> mMod;
 
-  mode_t pwd_mode;
-  mode_t sdw_mode;
-
-  uid_t pwd_uid;
-  gid_t pwd_gid;
-
-  uid_t sdw_uid;
-  gid_t sdw_gid;
-
-  QPtrList<KUser> allUsers;
-  QPtrList<KUser> usersToDelete;
-
-  bool doCreate();
-  bool doDelete();
-  void fillGecos(KUser *user, const char *gecos);
-  bool loadpwd();
-  bool loadsdw();
-
-  bool savepwd();
-  bool savesdw();
+  QString domsid;
+  
+  bool doCreate( KUser *user );
+  bool doDelete( KUser *user );
+  void fillGecos( KUser *user, const char *gecos );
+  
 };
 
 #endif // _KUSER_H_
-

@@ -1,5 +1,6 @@
 /*
  *  Copyright (c) 1998 Denis Perchine <dyp@perchine.com>
+ *  Copyright (c) 2004 Szombathelyi György <gyurco@freemail.hu>
  *  Maintained by Adriaan de Groot <groot@kde.org>
  *
  *  This program is free software; you can redistribute it and/or
@@ -20,42 +21,26 @@
 #ifndef __KGLOBAL_H__
 #define __KGLOBAL_H__
 
-#include "globals.h"
-
 #include "kuser.h"
 #include "kgroup.h"
-#include "quota.h"
-#include "mnt.h"
 
-/** Initializate and store pointers to the objects that manages users, groups, quotas, mounts, etc. */
 class KUserGlobals {
 public:
-  /** Constructor, do nothing. */
   KUserGlobals();
-  
-  /** Initializate users (KUsers) and groups (KGroups) and if quota is enabled, mounts and quotas. */
-  void init();
-  
-  /** Destructor delete the objectes created on init(). */
   ~KUserGlobals();
+  void init();
+  void initCfg( const QString &connection );
   
-  /** Get the pointer to the users */  
+  KUserPrefsBase *kcfg() { return cfg; }
   KUsers &getUsers();
   KGroups &getGroups();
   
-#ifdef _KU_QUOTA
-  Quotas &getQuotas();
-  Mounts &getMounts();
-#endif
-
 private:
-#ifdef _KU_QUOTA
-  Mounts *mounts;
-  Quotas *quotas;
-#endif
 
   KUsers *users;
   KGroups *groups;
+  
+  KUserPrefsBase *cfg;
 };
 
 extern KUserGlobals *kug;

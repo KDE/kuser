@@ -1,6 +1,7 @@
 /*
  *  Copyright (c) 1998 Denis Perchine <dyp@perchine.com>
- *  Maintained by Adriaan de Groot <groot@kde.org>
+ *  Copyright (c) 2004 Szombathelyi György <gyurco@freemail.hu>
+ *  Former maintainer: Adriaan de Groot <groot@kde.org>
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public
@@ -26,24 +27,14 @@
 class addUser: public propdlg {
   Q_OBJECT
 public:
-#ifdef _KU_QUOTA
-  addUser(KUser *AUser, Quota *AQuota, QWidget *parent = 0, const char *name = 0, int isprep = false);
-#else
-  addUser(KUser *AUser, QWidget *parent = 0, const char *name = 0, int isprep = false);
-#endif
+  addUser(KUser *AUser, bool useprivategroup, 
+    QWidget *parent = 0, const char *name = 0 );
 
   void setCreateHomeDir(bool b)
      { createhome->setChecked(b); }
 
   void setCopySkel(bool b)
      { copyskel->setChecked(b); }
-
-  void setUsePrivateGroup(bool b)
-     { usePrivateGroup->setChecked(b); }
-
-  bool getUsePrivateGroup()
-     { return usePrivateGroup->isChecked(); }
-
 
 protected slots:
   virtual void slotOk();
@@ -53,7 +44,6 @@ protected:
 
   QCheckBox *createhome;
   QCheckBox *copyskel;
-  QCheckBox *usePrivateGroup;
 };
 
 #endif // _KU_ADDUSER_H

@@ -1,6 +1,7 @@
 /*
  *  Copyright (c) 1998 Denis Perchine <dyp@perchine.com>
- *  Maintained by Adriaan de Groot <groot@kde.org>
+ *  Copyright (c) 2004 Szombathelyi György <gyurco@freemail.hu>
+ *  Former maintainer: Adriaan de Groot <groot@kde.org>
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public
@@ -17,15 +18,9 @@
  *  Boston, MA 02111-1307, USA.
  **/
 
-#define _KU_MAIN
 #include "mainView.h"
 
-#include "globals.h"
-
 #include <stdio.h>
-
-#include <unistd.h>
-#include <signal.h>
 
 #include <qtooltip.h>
 #include <qsplitter.h>
@@ -35,10 +30,10 @@
 #include <ktoolbar.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
+#include <kdebug.h>
 
 #include "misc.h"
 #include "kglobal_.h"
-#include "grpnamedlg.h"
 #include "propdlg.h"
 #include "addUser.h"
 #include "delUser.h"
@@ -46,19 +41,18 @@
 #include "editGroup.h"
 #include "editDefaults.h"
 
-mainView::mainView(QWidget *parent) : QTabWidget(parent) {
-  changed = false;
-
+mainView::mainView(QWidget *parent) : QTabWidget(parent) 
+{
   init();
 }
 
 void mainView::init() {
 
-  lbusers = new KUserView(this, "lbusers");
-  addTab(lbusers, i18n("Users"));
+  lbusers = new KUserView( this, "lbusers" );
+  addTab( lbusers, i18n("Users") );
 
-  lbgroups = new KGroupView(this, "lbgroups");
-  addTab(lbgroups, i18n("Groups"));
+  lbgroups = new KGroupView( this, "lbgroups" );
+  addTab( lbgroups, i18n("Groups"));
 
   connect(lbusers, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(userSelected()));
   connect(lbusers, SIGNAL(returnPressed(QListViewItem *)), this, SLOT(userSelected()));
@@ -72,7 +66,8 @@ void mainView::init() {
   connect(this, SIGNAL(currentChanged(QWidget *)), this, SLOT(slotTabChanged()));
 }
 
-mainView::~mainView() {
+mainView::~mainView() 
+{
 }
 
 void mainView::slotTabChanged()
@@ -89,152 +84,128 @@ void mainView::slotTabChanged()
   }
 }
 
-void mainView::reloadUsers() {
+void mainView::reloadUsers() 
+{
   KUser *ku;
 
   lbusers->clear();
-
-  for (uint i = 0; i<kug->getUsers().count(); i++) {
-    ku = kug->getUsers()[i];
-    lbusers->insertItem(ku);
+  lbusers->init();
+  
+  ku = kug->getUsers().first();
+  while ( ku ) {
+    lbusers->insertItem( ku );
+    ku = kug->getUsers().next();
   }
   if (lbusers->firstChild())
     lbusers->setSelected(lbusers->firstChild(), true);
 }
 
-void mainView::reloadGroups() {
+void mainView::reloadGroups() 
+{
   KGroup *kg;
 
   lbgroups->clear();
+  lbgroups->init();
 
-  for (uint i = 0; i<kug->getGroups().count(); i++) {
-    kg = kug->getGroups()[i];
+  kg = kug->getGroups().first();
+  while ( kg ) {
     lbgroups->insertItem(kg);
+    kg = kug->getGroups().next();
   }
-  if (lbgroups->firstChild())
-    lbgroups->setSelected(lbgroups->firstChild(), true);
-
 }
 
-void mainView::useredit() {
+void mainView::useredit() 
+{
   userSelected();
 }
 
-void mainView::userdel() {
+void mainView::userdel() 
+{
   KUser *user = lbusers->getCurrentUser();
-
   if (!user)
     return;
 
+  QString username = user->getName();
+  gid_t gid = user->getGID();
   delUser dlg(user, this);
 
-  if (!dlg.exec())
+  if ( dlg.exec() == QDialog::Rejected )
      return;
 
-#ifdef _KU_QUOTA
-  uint uid = user->getUID();
-
-  if (kug->getUsers().lookup(uid) == 0)
-    kug->getQuotas().delQuota(uid);
-#endif
-
-  kug->getUsers().del(user, dlg.getDeleteHomeDir(), dlg.getDeleteMailBox());
-  lbusers->removeItem(user);
-
-  changed = true;
-
-  config->setGroup("template");
-  if (!config->readBoolEntry("userPrivateGroup", KU_USERPRIVATEGROUP))
-    return;
-
-  const QString &userName = user->getName();
+  user->setDeleteHome( dlg.getDeleteHomeDir() );
+  user->setDeleteMailBox( dlg.getDeleteMailBox() );
+  
+  kug->getUsers().del( user );
+  if ( !updateUsers() ) return;
+    
   KGroup *group = 0;
-
-  for (uint i=0; i<kug->getGroups().count(); i++)
-    if (kug->getGroups()[i]->getName() == userName) {
-      group = kug->getGroups()[i];
-      break;
+  group = kug->getGroups().first();
+  while ( group ) {
+    kdDebug() << "group: " << group->getName() << endl;
+    if ( group->lookup_user( username ) ) {
+      kdDebug() << "group: " << group->getName() << " found user: " << username << endl;
+      KGroup newgroup( group );
+      newgroup.removeUser( username );
+      kug->getGroups().mod( group, newgroup );
     }
+    group = kug->getGroups().next();
+  }
+  
+  if ( kug->kcfg()->userPrivateGroup() ) {
 
-  if (!group)
-    return;
+    group = kug->getGroups().lookup( gid );
 
-  if (KMessageBox::warningContinueCancel(0,
-        i18n("You are using private groups.\n"
-             "Do you want to delete the user's private group '%1'?")
-	       .arg(group->getName()), QString::null,
-	     i18n("&Delete")) != KMessageBox::Continue)
-    return;
+    if ( group &&
+      KMessageBox::warningContinueCancel( 0, i18n("You are using private groups.\n"
+        "Do you want to delete the user's private group '%1'?")
+        .arg(group->getName()), QString::null,
+        i18n("&Delete")) == KMessageBox::Continue) {
 
-  kug->getGroups().del(group);
-  lbgroups->removeItem(group);
+      kug->getGroups().del( group );
+    }
+  }
+  updateGroups();
 }
 
-void mainView::useradd() {
+void mainView::useradd() 
+{
   KUser *tk;
-#ifdef _KU_QUOTA
-  Quota *tq;
-#endif // _KU_QUOTA
 
   showPage(lbusers);
 
   int uid;
+  uint rid;
+  bool samba = kug->getUsers().getCaps() & KUsers::Cap_Samba;
 
   if ((uid = kug->getUsers().first_free()) == -1) {
-    err->display();
+    KMessageBox::sorry( 0, i18n("You run out of uid space!") );
+    return;
+  }
+  if ( samba && (rid = kug->getUsers().first_free_sam()) == 0) {
+    KMessageBox::sorry( 0, i18n("You run out of user RID space!") );
     return;
   }
 
   tk = new KUser();
-  tk->setUID(uid);
-
-#ifdef _KU_QUOTA
-  tq = new Quota(tk->getUID(), FALSE);
-#endif // _KU_QUOTA
-
-  bool ok;
-  QString name = KInputDialog::getText( i18n( "Add User" ),
-      i18n( "Enter user name:" ), QString::null, &ok, this );
-
-  if (!ok)  {
-    delete tk;
-#ifdef _KU_QUOTA
-    delete tq;
-#endif
-    return;
+  tk->setUID( uid );
+  
+  if ( samba ) {
+    SID sid;
+    sid.setDOM( kug->getUsers().getDOMSID() );
+    sid.setRID( rid );
+    tk->setSID( sid );
+    tk->setProfilePath( kug->kcfg()->samprofilepath() );
+    tk->setHomePath( kug->kcfg()->samhomepath() );
+    tk->setHomeDrive( kug->kcfg()->samhomedrive() );
+    tk->setLoginScript( kug->kcfg()->samloginscript() );
   }
-  tk->setName(name);
-
-  if (kug->getUsers().lookup(name)) {
-    KMessageBox::error( 0, i18n("User with name %1 already exists.").arg(name) );
-    delete tk;
-#ifdef _KU_QUOTA
-    delete tq;
-#endif
-    return;
+  
+  tk->setShell( kug->kcfg()->shell() );
+  tk->setHomeDir( kug->kcfg()->homepath() );
+  if ( kug->getUsers().getCaps() & KUsers::Cap_Shadow || samba ) {
+    tk->setLastChange( now() );
   }
-
-  config->setGroup("template");
-  tk->setShell(config->readPathEntry("shell", QString::fromLatin1("/bin/sh")));
-  tk->setHomeDir(config->readPathEntry("homeBase", QFile::decodeName(KU_HOMEPREFIX))+
-  	QString::fromLatin1("/")+tk->getName());
-  tk->setGID(config->readNumEntry("gid"));
-  tk->setFullName(config->readEntry("p_fname"));
-#if defined(__FreeBSD__) || defined(__bsdi__)
-  tk->setOffice(config->readEntry("p_office"));
-  tk->setWorkPhone(config->readEntry("p_ophone"));
-  tk->setHomePhone(config->readEntry("p_hphone"));
-  tk->setClass(config->readEntry("p_class"));
-  tk->setLastChange(config->readNumEntry("p_change"));
-  tk->setExpire(config->readNumEntry("p_expire"));
-#else
-  tk->setOffice1(config->readEntry("p_office1"));
-  tk->setOffice2(config->readEntry("p_office2"));
-  tk->setAddress(config->readEntry("p_address"));
-#endif
-
-#ifdef HAVE_SHADOW
-  tk->setLastChange(today());
+/*  
   if (config->hasKey("s_min"))
     tk->setMin(config->readNumEntry("s_min"));
 
@@ -252,216 +223,292 @@ void mainView::useradd() {
 
   if (config->hasKey("s_flag"))
     tk->setFlag(config->readNumEntry("s_flag"));
-#endif
-
-#ifdef _KU_QUOTA
-  if (is_quota == 0) {
-    delete tq;
-    tq = 0;
-  }
-#endif // _KU_QUOTA
+*/
   
-#ifdef _KU_QUOTA
-  addUser au(tk, tq, this, "userin");
-#else
-  addUser au(tk, this, "userin");
-#endif
+  bool privgroup = kug->kcfg()->userPrivateGroup();
 
-  au.setCreateHomeDir(config->readBoolEntry("createHomeDir", true));
-  au.setCopySkel(config->readBoolEntry("copySkel", true));
-  au.setUsePrivateGroup(config->readBoolEntry("userPrivateGroup", KU_USERPRIVATEGROUP));
-
-  if (au.exec() != 0) {
-    if (au.getUsePrivateGroup()) {
-      KGroup *tg;
-
-      if ((tg = kug->getGroups().lookup(tk->getName())) == 0) {
-        tg = new KGroup();
-        tg->setGID(kug->getGroups().first_free());
-        tg->setName(tk->getName());
-        kug->getGroups().add(tg);
-        lbgroups->insertItem(tg);
-      }
-
-      tk->setGID(tg->getGID());
-    }
-    kug->getUsers().add(tk);
-#ifdef _KU_QUOTA
-    if (tq)
-      kug->getQuotas().addQuota(tq);
-#endif
-    changed = true;
-    lbusers->insertItem(tk);
-  }
-  else {
+  addUser au( tk, privgroup, this );
+  
+  au.setCreateHomeDir( kug->kcfg()->createHomeDir() );
+  au.setCopySkel( kug->kcfg()->copySkel() );
+  
+  if ( au.exec() == QDialog::Rejected ) {
     delete tk;
-#ifdef _KU_QUOTA
-    delete tq;
-#endif
-  }
-
-}
-
-
-void mainView::save() {
-  if (!changed)
     return;
-    
-  kug->getUsers().save();
-  kug->getGroups().save();
-#ifdef _KU_QUOTA
-  if (is_quota != 0)
-    kug->getQuotas().save();
-#endif
-  err->display();
+  }
+  if ( privgroup ) {
+    KGroup *tg;
 
-  changed = FALSE;
+    if ((tg = kug->getGroups().lookup(tk->getName())) == 0) {
+      int gid = kug->getGroups().first_free();
+      uint rid = 0;
+      if ( samba ) rid = kug->getGroups().first_free_sam();
+      if ( gid < 0 || ( samba && rid == 0 ) ) {
+        kug->getGroups().cancelMods();
+        delete tk;
+        return;
+      }
+      tg = new KGroup();
+      tg->setGID(kug->getGroups().first_free());
+      if ( samba ) {
+        SID sid;
+        sid.setDOM( kug->getGroups().getDOMSID() );
+        sid.setRID( rid );
+        tg->setSID( sid );
+        tg->setDisplayName( tk->getName() );
+      }
+      tg->setName( tk->getName() );
+      kug->getGroups().add( tg );
+    }
+    tk->setGID( tg->getGID() );
+    tk->setPGSID( tg->getSID() );
+  }
+  kug->getUsers().add( tk );
+  if ( !updateUsers() ) {
+    kug->getGroups().cancelMods();
+    return;
+  }
+  updateGroups();
 }
 
 bool mainView::queryClose()
 {
-  if (!changed)
-    return true;
-    
-  int result = KMessageBox::warningYesNoCancel(0, i18n("Would you like to save your changes?"),
-                               i18n("Data Was Modified"),
-                               KStdGuiItem::save(), KStdGuiItem::discard());
-
-  if (result == KMessageBox::Cancel)
-    return false;
-    
-  if (result == KMessageBox::Yes)
-    save();
-    
   return true;
 }
 
-void mainView::setpwd() {
-  pwddlg d(lbusers->getCurrentUser(), this, "pwddlg");
-  if (d.exec() != 0)
-    changed = true;
+void mainView::slotApplySettings()
+{
+  kdDebug() << "settings changed!" << endl;
+  lbusers->clear();
+  lbgroups->clear();
+  kug->init();
+  reloadUsers();
+  reloadGroups();
 }
 
-void mainView::properties() {
-  editDefaults eddlg;
-
-  eddlg.setCaption(i18n("Edit Defaults"));
-
-  config->setGroup("template");
-  eddlg.setShell(config->readEntry("shell", QString::fromLatin1("/bin/sh")));
-  eddlg.setHomeBase(config->readEntry("homeBase", QString::fromLatin1("/home")));	
-  eddlg.setCreateHomeDir(config->readBoolEntry("createHomeDir", true));
-  eddlg.setCopySkel(config->readBoolEntry("copySkel", true));
-  eddlg.setUserPrivateGroup(config->readBoolEntry("userPrivateGroup", KU_USERPRIVATEGROUP));
-  config->setGroup("sources");
-  eddlg.setPasswdSrc(config->readEntry("passwdsrc", QFile::decodeName(PASSWORD_FILE)));
-  eddlg.setGroupSrc(config->readEntry("groupsrc", QFile::decodeName(GROUP_FILE)));
-  eddlg.setNISPasswdSrc(config->readEntry("nispasswdsrc"));
-  eddlg.setNISGroupSrc(config->readEntry("nisgroupsrc"));
-  eddlg.setMINUID(config->readEntry("nisminuid"));
-  eddlg.setMINGID(config->readEntry("nismingid"));
-//  eddlg.setEnableNIS(config->readBoolEntry("enableNIS", true));
-
-
-  if (eddlg.exec() != 0)
-  {
-    config->setGroup("template");
-    config->writePathEntry("shell", eddlg.getShell());
-    config->writePathEntry("homeBase", eddlg.getHomeBase());
-    config->writeEntry("createHomeDir", eddlg.getCreateHomeDir());
-    config->writeEntry("copySkel", eddlg.getCopySkel());
-    config->writeEntry("userPrivateGroup", eddlg.getUserPrivateGroup());
-    config->setGroup("sources");
-    config->writeEntry("passwdsrc", eddlg.getPasswdSrc());
-    config->writeEntry("nispasswdsrc", eddlg.getNISPasswdSrc());
-    config->writeEntry("groupsrc", eddlg.getGroupSrc());
-    config->writeEntry("nisgroupsrc", eddlg.getNISGroupSrc());
-    config->writeEntry("nisminuid", eddlg.getMINUID());
-    config->writeEntry("nismingid", eddlg.getMINGID());
-//    config->writeEntry("enableNIS", eddlg.getEnableNIS());
-    config->sync();
+void mainView::setpwd() 
+{
+  KUser *user = lbusers->getCurrentUser();
+  if ( !user ) return;
+  KUser newuser( user );
+  pwddlg d( this );
+  if ( d.exec() == QDialog::Accepted ) {
+    kug->getUsers().createPassword( &newuser, d.getPassword() );
+    newuser.setLastChange( now() );
+    kug->getUsers().mod( user, newuser );
+    updateUsers();
   }
 }
 
-void mainView::groupSelected() {
+void mainView::properties() 
+{
+  editDefaults *eddlg = new editDefaults( kug->kcfg(), this );
+  connect(eddlg, SIGNAL(settingsChanged()), this, SLOT(slotApplySettings()));
+
+  eddlg->show();
+}
+
+void mainView::groupSelected() 
+{
+  bool samba = kug->getGroups().getCaps() & KGroups::Cap_Samba;
   KGroup *tmpKG = lbgroups->getCurrentGroup();
+  if ( !tmpKG ) return;
+  KGroup newGroup( tmpKG );
 
-  if (!tmpKG) {
-    printf("Null pointer tmpKG in mainView::groupSelected()\n");
-    return;
+  if ( samba && newGroup.getSID().isEmpty() ) {
+    SID sid;
+    sid.setDOM( kug->getGroups().getDOMSID() );
+    sid.setRID( kug->getGroups().first_free_sam() );
+    newGroup.setSID( sid );
   }
+  editGroup egdlg( &newGroup, samba, false );
 
-  editGroup egdlg(tmpKG);
-
-  if (egdlg.exec() != 0)
-    changed = true;
+  if ( egdlg.exec() == QDialog::Accepted ) {
+    kug->getGroups().mod( tmpKG, newGroup );
+    updateGroups();
+  }
 }
 
-void mainView::userSelected() {
-  KUser *tmpKU;
-
-  tmpKU =  lbusers->getCurrentUser();
-  if (!tmpKU) 
-    return;
-
-#ifdef _KU_QUOTA
-  Quota *tmpQ = 0;
-
-  if (is_quota != 0) {
-    tmpQ = kug->getQuotas()[tmpKU->getUID()];
-    if (!tmpQ) {
-      printf("Null pointer tmpQ in mainView::selected()\n");
-      return;
-    }
-  }
+void mainView::userSelected() 
+{
+  QListViewItem *item;
+  QPtrList<KUser> ulist;
   
-  propdlg editUser(tmpKU, tmpQ, this, "userin");
-#else
-  propdlg editUser(tmpKU, this, "userin");
-#endif
-
-  if (editUser.exec() != 0) {
-    changed = true;
+  item = lbusers->firstChild();
+  while ( item ) {
+    if ( item->isSelected() ) {
+      ulist.append( ((KUserViewItem*) item)->user() );
+    }
+    item = item->nextSibling();
   }
+  if ( ulist.isEmpty() ) return;
+  
+  propdlg editUser( ulist, this );
+  if ( editUser.exec() == QDialog::Rejected ) return;
+    
+  KUser *user, newuser;
+  user = ulist.first();
+  while ( user ) {
+    editUser.mergeUser( user, &newuser );
+    kug->getUsers().mod( user, newuser );
+    user = ulist.next();
+  }
+  updateUsers();
+  updateGroups();
 }
 
-void mainView::grpadd() {
+void mainView::grpadd() 
+{
   showPage(lbgroups);
 
   int gid;
+  uint rid;
+  bool samba;
+  
+  samba = kug->getGroups().getCaps() & KGroups::Cap_Samba;
 
-  if ((gid = kug->getGroups().first_free()) == -1) {
-    err->display();
+  if ( (gid = kug->getGroups().first_free()) == -1 )
+  {
+    KMessageBox::sorry( 0, i18n("You run out of the gid space!") );
     return;
+  }
+  if ( samba && (rid = kug->getGroups().first_free_sam()) == 0 )
+  {
+    KMessageBox::sorry( 0, i18n("You run out of group RID space!") );
+    return;  
   }
 
   KGroup *tk = new KGroup();
   tk->setGID(gid);
+  if ( samba ) {
+    SID sid;
+    sid.setRID( rid );
+    sid.setDOM( kug->getGroups().getDOMSID() );
+    tk->setSID( sid );
+  }
+  editGroup egdlg( tk, samba, true );
   
-  grpnamedlg gd(*tk, this);
-  if (gd.exec() == 0) {
+  if ( egdlg.exec() == QDialog::Rejected ) {
     delete tk;
     return;
   }
-
   kug->getGroups().add(tk);
-  lbgroups->insertItem(tk);
-  changed = true;
+  updateGroups();
 }
 
-void mainView::grpedit() {
+void mainView::grpedit() 
+{
   groupSelected();
 }
 
-void mainView::grpdel() {
-  KGroup *group = lbgroups->getCurrentGroup();
-  if (KMessageBox::warningContinueCancel(0, i18n("Do you really want to delete the group '%1'?").arg(group->getName()),
-                     QString::null, i18n("&Delete")) != KMessageBox::Continue)
-    return;
+void mainView::grpdel() 
+{
+  QListViewItem *item;
+  KGroup *group;
+  int selected = 0;
+  
+  item = lbgroups->firstChild();
+  while ( item ) {
+    if ( item->isSelected() ) {
+    
+      selected++;
+      group = ((KGroupViewItem*) item)->group();
+      
+      KUser *user = kug->getUsers().first();
+      while ( user ) {
+        if ( user->getGID() == group->getGID() ) {
+          KMessageBox::error( 0, i18n( "The group '%1' is the primary group of one or more users. (For example: '%2'). This group cannot be deleted!" ).arg( group->getName() ).arg( user->getName() ) );
+          return;
+        }
+        user = kug->getUsers().next();
+      }
+    }
+    item = item->nextSibling();
+  }
 
-  kug->getGroups().del(group);
-  lbgroups->removeItem(group);
-  changed = true;
+  switch ( selected ) {
+    case 0: return;
+    case 1: 
+      if (KMessageBox::warningContinueCancel( 0, 
+        i18n("Do you really want to delete the group '%1'?").arg(group->getName()),
+        QString::null, i18n("&Delete")) != KMessageBox::Continue) return;
+      break;
+    default:
+      if (KMessageBox::warningContinueCancel( 0, 
+        i18n("Do you really want to delete the %1 selected groups?").arg(selected),
+        QString::null, i18n("&Delete")) != KMessageBox::Continue) return;
+  }
+  
+  item = lbgroups->firstChild();
+  while ( item ) {
+    if ( item->isSelected() ) {
+      group = ((KGroupViewItem*) item)->group();
+      kug->getGroups().del( group );
+    }
+    item = item->nextSibling();
+  }
+  updateGroups();
+}
+
+bool mainView::updateGroups()
+{
+  bool ret;
+  kdDebug() << "updateGroups() " << endl;
+  ret = kug->getGroups().dbcommit();
+  
+  KGroup *group;
+  KGroups::DelIt dit( kug->getGroups().mDelSucc );
+  KGroups::AddIt ait( kug->getGroups().mAddSucc );
+    
+  while ( (group = dit.current()) != 0 ) {
+    ++dit;
+    lbgroups->removeItem( group );
+  }
+  while ( (group = ait.current()) != 0 ) {
+    ++ait;
+    lbgroups->insertItem( group );
+  }
+  kug->getGroups().commit();
+  return ret;
+}
+
+bool mainView::updateUsers()
+{
+  bool ret;
+  kdDebug() << "updateUsers() " << endl;
+  ret = kug->getUsers().dbcommit();
+  
+  KUser *user;
+  KUsers::DelIt dit( kug->getUsers().mDelSucc );
+  KUsers::AddIt ait( kug->getUsers().mAddSucc );
+    
+  while ( (user = dit.current()) != 0 ) {
+    ++dit;
+    lbusers->removeItem( user );
+  }
+  while ( (user = ait.current()) != 0 ) {
+    ++ait;
+    lbusers->insertItem( user );
+  }
+  kug->getUsers().commit();
+  return ret;
+}
+  
+void mainView::slotApplyConnection()
+{
+  kdDebug() << "slotApplyConnection()" << endl;
+  QString conn = sc->connSelected();
+  kug->kcfg()->setConnection( conn );
+  kug->initCfg( conn );
+  slotApplySettings();
+}
+
+void mainView::selectconn()
+{
+  sc = new SelectConn( kug->kcfg()->connection(), this, "selectconn" );
+  connect( sc, SIGNAL(applyClicked()), SLOT(slotApplyConnection()) );
+  connect( sc, SIGNAL(okClicked()), SLOT(slotApplyConnection()) );
+  sc->show();
 }
 
 #include "mainView.moc"

@@ -1,5 +1,6 @@
 /*
  *  Copyright (c) 1998 Denis Perchine <dyp@perchine.com>
+ *  Copyright (c) 2004 Szombathelyi György <gyurco@freemail.hu>
  *  Maintained by Adriaan de Groot <groot@kde.org>
  *
  *  This program is free software; you can redistribute it and/or
@@ -17,34 +18,44 @@
  *  Boston, MA 02111-1307, USA.
  **/
 
-#ifndef _KERROR_H
-#define _KERROR_H
+#ifndef _KUSERFILES_H_
+#define _KUSERFILES_H_
 
-#include <qobject.h>
-#include <qptrlist.h>
+#include <sys/types.h>
+
 #include <qstring.h>
+#include <qptrlist.h>
 
-/** Class to mantain a Queue of errors that are displayed with KMessageBox::information in FIFO way. */
-class KError: public QObject {
+#include "kuser.h"
+
+class KUserFiles : public KUsers {
 public:
-  /** Constructor, do nothing. */
-  KError();
-  
-  /** Destructor, do nothing. */
-  ~KError();
+  KUserFiles(KUserPrefsBase *cfg);
+  virtual ~KUserFiles();
 
-  /**
-   * Add a message to the queue of messages
-   * \param amesg is (a QString containing) the message to be added.
-   */
-  void addMsg(QString amsg);
-  
-  /** Display the messages enqueued. This is done in FIFO mode. */
-  void display();
+  virtual bool dbcommit();
+  virtual bool reload();
+  virtual void createPassword( KUser *user, const QString &password );
 
 private:
-  /** List of strings that are the messages to be displayed */
-  QStringList msgs;
-};
+  bool pw_backuped;
+  bool pn_backuped;
+  bool s_backuped;
 
-#endif // _KERROR_H
+  mode_t pwd_mode;
+  mode_t sdw_mode;
+
+  uid_t pwd_uid;
+  gid_t pwd_gid;
+
+  uid_t sdw_uid;
+  gid_t sdw_gid;
+
+  bool loadpwd();
+  bool loadsdw();
+
+  bool savepwd();
+  bool savesdw();
+};
+#endif // _KUSER_H_
+

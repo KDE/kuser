@@ -1,6 +1,5 @@
 /*
- *  Copyright (c) 1998 Denis Perchine <dyp@perchine.com>
- *  Maintained by Adriaan de Groot <groot@kde.org>
+ *  Copyright (c) 2004 Szombathelyi György <gyurco@freemail.hu>
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public
@@ -17,23 +16,28 @@
  *  Boston, MA 02111-1307, USA.
  **/
 
-#include "misc.h"
-#include "kerror.h"
-#include <kmessagebox.h>
+#ifndef _SELECTCONN_H_
+#define _SELECTCONN_H_
 
-KError::KError() {
-}
+#include <kdialogbase.h>
+#include <kcombobox.h>
 
-KError::~KError() {
-}
+class SelectConn : public KDialogBase {
+  Q_OBJECT
+public:
+  SelectConn( const QString &selected, QWidget* parent, const char * name);
+  QString connSelected();
+protected slots:
+  void slotUser1();
+  void slotUser2();
+  void slotUser3();  
+  void slotNewApplySettings();
+  void slotApplySettings();
+  void slotApply();
+  
+protected:
+  KComboBox *mCombo;
+  QString conn, newconn, mSelected;
+};
 
-void KError::addMsg(QString amsg) {
-  msgs.append(amsg);
-}
-
-void KError::display() {
-  for (uint i=0;i<msgs.count();i++)
-     KMessageBox::information(0, msgs[i]);
-  msgs.clear();
-}
-
+#endif // selectconn_included

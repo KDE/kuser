@@ -1,5 +1,6 @@
 /*
  *  Copyright (c) 1998 Denis Perchine <dyp@perchine.com>
+ *  Copyright (c) 2004 Szombathelyi György <gyurco@freemail.hu>
  *  Maintained by Adriaan de Groot <groot@kde.org>
  *
  *  This program is free software; you can redistribute it and/or
@@ -20,27 +21,24 @@
 #ifndef _KU_PWDDLG
 #define _KU_PWDDLG
 
-#include <qlineedit.h>
+#include <qstring.h>
+#include <klineedit.h>
 #include <kdialogbase.h>
-
-
-#include "kuser.h"
 
 class pwddlg : public KDialogBase {
   Q_OBJECT
 
 public:
-  pwddlg(KUser *AUser, QWidget* parent = NULL, const char* name = NULL);
+  pwddlg( QWidget* parent = NULL, const char* name = NULL );
   ~pwddlg();
 
+  QString getPassword() const;
 protected slots:
   void slotOk();
 
 private:
-  KUser *user;
-
-  QLineEdit   *leusername1;
-  QLineEdit   *leusername2;
+  KLineEdit   *lepw1;
+  KLineEdit   *lepw2;
 };
 
 #endif // _KU_PWDDLG

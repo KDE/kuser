@@ -1,6 +1,7 @@
 /*
  *  Copyright (c) 1998 Denis Perchine <dyp@perchine.com>
- *  Maintained by Adriaan de Groot <groot@kde.org>
+ *  Copyright (c) 2004 Szombathelyi György <gyurco@freemail.hu>
+ *  Former maintainer: Adriaan de Groot <groot@kde.org>
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public
@@ -17,30 +18,58 @@
  *  Boston, MA 02111-1307, USA.
  **/
 
+#include "kglobal_.h"
 #include "misc.h"
 
 #include "kgroupvw.h"
 
-class KListViewGroup : public QListViewItem
-{
-public:
-  KListViewGroup(QListView *parent, KGroup *aku);
-  virtual QString text ( int ) const;
 
-  KGroup *group;
-};
-
-KListViewGroup::KListViewGroup(QListView *parent, KGroup *aku)
- : QListViewItem(parent), group(aku)
+KGroupViewItem::KGroupViewItem(KListView *parent, KGroup *aku)
+ : KListViewItem(parent), mGroup(aku)
 {
 }
 
-QString KListViewGroup::text(int num) const
+int KGroupViewItem::compare( QListViewItem *i, int col, bool ascending ) const
+{
+  switch ( col ) {
+    case 0: {
+      gid_t gid1, gid2;
+
+      gid1 = mGroup->getGID();
+      gid2 = ((KGroupViewItem*) i)->mGroup->getGID();
+
+      if ( gid1 == gid2 ) return 0;
+      return ( gid1 < gid2) ? -1: 1;
+    }
+    case 2: {
+      uint rid1,rid2;
+      rid1 = mGroup->getSID().getRID();
+      rid2 = ((KGroupViewItem*) i)->mGroup->getSID().getRID();
+      if ( rid1 == rid2 ) return 0;
+      return ( rid1 < rid2) ? -1: 1;
+    }
+    default:  
+      return QListViewItem::compare( i, col, ascending );
+  }
+}
+
+QString KGroupViewItem::text(int num) const
 {
   switch(num)
   {
-     case 0: return QString::fromLatin1("%1 ").arg(group->getGID(),6);
-     case 1: return group->getName();
+     case 0: return QString::fromLatin1("%1 ").arg(mGroup->getGID(),6);
+     case 1: return mGroup->getName();
+     case 2: return QString::number(mGroup->getSID().getRID());
+     case 3: {
+       switch ( mGroup->getType() ) {
+         case 2: return i18n("Domain");
+         case 4: return i18n("Local");
+         case 5: return i18n("Builtin");
+         default: return i18n("Unknown");
+       }
+     }
+     case 4: return mGroup->getDisplayName();
+     case 5: return mGroup->getDesc();
   }
   return QString::null;
 }
@@ -49,45 +78,60 @@ QString KListViewGroup::text(int num) const
 KGroupView::KGroupView(QWidget *parent, const char *name) 
   : KListView( parent, name ) 
 {
-  init();
+  setSelectionMode( QListView::Extended );
 }
 
-KGroupView::~KGroupView() {
+KGroupView::~KGroupView() 
+{
 }
 
-void KGroupView::insertItem(KGroup *aku) {
-  KListViewGroup *groupItem = new KListViewGroup(this, aku);
+void KGroupView::insertItem(KGroup *aku) 
+{
+  KGroupViewItem *groupItem = new KGroupViewItem(this, aku);
   KListView::insertItem(groupItem);
-  setSelected(groupItem, true);
 }
 
-void KGroupView::removeItem(KGroup *aku) {
-  KListViewGroup *groupItem = (KListViewGroup *)firstChild();
+void KGroupView::removeItem(KGroup *aku) 
+{
+  KGroupViewItem *groupItem = (KGroupViewItem *)firstChild();
   
   while(groupItem)
   {
-     if (groupItem->group == aku)
+     if (groupItem->group() == aku)
      {
         delete groupItem;
         return;
      }
-     groupItem = (KListViewGroup*) groupItem->nextSibling();
+     groupItem = (KGroupViewItem*) groupItem->nextSibling();
   }
 }
 
 void KGroupView::init() 
 {
+  while ( columns() > 2 ) {
+    removeColumn( 2 );
+  }
   setAllColumnsShowFocus(true);
-  addColumn(i18n("GID"));
-  setColumnAlignment(0, AlignRight);
-  addColumn(i18n("Group Name"));
+  
+  if ( columns() < 2 ) {
+    addColumn(i18n("GID"));
+    setColumnAlignment(0, AlignRight);
+    addColumn(i18n("Group Name"));
+  }
+  if ( kug->getGroups().getCaps() & KGroups::Cap_Samba ) {
+    addColumn(i18n("RID"));
+    addColumn(i18n("Type"));
+    addColumn(i18n("Display Name"));
+    addColumn(i18n("Description"));
+  }
 }
 
-KGroup *KGroupView::getCurrentGroup() {
-  KListViewGroup *groupItem = (KListViewGroup *)currentItem();
+KGroup *KGroupView::getCurrentGroup() 
+{
+  KGroupViewItem *groupItem = (KGroupViewItem *)currentItem();
   if (!groupItem) return 0;
 
-  return groupItem->group;
+  return groupItem->group();
 }
 
 #include "kgroupvw.moc"

@@ -36,10 +36,8 @@ bin_PROGRAMS = kuser
 # the subdirs we have. Better would be to include pic here too
 SUBDIRS = pic toolbar icon lsm
 
-# only install in your own directories
-install-data-local:
-	$(mkinstalldirs) $(kde_appsdir)/System
-	$(INSTALL_DATA) $(srcdir)/kuser.desktop $(kde_appsdir)/System/
+appsdir   = $(kde_appsdir)/Programs/System
+apps_DATA = kuser.desktop
 
 edit::
 	xemacs -fn "-edict-fixed-medium-r-*-*-*-120-*-*-*-*-koi8-r" -geometry 142x41+0+0 $(EDITABLE)&

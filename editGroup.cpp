@@ -30,6 +30,8 @@ editGroup::editGroup(KGroup *akg, QWidget* parent, const char* name)
   m_list->addColumn(i18n("Users in Group '%1':").arg(kg->getName()));
   QString whatstr = i18n("Select the users that should be in this group.");
   QWhatsThis::add(m_list, whatstr);
+  connect(this,SIGNAL(okClicked(void)),
+          this,SLOT(okClicked()));		
 
   for (int i = 0; i<kug->getUsers().count(); i++) {
     QString userName = kug->getUsers()[i]->getName();
@@ -44,7 +46,7 @@ editGroup::~editGroup() {
 
 void editGroup::okClicked() {
   kg->clear();
-
+ 
   QCheckListItem *item = (QCheckListItem *) m_list->firstChild();
   while(item)
   {

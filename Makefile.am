@@ -45,6 +45,8 @@ SUBDIRS = doc pic toolbar icon mini-icon lsm
 install-data-local:
 	$(mkinstalldirs) $(kde_appsdir)/System
 	$(INSTALL_DATA) $(srcdir)/kuser.kdelnk $(kde_appsdir)/System/
+	$(mkinstalldirs) $(kde_appsdir)/System
+	$(INSTALL_DATA) $(srcdir)/large-kuser.xpm $(kde_minidir)/../large/kuser.xpm
 
 edit::
 	xemacs -fn "-edict-fixed-medium-r-*-*-*-120-*-*-*-*-koi8-r" -geometry 142x41+0+0 $(EDITABLE)&

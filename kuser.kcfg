@@ -229,7 +229,7 @@
     <entry name="ldapcnfullname" type="Bool">
       <label>Store the user's full name in the cn attribute</label>
       <whatsthis>Check this if the user's full name should be stored in the cn (Canonical Name) attribute.</whatsthis>
-      <default>false</default>
+      <default>true</default>
     </entry>
     <entry name="ldapgecos" type="Bool">
       <label>Update the gecos field</label>
@@ -276,6 +276,10 @@
       <label>Enable samba account management</label>
       <whatsthis>Check this if you want to use the user/group entries in a Samba domain. KUser will create sambaSamAccount objectclass for each entry which is usable with the ldapsam passdb backend with Samba version greater than 3.0.</whatsthis>
     </entry>
+    <entry name="samdomain" type="String">
+      <label>Samba domain name</label>
+      <whatsthis>This specifies the samba domain name.</whatsthis>
+    </entry>
     <entry name="samdomsid" type="String">
       <label>Samba domain SID</label>
       <whatsthis>This specifies the domain Security IDentifier. It is unique in a single domain. You can query the value of the domain SID with 'net getlocalsid domain_name'.</whatsthis>
@@ -295,6 +299,11 @@
     <entry name="samhomepath" type="String">
       <label>Samba home path template</label>
       <whatsthis>This specifies the location of the home directory of the user. This field is meaningful only for Windows machines. The '%U' macro will be replaced with the actual user name.</whatsthis>
+    </entry>
+    <entry name="lanmanhash" type="Bool">
+      <label>Store LanManager hashed password</label>
+      <whatsthis>Store the LanManager hashed password in the sambaLMPassword attribute. Check this if you have older clients (Win9x series and before) on your network.</whatsthis>
+      <default>false</default>
     </entry>
 
   </group>

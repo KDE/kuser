@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>311</width>
-            <height>233</height>
+            <height>237</height>
         </rect>
     </property>
     <vbox>
@@ -215,6 +215,12 @@
         <signal>toggled(bool)</signal>
         <receiver>kcfg_defaultgroup</receiver>
         <slot>setDisabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>kcfg_createHomeDir</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>kcfg_copySkel</receiver>
+        <slot>setEnabled(bool)</slot>
     </connection>
 </connections>
 <tabstops>

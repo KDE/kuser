@@ -30,6 +30,10 @@
 
 #include "kuserldap.moc"
 
+extern "C" { 
+  void E_P16(unsigned char *p14,unsigned char *p16); //in smbdes.c
+}
+
 
 KUserLDAP::KUserLDAP(KUserPrefsBase *cfg) : KUsers( cfg )
 {
@@ -187,6 +191,8 @@ void KUserLDAP::data( KIO::Job *, const QByteArray& data )
           mUser->setProfilePath( val );
         else if ( name == "sambauserworkstations" )
           mUser->setWorkstations( val );
+        else if ( name == "sambadomainname" )
+          mUser->setDomain( val );
         else if ( name == "sambapwdlastset" )
           mUser->setLastChange( val.toLong() );
         break;
@@ -329,8 +335,23 @@ void KUserLDAP::createPassword( KUser *user, const QString &password )
             hash[12], hash[13], hash[14], hash[15]);
 
     user->setNTPwd( QString::fromLatin1( (const char*) &hex, 32 ) );
-/* FIXME: only NT (MD4) password handled, may need to handle LanManager passwords, too */
-    user->setLMPwd( "" );
+
+    if ( mCfg->lanmanhash() ) {
+      char lmpass[15];
+      memset( hash, 0, 16 );
+      memset( lmpass, 0, 15 );
+      strncpy( lmpass, password.upper().local8Bit(), 14 );
+      E_P16( (uchar*) lmpass, hash );
+      snprintf( (char*) &hex, 33,
+        "%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X",
+            hash[0], hash[1], hash[2], hash[3], hash[4], hash[5],
+            hash[6], hash[7], hash[8], hash[9], hash[10], hash[11],
+            hash[12], hash[13], hash[14], hash[15]);
+
+      user->setLMPwd( QString::fromLatin1( (const char*) &hex, 32 ) );
+    } else {
+      user->setLMPwd( "" );
+    }
   }
 }
 
@@ -451,7 +472,9 @@ void KUserLDAP::getLDIF( KUser *user, bool mod )
 
   if ( caps & Cap_Samba ) {
     if ( user->getCaps() & KUser::Cap_Samba ) {
-      if ( mod ) ldif += "replace: sambauserworkstations\n";
+      if ( mod ) ldif += "replace: sambadomainname\n";
+      ldif += KABC::LDIF::assembleLine( "sambadomainname", user->getDomain() ) + "\n";
+      if ( mod ) ldif += "-\nreplace: sambauserworkstations\n";
       ldif += KABC::LDIF::assembleLine( "sambauserworkstations", user->getWorkstations() ) + "\n";
       if ( mod ) ldif += "-\nreplace: sambahomepath\n";
       ldif += KABC::LDIF::assembleLine( "sambahomepath", user->getHomePath() ) + "\n";

@@ -218,6 +218,7 @@ void mainView::useradd()
     tk->setHomePath( kug->kcfg()->samhomepath().replace( "%U", name ) );
     tk->setHomeDrive( kug->kcfg()->samhomedrive() );
     tk->setLoginScript( kug->kcfg()->samloginscript() );
+    tk->setDomain( kug->kcfg()->samdomain() );
   }
 
   tk->setShell( kug->kcfg()->shell() );

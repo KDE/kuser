@@ -18,9 +18,15 @@
  *  Boston, MA 02111-1307, USA.
  **/
 
+#include <kdebug.h>
+
 #include <ktabwidget.h>
 #include <kcombobox.h>
+#include <kmessagebox.h>
+#include <klineedit.h>
+#include <kpushbutton.h>
 #include <kabc/ldapconfigwidget.h>
+#include <kabc/ldapurl.h>
 
 #include "editDefaults.h"
 #include "generalsettings.h"
@@ -50,7 +56,7 @@ editDefaults::editDefaults( KConfigSkeleton *config, QWidget *parent, const char
 
   KTabWidget *page3 = new KTabWidget( this );
   page3->setMargin( KDialog::marginHint() );
-  KABC::LdapConfigWidget *ldconf =
+  ldconf =
     new KABC::LdapConfigWidget(
        KABC::LdapConfigWidget::W_USER |
        KABC::LdapConfigWidget::W_PASS |
@@ -68,8 +74,103 @@ editDefaults::editDefaults( KConfigSkeleton *config, QWidget *parent, const char
   LdapSettings *page3b = new LdapSettings( this );
   page3->addTab( page3b, i18n("Settings") );
 
-  LdapSamba *page3c = new LdapSamba( this );
+  page3c = new LdapSamba( this );
+  connect( page3c->domQuery, SIGNAL(clicked()), SLOT(slotQueryClicked()) );
   page3->addTab( page3c, i18n("Samba") );
   addPage( page3, i18n("LDAP"), "", i18n("LDAP Source Settings") );
 }
+
+void editDefaults::slotQueryClicked()
+{
+  KABC::LDAPUrl _url = ldconf->url();
+
+  mResult.clear();
+  mCancelled = true;
+  mDomain.name = "";
+  mDomain.sid = "";
+
+  QStringList attrs;
+  QString filter = "(objectClass=sambaDomain)";
+  QString dom = page3c->kcfg_samdomain->text();
+  if ( !dom.isEmpty() ) filter = "(&(sambaDomainName=" + dom + ")"+filter+")";
+  attrs.append("sambaDomainName");
+  attrs.append("sambaSID");
+  _url.setAttributes( attrs );
+  _url.setScope( KABC::LDAPUrl::One );
+  _url.setExtension( "x-dir", "base" );
+  _url.setFilter( filter );
+
+  kdDebug() << "sendQuery url: " << _url.prettyURL() << endl;
+  mLdif.startParsing();
+  KIO::Job *job = KIO::get( _url, true, false );
+//  job->addMetaData("no-auth-prompt","true");
+  connect( job, SIGNAL( data( KIO::Job*, const QByteArray& ) ),
+    this, SLOT( loadData( KIO::Job*, const QByteArray& ) ) );
+  connect( job, SIGNAL( result( KIO::Job* ) ),
+    this, SLOT( loadResult( KIO::Job* ) ) );
+
+  mProg = new KProgressDialog( this, 0, i18n("LDAP Query"), _url.prettyURL(), true );
+  mProg->progressBar()->setValue( 0 );
+  mProg->progressBar()->setTotalSteps( 1 );
+  mProg->exec();
+  delete mProg;
+  if ( mCancelled ) {
+    kdDebug(5700) << "query cancelled!" << endl;
+    job->kill( true );
+  } else {
+    if ( !mErrorMsg.isEmpty() ) 
+      KMessageBox::error( this, mErrorMsg );
+    else {
+      mDomain = mResult.first();
+      if ( !mDomain.name.isEmpty() && !mDomain.sid.isEmpty() ) {
+        page3c->kcfg_samdomain->setText( mDomain.name );
+        page3c->kcfg_samdomsid->setText( mDomain.sid );
+      }
+    }
+  }
+  kdDebug() << "domQueryx" << endl;
+}
+
+void editDefaults::loadData( KIO::Job*, const QByteArray& d )
+{
+  KABC::LDIF::ParseVal ret;
+
+  if ( d.size() ) {
+    mLdif.setLDIF( d );
+  } else {
+    mLdif.endLDIF();
+  }
+  do {
+    ret = mLdif.nextItem();
+    switch ( ret ) {
+      case KABC::LDIF::Item:
+        if ( mLdif.attr() == "sambaDomainName" ) 
+          mDomain.name = QString::fromUtf8( mLdif.val(), mLdif.val().size() );
+        else if ( mLdif.attr() == "sambaSID" ) 
+          mDomain.sid = QString::fromUtf8( mLdif.val(), mLdif.val().size() );
+        break;
+      case KABC::LDIF::EndEntry:
+        mProg->progressBar()->advance( 1 );
+        if ( !mDomain.name.isEmpty() && !mDomain.sid.isEmpty() )
+          mResult.push_back( mDomain );
+        mDomain.sid = "";
+        mDomain.name = "";
+        break;
+      
+    }
+  } while ( ret != KABC::LDIF::MoreData );
+}
+
+void editDefaults::loadResult( KIO::Job* job)
+{
+  int error = job->error();
+  if ( error && error != KIO::ERR_USER_CANCELED )
+    mErrorMsg = job->errorString();
+  else
+    mErrorMsg = "";
+
+  mCancelled = false;
+  mProg->close();
+}
+
 #include "editDefaults.moc"

@@ -17,7 +17,7 @@ kuser_SOURCES	=	\
 	kglobal.cpp sid.cpp\
 	kuserfiles.cpp kgroupfiles.cpp kuserldap.cpp kgroupldap.cpp \
 	kusersystem.cpp kgroupsystem.cpp selectconn.cpp\
-	sha1.cpp md4.cpp kuserprefs.kcfgc \
+	sha1.cpp md4.cpp smbdes.c kuserprefs.kcfgc \
 	filessettings.ui generalsettings.ui ldapsettings.ui ldapsamba.ui passwordpolicy.ui
 
 kuser_METASOURCES = AUTO

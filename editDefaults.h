@@ -21,12 +21,38 @@
 #ifndef _EDITDEFAULTS_H_
 #define _EDITDEFAULTS_H_
 
+#include <qmemarray.h>
 #include <kconfigdialog.h>
+#include <kprogress.h>
+#include <kabc/ldif.h>
+#include "ldapsamba.h"
+
+class LdapSamba;
+namespace KABC { class LdapConfigWidget; }
+namespace KIO { class Job; }
+
+typedef struct SambaDomain {
+  QString name;
+  QString sid;
+};
 
 class editDefaults : public KConfigDialog {
   Q_OBJECT
 public:
   editDefaults( KConfigSkeleton *config, QWidget* parent, const char * name = 0 );
+private:
+  KProgressDialog *mProg;
+  LdapSamba *page3c;
+  KABC::LdapConfigWidget *ldconf;
+  KABC::LDIF mLdif;
+  bool mCancelled;
+  QString mErrorMsg;
+  QValueList<SambaDomain> mResult;
+  SambaDomain mDomain;
+private slots:
+  void slotQueryClicked();
+  void loadData( KIO::Job*, const QByteArray& d );
+  void loadResult( KIO::Job* job);
 };
 
 #endif // _EDITDEFAULTS_H_

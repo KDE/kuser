@@ -143,6 +143,7 @@ protected:
   KLineEdit   *lehomedrive;
   KLineEdit   *lehomepath;
   KLineEdit   *leworkstations;
+  KLineEdit   *ledomain;
   KLineEdit   *ledomsid;
 };
 

@@ -84,9 +84,10 @@ public:
   const QString &getHomeDrive() const; //sam_homedrive,
   const QString &getHomePath() const; //sam_homepath;
   const QString &getWorkstations() const; //sam_workstations
+  const QString &getDomain() const; //sam_domain
   const SID &getSID() const; //sid,
   const SID &getPGSID() const; //pgroup_sid;
-
+  
   void setName(const QString &data);
   void setSurname(const QString &data);
   void setEmail(const QString &data);
@@ -125,6 +126,7 @@ public:
   void setHomeDrive( const QString &data ); //sam_homedrive,
   void setHomePath( const QString &data ); //sam_homepath;
   void setWorkstations( const QString &data ); //sam_workstations
+  void setDomain( const QString &data ); //sam_domain
   void setSID( const SID &data ); //sid,
   void setPGSID( const SID &data ); //pgroup_sid;
   
@@ -187,7 +189,8 @@ protected:
     sam_profile,
     sam_homedrive,
     sam_homepath,
-    sam_workstations;
+    sam_workstations,
+    sam_domain;
   SID 
     sid,
     pgroup_sid;

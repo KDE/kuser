@@ -231,14 +231,21 @@ void propdlg::initDlg()
     row++;
 
     if ( kug->getUsers().getCaps() & KUsers::Cap_Shadow ) {
+      layout->addWidget( new QLabel( "POSIX parameters:", frame ), row++, 0 );
       lesmin = addDaysGroup(frame, layout, row++, i18n("Time before password may &not be changed after last password change:"), false);
       lesmax = addDaysGroup(frame, layout, row++, i18n("Time when password &expires after last password change:") );
       leswarn = addDaysGroup(frame, layout, row++, i18n("Time before password expires to &issue an expire warning:"));
       lesinact = addDaysGroup(frame, layout, row++, i18n("Time when account will be &disabled after expiration of password:"));
+      layout->addMultiCellWidget(new KSeparator(KSeparator::HLine, frame), row, row, 0, 3);
+      row++;
     }
-    layout->addMultiCellWidget(new KSeparator(KSeparator::HLine, frame), row, row, 0, 3);
-    row++;
-
+    /*
+    if ( kug->getUsers().getCaps() & KUsers::Cap_Samba ) {
+      layout->addWidget( new QLabel( "SAMBA parameters:", frame ), row++, 0 );
+      layout->addMultiCellWidget(new KSeparator(KSeparator::HLine, frame), row, row, 0, 3);
+      row++;
+    }
+    */
     QLabel *label = new QLabel( i18n("&Account will expire on:"), frame );
     layout->addWidget( label, row, 0 );
     lesexpire = new KDateTimeWidget( frame );
@@ -289,6 +296,11 @@ void propdlg::initDlg()
 //  whatstr = i18n("WHAT IS THIS: Login script");
     addRow(frame, layout, row++, leworkstations, i18n("User workstations:"), whatstr);
     connect(leworkstations, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
+
+    ledomain = new KLineEdit(frame);
+//  whatstr = i18n("WHAT IS THIS: Login script");
+    addRow(frame, layout, row++, ledomain, i18n("Domain name:"), whatstr);
+    connect(ledomain, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
 
     ledomsid = new KLineEdit(frame);
 //  whatstr = i18n("WHAT IS THIS: Login script");
@@ -363,6 +375,12 @@ void propdlg::cbposixChanged()
   leid->setEnabled( posix  & ( mUsers.getFirst() == mUsers.getLast() ) );
   leshell->setEnabled( posix );
   lehome->setEnabled( posix );
+  if ( kug->getUsers().getCaps() & KUsers::Cap_Shadow ) {
+    lesmin->setEnabled( posix );
+    lesmax->setEnabled( posix );
+    leswarn->setEnabled( posix );
+    lesinact->setEnabled( posix );
+  }
 }
 
 void propdlg::cbsambaChanged()
@@ -374,6 +392,7 @@ void propdlg::cbsambaChanged()
   lehomedrive->setEnabled( samba );
   lehomepath->setEnabled( samba );
   leworkstations->setEnabled( samba );
+  ledomain->setEnabled( samba );
   ledomsid->setEnabled( samba );
 }
 
@@ -509,6 +528,7 @@ void propdlg::selectuser()
       if ( !one ) home.replace( user->getName(), "%U" );
       setLE( lehomepath, home, first );
       setLE( leworkstations, user->getWorkstations(), first );
+      setLE( ledomain, user->getDomain(), first );
       setLE( ledomsid, user->getSID().getDOM(), first );
       setCB( cbsamba, !(user->getCaps() & KUser::Cap_Samba), first );
     }
@@ -729,6 +749,8 @@ void propdlg::mergeUser( KUser *user, KUser *newuser )
       mergeLE( lehomepath, user->getHomePath(), one ).replace( "%U", newuser->getName() ) : QString::null );
     newuser->setWorkstations( samba ? 
       mergeLE( leworkstations, user->getWorkstations(), one ) : QString::null );
+    newuser->setDomain( samba ? 
+      mergeLE( ledomain, user->getDomain(), one ) : QString::null );
   }
 
   if ( kug->getUsers().getCaps() & KUsers::Cap_BSD ) {

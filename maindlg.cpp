@@ -55,8 +55,6 @@ void mainDlg::init() {
   lbgroups = new KGroupView(kp, "lbgroups");
   //  lbgroups->setGeometry(10,400,380,208);
 
-  kp->activate(lbusers, lbgroups);
-  
   QObject::connect(lbusers, SIGNAL(headerClicked(int)), this, SLOT(setUsersSort(int)));
   QObject::connect(lbusers, SIGNAL(selected(int)), this, SLOT(userSelected(int)));
 

@@ -37,20 +37,17 @@ bin_PROGRAMS = kuser
 # the subdirs we have. Better would be to include pic here too
 SUBDIRS = doc pic toolbar icon mini-icon lsm
 
-# override the permissions
-INSTALL_PROGRAMM = ${INSTALL} -m 0750 
-
 # only install in your own directories
 install-data-local:
 	$(mkinstalldirs) $(kde_appsdir)/System
-	$(INSTALL) -m 644 kuser.kdelnk $(kde_appsdir)/System/
+	$(INSTALL_DATA) kuser.kdelnk $(kde_appsdir)/System/
 
 edit::
 	xemacs -fn "-edict-fixed-medium-r-*-*-*-120-*-*-*-*-koi8-r" -geometry 142x41+0+0 $(EDITABLE)&
 
 # I don't care, what Denis does in his free time ;)
 messages:
-	@XGETTEXT@ -k_ -o ../po/kuser.pot -x ../../kdelibs/po/kde.pot -d kuser -C -n *.cpp 		
+	@XGETTEXT@ -k_ -ki18n -o ../po/kuser.pot -x ../../kdelibs/po/kde.pot -d kuser -C -n *.cpp
 
 pot::
 	/usr/local/bin/xgettext -k_ -o kuser.pot -p ../po -d kuser -C -n *.cpp

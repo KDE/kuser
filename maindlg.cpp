@@ -82,30 +82,31 @@ printf("mainDlg::init()\n");
   QPopupMenu *file = new QPopupMenu;
   CHECK_PTR( file );
   file->setFont(rufont);
-  file->insertItem(_("Properties"),  this, SLOT(properties()) );
+  file->insertItem(_("Properties..."),  this, SLOT(properties()) );
   file->insertSeparator();
   file->insertItem(_("Quit"),  this, SLOT(quit()) );
 
   QPopupMenu *user = new QPopupMenu;
   CHECK_PTR(user);
   user->setFont(rufont);
-  user->insertItem(_("Edit"), this, SLOT(edit()) );
-  user->insertItem(_("Delete"), this, SLOT(del()) );
-  user->insertItem(_("Add"), this, SLOT(add()) );
-  user->insertItem(_("Set password"), this, SLOT(setpwd()) );
+  user->insertItem(_("Edit..."), this, SLOT(edit()) );
+  user->insertItem(_("Delete..."), this, SLOT(del()) );
+  user->insertItem(_("Add..."), this, SLOT(add()) );
+  user->insertItem(_("Set password..."), this, SLOT(setpwd()) );
 
   QPopupMenu *help = new QPopupMenu;
   CHECK_PTR( help );
   help->setFont(rufont);
-  help->insertItem(_("About"), this, SLOT(about()));
-  help->insertSeparator();
   help->insertItem(_("Help"), this, SLOT(help()));
+  help->insertSeparator();
+  help->insertItem(_("About..."), this, SLOT(about()));
 
   menubar = new KMenuBar( this );
   CHECK_PTR( menubar );
   menubar->setFont(rufont);
   menubar->insertItem(_("File"), file );
   menubar->insertItem(_("User"), user );
+  menubar->insertSeparator();
   menubar->insertItem(_("Help"), help );
 
   setMenu(menubar);
@@ -172,7 +173,7 @@ void mainDlg::del() {
   if (KMsgBox::yesNo(0, _("WARNING"),
                      _("Do you really want to delete user ?"),
                      KMsgBox::STOP,
-                     _("Delete"), _("Cancel")) == 1) {
+                     _("Cancel"), _("Delete")) == 2) {
 
     i = list->currentItem();
     if (i == u->getUsersNumber()-1)
@@ -193,6 +194,7 @@ void mainDlg::del() {
       reload(i);
     else
       reload(i-1);
+    changed = TRUE;
   }
 }
 

@@ -69,6 +69,7 @@ private:
   QLabel *ld8;
   QLabel *l9;
   QLabel *ld9;
+  QLabel *l10a;
   QLabel *l10;
   QLabel *l11;
   QLabel *l12;

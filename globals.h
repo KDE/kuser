@@ -3,6 +3,10 @@
 
 #define _KU_VERSION "0.1"
 
+#ifdef __FreeBSD__
+#undef _KU_SHADOW
+#endif
+
 #include <kconfig.h>
 #include "../config.h"
 

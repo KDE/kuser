@@ -13,7 +13,7 @@ BUILTSOURCE	=       kuservw.moc kheader.moc krowtable.moc kusertbl.moc kdatectl.
 
 # the following are only useful, if you want to use "make dist"
 noinst_HEADERS	=       kuservw.h kheader.h krowtable.h kusertbl.h kdatectl.h kuser.h maindlg.h   propdlg.h  mnt.h quota.h globals.h misc.h usernamedlg.h pwddlg.h mrqpasswdlined.h
-DISTFILES 	=	README AUTHORS
+DISTFILES 	=	README AUTHORS THANKS
 DISTCLEANFILES	= 	$(BUILTSOURCE) 
 EDITABLE	=	$(DISTFILES) $(noinst_HEADERS) $(kuser_SOURCES) Makefile.am
 

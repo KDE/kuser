@@ -210,6 +210,8 @@ void propdlg::initDlg()
       connect(cbposix, SIGNAL(stateChanged(int)), this, SLOT(changed()));
       connect(cbposix, SIGNAL(stateChanged(int)), this, SLOT(cbposixChanged()));
       addRow(frame, layout, row++, cbposix, i18n("Disable &POSIX account information"), whatstr);
+    } else {
+      cbposix = 0;
     }
     frontrow = row;
   }
@@ -706,7 +708,8 @@ void propdlg::mergeUser( KUser *user, KUser *newuser )
   bool posix, samba = false;
 
   newuser->copy( user );
-  if ( cbposix->state() != QButton::NoChange ) {
+
+  if ( kug->getUsers().getCaps() & KUsers::Cap_Disable_POSIX && cbposix->state() != QButton::NoChange ) {
     if ( cbposix->isChecked() )
       newuser->setCaps( newuser->getCaps() & ~KUser::Cap_POSIX );
     else
@@ -873,7 +876,7 @@ bool propdlg::checkShell(const QString &shell)
 bool propdlg::check()
 {
   bool one = ( mUsers.getFirst() == mUsers.getLast() );
-  bool posix = !( cbposix->isChecked() );
+  bool posix = !( kug->getUsers().getCaps() & KUsers::Cap_Disable_POSIX ) || !( cbposix->isChecked() );
 
   if ( one && posix && leid->text().isEmpty() ) {
     KMessageBox::sorry( 0, i18n("You need to specify an UID.") );
@@ -928,7 +931,8 @@ void propdlg::slotOk()
 
   uid_t newuid = leid->text().toULong();
 
-  if ( one && !cbposix->isChecked() && olduid != newuid )
+  if ( one && ( !( kug->getUsers().getCaps() & KUsers::Cap_Disable_POSIX ) || !cbposix->isChecked() )
+               && olduid != newuid )
   {
     if (kug->getUsers().lookup(newuid)) {
       KMessageBox::sorry( 0,

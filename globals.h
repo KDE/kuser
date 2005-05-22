@@ -21,7 +21,7 @@
 #ifndef _KU_GLOBALS_H_
 #define _KU_GLOBALS_H_
 
-#define _KU_VERSION "2.0"
+#define _KU_VERSION "2.0.1"
 
 #include <config.h>
 #ifdef HAVE_PATHS_H

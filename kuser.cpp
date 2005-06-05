@@ -41,6 +41,8 @@
 #include <kmessagebox.h>
 #include <kprocess.h>
 #include <kdebug.h>
+#include <kio/netaccess.h>
+#include <kurl.h>
 
 // class KUser
 
@@ -740,25 +742,15 @@ int KUser::copySkel()
   return 0;
 }
 
-// Temporarily use rm
-//TODO: replace by our own procedure cause calling other programs
-//      for things we are know how to do is not a good idea
-
 int KUser::removeHome()
 {
   struct stat sb;
-  QString command;
 
   if (!stat(QFile::encodeName(p_dir), &sb))
     if (S_ISDIR(sb.st_mode) && sb.st_uid == p_uid) {
-#ifdef MINIX
-      command = QString::fromLatin1("/usr/bin/rm -rf -- %1").arg(KProcess::quote(p_dir));
-#else
-      command = QString::fromLatin1("/bin/rm -rf -- %1").arg(KProcess::quote(p_dir));
-#endif
-      if (system(QFile::encodeName(command)) != 0) {
+      if (!KIO::NetAccess::del(KURL::fromPathOrURL(p_dir))) {
              KMessageBox::error( 0, i18n("Cannot remove home folder %1.\nError: %2")
-                       .arg(command).arg(QString::fromLocal8Bit(strerror(errno))) );
+                       .arg(p_dir).arg(KIO::NetAccess::lastErrorString()) );
       }
     } else {
       KMessageBox::error( 0, i18n("Removal of home folder %1 failed (uid = %2, gid = %3).").arg(p_dir).arg(sb.st_uid).arg(sb.st_gid) );

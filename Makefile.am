@@ -4,7 +4,7 @@ INCLUDES	= -I.. -I$(top_srcdir)/kuser $(all_includes)
 #AM_CXXFLAGS = 	$(KU_NIS) $(KU_QUOTA) $(QUOTACTL) -D_KU_DEBUG
 
 kuser_LDFLAGS	=	$(all_libraries) $(KDE_RPATH)
-kuser_LDADD	=	$(LIB_KDEUI) $(LIBCRYPT) $(LIBSHADOW) $(LIBGEN) $(LIB_KABC)
+kuser_LDADD	=	$(LIB_KDEUI) $(LIBCRYPT) $(LIBSHADOW) $(LIBGEN) $(LIB_KABC) -lkntlm
 
 ####### Files
 
@@ -17,7 +17,7 @@ kuser_SOURCES	=	\
 	kglobal.cpp sid.cpp\
 	kuserfiles.cpp kgroupfiles.cpp kuserldap.cpp kgroupldap.cpp \
 	kusersystem.cpp kgroupsystem.cpp selectconn.cpp\
-	sha1.cpp md4.cpp smbdes.c kuserprefs.kcfgc \
+	sha1.cpp kuserprefs.kcfgc \
 	filessettings.ui generalsettings.ui ldapsettings.ui ldapsamba.ui passwordpolicy.ui
 
 kuser_METASOURCES = AUTO

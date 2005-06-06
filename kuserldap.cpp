@@ -21,6 +21,7 @@
 #include <kdebug.h>
 #include <kmdcodec.h>
 #include <kmessagebox.h>
+#include <kio/kntlm.h>
 
 #include "kglobal_.h"
 #include "kuserldap.h"
@@ -29,11 +30,6 @@
 #include "md4.h"
 
 #include "kuserldap.moc"
-
-extern "C" { 
-  void E_P16(unsigned char *p14,unsigned char *p16); //in smbdes.c
-}
-
 
 KUserLDAP::KUserLDAP(KUserPrefsBase *cfg) : KUsers( cfg )
 {
@@ -314,19 +310,11 @@ void KUserLDAP::createPassword( KUser *user, const QString &password )
   }
 
   if ( caps & Cap_Samba ) {
-    struct md4_ctx ctx;
-    const QChar *data = password.unicode();
-    Q_UINT8 hash[16], hex[33];
+    Q_UINT8 hex[33];
 
-/*  FIXME: maybe this is neccessary for BIGENDIAN systems
-    QByteArray passwd( 2 * password.length() );
-    for ( uint i = 0; i<password.length(); i++ ) {
-      passwd[ i ] = data[i] >> 8 |  data[i] << 8;
-    }
-*/
-    md4_init( &ctx );
-    md4_update( &ctx, (const Q_UINT8*) /*passwd.data()*/ data, 2 * password.length() );
-    md4_final( &ctx, (Q_UINT8*) &hash );
+    QByteArray ntlmhash;
+    ntlmhash = KNTLM::ntlmHash( password );
+    unsigned char *hash = (unsigned char*) ntlmhash.data();
 
     snprintf( (char*) &hex, 33,
       "%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X",
@@ -337,11 +325,10 @@ void KUserLDAP::createPassword( KUser *user, const QString &password )
     user->setNTPwd( QString::fromLatin1( (const char*) &hex, 32 ) );
 
     if ( mCfg->lanmanhash() ) {
-      char lmpass[15];
-      memset( hash, 0, 16 );
-      memset( lmpass, 0, 15 );
-      strncpy( lmpass, password.upper().local8Bit(), 14 );
-      E_P16( (uchar*) lmpass, hash );
+
+      QByteArray lmhash;
+      lmhash = KNTLM::lmHash( password );
+      unsigned char *hash = (unsigned char*) lmhash.data();
       snprintf( (char*) &hex, 33,
         "%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X",
             hash[0], hash[1], hash[2], hash[3], hash[4], hash[5],

@@ -28,7 +28,7 @@ noinst_HEADERS	=	\
 	kuser.h mainView.h kgroup.h delUser.h \
 	kgroupvw.h propdlg.h globals.h misc.h \
 	pwddlg.h addUser.h \
-	editDefaults.h selectconn.h sha1.h md4.h sid.h kglobal_.h \
+	editDefaults.h selectconn.h sha1.h sid.h kglobal_.h \
 	kusersystem.h kgroupsystem.h kuserfiles.h kgroupfiles.h kuserldap.h kgroupldap.h
 
 kde_kcfg_DATA = kuser.kcfg

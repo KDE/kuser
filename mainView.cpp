@@ -252,7 +252,7 @@ void mainView::useradd()
 
     if ((tg = kug->getGroups().lookup(tk->getName())) == 0) {
       gid_t gid;
-      if ((tg = kug->getGroups().lookup(tk->getUID())) == 0) {
+      if ( kug->getGroups().lookup( tk->getUID() ) == 0 ) {
         gid = tk->getUID();
       } else {
         gid = kug->getGroups().first_free();

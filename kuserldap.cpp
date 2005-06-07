@@ -607,6 +607,7 @@ void KUserLDAP::putData( KIO::Job *, QByteArray& data )
     mModSucc.insert( mUser, mit.data() );
     mMod.remove( mit );
     mit = mMod.begin();
+    mUser = 0;
   }
 
   if ( (mAddUser = mAdd.current()) ) {

@@ -217,6 +217,7 @@ void KGroupLDAP::putData( KIO::Job*, QByteArray& data )
     mModSucc.insert( mGroup, mit.data() );
     mMod.remove( mit );
     mit = mMod.begin();
+    mGroup = 0;
   }
 
   if ( (mAddGroup = mAdd.current()) ) {
@@ -253,13 +254,14 @@ void KGroupLDAP::addData( KGroup *group )
       KABC::LDIF::assembleLine( "sambagrouptype", QString::number( group->getType() ) ) + "\n";
   }
   ldif += "\n\n";
-//  kdDebug() << "ldif: " << ldif << endl;
+  kdDebug() << "ldif: " << ldif << endl;
 }
 
 void KGroupLDAP::delData( KGroup *group )
 {
   ldif = "dn: " + getRDN( group ).utf8() + "," +
     mUrl.dn().utf8() + "\n" + "changetype: delete\n\n";
+  kdDebug() << "ldif: " << ldif << endl;
 }
 
 void KGroupLDAP::modData( KGroup *group )

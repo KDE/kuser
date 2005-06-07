@@ -167,10 +167,11 @@ void mainView::userdel()
         "Do you want to delete the user's private group '%1'?")
         .arg(group->getName()), QString::null,
         KStdGuiItem::del()) == KMessageBox::Yes) {
-
+      kdDebug() << "del private group" << endl;
       kug->getGroups().del( group );
     }
   }
+  kdDebug() << "update groups" << endl;
   updateGroups();
 }
 
@@ -485,6 +486,7 @@ bool mainView::updateGroups()
     ++ait;
     lbgroups->insertItem( group );
   }
+  kdDebug() << "commit groups" << endl;
   kug->getGroups().commit();
   return ret;
 }

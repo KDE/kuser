@@ -301,6 +301,10 @@ void KGroups::commit()
   AddIt ait( mAddSucc );
   ModIt mit = mModSucc.begin();
     
+  while ( mit != mModSucc.end() ) {
+    *(mit.key()) = mit.data();
+    mit++;
+  }
   while ( (group = dit.current()) != 0 ) {
     ++dit;
     mGroups.remove( group );
@@ -308,10 +312,6 @@ void KGroups::commit()
   while ( (group = ait.current()) != 0 ) {
     ++ait;
     mGroups.append( group );
-  }
-  while ( mit != mModSucc.end() ) {
-    *(mit.key()) = mit.data();
-    mit++;
   }
   cancelMods();  
 }

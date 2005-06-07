@@ -1019,6 +1019,11 @@ void KUsers::commit()
   AddIt ait( mAddSucc );
   ModIt mit = mModSucc.begin();
 
+//commit modifications
+  while ( mit != mModSucc.end() ) {
+    *(mit.key()) = mit.data();
+    mit++;
+  }
 //commit deletes
   while ( (user = dit.current()) != 0 ) {
     ++dit;
@@ -1030,11 +1035,6 @@ void KUsers::commit()
     ++ait;
     doCreate( user );
     mUsers.append( user );
-  }
-//commit modifications
-  while ( mit != mModSucc.end() ) {
-    *(mit.key()) = mit.data();
-    mit++;
   }
 
 //clear the unsuccessful modifications

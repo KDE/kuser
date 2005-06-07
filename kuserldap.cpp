@@ -27,7 +27,6 @@
 #include "kuserldap.h"
 #include "misc.h"
 #include "sha1.h"
-#include "md4.h"
 
 #include "kuserldap.moc"
 

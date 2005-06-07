@@ -251,7 +251,13 @@ void mainView::useradd()
     KGroup *tg;
 
     if ((tg = kug->getGroups().lookup(tk->getName())) == 0) {
-      gid_t gid = kug->getGroups().first_free();
+      gid_t gid;
+      if ((tg = kug->getGroups().lookup(tk->getUID())) == 0) {
+        gid = tk->getUID();
+      } else {
+        gid = kug->getGroups().first_free();
+      }
+      kdDebug() << "private group GID: " << gid << endl;
       uid_t rid = 0;
       if ( samba ) rid = kug->getGroups().first_free_sam();
       if ( gid == KGroups::NO_FREE || ( samba && rid == 0 ) ) {
@@ -260,7 +266,7 @@ void mainView::useradd()
         return;
       }
       tg = new KGroup();
-      tg->setGID(kug->getGroups().first_free());
+      tg->setGID( gid );
       if ( samba && ( tk->getCaps() & KUser::Cap_Samba ) ) {
         SID sid;
         sid.setDOM( kug->getGroups().getDOMSID() );

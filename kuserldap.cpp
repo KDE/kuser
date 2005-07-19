@@ -32,6 +32,8 @@
 
 KUserLDAP::KUserLDAP(KUserPrefsBase *cfg) : KUsers( cfg )
 {
+  schemaversion = 0;
+
   if ( mCfg->ldapssl() )
     mUrl.setProtocol("ldaps");
   else
@@ -190,6 +192,9 @@ void KUserLDAP::data( KIO::Job *, const QByteArray& data )
           mUser->setDomain( val );
         else if ( name == "sambapwdlastset" )
           mUser->setLastChange( val.toLong() );
+	//these new attributes introduced around samba 3.0.6
+	else if ( name == "sambapasswordhistory" || name == "sambalogonhours" ) 
+          schemaversion = 1; 
         break;
       case KABC::LDIF::EndEntry: {
         KUser newUser;
@@ -512,11 +517,10 @@ void KUserLDAP::getLDIF( KUser *user, bool mod )
         ldif += "-\nreplace: sambabadpasswordcount\n";
         ldif += "-\nreplace: sambabadpasswordtime\n";
         ldif += "-\nreplace: sambadomainname\n";
-/* FIXME: these attributes in only samba >= 3.0.6 
- * I fear that schema checking will neccessary. 
- */
-//        ldif += "-\nreplace: sambapasswordhistory\n";
-//        ldif += "-\nreplace: sambalogonhours\n";
+        if ( schemaversion > 0 ) {       
+          ldif += "-\nreplace: sambapasswordhistory\n";
+          ldif += "-\nreplace: sambalogonhours\n";
+        }
         ldif += "-\n";
       }
     }

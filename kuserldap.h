@@ -53,6 +53,7 @@ private:
   KUser *mUser, *mDelUser, *mAddUser;
   int mAdv;
   QCString ldif;
+  int schemaversion;
   
   QString getRDN( KUser *user );
   void getLDIF( KUser *user, bool mod );

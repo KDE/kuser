@@ -24,6 +24,7 @@
 #include <kcombobox.h>
 #include <kmessagebox.h>
 #include <klineedit.h>
+#include <knuminput.h>
 #include <kpushbutton.h>
 #include <kabc/ldapconfigwidget.h>
 #include <kabc/ldapurl.h>
@@ -88,6 +89,7 @@ void editDefaults::slotQueryClicked()
   mCancelled = true;
   mDomain.name = "";
   mDomain.sid = "";
+  mDomain.ridbase = 1000;
 
   QStringList attrs;
   QString filter = "(objectClass=sambaDomain)";
@@ -95,6 +97,7 @@ void editDefaults::slotQueryClicked()
   if ( !dom.isEmpty() ) filter = "(&(sambaDomainName=" + dom + ")"+filter+")";
   attrs.append("sambaDomainName");
   attrs.append("sambaSID");
+  attrs.append("sambaAlgorithmicRidBase");
   _url.setAttributes( attrs );
   _url.setScope( KABC::LDAPUrl::One );
   _url.setExtension( "x-dir", "base" );
@@ -125,6 +128,7 @@ void editDefaults::slotQueryClicked()
       if ( !mDomain.name.isEmpty() && !mDomain.sid.isEmpty() ) {
         page3c->kcfg_samdomain->setText( mDomain.name );
         page3c->kcfg_samdomsid->setText( mDomain.sid );
+        page3c->kcfg_samridbase->setValue( mDomain.ridbase );
       }
     }
   }
@@ -148,6 +152,8 @@ void editDefaults::loadData( KIO::Job*, const QByteArray& d )
           mDomain.name = QString::fromUtf8( mLdif.val(), mLdif.val().size() );
         else if ( mLdif.attr() == "sambaSID" ) 
           mDomain.sid = QString::fromUtf8( mLdif.val(), mLdif.val().size() );
+        else if ( mLdif.attr() == "sambaAlgorithmicRidBase" )
+          mDomain.ridbase = QString::fromUtf8( mLdif.val(), mLdif.val().size() ).toUInt();
         break;
       case KABC::LDIF::EndEntry:
         mProg->progressBar()->advance( 1 );
@@ -155,6 +161,7 @@ void editDefaults::loadData( KIO::Job*, const QByteArray& d )
           mResult.push_back( mDomain );
         mDomain.sid = "";
         mDomain.name = "";
+        mDomain.ridbase = 1000;
         break;
       
     }

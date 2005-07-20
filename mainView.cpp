@@ -188,11 +188,13 @@ void mainView::useradd()
     KMessageBox::sorry( 0, i18n("You have run out of uid space.") );
     return;
   }
+/*
   if ( samba && (rid = kug->getUsers().first_free_sam()) == 0) {
     KMessageBox::sorry( 0, i18n("You have run out of user RID space.") );
     return;
   }
-
+*/
+  if ( samba ) rid = SID::uid2rid( uid );
   bool ok;
   QString name = KInputDialog::getText( QString::null,
     i18n("Please type the name of the new user:"),
@@ -260,7 +262,8 @@ void mainView::useradd()
       }
       kdDebug() << "private group GID: " << gid << endl;
       uid_t rid = 0;
-      if ( samba ) rid = kug->getGroups().first_free_sam();
+//      if ( samba ) rid = kug->getGroups().first_free_sam();
+      if ( samba ) rid = SID::gid2rid( gid );
       if ( gid == KGroups::NO_FREE || ( samba && rid == 0 ) ) {
         kug->getGroups().cancelMods();
         delete tk;
@@ -332,12 +335,15 @@ void mainView::groupSelected()
   if ( !tmpKG ) return;
   KGroup newGroup( tmpKG );
 
+  kdDebug() << "The SID for group " << newGroup.getName() << " is: '" << newGroup.getSID().getSID() << "'" << endl;
   if ( samba && ( newGroup.getCaps() & KGroup::Cap_Samba ) && 
       newGroup.getSID().isEmpty() ) {
     SID sid;
     sid.setDOM( kug->getGroups().getDOMSID() );
-    sid.setRID( kug->getGroups().first_free_sam() );
+//    sid.setRID( kug->getGroups().first_free_sam() );
+    sid.setRID( SID::gid2rid( newGroup.getGID() ) );
     newGroup.setSID( sid );
+    kdDebug() << "The new SID for group " << newGroup.getName() << " is: " << sid.getSID() << endl;
   }
   editGroup egdlg( &newGroup, samba, false );
 
@@ -390,11 +396,14 @@ void mainView::grpadd()
     KMessageBox::sorry( 0, i18n("You have run out of gid space.") );
     return;
   }
+/*
   if ( samba && (rid = kug->getGroups().first_free_sam()) == 0 )
   {
     KMessageBox::sorry( 0, i18n("You have run out of group RID space.") );
     return;
   }
+*/
+  if ( samba ) rid = SID::gid2rid( gid );
 
   KGroup *tk = new KGroup();
   tk->setGID(gid);

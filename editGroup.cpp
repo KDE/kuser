@@ -311,6 +311,10 @@ void editGroup::slotOk()
     kg->setDisplayName( ledispname->text() );
   } else {
     kg->setCaps( 0 );
+    kg->setSID( QString::null );
+    kg->setDesc( QString::null );
+    kg->setDisplayName( QString::null );
+    kg->setType( 0 );
   }
 
   QListViewItem *item;

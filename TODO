@@ -1,5 +1,5 @@
 Must do soon (these are very easy):
-- Implement UID->SID like in ldapsam (Requires introducing the algorithmic RID base).
+- Implement UID->SID like in ldapsam (Requires introducing the algorithmic RID base). - Ready
 - Newer samba schema support (new attributes in sambaSamAccount in Samba>=3.0.6). - Ready
 - Support LDAP entries with more objectclasses than we handle (part of #95366).
 

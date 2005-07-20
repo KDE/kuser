@@ -59,7 +59,8 @@ QString KGroupViewItem::text(int num) const
   {
      case 0: return QString::number(mGroup->getGID());
      case 1: return mGroup->getName();
-     case 2: return mGroup->getSID().getDOM();
+     case 2: return ( mGroup->getCaps() & KGroup::Cap_Samba ) ? 
+       mGroup->getSID().getDOM() : QString::null;
      case 3: return ( mGroup->getCaps() & KGroup::Cap_Samba ) ?
       QString::number( mGroup->getSID().getRID() ) : QString::null;
      case 4: {

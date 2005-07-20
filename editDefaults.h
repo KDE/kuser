@@ -34,6 +34,7 @@ namespace KIO { class Job; }
 typedef struct SambaDomain {
   QString name;
   QString sid;
+  uint ridbase;
 };
 
 class editDefaults : public KConfigDialog {

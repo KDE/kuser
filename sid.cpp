@@ -17,7 +17,17 @@
  **/
  
 #include "sid.h"
- 
+#include <kdebug.h> 
+//From Samba
+/* Take the bottom bit. */
+#define RID_MULTIPLIER 2
+
+/* The two common types. */
+#define USER_RID_TYPE 0
+#define GROUP_RID_TYPE 1
+
+uint SID::mAlgRidBase = 1000;
+
 SID::SID()
 {
   mRid = 0; mSid = QString::null; mDom = QString::null;
@@ -37,6 +47,16 @@ SID::~SID()
 {
 }
 
+uint SID::uid2rid( uint uid )
+{
+  return( (( uid*RID_MULTIPLIER ) + mAlgRidBase ) | USER_RID_TYPE );
+}
+
+uint SID::gid2rid( uint gid )
+{
+  return( (( gid*RID_MULTIPLIER ) + mAlgRidBase ) | GROUP_RID_TYPE );
+}
+
 bool SID::operator == ( const SID &sid ) const
 {
   return ( mSid  == sid.mSid && mDom == sid.mDom );
@@ -49,7 +69,7 @@ bool SID::operator != ( const SID&sid ) const
 
 bool SID::isEmpty() const
 {
-  return ( mSid.isEmpty() && mDom.isEmpty() );
+  return ( ( mSid.isEmpty() || mRid == 0 ) && mDom.isEmpty() );
 }
 
 void SID::updateSID()

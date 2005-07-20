@@ -20,6 +20,15 @@
 #define _SID_H_
 
 #include <qstring.h>
+
+
+//From Samba
+/* Take the bottom bit. */
+#define RID_MULTIPLIER 2
+
+/* The two common types. */
+#define USER_RID_TYPE 0
+#define GROUP_RID_TYPE 1
  
 class SID {
     
@@ -40,10 +49,15 @@ public:
   uint getRID() const ;
   const QString &getDOM() const;
 
+  static uint uid2rid( uint uid );
+  static uint gid2rid( uint gid );
+  static void setAlgRidBase( uint base ) { mAlgRidBase = base; };
+  static uint getAlgRidBase() { return mAlgRidBase; };
 private:
   void updateSID();
   QString mSid, mDom;
   uint mRid;
+  static uint mAlgRidBase;
 };
 
 #endif //_SID_H_

@@ -50,6 +50,8 @@ void KUserGlobals::init()
 {
   if ( users ) delete users;
   if ( groups ) delete groups;
+  SID::setAlgRidBase( cfg->samridbase() );
+  kdDebug() << "Algorithmic RID base: " << SID::getAlgRidBase() << endl;
   switch ( cfg->source() ) {
     case KUserPrefsBase::EnumSource::Files:
       users = new KUserFiles( cfg );

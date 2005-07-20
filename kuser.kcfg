@@ -287,6 +287,11 @@
       <label>Samba domain SID</label>
       <whatsthis>This specifies the domain Security IDentifier. It is unique in a single domain. You can query the value of the domain SID with 'net getlocalsid domain_name'.</whatsthis>
     </entry>
+    <entry name="samridbase" type="Int">
+      <label>Algorithmic RID base</label>
+      <whatsthis>This values is an offset for the algorithmic mapping from uids and gids to rids. The default (and minimum) value is 1000, it must be even, and the LDAP database and smb.conf must store the same values.</whatsthis>
+      <default>1000</default>
+    </entry>
     <entry name="samloginscript" type="String">
       <label>Samba login script</label>
       <whatsthis>This specifies a name of a login script (in the `Netlogon` share) which will be executed as the user logs in to a Windows machine.</whatsthis>

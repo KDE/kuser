@@ -45,6 +45,7 @@ public:
   void setCaps( int data );
   int getCaps();
 
+//General
   const QString &getName() const;
   const QString &getSurname() const;
   const QString &getEmail() const;
@@ -56,15 +57,39 @@ public:
   uid_t getUID() const;
   uid_t getGID() const;
   bool getDisabled() const;
-//BSD gecos
+
+  void setName(const QString &data);
+  void setSurname(const QString &data);
+  void setEmail(const QString &data);
+  void setPwd(const QString &data);
+  void setHomeDir(const QString &data);
+  void setShell(const QString &data);
+  void setFullName(const QString &data);
+
+  void setUID(uid_t data);
+  void setGID(uid_t data);
+  void setDisabled(bool data);
+
+//gecos
+//--BSD gecos
   const QString &getOffice() const;
   const QString &getWorkPhone() const;
   const QString &getHomePhone() const;
   const QString &getClass() const;
-//BSD end
+//--BSD end
   const QString &getOffice1() const;
   const QString &getOffice2() const;
   const QString &getAddress() const;
+
+//--BSD
+  void setOffice(const QString &data);
+  void setWorkPhone(const QString &data);
+  void setHomePhone(const QString &data);
+  void setClass(const QString &data);
+//--BSD end
+  void setOffice1(const QString &data);
+  void setOffice2(const QString &data);
+  void setAddress(const QString &data);
 
 //shadow
   const QString &getSPwd() const;
@@ -75,6 +100,15 @@ public:
   int getWarn() const;
   int getInactive() const;
   int getFlag() const;
+
+  void setSPwd(const QString &data);
+  void setLastChange(time_t data);
+  void setMin(int data);
+  void setMax(int data);
+  void setWarn(int data);
+  void setInactive(int data);
+  void setExpire(time_t data);
+  void setFlag(int data);
 
 //samba
   const QString &getLMPwd() const; //  sam_lmpwd,
@@ -88,37 +122,6 @@ public:
   const SID &getSID() const; //sid,
   const SID &getPGSID() const; //pgroup_sid;
   
-  void setName(const QString &data);
-  void setSurname(const QString &data);
-  void setEmail(const QString &data);
-  void setPwd(const QString &data);
-  void setHomeDir(const QString &data);
-  void setShell(const QString &data);
-  void setFullName(const QString &data);
-
-  void setUID(uid_t data);
-  void setGID(uid_t data);
-  void setDisabled(bool data);
-
-//BSD
-  void setOffice(const QString &data);
-  void setWorkPhone(const QString &data);
-  void setHomePhone(const QString &data);
-  void setClass(const QString &data);
-//BSD end
-  void setOffice1(const QString &data);
-  void setOffice2(const QString &data);
-  void setAddress(const QString &data);
-
-  void setSPwd(const QString &data);
-  void setLastChange(time_t data);
-  void setMin(int data);
-  void setMax(int data);
-  void setWarn(int data);
-  void setInactive(int data);
-  void setExpire(time_t data);
-  void setFlag(int data);
-
   void setLMPwd( const QString &data ); //  sam_lmpwd,
   void setNTPwd( const QString &data ); //sam_ntpwd,
   void setLoginScript( const QString &data ); //sam_loginscript,
@@ -130,6 +133,7 @@ public:
   void setSID( const SID &data ); //sid,
   void setPGSID( const SID &data ); //pgroup_sid;
   
+//Administrative
   bool getCreateHome();
   bool getCreateMailBox();
   bool getCopySkel();

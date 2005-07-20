@@ -54,15 +54,14 @@ private:
   int mAdv;
   QCString ldif;
   int schemaversion;
+  QStringList mOc;
+  QMap<KUser*, QStringList> mObjectClasses;
   
   QString getRDN( KUser *user );
   void getLDIF( KUser *user, bool mod );
   void delData( KUser *user );
   
   virtual void createPassword( KUser *user, const QString &password );
-  
-  
 };
 
 #endif // _KUSER_H_
-

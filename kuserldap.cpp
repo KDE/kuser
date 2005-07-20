@@ -115,6 +115,11 @@ void KUserLDAP::data( KIO::Job *, const QByteArray& data )
             mUser->setCaps( mUser->getCaps() | KUser::Cap_POSIX );
           else if ( val.lower() == "sambasamaccount" )
             mUser->setCaps( mUser->getCaps() | KUser::Cap_Samba );
+	  else if ( val.lower() != "inetorgperson" &&
+	            val.lower() != "shadowaccount" &&
+                    val.lower() != "account" )
+            mOc.append( val );
+          
         } else if ( name == "uidnumber" )
           mUser->setUID( val.toLong() );
         else if ( name == "gidnumber" )
@@ -197,10 +202,16 @@ void KUserLDAP::data( KIO::Job *, const QByteArray& data )
           schemaversion = 1; 
         break;
       case KABC::LDIF::EndEntry: {
-        KUser newUser;
+        KUser emptyUser, *newUser;
         kdDebug() << "new user: " << mUser->getName() << endl;
-        mUsers.append( new KUser( mUser ) );
-        mUser->copy( &newUser );
+        newUser = new KUser( mUser );
+        mUsers.append( newUser );
+        if ( !mOc.isEmpty() ) {
+          mObjectClasses.insert( newUser, mOc );
+          kdDebug() << "user: " << newUser->getName() << " other objectclasses: " << mOc.join(",") << endl;
+        }
+        mOc.clear();
+        mUser->copy( &emptyUser );
         mUser->setDisabled( true );
 
         if ( ( mUsers.count() & 7 ) == 7 ) {
@@ -220,6 +231,8 @@ void KUserLDAP::data( KIO::Job *, const QByteArray& data )
 bool KUserLDAP::reload()
 {
   kdDebug() << "kuserldap::reload()" << endl;
+  mObjectClasses.clear();
+  mOc.clear();
   mUser = new KUser();
   mUser->setPwd( "" );
   mUser->setSPwd( "" );
@@ -401,6 +414,17 @@ void KUserLDAP::getLDIF( KUser *user, bool mod )
   if ( ( caps & Cap_Samba ) && ( user->getCaps() & KUser::Cap_Samba ) ) {
     ldif += "objectClass: sambaSamAccount\n";
   }
+  if ( mod && mObjectClasses.contains( mUser ) ) {
+    QStringList ocs = mObjectClasses[ mUser ];
+    kdDebug() << user->getName() << " has additional objectclasses: " << ocs.join(",") << endl;
+    QValueListIterator<QString> it;
+    for ( it = ocs.begin(); it != ocs.end(); ++it ) {
+      ldif += "objectClass: ";
+      ldif += (*it).utf8();
+      ldif += "\n";
+    }
+  }
+
   if ( mod ) ldif += "-\nreplace: cn\n";
   ldif += KABC::LDIF::assembleLine( "cn", cn )+"\n";
   if ( caps & Cap_InetOrg ) {
@@ -604,6 +628,10 @@ void KUserLDAP::putData( KIO::Job *, QByteArray& data )
   if ( mDelUser ) {
     kdDebug() << "delete ok for: " << mDelUser->getName() << endl;
     mDelSucc.append( mDelUser );
+    if ( mObjectClasses.contains( mDelUser ) ) {
+      kdDebug() << "deleting additonal objectclasses!" << endl;
+      mObjectClasses.remove( mDelUser );
+    }
     mDel.remove();
     mDelUser = 0;
   }

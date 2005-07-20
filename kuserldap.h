@@ -64,4 +64,4 @@ private:
   virtual void createPassword( KUser *user, const QString &password );
 };
 
-#endif // _KUSER_H_
+#endif // _KUSERLDAP_H_

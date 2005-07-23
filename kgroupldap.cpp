@@ -41,8 +41,10 @@ KGroupLDAP::KGroupLDAP( KUserPrefsBase *cfg ) : KGroups( cfg )
   mUrl.setHost( mCfg->ldaphost() );
   mUrl.setPort( mCfg->ldapport() );
   mUrl.setDn( mCfg->ldapgroupbase() + "," + mCfg->ldapdn() );
-  mUrl.setUser( mCfg->ldapuser() );
-  mUrl.setPass( mCfg->ldappassword() );
+  if ( !mCfg->ldapanon() ) {
+    mUrl.setUser( mCfg->ldapuser() );
+    mUrl.setPass( mCfg->ldappassword() );
+  }
   mUrl.setFilter( mCfg->ldapgroupfilter() );
 
   if ( mCfg->ldaptls() ) mUrl.setExtension("x-tls","");

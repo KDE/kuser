@@ -42,8 +42,10 @@ KUserLDAP::KUserLDAP(KUserPrefsBase *cfg) : KUsers( cfg )
   mUrl.setHost( mCfg->ldaphost() );
   mUrl.setPort( mCfg->ldapport() );
   mUrl.setDn( mCfg->ldapuserbase() + "," + mCfg->ldapdn() );
-  mUrl.setUser( mCfg->ldapuser() );
-  mUrl.setPass( mCfg->ldappassword() );
+  if ( !mCfg->ldapanon() ) {
+    mUrl.setUser( mCfg->ldapuser() );
+    mUrl.setPass( mCfg->ldappassword() );
+  }
   mUrl.setFilter( mCfg->ldapuserfilter() );
 
   if ( mCfg->ldaptls() ) mUrl.setExtension( "x-tls", "" );

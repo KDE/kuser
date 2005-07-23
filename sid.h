@@ -21,15 +21,6 @@
 
 #include <qstring.h>
 
-
-//From Samba
-/* Take the bottom bit. */
-#define RID_MULTIPLIER 2
-
-/* The two common types. */
-#define USER_RID_TYPE 0
-#define GROUP_RID_TYPE 1
- 
 class SID {
     
 public:

@@ -166,7 +166,7 @@ void mainView::userdel()
       KMessageBox::questionYesNo( 0, i18n("You are using private groups.\n"
         "Do you want to delete the user's private group '%1'?")
         .arg(group->getName()), QString::null,
-        KStdGuiItem::del()) == KMessageBox::Yes) {
+        KStdGuiItem::del(), i18n("Do Not Delete")) == KMessageBox::Yes) {
       kdDebug() << "del private group" << endl;
       kug->getGroups().del( group );
     }
@@ -305,7 +305,7 @@ void mainView::setpwd()
   if ( count > 1 ) {
     if ( KMessageBox::questionYesNo( 0,
       i18n("You have selected %1 users. Do you really want to change the password for all the selected users?")
-		.arg( count ) ) == KMessageBox::No ) return;
+		.arg( count ), QString::null, i18n("Change"), i18n("Do Not Change") ) == KMessageBox::No ) return;
   }
   pwddlg d( this );
   if ( d.exec() != QDialog::Accepted ) return;

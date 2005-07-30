@@ -17,6 +17,8 @@
  **/
 
 #include <qstring.h>
+//Added by qt3to4:
+#include <Q3CString>
 
 #include <kdebug.h>
 #include <kmdcodec.h>
@@ -145,7 +147,7 @@ void KUserLDAP::data( KIO::Job *, const QByteArray& data )
             mUser->setOffice2( val );
         } else if ( name == "gecos" ) {
           QString name, f1, f2, f3;
-          parseGecos( QCString( value.data(), value.size()+1 ), name, f1, f2, f3 );
+          parseGecos( Q3CString( value.data(), value.size()+1 ), name, f1, f2, f3 );
           if ( mUser->getFullName().isEmpty() ) mUser->setFullName( val );
           if ( mUser->getOffice1().isEmpty() ) mUser->setOffice1( f1 );
           if ( mUser->getOffice2().isEmpty() ) mUser->setOffice2( f1 );
@@ -290,8 +292,8 @@ void KUserLDAP::createPassword( KUser *user, const QString &password )
       break;
     }
     case KUserPrefsBase::EnumLdappasswordhash::SMD5: {
-      QCString salt = genSalt( 4 );
-      QCString pwd = password.utf8() + salt;
+      Q3CString salt = genSalt( 4 );
+      Q3CString pwd = password.utf8() + salt;
       KMD5::Digest digest;
       QByteArray hash(20);
 
@@ -316,8 +318,8 @@ void KUserLDAP::createPassword( KUser *user, const QString &password )
     case KUserPrefsBase::EnumLdappasswordhash::SSHA: {
       struct sha1_ctx ctx;
       QByteArray hash(24);
-      QCString salt = genSalt( 4 );
-      QCString pwd = password.utf8() + salt;
+      Q3CString salt = genSalt( 4 );
+      Q3CString pwd = password.utf8() + salt;
 
       sha1_init( &ctx );
       sha1_update( &ctx, (const Q_UINT8*) pwd.data(), pwd.length() );
@@ -419,7 +421,7 @@ void KUserLDAP::getLDIF( KUser *user, bool mod )
   if ( mod && mObjectClasses.contains( mUser ) ) {
     QStringList ocs = mObjectClasses[ mUser ];
     kdDebug() << user->getName() << " has additional objectclasses: " << ocs.join(",") << endl;
-    QValueListIterator<QString> it;
+    Q3ValueListIterator<QString> it;
     for ( it = ocs.begin(); it != ocs.end(); ++it ) {
       ldif += "objectClass: ";
       ldif += (*it).utf8();
@@ -452,8 +454,8 @@ void KUserLDAP::getLDIF( KUser *user, bool mod )
     ldif += KABC::LDIF::assembleLine( "gidnumber",
       QString::number( user->getGID() ) )+"\n";
     if ( mod ) ldif += "-\nreplace: gecos\n";
-    ldif += KABC::LDIF::assembleLine( "gecos", !mCfg->ldapgecos() ? QCString() :
-      QCString( gecos.latin1() ) )+"\n";
+    ldif += KABC::LDIF::assembleLine( "gecos", !mCfg->ldapgecos() ? Q3CString() :
+      Q3CString( gecos.latin1() ) )+"\n";
     if ( mod ) ldif += "-\nreplace: homedirectory\n";
     ldif += KABC::LDIF::assembleLine( "homedirectory",
       user->getHomeDir() )+"\n";

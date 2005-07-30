@@ -29,7 +29,7 @@ KGroupViewItem::KGroupViewItem(KListView *parent, KGroup *aku)
 {
 }
 
-int KGroupViewItem::compare( QListViewItem *i, int col, bool ascending ) const
+int KGroupViewItem::compare( Q3ListViewItem *i, int col, bool ascending ) const
 {
   switch ( col ) {
     case 0: {
@@ -49,7 +49,7 @@ int KGroupViewItem::compare( QListViewItem *i, int col, bool ascending ) const
       return ( rid1 < rid2) ? -1: 1;
     }
     default:
-      return QListViewItem::compare( i, col, ascending );
+      return Q3ListViewItem::compare( i, col, ascending );
   }
 }
 
@@ -85,7 +85,7 @@ QString KGroupViewItem::text(int num) const
 KGroupView::KGroupView(QWidget *parent, const char *name) 
   : KListView( parent, name ) 
 {
-  setSelectionMode( QListView::Extended );
+  setSelectionMode( Q3ListView::Extended );
 }
 
 KGroupView::~KGroupView() 

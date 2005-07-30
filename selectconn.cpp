@@ -20,8 +20,11 @@
 #include <qlayout.h>
 
 #include <qlabel.h>
-#include <qgrid.h>
+#include <q3grid.h>
 #include <qregexp.h>
+//Added by qt3to4:
+#include <QVBoxLayout>
+#include <Q3Frame>
 
 #include <kdebug.h>
 #include <kapplication.h>
@@ -34,7 +37,7 @@
 #include "editDefaults.h"
 
 SelectConn::SelectConn(const QString &selected, QWidget* parent, const char * name) :
-  KDialogBase( Plain, WStyle_DialogBorder, parent, name, true,
+  KDialogBase( Plain, Qt::WStyle_DialogBorder, parent, name, true,
   i18n("Connection Selection"), Ok | Apply | Cancel | User1 | User2 | User3 )
 {
   QStringList conns;
@@ -43,7 +46,7 @@ SelectConn::SelectConn(const QString &selected, QWidget* parent, const char * na
   setButtonText( User2, i18n("&Edit") );
   setButtonText( User1, i18n("&Delete") );
 
-  QFrame *page = plainPage();
+  Q3Frame *page = plainPage();
   QVBoxLayout *topLayout = new QVBoxLayout( page, 0, KDialog::spacingHint() );
   QLabel *label = new QLabel( i18n("Defined connections:"), page );
   mCombo = new KComboBox( page );

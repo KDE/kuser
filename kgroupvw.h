@@ -34,7 +34,7 @@ public:
   KGroup *group() { return mGroup; }
 private:  
   virtual QString text ( int ) const;
-  virtual int compare( QListViewItem *i, int col, bool ascending ) const;
+  virtual int compare( Q3ListViewItem *i, int col, bool ascending ) const;
   
   KGroup *mGroup;
 };

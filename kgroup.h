@@ -25,7 +25,7 @@
 
 #include <qstring.h>
 #include <qstringlist.h>
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 
 #include "kuserprefs.h"
 #include "sid.h"
@@ -92,12 +92,12 @@ public:
     Cap_Samba = 8
   };
 
-  typedef QPtrListIterator<KGroup> DelIt;
-  typedef QPtrListIterator<KGroup> AddIt;
+  typedef Q3PtrListIterator<KGroup> DelIt;
+  typedef Q3PtrListIterator<KGroup> AddIt;
   typedef QMapIterator<KGroup*, KGroup> ModIt;
   
-  QPtrList<KGroup> mDelSucc;
-  QPtrList<KGroup> mAddSucc;
+  Q3PtrList<KGroup> mDelSucc;
+  Q3PtrList<KGroup> mAddSucc;
   QMap<KGroup*, KGroup> mModSucc;
   
   KGroups( KUserPrefsBase *cfg );
@@ -134,10 +134,10 @@ public:
 
 protected:
   KUserPrefsBase *mCfg;
-  QPtrList<KGroup> mGroups;
+  Q3PtrList<KGroup> mGroups;
   
-  QPtrList<KGroup> mDel;
-  QPtrList<KGroup> mAdd;
+  Q3PtrList<KGroup> mDel;
+  Q3PtrList<KGroup> mAdd;
   QMap<KGroup*, KGroup> mMod;
   int caps;
   QString domsid;

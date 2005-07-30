@@ -24,11 +24,15 @@
 #include <qlabel.h>
 #include <qpushbutton.h>
 #include <qwidget.h>
-#include <qlistbox.h>
+#include <q3listbox.h>
 #include <qtooltip.h>
 #include <qcheckbox.h>
 #include <qlayout.h>
 #include <qmap.h>
+//Added by qt3to4:
+#include <Q3Frame>
+#include <QGridLayout>
+#include <Q3PtrList>
 
 #include <klineedit.h>
 #include <kdatetimewidget.h>
@@ -44,7 +48,7 @@ class propdlg : public KDialogBase
   Q_OBJECT
 
 public:
-  propdlg( const QPtrList<KUser> &users,
+  propdlg( const Q3PtrList<KUser> &users,
     QWidget *parent = 0, const char *name = 0 );
   propdlg( KUser *AUser, bool fixedprivgroup, 
     QWidget *parent = 0, const char *name = 0 );
@@ -81,11 +85,11 @@ protected:
   KIntSpinBox *addDaysGroup( QWidget  *parent, QGridLayout *layout, int row, 
     const QString &title, bool never=true );
 
-  QFrame *frontpage;
+  Q3Frame *frontpage;
   QGridLayout *frontlayout;
   int frontrow;
 
-  QPtrList<KUser> mUsers;
+  Q3PtrList<KUser> mUsers;
   QMap<QWidget*, QCheckBox*> mNoChanges;
   bool ismoreshells;
   bool ischanged;

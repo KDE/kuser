@@ -29,11 +29,13 @@
 #include <qwidget.h>
 #include <qlabel.h>
 #include <qlineedit.h>
+//Added by qt3to4:
+#include <Q3CString>
 
 class KUser;
 
 bool backup(const QString & name);
-QCString genSalt( int len );
+Q3CString genSalt( int len );
 QString encryptPass( const QString &pass, bool md5 );
 time_t now();
 int copyFile(const QString & from, const QString & to);

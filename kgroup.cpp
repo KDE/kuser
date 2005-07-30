@@ -181,7 +181,7 @@ KGroups::KGroups(KUserPrefsBase *cfg)
 KGroup *KGroups::lookup(const QString &name) 
 {
   KGroup *group;
-  QPtrListIterator<KGroup> it( mGroups );
+  Q3PtrListIterator<KGroup> it( mGroups );
   
   while ( (group = it.current()) != 0 && group->getName() != name ) ++it;
   return group;
@@ -190,7 +190,7 @@ KGroup *KGroups::lookup(const QString &name)
 KGroup *KGroups::lookup(gid_t gid) 
 {
   KGroup *group;
-  QPtrListIterator<KGroup> it( mGroups );
+  Q3PtrListIterator<KGroup> it( mGroups );
   
   while ( (group = it.current()) != 0 && group->getGID() != gid ) ++it;
   return group;
@@ -199,7 +199,7 @@ KGroup *KGroups::lookup(gid_t gid)
 KGroup *KGroups::lookup_sam( const SID &sid )
 {
   KGroup *group;
-  QPtrListIterator<KGroup> it( mGroups );
+  Q3PtrListIterator<KGroup> it( mGroups );
   
   while ( (group = it.current()) != 0 && group->getSID() != sid ) ++it;
   return group;
@@ -208,7 +208,7 @@ KGroup *KGroups::lookup_sam( const SID &sid )
 KGroup *KGroups::lookup_sam( const QString &sid )
 {
   KGroup *group;
-  QPtrListIterator<KGroup> it( mGroups );
+  Q3PtrListIterator<KGroup> it( mGroups );
   
   while ( (group = it.current()) != 0 && group->getSID().getSID() != sid ) ++it;
   return group;
@@ -217,7 +217,7 @@ KGroup *KGroups::lookup_sam( const QString &sid )
 KGroup *KGroups::lookup_sam( uint rid )
 {
   KGroup *group;
-  QPtrListIterator<KGroup> it( mGroups );
+  Q3PtrListIterator<KGroup> it( mGroups );
   
   while ( (group = it.current()) != 0 && group->getSID().getRID() != rid ) ++it;
   return group;

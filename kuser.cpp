@@ -912,7 +912,7 @@ bool KUsers::doDelete( KUser *user )
 KUser *KUsers::lookup(const QString & name)
 {
   KUser *user;
-  QPtrListIterator<KUser> it( mUsers );
+  Q3PtrListIterator<KUser> it( mUsers );
 
   while ( (user = it.current()) != 0 && user->getName() != name ) ++it;
   return user;
@@ -921,7 +921,7 @@ KUser *KUsers::lookup(const QString & name)
 KUser *KUsers::lookup(uid_t uid)
 {
   KUser *user;
-  QPtrListIterator<KUser> it( mUsers );
+  Q3PtrListIterator<KUser> it( mUsers );
 
   while ( (user = it.current()) != 0 && user->getUID() != uid ) ++it;
   return user;
@@ -930,7 +930,7 @@ KUser *KUsers::lookup(uid_t uid)
 KUser *KUsers::lookup_sam( const SID &sid )
 {
   KUser *user;
-  QPtrListIterator<KUser> it( mUsers );
+  Q3PtrListIterator<KUser> it( mUsers );
 
   while ( (user = it.current()) != 0 && user->getSID() != sid ) ++it;
   return user;
@@ -939,7 +939,7 @@ KUser *KUsers::lookup_sam( const SID &sid )
 KUser *KUsers::lookup_sam( const QString &sid )
 {
   KUser *user;
-  QPtrListIterator<KUser> it( mUsers );
+  Q3PtrListIterator<KUser> it( mUsers );
 
   while ( (user = it.current()) != 0 && user->getSID().getSID() != sid ) ++it;
   return user;
@@ -948,7 +948,7 @@ KUser *KUsers::lookup_sam( const QString &sid )
 KUser *KUsers::lookup_sam( uint rid )
 {
   KUser *user;
-  QPtrListIterator<KUser> it( mUsers );
+  Q3PtrListIterator<KUser> it( mUsers );
 
   while ( (user = it.current()) != 0 && user->getSID().getRID() != rid ) ++it;
   return user;

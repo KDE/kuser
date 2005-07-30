@@ -22,10 +22,15 @@
 #include <stdlib.h>
 
 #include <qdatetime.h>
-#include <qwhatsthis.h>
+
 #include <qlayout.h>
-#include <qgroupbox.h>
+#include <q3groupbox.h>
 #include <qfile.h>
+//Added by qt3to4:
+#include <QGridLayout>
+#include <Q3PtrList>
+#include <Q3Frame>
+#include <QLabel>
 
 #include <kseparator.h>
 #include <kmessagebox.h>
@@ -48,8 +53,8 @@ void propdlg::addRow(QWidget *parent, QGridLayout *layout, int row,
    layout->addWidget(lab, row, 0);
    if (!what.isEmpty())
    {
-      QWhatsThis::add(lab, what);
-      QWhatsThis::add(widget, what);
+      lab->setWhatsThis( what);
+      widget->setWhatsThis( what);
    }
    if (two_column)
       layout->addMultiCellWidget(widget, row, row, 1, 2);
@@ -104,7 +109,7 @@ void propdlg::initDlg()
 
   // Tab 1: User Info
   {
-    QFrame *frame = addPage(i18n("User Info"));
+    Q3Frame *frame = addPage(i18n("User Info"));
     QGridLayout *layout = new QGridLayout(frame, 20, 4, marginHint(), spacingHint());
     int row = 0;
 
@@ -221,7 +226,7 @@ void propdlg::initDlg()
        kug->getUsers().getCaps() & KUsers::Cap_BSD ) {
 
   // Tab 2 : Password Management
-    QFrame *frame = addPage(i18n("Password Management"));
+    Q3Frame *frame = addPage(i18n("Password Management"));
     QGridLayout *layout = new QGridLayout(frame, 20, 4, marginHint(), spacingHint());
     int row = 0;
 
@@ -264,7 +269,7 @@ void propdlg::initDlg()
 
   // Tab 3: Samba
   if ( kug->getUsers().getCaps() & KUsers::Cap_Samba ) {
-    QFrame *frame = addPage(i18n("Samba"));
+    Q3Frame *frame = addPage(i18n("Samba"));
     QGridLayout *layout = new QGridLayout(frame, 10, 4, marginHint(), spacingHint());
     int row = 0;
 
@@ -317,15 +322,15 @@ void propdlg::initDlg()
 
   // Tab 4: Groups
   {
-    QFrame *frame = addPage(i18n("Groups"));
+    Q3Frame *frame = addPage(i18n("Groups"));
     QGridLayout *layout = new QGridLayout(frame, 2, 2, marginHint(), spacingHint());
 
     lstgrp = new KListView(frame);
     lstgrp->setFullWidth(true); // Single column, full widget width.
     lstgrp->addColumn( i18n("Groups") );
-    if ( ro ) lstgrp->setSelectionMode( QListView::NoSelection );
+    if ( ro ) lstgrp->setSelectionMode( Q3ListView::NoSelection );
 //    QString whatstr = i18n("Select the groups that this user belongs to.");
-    QWhatsThis::add(lstgrp, whatstr);
+    lstgrp->setWhatsThis( whatstr);
     layout->addMultiCellWidget(lstgrp, 0, 0, 0, 1);
     leprigr = new QLabel( i18n("Primary group: "), frame );
     layout->addWidget( leprigr, 1, 0 );
@@ -334,12 +339,12 @@ void propdlg::initDlg()
       layout->addWidget( pbprigr, 1, 1 );
       connect( pbprigr, SIGNAL(clicked()), this, SLOT(setpgroup()) );
     }
-    connect( lstgrp, SIGNAL(clicked(QListViewItem *)), this, SLOT(gchanged()) );
+    connect( lstgrp, SIGNAL(clicked(Q3ListViewItem *)), this, SLOT(gchanged()) );
   }
 
 }
 
-propdlg::propdlg( const QPtrList<KUser> &users,
+propdlg::propdlg( const Q3PtrList<KUser> &users,
   QWidget *parent, const char *name ) :
   KDialogBase(Tabbed, i18n("User Properties"), Ok | Cancel, Ok, parent, name, true)
 
@@ -373,7 +378,7 @@ propdlg::~propdlg()
 
 void propdlg::cbposixChanged()
 {
-  bool posix = !( cbposix->state() == QButton::On );
+  bool posix = !( cbposix->state() == Q3Button::On );
   leid->setEnabled( posix  & ( mUsers.getFirst() == mUsers.getLast() ) );
   leshell->setEnabled( posix );
   lehome->setEnabled( posix );
@@ -387,7 +392,7 @@ void propdlg::cbposixChanged()
 
 void propdlg::cbsambaChanged()
 {
-  bool samba = !( cbsamba->state() == QButton::On );
+  bool samba = !( cbsamba->state() == Q3Button::On );
   lerid->setEnabled( samba & ( mUsers.getFirst() == mUsers.getLast() ) );
   leliscript->setEnabled( samba );
   leprofile->setEnabled( samba );
@@ -595,7 +600,7 @@ void propdlg::loadgroups( bool fixedprivgroup )
   KGroup *group = kug->getGroups().first();
   while ( group ) {
     QString groupName = group->getName();
-    QCheckListItem *item = new QCheckListItem(lstgrp, groupName, QCheckListItem::CheckBox);
+    Q3CheckListItem *item = new Q3CheckListItem(lstgrp, groupName, Q3CheckListItem::CheckBox);
     KUser *user = mUsers.first();
     while ( user ) {
       bool prigr =
@@ -618,7 +623,7 @@ void propdlg::loadgroups( bool fixedprivgroup )
       else
         if ( item->isOn() != on ) {
           item->setTristate( true );
-          item->setState( QCheckListItem::NoChange );
+          item->setState( Q3CheckListItem::NoChange );
         }
       user = mUsers.next();
     }
@@ -629,7 +634,7 @@ void propdlg::loadgroups( bool fixedprivgroup )
     KUser *user = mUsers.first();
     kdDebug() << "privgroup: " << user->getName() << endl;
     if ( !wasprivgr ) {
-      QCheckListItem *item = new QCheckListItem(lstgrp, user->getName(), QCheckListItem::CheckBox);
+      Q3CheckListItem *item = new Q3CheckListItem(lstgrp, user->getName(), Q3CheckListItem::CheckBox);
       item->setOn(true);
       item->setEnabled(false);
       primaryGroup = user->getName();
@@ -641,15 +646,15 @@ void propdlg::loadgroups( bool fixedprivgroup )
 void propdlg::setpgroup()
 {
   isgchanged = true;
-  QCheckListItem *item;
-  item = (QCheckListItem *) lstgrp->selectedItem();
+  Q3CheckListItem *item;
+  item = (Q3CheckListItem *) lstgrp->selectedItem();
   if ( item == 0 || item->text() == primaryGroup )
      return;
 
   bool prevPrimaryGroupWasOn = primaryGroupWasOn;
-  primaryGroup = ((QCheckListItem *) lstgrp->selectedItem())->text();
+  primaryGroup = ((Q3CheckListItem *) lstgrp->selectedItem())->text();
 
-  item = (QCheckListItem *) lstgrp->firstChild();
+  item = (Q3CheckListItem *) lstgrp->firstChild();
 
   while(item)
   {
@@ -668,7 +673,7 @@ void propdlg::setpgroup()
         item->repaint();
      }
 
-     item = (QCheckListItem *) item->nextSibling();
+     item = (Q3CheckListItem *) item->nextSibling();
   }
   leprigr->setText( i18n("Primary group: ") + primaryGroup );
 }
@@ -709,7 +714,7 @@ void propdlg::mergeUser( KUser *user, KUser *newuser )
 
   newuser->copy( user );
 
-  if ( kug->getUsers().getCaps() & KUsers::Cap_Disable_POSIX && cbposix->state() != QButton::NoChange ) {
+  if ( kug->getUsers().getCaps() & KUsers::Cap_Disable_POSIX && cbposix->state() != Q3Button::NoChange ) {
     if ( cbposix->isChecked() )
       newuser->setCaps( newuser->getCaps() & ~KUser::Cap_POSIX );
     else
@@ -727,7 +732,7 @@ void propdlg::mergeUser( KUser *user, KUser *newuser )
   }
   newuser->setFullName( mergeLE( lefname, user->getFullName(), one ) );
   if ( kug->getUsers().getCaps() & KUsers::Cap_Samba ) {
-    if ( cbsamba->state() != QButton::NoChange ) {
+    if ( cbsamba->state() != Q3Button::NoChange ) {
       if ( cbsamba->isChecked() )
         newuser->setCaps( newuser->getCaps() & ~KUser::Cap_Samba );
       else
@@ -785,7 +790,7 @@ void propdlg::mergeUser( KUser *user, KUser *newuser )
   } else
     newuser->setShell( QString::null );
 
-  newuser->setDisabled( (cbdisabled->state() == QButton::NoChange) ? user->getDisabled() : cbdisabled->isChecked() );
+  newuser->setDisabled( (cbdisabled->state() == Q3Button::NoChange) ? user->getDisabled() : cbdisabled->isChecked() );
 
   if ( kug->getUsers().getCaps() & KUsers::Cap_InetOrg ) {
     newuser->setSurname( mergeLE( lesurname, user->getSurname(), one ) );
@@ -804,13 +809,13 @@ void propdlg::mergeUser( KUser *user, KUser *newuser )
        ( (kug->getUsers().getCaps() & KUsers::Cap_BSD) && posix ) ) {
 
     switch ( cbexpire->state() ) {
-      case QButton::NoChange:
+      case Q3Button::NoChange:
         newuser->setExpire( user->getExpire() );
         break;
-      case QButton::On:
+      case Q3Button::On:
         newuser->setExpire( -1 );
         break;
-      case QButton::Off:
+      case Q3Button::Off:
         newuser->setExpire( !one && lesexpire->dateTime().toTime_t() == 0 ?
           user->getExpire() : lesexpire->dateTime().toTime_t() );
         break;
@@ -834,14 +839,14 @@ bool propdlg::saveg()
 {
   if ( !isgchanged ) return true;
 
-  QCheckListItem *item = (QCheckListItem *) lstgrp->firstChild();
+  Q3CheckListItem *item = (Q3CheckListItem *) lstgrp->firstChild();
   KGroup *group;
 
   while(item)
   {
     kdDebug() << "saveg: group name: " << item->text() << endl;
     group = kug->getGroups().lookup(item->text());
-    if ( group && item->state() != QCheckListItem::NoChange ) {
+    if ( group && item->state() != Q3CheckListItem::NoChange ) {
 
       KGroup newgroup( group );
       bool mod = false;
@@ -860,7 +865,7 @@ bool propdlg::saveg()
 
       if ( mod ) kug->getGroups().mod( group, newgroup );
     }
-    item = (QCheckListItem *) item->nextSibling();
+    item = (Q3CheckListItem *) item->nextSibling();
   }
   return true;
 }

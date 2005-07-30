@@ -351,14 +351,14 @@ bool KUserFiles::savepwd()
         KMessageBox::error( 0, i18n("Error opening %1 for writing.").arg(nispasswd_filename) );
   }
 
-  QPtrListIterator<KUser> it( mUsers );
+  Q3PtrListIterator<KUser> it( mUsers );
   KUser *user;
   bool addok = false;
   user = (*it);
   while (true) {
     if ( user == 0 ) {
       if ( addok ) break;
-      it = QPtrListIterator<KUser> ( mAdd );
+      it = Q3PtrListIterator<KUser> ( mAdd );
       user = (*it);
       addok = true;
       if ( user == 0 ) break;
@@ -529,13 +529,13 @@ bool KUserFiles::savesdw()
   s.sp_namp = (char *)malloc(200);
   s.sp_pwdp = (char *)malloc(200);
 
-  QPtrListIterator<KUser> it( mUsers );
+  Q3PtrListIterator<KUser> it( mUsers );
   up = (*it);
   while (true) {
 
     if ( up == 0 ) {
       if ( addok ) break;
-      it = QPtrListIterator<KUser> ( mAdd );
+      it = Q3PtrListIterator<KUser> ( mAdd );
       up = (*it);
       addok = true;
       if ( up == 0 ) break;

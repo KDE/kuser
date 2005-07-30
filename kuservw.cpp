@@ -29,7 +29,7 @@ KUserViewItem::KUserViewItem(KListView *parent, KUser *aku)
 {
 }
 
-int KUserViewItem::compare( QListViewItem *i, int col, bool ascending ) const
+int KUserViewItem::compare( Q3ListViewItem *i, int col, bool ascending ) const
 {
   if ( col == 0 ) {
     uid_t uid1, uid2;
@@ -40,7 +40,7 @@ int KUserViewItem::compare( QListViewItem *i, int col, bool ascending ) const
     if ( uid1 == uid2 ) return 0;
     return ( uid1 < uid2) ? -1: 1;
   } else {
-    return QListViewItem::compare( i, col, ascending );
+    return Q3ListViewItem::compare( i, col, ascending );
   }
 }
 
@@ -83,7 +83,7 @@ QString KUserViewItem::text(int num) const
 KUserView::KUserView(QWidget *parent, const char *name)
   : KListView( parent, name )
 {
-  setSelectionMode( QListView::Extended );
+  setSelectionMode( Q3ListView::Extended );
 }
 
 KUserView::~KUserView()

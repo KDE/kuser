@@ -24,7 +24,7 @@
 #include <sys/types.h>
 
 #include <qstring.h>
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 
 #include "globals.h"
 #include "sid.h"
@@ -224,12 +224,12 @@ public:
     Cap_Disable_POSIX = 32,
     Cap_BSD = 64
   };
-  typedef QPtrListIterator<KUser> DelIt;
-  typedef QPtrListIterator<KUser> AddIt;
+  typedef Q3PtrListIterator<KUser> DelIt;
+  typedef Q3PtrListIterator<KUser> AddIt;
   typedef QMapIterator<KUser*, KUser> ModIt;
   
-  QPtrList<KUser> mDelSucc;
-  QPtrList<KUser> mAddSucc;
+  Q3PtrList<KUser> mDelSucc;
+  Q3PtrList<KUser> mAddSucc;
   QMap<KUser*, KUser> mModSucc;
   
   KUsers(KUserPrefsBase *cfg);
@@ -284,12 +284,12 @@ public:
   virtual bool dbcommit() = 0;
   
 protected:
-  QPtrList<KUser> mUsers;
+  Q3PtrList<KUser> mUsers;
   int caps;
   KUserPrefsBase *mCfg;
   
-  QPtrList<KUser> mDel;
-  QPtrList<KUser> mAdd;
+  Q3PtrList<KUser> mDel;
+  Q3PtrList<KUser> mAdd;
   QMap<KUser*, KUser> mMod;
 
   QString domsid;

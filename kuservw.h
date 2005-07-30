@@ -36,7 +36,7 @@ private:
   virtual QString text ( int ) const;
   virtual void paintCell( QPainter *p, const QColorGroup &cg,
     int column, int width, int alignment );
-  virtual int compare( QListViewItem *i, int col, bool ascending ) const;
+  virtual int compare( Q3ListViewItem *i, int col, bool ascending ) const;
   KUser *mUser;
 };
 

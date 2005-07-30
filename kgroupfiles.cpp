@@ -251,7 +251,7 @@ bool KGroupFiles::save()
     }
   }
 
-  QPtrListIterator<KGroup> it( mGroups );
+  Q3PtrListIterator<KGroup> it( mGroups );
   KGroup *gr;
   bool addok = false;
 
@@ -261,7 +261,7 @@ bool KGroupFiles::save()
 
     if ( gr == 0 ) {
       if ( addok ) break;
-      it = QPtrListIterator<KGroup> ( mAdd );
+      it = Q3PtrListIterator<KGroup> ( mAdd );
       gr = (*it);
       addok = true;
       if ( gr == 0 ) break;

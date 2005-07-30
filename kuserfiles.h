@@ -24,7 +24,7 @@
 #include <sys/types.h>
 
 #include <qstring.h>
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 
 #include "kuser.h"
 

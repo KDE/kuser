@@ -24,6 +24,8 @@
 
 #include <qtooltip.h>
 #include <qfile.h>
+//Added by qt3to4:
+#include <Q3PtrList>
 
 #include <kinputdialog.h>
 #include <ktoolbar.h>
@@ -52,11 +54,11 @@ void mainView::init() {
   lbgroups = new KGroupView( this, "lbgroups" );
   addTab( lbgroups, i18n("Groups"));
 
-  connect(lbusers, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(userSelected()));
-  connect(lbusers, SIGNAL(returnPressed(QListViewItem *)), this, SLOT(userSelected()));
+  connect(lbusers, SIGNAL(doubleClicked(Q3ListViewItem *)), this, SLOT(userSelected()));
+  connect(lbusers, SIGNAL(returnPressed(Q3ListViewItem *)), this, SLOT(userSelected()));
 
-  connect(lbgroups, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(groupSelected()));
-  connect(lbgroups, SIGNAL(returnPressed(QListViewItem *)), this, SLOT(groupSelected()));
+  connect(lbgroups, SIGNAL(doubleClicked(Q3ListViewItem *)), this, SLOT(groupSelected()));
+  connect(lbgroups, SIGNAL(returnPressed(Q3ListViewItem *)), this, SLOT(groupSelected()));
 
   connect(this, SIGNAL(currentChanged(QWidget *)), this, SLOT(slotTabChanged()));
 }
@@ -311,7 +313,7 @@ void mainView::setpwd()
   if ( d.exec() != QDialog::Accepted ) return;
 
   KUser newuser, *user;
-  QListViewItem *item;
+  Q3ListViewItem *item;
 
   item = lbusers->firstChild();
   while ( item ) {
@@ -355,8 +357,8 @@ void mainView::groupSelected()
 
 void mainView::userSelected()
 {
-  QListViewItem *item;
-  QPtrList<KUser> ulist;
+  Q3ListViewItem *item;
+  Q3PtrList<KUser> ulist;
 
   item = lbusers->firstChild();
   while ( item ) {
@@ -430,7 +432,7 @@ void mainView::grpedit()
 
 void mainView::grpdel()
 {
-  QListViewItem *item;
+  Q3ListViewItem *item;
   KGroup *group = NULL;
   int selected = 0;
 

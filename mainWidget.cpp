@@ -75,28 +75,28 @@ void mainWidget::setupActions()
 
 #define BarIconC(x)	BarIcon(QString::fromLatin1(x))
 
-  (void) new KAction(i18n("&Add..."), QIconSet(BarIconC("add_user")), 0, md,
+  (void) new KAction(i18n("&Add..."), QIcon(BarIconC("add_user")), 0, md,
     SLOT(useradd()), actionCollection(), "add_user");
 
-  (void) new KAction(i18n("&Edit..."), QIconSet(BarIconC("edit_user")), 0, md,
+  (void) new KAction(i18n("&Edit..."), QIcon(BarIconC("edit_user")), 0, md,
     SLOT(useredit()), actionCollection(), "edit_user");
 
-  (void) new KAction(i18n("&Delete..."), QIconSet(BarIconC("delete_user")), 0, md,
+  (void) new KAction(i18n("&Delete..."), QIcon(BarIconC("delete_user")), 0, md,
     SLOT(userdel()), actionCollection(), "delete_user");
 
   (void) new KAction(i18n("&Set Password..."),
     0, md, SLOT(setpwd()), actionCollection(), "set_password_user");
 
-  (void) new KAction(i18n("&Add..."), QIconSet(BarIconC("add_group")), 0, md,
+  (void) new KAction(i18n("&Add..."), QIcon(BarIconC("add_group")), 0, md,
     SLOT(grpadd()), actionCollection(), "add_group");
 
-  (void) new KAction(i18n("&Edit..."), QIconSet(BarIconC("edit_group")), 0, md,
+  (void) new KAction(i18n("&Edit..."), QIcon(BarIconC("edit_group")), 0, md,
     SLOT(grpedit()), actionCollection(), "edit_group");
 
-  (void) new KAction(i18n("&Delete"), QIconSet(BarIconC("delete_group")), 0, md,
+  (void) new KAction(i18n("&Delete"), QIcon(BarIconC("delete_group")), 0, md,
     SLOT(grpdel()), actionCollection(), "delete_group");
 
-  (void) new KAction(i18n("&Reload"), QIconSet(BarIconC("reload")), 0, this,
+  (void) new KAction(i18n("&Reload"), QIcon(BarIconC("reload")), 0, this,
     SLOT(reload()), actionCollection(), "reload");
 
 #undef BarIconC

@@ -21,9 +21,13 @@
 
 #include <qlabel.h>
 #include <qlayout.h>
-#include <qvbox.h>
+#include <q3vbox.h>
 #include <qvalidator.h>
-#include <qwhatsthis.h>
+#include <q3whatsthis.h>
+//Added by qt3to4:
+#include <Q3Frame>
+#include <Q3ValueList>
+#include <QGridLayout>
 
 #include <kapplication.h>
 #include <klocale.h>
@@ -72,7 +76,7 @@ editGroup::editGroup(KGroup *akg, bool samba, bool add,
     lb->setText(i18n("Group rid:"));
     lerid = new KComboBox( page );
     lerid->setEditable( !ro );
-    QValueList<RID>::Iterator it;
+    Q3ValueList<RID>::Iterator it;
     for ( it = mRids.begin(); it != mRids.end(); ++it ) {
       lerid->insertItem( QString::number( (*it).rid ) + " - " + (*it).name );
     }
@@ -161,10 +165,10 @@ editGroup::editGroup(KGroup *akg, bool samba, bool add,
   m_list_in = new KListView(page);
   m_list_in->setFullWidth(true); // Single column, full widget width.
   m_list_in->addColumn(i18n("Users in Group"));
-  m_list_in->setSelectionMode( QListView::Extended );
+  m_list_in->setSelectionMode( Q3ListView::Extended );
   layout->addWidget( m_list_in, 8, 0 );
 
-  QVBox *vbox = new QVBox(page);
+  Q3VBox *vbox = new Q3VBox(page);
   QPushButton *btadd = new QPushButton(i18n("Add <-"), vbox);
   QPushButton *btdel = new QPushButton(i18n("Remove ->"), vbox);
   layout->addWidget( vbox, 8, 1 );
@@ -172,7 +176,7 @@ editGroup::editGroup(KGroup *akg, bool samba, bool add,
   m_list_notin = new KListView(page);
   m_list_notin->setFullWidth(true); // Single column, full widget width.
   m_list_notin->addColumn(i18n("Users NOT in Group"));
-  m_list_notin->setSelectionMode(QListView::Extended);
+  m_list_notin->setSelectionMode(Q3ListView::Extended);
   layout->addWidget( m_list_notin, 8, 2 );
 //  QString whatstr = i18n("Select the users that should be in this kg->");
 //  QWhatsThis::add(m_list, whatstr);
@@ -215,7 +219,7 @@ void editGroup::ridSelected( int index )
 
 void editGroup::addClicked()
 {
-  QListViewItem *item, *next;
+  Q3ListViewItem *item, *next;
   QString name;
 
   item = m_list_notin->firstChild();
@@ -232,7 +236,7 @@ void editGroup::addClicked()
 
 void editGroup::delClicked()
 {
-  QListViewItem *item, *next;
+  Q3ListViewItem *item, *next;
   QString name;
 
   item = m_list_in->firstChild();
@@ -317,7 +321,7 @@ void editGroup::slotOk()
     kg->setType( 0 );
   }
 
-  QListViewItem *item;
+  Q3ListViewItem *item;
   item = m_list_in->firstChild();
   while ( item ) {
     kg->addUser( item->text( 0 ) );

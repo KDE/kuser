@@ -29,6 +29,8 @@
 #include <crypt.h>
 #endif
 #include <qfile.h>
+//Added by qt3to4:
+#include <Q3CString>
 
 #include <kmessagebox.h>
 
@@ -72,12 +74,12 @@ int copyFile(const QString & from, const QString & to)
     return (-1);
   }
 
-  if (!fi.open(IO_ReadOnly)) {
+  if (!fi.open(QIODevice::ReadOnly)) {
     KMessageBox::error( 0, i18n("Cannot open file %1 for reading.").arg(from) );
     return (-1);
   }
 
-  if (!fo.open(IO_Raw | IO_WriteOnly | IO_Truncate)) {
+  if (!fo.open(IO_Raw | QIODevice::WriteOnly | QIODevice::Truncate)) {
     KMessageBox::error( 0, i18n("Cannot open file %1 for writing.").arg(to) );
     return (-1);
   }
@@ -132,9 +134,9 @@ void addShell(const QString &shell)
     fclose(f);
 }
 
-QCString genSalt( int len )
+Q3CString genSalt( int len )
 {
-  QCString salt( len + 1 );
+  Q3CString salt( len + 1 );
   const char * set = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./";
     
   salt[0] = set[getpid() % strlen(set)];
@@ -146,7 +148,7 @@ QCString genSalt( int len )
 
 QString encryptPass( const QString &pass, bool md5 )
 {
-  QCString salt;
+  Q3CString salt;
   char tmp[128];
   
   if ( md5 ) {

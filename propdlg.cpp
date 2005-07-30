@@ -109,7 +109,7 @@ void propdlg::initDlg()
 
   // Tab 1: User Info
   {
-    Q3Frame *frame = addPage(i18n("User Info"));
+    QFrame *frame = addPage(i18n("User Info"));
     QGridLayout *layout = new QGridLayout(frame, 20, 4, marginHint(), spacingHint());
     int row = 0;
 
@@ -226,7 +226,7 @@ void propdlg::initDlg()
        kug->getUsers().getCaps() & KUsers::Cap_BSD ) {
 
   // Tab 2 : Password Management
-    Q3Frame *frame = addPage(i18n("Password Management"));
+    QFrame *frame = addPage(i18n("Password Management"));
     QGridLayout *layout = new QGridLayout(frame, 20, 4, marginHint(), spacingHint());
     int row = 0;
 
@@ -269,7 +269,7 @@ void propdlg::initDlg()
 
   // Tab 3: Samba
   if ( kug->getUsers().getCaps() & KUsers::Cap_Samba ) {
-    Q3Frame *frame = addPage(i18n("Samba"));
+    QFrame *frame = addPage(i18n("Samba"));
     QGridLayout *layout = new QGridLayout(frame, 10, 4, marginHint(), spacingHint());
     int row = 0;
 
@@ -322,7 +322,7 @@ void propdlg::initDlg()
 
   // Tab 4: Groups
   {
-    Q3Frame *frame = addPage(i18n("Groups"));
+    QFrame *frame = addPage(i18n("Groups"));
     QGridLayout *layout = new QGridLayout(frame, 2, 2, marginHint(), spacingHint());
 
     lstgrp = new KListView(frame);
@@ -714,7 +714,7 @@ void propdlg::mergeUser( KUser *user, KUser *newuser )
 
   newuser->copy( user );
 
-  if ( kug->getUsers().getCaps() & KUsers::Cap_Disable_POSIX && cbposix->state() != Q3Button::NoChange ) {
+  if ( kug->getUsers().getCaps() & KUsers::Cap_Disable_POSIX && cbposix->state() != QCheckBox::NoChange ) {
     if ( cbposix->isChecked() )
       newuser->setCaps( newuser->getCaps() & ~KUser::Cap_POSIX );
     else
@@ -732,7 +732,7 @@ void propdlg::mergeUser( KUser *user, KUser *newuser )
   }
   newuser->setFullName( mergeLE( lefname, user->getFullName(), one ) );
   if ( kug->getUsers().getCaps() & KUsers::Cap_Samba ) {
-    if ( cbsamba->state() != Q3Button::NoChange ) {
+    if ( cbsamba->state() != QCheckBox::NoChange ) {
       if ( cbsamba->isChecked() )
         newuser->setCaps( newuser->getCaps() & ~KUser::Cap_Samba );
       else
@@ -790,7 +790,7 @@ void propdlg::mergeUser( KUser *user, KUser *newuser )
   } else
     newuser->setShell( QString::null );
 
-  newuser->setDisabled( (cbdisabled->state() == Q3Button::NoChange) ? user->getDisabled() : cbdisabled->isChecked() );
+  newuser->setDisabled( (cbdisabled->state() == QCheckBox::NoChange) ? user->getDisabled() : cbdisabled->isChecked() );
 
   if ( kug->getUsers().getCaps() & KUsers::Cap_InetOrg ) {
     newuser->setSurname( mergeLE( lesurname, user->getSurname(), one ) );
@@ -809,7 +809,7 @@ void propdlg::mergeUser( KUser *user, KUser *newuser )
        ( (kug->getUsers().getCaps() & KUsers::Cap_BSD) && posix ) ) {
 
     switch ( cbexpire->state() ) {
-      case Q3Button::NoChange:
+      case QCheckBox::NoChange:
         newuser->setExpire( user->getExpire() );
         break;
       case Q3Button::On:

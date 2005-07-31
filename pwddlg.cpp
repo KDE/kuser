@@ -30,12 +30,12 @@
 pwddlg::pwddlg( QWidget* parent, const char* name )
   : KDialogBase(parent, name, true, i18n("Enter Password"), Ok | Cancel, Ok, true)
 {
-  Q3Grid *page = makeGridMainWidget(2, Q3Grid::Horizontal);
+  Q3Grid *page = makeGridMainWidget(2, Qt::Horizontal);
 
   QLabel* lb1 = new QLabel(page, "lb1");
   lb1->setText(i18n("Password:"));
   lb1->setMinimumSize(lb1->sizeHint());
-  lb1->setAlignment(AlignRight|AlignVCenter);
+  lb1->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
 
   lepw1 = new KLineEdit(page, "LineEdit_1");
 
@@ -51,7 +51,7 @@ pwddlg::pwddlg( QWidget* parent, const char* name )
   QLabel* lb2 = new QLabel(page, "lb2");
   lb2->setText(i18n("Verify:"));
   lb2->setMinimumSize(lb2->sizeHint());
-  lb2->setAlignment(AlignRight|AlignVCenter);
+  lb2->setAlignment(AlignRight|Qt::AlignVCenter);
 
   lepw2 = new KLineEdit(page, "LineEdit_2");
 

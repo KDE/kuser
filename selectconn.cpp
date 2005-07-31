@@ -46,7 +46,7 @@ SelectConn::SelectConn(const QString &selected, QWidget* parent, const char * na
   setButtonText( User2, i18n("&Edit") );
   setButtonText( User1, i18n("&Delete") );
 
-  Q3Frame *page = plainPage();
+  QFrame *page = plainPage();
   QVBoxLayout *topLayout = new QVBoxLayout( page, 0, KDialog::spacingHint() );
   QLabel *label = new QLabel( i18n("Defined connections:"), page );
   mCombo = new KComboBox( page );

@@ -122,7 +122,7 @@ void KGroupView::init()
 
   if ( columns() < 2 ) {
     addColumn(i18n("GID"));
-    setColumnAlignment(0, AlignRight);
+    setColumnAlignment(0, Qt::AlignRight);
     addColumn(i18n("Group Name"));
   }
   if ( kug->getGroups().getCaps() & KGroups::Cap_Samba ) {

@@ -74,7 +74,7 @@ KIntSpinBox *propdlg::addDaysGroup(QWidget *parent, QGridLayout *layout, int row
     KIntSpinBox *days;
 
     QLabel *label = new QLabel( title, parent );
-    layout->addMultiCellWidget( label, row, row, 0, 1, AlignRight );
+    layout->addMultiCellWidget( label, row, row, 0, 1, Qt::AlignRight );
 
     days = new KIntSpinBox( parent );
     label->setBuddy( days );

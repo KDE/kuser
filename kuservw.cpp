@@ -118,7 +118,7 @@ void KUserView::init()
   setAllColumnsShowFocus(true);
   if ( columns() < 5 ) {
     addColumn(i18n("UID"));
-    setColumnAlignment(0, AlignRight);
+    setColumnAlignment(0, Qt::AlignRight);
     addColumn(i18n("User Login"));
     addColumn(i18n("Full Name"));
     addColumn(i18n("Home Directory"));

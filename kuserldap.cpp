@@ -21,7 +21,7 @@
 #include <Q3CString>
 
 #include <kdebug.h>
-#include <kmdcodec.h>
+#include <kcodecs.h>
 #include <kmessagebox.h>
 #include <kio/kntlm.h>
 

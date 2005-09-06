@@ -35,6 +35,7 @@
 #include <qdir.h>
 
 #include <kdebug.h>
+#include <kstandarddirs.h>
 #include <kmessagebox.h>
 
 #include "kglobal_.h"
@@ -196,7 +197,10 @@ bool KGroupFiles::save()
   new_group_filename = group_filename + QString::fromLatin1(KU_CREATE_EXT);
 #ifdef HAVE_SHADOW
   gshadow_filename = mCfg->gshadowsrc();
-  new_gshadow_filename = gshadow_filename + QString::fromLatin1(KU_CREATE_EXT);
+  if ( !KStandardDirs::exists( gshadow_filename ) )
+      gshadow_filename = QString::null;
+  else
+      new_gshadow_filename = gshadow_filename + QString::fromLatin1(KU_CREATE_EXT);
 #endif
   nisgroup_filename = mCfg->nisgroupsrc();
   new_nisgroup_filename = nisgroup_filename + QString::fromLatin1(KU_CREATE_EXT);

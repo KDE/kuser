@@ -51,7 +51,7 @@ pwddlg::pwddlg( QWidget* parent, const char* name )
   QLabel* lb2 = new QLabel(page, "lb2");
   lb2->setText(i18n("Verify:"));
   lb2->setMinimumSize(lb2->sizeHint());
-  lb2->setAlignment(AlignRight|Qt::AlignVCenter);
+  lb2->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
 
   lepw2 = new KLineEdit(page, "LineEdit_2");
 

@@ -240,7 +240,7 @@ public:
   KUser *lookup_sam( const QString &sid );
   KUser *lookup_sam( uint rid );
   
-  int getCaps() { return caps; }
+  int getCaps() const { return caps; }
   const QString &getDOMSID() const;
   
   KUser *first();

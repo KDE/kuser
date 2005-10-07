@@ -28,7 +28,7 @@ delUser::delUser(KUser *AUser, QWidget *parent, const char *name)
  : KDialogBase( parent, name, true, i18n("Delete User"),
                 KDialogBase::Ok|KDialogBase::Cancel, KDialogBase::Ok, true )
 {                   
-  Q3VBox *page = makeVBoxMainWidget();
+  KVBox *page = makeVBoxMainWidget();
   new QLabel( i18n("<p>Deleting user <b>%1</b>"
                    "<p>Also perform the following actions:").arg(AUser->getName()),
               page);

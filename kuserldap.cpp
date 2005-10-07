@@ -111,17 +111,17 @@ void KUserLDAP::data( KIO::Job *, const QByteArray& data )
     ret = mParser.nextItem();
     switch ( ret ) {
       case KABC::LDIF::Item:
-        name = mParser.attr().lower();
+        name = mParser.attr().toLower();
         value = mParser.val();
         val = QString::fromUtf8( value, value.size() );
         if ( name == "objectclass" ) {
-          if ( val.lower() == "posixaccount" )
+          if ( val.toLower() == "posixaccount" )
             mUser->setCaps( mUser->getCaps() | KUser::Cap_POSIX );
-          else if ( val.lower() == "sambasamaccount" )
+          else if ( val.toLower() == "sambasamaccount" )
             mUser->setCaps( mUser->getCaps() | KUser::Cap_Samba );
-	  else if ( val.lower() != "inetorgperson" &&
-	            val.lower() != "shadowaccount" &&
-                    val.lower() != "account" )
+	  else if ( val.toLower() != "inetorgperson" &&
+	            val.toLower() != "shadowaccount" &&
+                    val.toLower() != "account" )
             mOc.append( val );
           
         } else if ( name == "uidnumber" )
@@ -309,9 +309,9 @@ void KUserLDAP::createPassword( KUser *user, const QString &password )
       QByteArray hash(20);
 
       sha1_init( &ctx );
-      sha1_update( &ctx, (const Q_UINT8*) password.utf8().data(),
+      sha1_update( &ctx, (const quint8*) password.utf8().data(),
         password.utf8().length() );
-      sha1_final( &ctx, (Q_UINT8*) hash.data() );
+      sha1_final( &ctx, (quint8*) hash.data() );
       user->setPwd( "{SHA}" + KCodecs::base64Encode( ( hash ) ) );
       break;
     }
@@ -322,8 +322,8 @@ void KUserLDAP::createPassword( KUser *user, const QString &password )
       Q3CString pwd = password.utf8() + salt;
 
       sha1_init( &ctx );
-      sha1_update( &ctx, (const Q_UINT8*) pwd.data(), pwd.length() );
-      sha1_final( &ctx, (Q_UINT8*) hash.data() );
+      sha1_update( &ctx, (const quint8*) pwd.data(), pwd.length() );
+      sha1_final( &ctx, (quint8*) hash.data() );
       memcpy( &(hash.data()[ 20 ]), salt.data(), 4 );
       user->setPwd( "{SSHA}" + KCodecs::base64Encode( ( hash ) ) );
       break;
@@ -331,7 +331,7 @@ void KUserLDAP::createPassword( KUser *user, const QString &password )
   }
 
   if ( caps & Cap_Samba ) {
-    Q_UINT8 hex[33];
+    quint8 hex[33];
 
     QByteArray ntlmhash;
     ntlmhash = KNTLM::ntlmHash( password );

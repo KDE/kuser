@@ -726,17 +726,17 @@ int KUser::copySkel()
   mode_t mode;
   
   if (!s.exists()) {
-    KMessageBox::error( 0, i18n("Folder %1 does not exist, cannot copy skeleton for %2.").arg(s.absPath()).arg(p_name) );
+    KMessageBox::error( 0, i18n("Folder %1 does not exist, cannot copy skeleton for %2.").arg(s.absolutePath()).arg(p_name) );
     return (-1);
   }
 
   if (!d.exists()) {
-    KMessageBox::error( 0, i18n("Folder %1 does not exist, cannot copy skeleton.").arg(d.absPath()) );
+    KMessageBox::error( 0, i18n("Folder %1 does not exist, cannot copy skeleton.").arg(d.absolutePath()) );
     return (-1);
   }
   
   mode = umask(0007);
-  copyDir(s.absPath(), d.absPath());
+  copyDir(s.absolutePath(), d.absPath());
   umask( mode );
   
   return 0;

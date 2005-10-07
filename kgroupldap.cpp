@@ -115,11 +115,11 @@ void KGroupLDAP::data( KIO::Job*, const QByteArray& data )
     ret = mParser.nextItem();
     switch ( ret ) {
       case KABC::LDIF::Item:
-        name = mParser.attr().lower();
+        name = mParser.attr().toLower();
         value = mParser.val();
         val = QString::fromUtf8( value, value.size() );
         if ( name == "objectclass" ) {
-          if ( val.lower() == "sambagroupmapping" ) 
+          if ( val.toLower() == "sambagroupmapping" ) 
             mGroup->setCaps( KGroup::Cap_Samba );
         } else if ( name == "gidnumber" )
           mGroup->setGID( val.toLong() );

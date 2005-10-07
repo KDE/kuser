@@ -24,13 +24,13 @@
 #include <qglobal.h>
 
 struct sha1_ctx {
-        Q_UINT64 count;
-        Q_UINT32 state[5];
-        Q_UINT8 buffer[64];
+        quint64 count;
+        quint32 state[5];
+        quint8 buffer[64];
 };
 
 void sha1_init(void *ctx);
-void sha1_update(void *ctx, const Q_UINT8 *data, unsigned int len);
-void sha1_final(void* ctx, Q_UINT8 *out);
+void sha1_update(void *ctx, const quint8 *data, unsigned int len);
+void sha1_final(void* ctx, quint8 *out);
 
 #endif

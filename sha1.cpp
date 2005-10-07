@@ -27,7 +27,7 @@
 #define SHA1_DIGEST_SIZE	20
 #define SHA1_HMAC_BLOCK_SIZE	64
 
-static inline Q_UINT32 rol(Q_UINT32 value, Q_UINT32 bits)
+static inline quint32 rol(quint32 value, quint32 bits)
 {
 	return (((value) << (bits)) | ((value) >> (32 - (bits))));
 }
@@ -50,20 +50,20 @@ static inline Q_UINT32 rol(Q_UINT32 value, Q_UINT32 bits)
 #define R4(v,w,x,y,z,i) z+=(w^x^y)+blk(i)+0xCA62C1D6+rol(v,5);w=rol(w,30);
 
 /* Hash a single 512-bit block. This is the core of the algorithm. */
-static void sha1_transform(Q_UINT32 *state, const Q_UINT8 *in)
+static void sha1_transform(quint32 *state, const quint8 *in)
 {
-	Q_UINT32 a, b, c, d, e;
-	Q_UINT32 block32[16];
+	quint32 a, b, c, d, e;
+	quint32 block32[16];
 
 	/* convert/copy data to workspace */
-	for (a = 0; a < sizeof(block32)/sizeof(Q_UINT32); a++)
+	for (a = 0; a < sizeof(block32)/sizeof(quint32); a++)
 #ifdef WORDS_BIGENDIAN  
-		block32[a] = ((const Q_UINT32 *)in)[a];
+		block32[a] = ((const quint32 *)in)[a];
 #else
-		block32[a] = ((const Q_UINT32 *)in)[a] >> 24 |
-                 (((const Q_UINT32 *)in)[a] >> 8 & 0x0000ff00) |
-                 (((const Q_UINT32 *)in)[a] << 8 & 0x00ff0000) |
-                 (((const Q_UINT32 *)in)[a] << 24);
+		block32[a] = ((const quint32 *)in)[a] >> 24 |
+                 (((const quint32 *)in)[a] >> 8 & 0x0000ff00) |
+                 (((const quint32 *)in)[a] << 8 & 0x00ff0000) |
+                 (((const quint32 *)in)[a] << 24);
 #endif
 	/* Copy context->state[] to working vars */
 	a = state[0];
@@ -116,7 +116,7 @@ void sha1_init(void *ctx)
 	*sctx = initstate;
 }
 
-void sha1_update(void *ctx, const Q_UINT8 *data, unsigned int len)
+void sha1_update(void *ctx, const quint8 *data, unsigned int len)
 {
 	struct sha1_ctx *sctx = (sha1_ctx*) ctx;
 	unsigned int i, j;
@@ -138,13 +138,13 @@ void sha1_update(void *ctx, const Q_UINT8 *data, unsigned int len)
 
 
 /* Add padding and return the message digest. */
-void sha1_final(void* ctx, Q_UINT8 *out)
+void sha1_final(void* ctx, quint8 *out)
 {
 	struct sha1_ctx *sctx = (sha1_ctx*) ctx;
-	Q_UINT32 i, j, index, padlen;
-	Q_UINT64 t;
-	Q_UINT8 bits[8] = { 0, };
-	static const Q_UINT8 padding[64] = { 0x80, };
+	quint32 i, j, index, padlen;
+	quint64 t;
+	quint8 bits[8] = { 0, };
+	static const quint8 padding[64] = { 0x80, };
 
 	t = sctx->count;
 	bits[7] = 0xff & t; t>>=8;
@@ -166,7 +166,7 @@ void sha1_final(void* ctx, Q_UINT8 *out)
 
 	/* Store state in digest */
 	for (i = j = 0; i < 5; i++, j += 4) {
-		Q_UINT32 t2 = sctx->state[i];
+		quint32 t2 = sctx->state[i];
 		out[j+3] = t2 & 0xff; t2>>=8;
 		out[j+2] = t2 & 0xff; t2>>=8;
 		out[j+1] = t2 & 0xff; t2>>=8;

@@ -736,7 +736,7 @@ int KUser::copySkel()
   }
   
   mode = umask(0007);
-  copyDir(s.absolutePath(), d.absPath());
+  copyDir(s.absolutePath(), d.absolutePath());
   umask( mode );
   
   return 0;

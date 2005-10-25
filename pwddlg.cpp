@@ -37,7 +37,7 @@ pwddlg::pwddlg( QWidget* parent, const char* name )
   lb1->setMinimumSize(lb1->sizeHint());
   lb1->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
 
-  lepw1 = new KLineEdit(page, "LineEdit_1");
+  lepw1 = new KLineEdit(page);
 
   // ensure it fits at least 12 characters
   lepw1->setText( "XXXXXXXXXXXX" );
@@ -53,7 +53,7 @@ pwddlg::pwddlg( QWidget* parent, const char* name )
   lb2->setMinimumSize(lb2->sizeHint());
   lb2->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
 
-  lepw2 = new KLineEdit(page, "LineEdit_2");
+  lepw2 = new KLineEdit(page);
 
   // ensure it fits at least 12 characters
   lepw2->setText( "XXXXXXXXXXXX" );

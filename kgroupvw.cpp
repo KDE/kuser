@@ -83,7 +83,7 @@ QString KGroupViewItem::text(int num) const
 
 
 KGroupView::KGroupView(QWidget *parent, const char *name) 
-  : KListView( parent, name ) 
+  : KListView( parent ) 
 {
   setSelectionMode( Q3ListView::Extended );
 }

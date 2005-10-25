@@ -20,7 +20,7 @@
 
 #include <qtooltip.h>
 #include <qtimer.h>
-
+#include <kxmlguifactory.h>
 #include <ktoolbar.h>
 #include <kiconloader.h>
 #include <kaction.h>

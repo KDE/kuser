@@ -81,7 +81,7 @@ QString KUserViewItem::text(int num) const
 }
 
 KUserView::KUserView(QWidget *parent, const char *name)
-  : KListView( parent, name )
+  : KListView( parent )
 {
   setSelectionMode( Q3ListView::Extended );
 }

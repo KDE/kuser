@@ -33,6 +33,7 @@
 #include <Q3CString>
 
 #include <kmessagebox.h>
+#include <krandom.h>
 
 #include "misc.h"
 #include "kglobal_.h"
@@ -141,7 +142,7 @@ Q3CString genSalt( int len )
     
   salt[0] = set[getpid() % strlen(set)];
   for( int i = 1; i < len; i++ ) {
-    salt[i] = set[kapp->random() % strlen(set)];
+    salt[i] = set[KRandom::random() % strlen(set)];
   }
   return salt;
 }

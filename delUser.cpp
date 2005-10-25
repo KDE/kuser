@@ -19,7 +19,7 @@
 #include "delUser.h"
 
 #include <qlabel.h>
-#include <q3vbox.h>
+#include <kvbox.h>
 #include <qfile.h>
 
 #include <klocale.h>

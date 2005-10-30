@@ -24,7 +24,7 @@
 
 #include <klocale.h>
 
-delUser::delUser(KUser *AUser, QWidget *parent, const char *name) 
+delUser::delUser(KU::KUser *AUser, QWidget *parent, const char *name) 
  : KDialogBase( parent, name, true, i18n("Delete User"),
                 KDialogBase::Ok|KDialogBase::Cancel, KDialogBase::Ok, true )
 {                   

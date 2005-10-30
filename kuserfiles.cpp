@@ -91,7 +91,7 @@ bool KUserFiles::reload() {
 bool KUserFiles::loadpwd()
 {
   passwd *p;
-  KUser *tmpKU = 0;
+  KU::KUser *tmpKU = 0;
   struct stat st;
   QString filename;
   QString passwd_filename;
@@ -104,7 +104,7 @@ bool KUserFiles::loadpwd()
   #define P_NISPASSWD 0x02
   #define MAXFILES 2
 
-  // Read KUser configuration
+  // Read KU::KUser configuration
 
   passwd_filename = mCfg->passwdsrc();
   nispasswd_filename = mCfg->nispasswdsrc();
@@ -115,7 +115,7 @@ bool KUserFiles::loadpwd()
     mCfg->setPasswdsrc( PASSWORD_FILE );
     mCfg->setGroupsrc( GROUP_FILE );
     passwd_filename = mCfg->passwdsrc();
-    KMessageBox::error( 0, i18n("KUser sources were not configured.\nLocal passwd source set to %1\nLocal group source set to %2.").arg(mCfg->passwdsrc().arg(mCfg->groupsrc())) );
+    KMessageBox::error( 0, i18n("KU::KUser sources were not configured.\nLocal passwd source set to %1\nLocal group source set to %2.").arg(mCfg->passwdsrc().arg(mCfg->groupsrc())) );
   }
 
   if(!passwd_filename.isEmpty()) {
@@ -128,7 +128,7 @@ bool KUserFiles::loadpwd()
   for(int i = 0; i < MAXFILES; i++) {
     rc = stat(QFile::encodeName(filename), &st);
     if(rc != 0) {
-      KMessageBox::error( 0, i18n("Stat call on file %1 failed: %2\nCheck KUser settings.").arg(filename).arg(QString::fromLocal8Bit(strerror(errno))) );
+      KMessageBox::error( 0, i18n("Stat call on file %1 failed: %2\nCheck KU::KUser settings.").arg(filename).arg(QString::fromLocal8Bit(strerror(errno))) );
       if( (processing_file & P_PASSWD) != 0 ) {
         passwd_errno = errno;
         if(!nispasswd_filename.isEmpty()) {
@@ -164,8 +164,8 @@ bool KUserFiles::loadpwd()
     setpwent(); //This should be enough for BSDs
     while ((p = getpwent()) != NULL) {
 #endif
-      tmpKU = new KUser();
-      tmpKU->setCaps( KUser::Cap_POSIX );
+      tmpKU = new KU::KUser();
+      tmpKU->setCaps( KU::KUser::Cap_POSIX );
       tmpKU->setUID(p->pw_uid);
       tmpKU->setGID(p->pw_gid);
       tmpKU->setName(QString::fromLocal8Bit(p->pw_name));
@@ -222,7 +222,7 @@ bool KUserFiles::loadsdw()
 #ifdef HAVE_SHADOW
   QString shadow_file,tmp;
   struct spwd *spw;
-  KUser *up = NULL;
+  KU::KUser *up = NULL;
   struct stat st;
 
   shadow_file = mCfg->shadowsrc();
@@ -308,7 +308,7 @@ bool KUserFiles::savepwd()
     #define NOMINUID    0x01
     #define NONISPASSWD 0x02
 
-  // Read KUser configuration info
+  // Read KU::KUser configuration info
 
   passwd_filename = mCfg->passwdsrc();
   nispasswd_filename = mCfg->nispasswdsrc();
@@ -351,14 +351,14 @@ bool KUserFiles::savepwd()
         KMessageBox::error( 0, i18n("Error opening %1 for writing.").arg(nispasswd_filename) );
   }
 
-  QPtrListIterator<KUser> it( mUsers );
-  KUser *user;
+  QPtrListIterator<KU::KUser> it( mUsers );
+  KU::KUser *user;
   bool addok = false;
   user = (*it);
   while (true) {
     if ( user == 0 ) {
       if ( addok ) break;
-      it = QPtrListIterator<KUser> ( mAdd );
+      it = QPtrListIterator<KU::KUser> ( mAdd );
       user = (*it);
       addok = true;
       if ( user == 0 ) break;
@@ -471,11 +471,11 @@ bool KUserFiles::savepwd()
   }
 
   if( (errors_found & NOMINUID) != 0 ) {
-    KMessageBox::error( 0, i18n("Unable to process NIS passwd file without a minimum UID specified.\nPlease update KUser settings (Files).") );
+    KMessageBox::error( 0, i18n("Unable to process NIS passwd file without a minimum UID specified.\nPlease update KU::KUser settings (Files).") );
   }
 
   if( (errors_found & NONISPASSWD) != 0 ) {
-    KMessageBox::error( 0, i18n("Specifying NIS minimum UID requires NIS file(s).\nPlease update KUser settings (Files).") );
+    KMessageBox::error( 0, i18n("Specifying NIS minimum UID requires NIS file(s).\nPlease update KU::KUser settings (Files).") );
   }
 
   // need to run a utility program to build /etc/passwd, /etc/pwd.db
@@ -509,7 +509,7 @@ bool KUserFiles::savesdw()
   FILE *f;
   struct spwd *spwp;
   struct spwd s;
-  KUser *up;
+  KU::KUser *up;
   QString shadow_file = mCfg->shadowsrc();
   QString new_shadow_file = shadow_file+QString::fromLatin1(KU_CREATE_EXT);
 
@@ -529,13 +529,13 @@ bool KUserFiles::savesdw()
   s.sp_namp = (char *)malloc(200);
   s.sp_pwdp = (char *)malloc(200);
 
-  QPtrListIterator<KUser> it( mUsers );
+  QPtrListIterator<KU::KUser> it( mUsers );
   up = (*it);
   while (true) {
 
     if ( up == 0 ) {
       if ( addok ) break;
-      it = QPtrListIterator<KUser> ( mAdd );
+      it = QPtrListIterator<KU::KUser> ( mAdd );
       up = (*it);
       addok = true;
       if ( up == 0 ) break;
@@ -583,7 +583,7 @@ bool KUserFiles::savesdw()
 }
 
 
-void KUserFiles::createPassword( KUser *user, const QString &password )
+void KUserFiles::createPassword( KU::KUser *user, const QString &password )
 {
   if ( caps & Cap_Shadow ) {
     user->setSPwd( encryptPass( password, mCfg->md5shadow() ) );

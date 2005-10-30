@@ -29,7 +29,7 @@
 
 #include "kgroup.h"
 
-class KGroupSystem : public KGroups {
+class KGroupSystem : public KU::KGroups {
 public:
   KGroupSystem( KUserPrefsBase *cfg );
   virtual ~KGroupSystem();

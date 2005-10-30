@@ -30,6 +30,8 @@
 #include "kuserprefs.h"
 #include "sid.h"
 
+namespace KU {
+
 class KGroup {
 public:
   KGroup();
@@ -142,5 +144,7 @@ protected:
   int caps;
   QString domsid;
 };
+
+}
 
 #endif // _KU_GROUP_H_

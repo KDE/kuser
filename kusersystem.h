@@ -28,14 +28,14 @@
 
 #include "kuser.h"
 
-class KUserSystem : public KUsers {
+class KUserSystem : public KU::KUsers {
 public:
   KUserSystem(KUserPrefsBase *cfg);
   virtual ~KUserSystem();
 
   virtual bool dbcommit() { return true; }
   virtual bool reload();
-  virtual void createPassword( KUser * /*user*/, const QString & /*password*/ ) {}
+  virtual void createPassword( KU::KUser * /*user*/, const QString & /*password*/ ) {}
 
 private:
 

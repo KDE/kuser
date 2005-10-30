@@ -28,14 +28,14 @@
 
 #include "kuser.h"
 
-class KUserFiles : public KUsers {
+class KUserFiles : public KU::KUsers {
 public:
   KUserFiles(KUserPrefsBase *cfg);
   virtual ~KUserFiles();
 
   virtual bool dbcommit();
   virtual bool reload();
-  virtual void createPassword( KUser *user, const QString &password );
+  virtual void createPassword( KU::KUser *user, const QString &password );
 
 private:
   bool pw_backuped;
@@ -57,5 +57,5 @@ private:
   bool savepwd();
   bool savesdw();
 };
-#endif // _KUSER_H_
+#endif // _KUSERFILES_H_
 

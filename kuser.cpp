@@ -46,7 +46,7 @@
 
 // class KUser
 
-KUser::KUser()
+KU::KUser::KUser()
 {
   p_change = 0;
   p_expire = -1;
@@ -68,12 +68,12 @@ KUser::KUser()
   isDisabled = true;
 }
 
-KUser::KUser(const KUser *user)
+KU::KUser::KUser(const KU::KUser *user)
 {
   copy(user);
 }
 
-void KUser::copy(const KUser *user)
+void KU::KUser::copy(const KU::KUser *user)
 {
   if ( user != this ) {
     caps = user->caps;
@@ -124,427 +124,427 @@ void KUser::copy(const KUser *user)
   }
 }
 
-KUser::~KUser()
+KU::KUser::~KUser()
 {
 }
 
-void KUser::setCaps( int data )
+void KU::KUser::setCaps( int data )
 {
   caps = data;
 }
 
-int KUser::getCaps()
+int KU::KUser::getCaps()
 {
   return caps;
 }
 
-bool KUser::getDeleteHome()
+bool KU::KUser::getDeleteHome()
 {
   return isDeleteHome;
 }
 
-bool KUser::getDeleteMailBox()
+bool KU::KUser::getDeleteMailBox()
 {
   return isDeleteMailBox;
 }
 
-bool KUser::getCreateHome()
+bool KU::KUser::getCreateHome()
 {
   return isCreateHome;
 }
 
-bool KUser::getCreateMailBox()
+bool KU::KUser::getCreateMailBox()
 {
   return isCreateMailBox;
 }
 
-bool KUser::getCopySkel()
+bool KU::KUser::getCopySkel()
 {
   return isCopySkel;
 }
 
-const QString &KUser::getName() const
+const QString &KU::KUser::getName() const
 {
   return p_name;
 }
 
-const QString &KUser::getSurname() const
+const QString &KU::KUser::getSurname() const
 {
   return p_surname;
 }
 
-const QString &KUser::getEmail() const
+const QString &KU::KUser::getEmail() const
 {
   return p_email;
 }
 
-const QString &KUser::getPwd() const
+const QString &KU::KUser::getPwd() const
 {
   return p_pwd;
 }
 
-const QString &KUser::getHomeDir() const
+const QString &KU::KUser::getHomeDir() const
 {
   return p_dir;
 }
 
-const QString &KUser::getShell() const
+const QString &KU::KUser::getShell() const
 {
   return p_shell;
 }
 
-const QString &KUser::getFullName() const
+const QString &KU::KUser::getFullName() const
 {
   return p_fname;
 }
 
-bool KUser::getDisabled() const
+bool KU::KUser::getDisabled() const
 {
   return isDisabled;
 }
 
 // FreeBSD apparently uses the GECOS fields differently than other Unices.
 // Create some better named functions to make the FreeBSD code clear
-const QString &KUser::getOffice() const
+const QString &KU::KUser::getOffice() const
 {
   return p_office;
 }
 
-const QString &KUser::getWorkPhone() const
+const QString &KU::KUser::getWorkPhone() const
 {
   return p_ophone;
 }
 
-const QString &KUser::getHomePhone() const
+const QString &KU::KUser::getHomePhone() const
 {
   return p_hphone;
 }
 
 // New fields needed for the FreeBSD /etc/master.passwd file
-const QString &KUser::getClass() const
+const QString &KU::KUser::getClass() const
 {
   return p_class;
 }
 
-const QString &KUser::getOffice1() const
+const QString &KU::KUser::getOffice1() const
 {
   return p_office1;
 }
 
-const QString &KUser::getOffice2() const
+const QString &KU::KUser::getOffice2() const
 {
   return p_office2;
 }
 
-const QString &KUser::getAddress() const
+const QString &KU::KUser::getAddress() const
 {
   return p_address;
 }
 
-uid_t KUser::getUID() const
+uid_t KU::KUser::getUID() const
 {
   return p_uid;
 }
 
-gid_t KUser::getGID() const
+gid_t KU::KUser::getGID() const
 {
   return p_gid;
 }
 
-const QString &KUser::getSPwd() const
+const QString &KU::KUser::getSPwd() const
 {
   return s_pwd;
 }
 
-time_t KUser::getLastChange() const
+time_t KU::KUser::getLastChange() const
 {
   return p_change;
 }
 
-int KUser::getMin() const
+int KU::KUser::getMin() const
 {
   return s_min;
 }
 
-int KUser::getMax() const
+int KU::KUser::getMax() const
 {
   return s_max;
 }
 
-int KUser::getWarn() const
+int KU::KUser::getWarn() const
 {
   return s_warn;
 }
 
-int KUser::getInactive() const
+int KU::KUser::getInactive() const
 {
   return s_inact;
 }
 
-int KUser::getFlag() const
+int KU::KUser::getFlag() const
 {
   return s_flag;
 }
 
-time_t KUser::getExpire() const
+time_t KU::KUser::getExpire() const
 {
   return p_expire;
 }
 
-const QString &KUser::getLMPwd() const //  sam_lmpwd,
+const QString &KU::KUser::getLMPwd() const //  sam_lmpwd,
 {
   return sam_lmpwd;
 }
 
-const QString &KUser::getNTPwd() const //sam_ntpwd,
+const QString &KU::KUser::getNTPwd() const //sam_ntpwd,
 {
   return sam_ntpwd;
 }
 
-const QString &KUser::getLoginScript() const //sam_loginscript,
+const QString &KU::KUser::getLoginScript() const //sam_loginscript,
 {
   return sam_loginscript;
 }
 
-const QString &KUser::getProfilePath() const //  sam_profile,
+const QString &KU::KUser::getProfilePath() const //  sam_profile,
 {
   return sam_profile;
 }
 
-const QString &KUser::getHomeDrive() const //sam_homedrive,
+const QString &KU::KUser::getHomeDrive() const //sam_homedrive,
 {
   return sam_homedrive;
 }
 
-const QString &KUser::getHomePath() const //sam_homepath;
+const QString &KU::KUser::getHomePath() const //sam_homepath;
 {
   return sam_homepath;
 }
 
-const QString &KUser::getWorkstations() const //sam_workstation;
+const QString &KU::KUser::getWorkstations() const //sam_workstation;
 {
   return sam_workstations;
 }
 
-const QString &KUser::getDomain() const //sam_domain;
+const QString &KU::KUser::getDomain() const //sam_domain;
 {
   return sam_domain;
 }
 
-const SID &KUser::getSID() const //sid,
+const SID &KU::KUser::getSID() const //sid,
 {
   return sid;
 }
 
-const SID &KUser::getPGSID() const //pgroup_sid;
+const SID &KU::KUser::getPGSID() const //pgroup_sid;
 {
   return pgroup_sid;
 }
 
-void KUser::setName(const QString &data)
+void KU::KUser::setName(const QString &data)
 {
   p_name = data;
 }
 
-void KUser::setSurname(const QString &data)
+void KU::KUser::setSurname(const QString &data)
 {
   p_surname = data;
 }
 
-void KUser::setEmail(const QString &data)
+void KU::KUser::setEmail(const QString &data)
 {
   p_email = data;
 }
 
-void KUser::setPwd(const QString &data)
+void KU::KUser::setPwd(const QString &data)
 {
   p_pwd = data;
 }
 
-void KUser::setHomeDir(const QString &data)
+void KU::KUser::setHomeDir(const QString &data)
 {
   p_dir = data;
 }
 
-void KUser::setShell(const QString &data)
+void KU::KUser::setShell(const QString &data)
 {
   p_shell = data;
 }
 
-void KUser::setFullName(const QString &data)
+void KU::KUser::setFullName(const QString &data)
 {
   p_fname = data;
 }
 
-void KUser::setDisabled(bool data)
+void KU::KUser::setDisabled(bool data)
 {
   isDisabled = data;
 }
 
 // FreeBSD apparently uses the GECOS fields differently than other Unices.
 // Create some better named functions to make the FreeBSD code clear
-void KUser::setOffice(const QString &data)
+void KU::KUser::setOffice(const QString &data)
 {
   p_office = data;
 }
 
-void KUser::setWorkPhone(const QString &data)
+void KU::KUser::setWorkPhone(const QString &data)
 {
   p_ophone = data;
 }
 
-void KUser::setHomePhone(const QString &data)
+void KU::KUser::setHomePhone(const QString &data)
 {
   p_hphone = data;
 }
 
 // New fields needed for the FreeBSD /etc/master.passwd file
-void KUser::setClass(const QString &data)
+void KU::KUser::setClass(const QString &data)
 {
   p_class = data;
 }
 
-void KUser::setLastChange(time_t data)
+void KU::KUser::setLastChange(time_t data)
 {
   p_change = data;
 }
 
-void KUser::setExpire(time_t data)
+void KU::KUser::setExpire(time_t data)
 {
   p_expire = data;
 }
 
-void KUser::setOffice1(const QString &data)
+void KU::KUser::setOffice1(const QString &data)
 {
   p_office1 = data;
 }
 
-void KUser::setOffice2(const QString &data)
+void KU::KUser::setOffice2(const QString &data)
 {
   p_office2 = data;
 }
 
-void KUser::setAddress(const QString &data)
+void KU::KUser::setAddress(const QString &data)
 {
   p_address = data;
 }
 
-void KUser::setUID(uid_t data)
+void KU::KUser::setUID(uid_t data)
 {
   p_uid = data;
 }
 
-void KUser::setGID(gid_t data)
+void KU::KUser::setGID(gid_t data)
 {
   p_gid = data;
 }
 
-void KUser::setSPwd(const QString &data)
+void KU::KUser::setSPwd(const QString &data)
 {
   s_pwd = data;
 }
 
-void KUser::setMin(int data)
+void KU::KUser::setMin(int data)
 {
   s_min = data;
 }
 
-void KUser::setMax(int data)
+void KU::KUser::setMax(int data)
 {
   s_max = data;
 }
 
-void KUser::setWarn(int data)
+void KU::KUser::setWarn(int data)
 {
   s_warn = data;
 }
 
-void KUser::setInactive(int data)
+void KU::KUser::setInactive(int data)
 {
   s_inact = data;
 }
 
-void KUser::setLMPwd( const QString &data ) //  sam_lmpwd,
+void KU::KUser::setLMPwd( const QString &data ) //  sam_lmpwd,
 {
   sam_lmpwd = data;
 }
 
-void KUser::setNTPwd( const QString &data ) //sam_ntpwd,
+void KU::KUser::setNTPwd( const QString &data ) //sam_ntpwd,
 {
   sam_ntpwd = data;
 }
 
-void KUser::setLoginScript( const QString &data ) //sam_loginscript,
+void KU::KUser::setLoginScript( const QString &data ) //sam_loginscript,
 {
   sam_loginscript = data;
 }
 
-void KUser::setProfilePath( const QString &data) //  sam_profile,
+void KU::KUser::setProfilePath( const QString &data) //  sam_profile,
 {
   sam_profile = data;
 }
 
-void KUser::setHomeDrive( const QString &data ) //sam_homedrive,
+void KU::KUser::setHomeDrive( const QString &data ) //sam_homedrive,
 {
   sam_homedrive = data;
 }
 
-void KUser::setHomePath( const QString &data ) //sam_homepath;
+void KU::KUser::setHomePath( const QString &data ) //sam_homepath;
 {
   sam_homepath = data;
 }
 
-void KUser::setWorkstations( const QString &data ) //sam_workstation;
+void KU::KUser::setWorkstations( const QString &data ) //sam_workstation;
 {
   sam_workstations = data;
 }
 
-void KUser::setDomain( const QString &data ) //sam_domain
+void KU::KUser::setDomain( const QString &data ) //sam_domain
 {
   sam_domain = data;
 }
 
-void KUser::setSID( const SID &data ) //sid,
+void KU::KUser::setSID( const SID &data ) //sid,
 {
   sid = data;
 }
 
-void KUser::setPGSID( const SID &data ) //pgroup_sid;
+void KU::KUser::setPGSID( const SID &data ) //pgroup_sid;
 {
   pgroup_sid = data;
 }
 
-void KUser::setFlag(int data)
+void KU::KUser::setFlag(int data)
 {
   s_flag = data;
 }
 
-void KUser::setCreateHome(bool data)
+void KU::KUser::setCreateHome(bool data)
 {
   isCreateHome = data;
 }
 
-void KUser::setCreateMailBox(bool data)
+void KU::KUser::setCreateMailBox(bool data)
 {
   isCreateMailBox = data;
 }
 
-void KUser::setCopySkel(bool data)
+void KU::KUser::setCopySkel(bool data)
 {
   isCopySkel = data;
 }
 
-void KUser::setDeleteHome(bool data)
+void KU::KUser::setDeleteHome(bool data)
 {
   isDeleteHome = data;
 }
 
-void KUser::setDeleteMailBox(bool data)
+void KU::KUser::setDeleteMailBox(bool data)
 {
   isDeleteMailBox = data;
 }
 
-int KUser::createHome()
+int KU::KUser::createHome()
 {
 
   if(p_dir.isNull() || p_dir.isEmpty()) {
@@ -571,7 +571,7 @@ int KUser::createHome()
   return(1);
 }
 
-int KUser::tryCreate(const QString &dir)
+int KU::KUser::tryCreate(const QString &dir)
 {
   struct stat sb;
   int rc = 0;
@@ -612,7 +612,7 @@ int KUser::tryCreate(const QString &dir)
   }
 }
 
-int KUser::createMailBox()
+int KU::KUser::createMailBox()
 {
   QString mailboxpath;
   int fd;
@@ -645,7 +645,7 @@ int KUser::createMailBox()
   return 0;
 }
 
-void KUser::copyDir(const QString &srcPath, const QString &dstPath)
+void KU::KUser::copyDir(const QString &srcPath, const QString &dstPath)
 {
   mode_t mode;
   QDir s(srcPath);
@@ -719,7 +719,7 @@ void KUser::copyDir(const QString &srcPath, const QString &dstPath)
   }
 }
 
-int KUser::copySkel()
+int KU::KUser::copySkel()
 {
   QDir s(QFile::decodeName(SKELDIR));
   QDir d(p_dir);
@@ -742,7 +742,7 @@ int KUser::copySkel()
   return 0;
 }
 
-int KUser::removeHome()
+int KU::KUser::removeHome()
 {
   struct stat sb;
 
@@ -765,7 +765,7 @@ int KUser::removeHome()
 
 //TODO: remove at jobs too.
 
-int KUser::removeCrontabs()
+int KU::KUser::removeCrontabs()
 {
   QString file;
   QString command;
@@ -782,7 +782,7 @@ int KUser::removeCrontabs()
   return 0;
 }
 
-int KUser::removeMailBox()
+int KU::KUser::removeMailBox()
 {
   QString file;
 
@@ -795,7 +795,7 @@ int KUser::removeMailBox()
   return 0;
 }
 
-int KUser::removeProcesses()
+int KU::KUser::removeProcesses()
 {
   // be paranoid -- kill all processes owned by that user, if not root.
 
@@ -815,23 +815,23 @@ int KUser::removeProcesses()
   return 0;
 }
 
-KUsers::KUsers(KUserPrefsBase *cfg)
+KU::KUsers::KUsers(KUserPrefsBase *cfg)
 {
   mUsers.setAutoDelete(TRUE);
   mCfg = cfg;
 }
 
-KUsers::~KUsers()
+KU::KUsers::~KUsers()
 {
   mUsers.clear();
 }
 
-const QString &KUsers::getDOMSID() const
+const QString &KU::KUsers::getDOMSID() const
 {
   return domsid;
 }
 
-void KUsers::parseGecos( const char *gecos, QString &name, 
+void KU::KUsers::parseGecos( const char *gecos, QString &name, 
   QString &field1, QString &field2, QString &field3 )
 {
   int no = 0;
@@ -858,7 +858,7 @@ void KUsers::parseGecos( const char *gecos, QString &name,
   }
 }  
 
-void KUsers::fillGecos(KUser *user, const char *gecos)
+void KU::KUsers::fillGecos(KU::KUser *user, const char *gecos)
 {
   QString name,field1,field2,field3;
   parseGecos( gecos, name, field1, field2, field3 );
@@ -868,7 +868,7 @@ void KUsers::fillGecos(KUser *user, const char *gecos)
   caps & Cap_BSD ? user->setHomePhone( field3 ) : user->setAddress( field3 );
 }
 
-bool KUsers::doCreate(KUser *user)
+bool KU::KUsers::doCreate(KU::KUser *user)
 {
   QString h_dir;
 
@@ -894,7 +894,7 @@ bool KUsers::doCreate(KUser *user)
   return TRUE;
 }
 
-bool KUsers::doDelete( KUser *user )
+bool KU::KUsers::doDelete( KU::KUser *user )
 {
   kdDebug() << "delete user: " << user->getName() << " uid: " << user->getUID() << endl;
   if ( user->isDeleteHome ) {
@@ -909,52 +909,52 @@ bool KUsers::doDelete( KUser *user )
   return TRUE;
 }
 
-KUser *KUsers::lookup(const QString & name)
+KU::KUser *KU::KUsers::lookup(const QString & name)
 {
-  KUser *user;
-  QPtrListIterator<KUser> it( mUsers );
+  KU::KUser *user;
+  QPtrListIterator<KU::KUser> it( mUsers );
 
   while ( (user = it.current()) != 0 && user->getName() != name ) ++it;
   return user;
 }
 
-KUser *KUsers::lookup(uid_t uid)
+KU::KUser *KU::KUsers::lookup(uid_t uid)
 {
-  KUser *user;
-  QPtrListIterator<KUser> it( mUsers );
+  KU::KUser *user;
+  QPtrListIterator<KU::KUser> it( mUsers );
 
   while ( (user = it.current()) != 0 && user->getUID() != uid ) ++it;
   return user;
 }
 
-KUser *KUsers::lookup_sam( const SID &sid )
+KU::KUser *KU::KUsers::lookup_sam( const SID &sid )
 {
-  KUser *user;
-  QPtrListIterator<KUser> it( mUsers );
+  KU::KUser *user;
+  QPtrListIterator<KU::KUser> it( mUsers );
 
   while ( (user = it.current()) != 0 && user->getSID() != sid ) ++it;
   return user;
 }
 
-KUser *KUsers::lookup_sam( const QString &sid )
+KU::KUser *KU::KUsers::lookup_sam( const QString &sid )
 {
-  KUser *user;
-  QPtrListIterator<KUser> it( mUsers );
+  KU::KUser *user;
+  QPtrListIterator<KU::KUser> it( mUsers );
 
   while ( (user = it.current()) != 0 && user->getSID().getSID() != sid ) ++it;
   return user;
 }
 
-KUser *KUsers::lookup_sam( uint rid )
+KU::KUser *KU::KUsers::lookup_sam( uint rid )
 {
-  KUser *user;
-  QPtrListIterator<KUser> it( mUsers );
+  KU::KUser *user;
+  QPtrListIterator<KU::KUser> it( mUsers );
 
   while ( (user = it.current()) != 0 && user->getSID().getRID() != rid ) ++it;
   return user;
 }
 
-uid_t KUsers::first_free()
+uid_t KU::KUsers::first_free()
 {
   uid_t t;
 
@@ -965,7 +965,7 @@ uid_t KUsers::first_free()
   return NO_FREE;
 }
 
-uint KUsers::first_free_sam()
+uint KU::KUsers::first_free_sam()
 {
   uint t;
 
@@ -976,45 +976,45 @@ uint KUsers::first_free_sam()
   return 0;
 }
 
-uint KUsers::count() const
+uint KU::KUsers::count() const
 {
   return mUsers.count();
 }
 
-KUser *KUsers::operator[](uint num)
+KU::KUser *KU::KUsers::operator[](uint num)
 {
   return mUsers.at(num);
 }
 
-KUser *KUsers::first()
+KU::KUser *KU::KUsers::first()
 {
   return mUsers.first();
 }
 
-KUser *KUsers::next()
+KU::KUser *KU::KUsers::next()
 {
   return mUsers.next();
 }
 
-void KUsers::add(KUser *user)
+void KU::KUsers::add(KU::KUser *user)
 {
   mAdd.append( user );
 }
 
-void KUsers::del(KUser *user)
+void KU::KUsers::del(KU::KUser *user)
 {
   mDel.append( user );
 }
 
-void KUsers::mod(KUser *uold, const KUser &unew)
+void KU::KUsers::mod(KU::KUser *uold, const KU::KUser &unew)
 {
   mMod.insert( uold, unew );
 }
 
-void KUsers::commit()
+void KU::KUsers::commit()
 {
-  kdDebug() << "KUsers::commit()" << endl;
-  KUser *user;
+  kdDebug() << "KU::KUsers::commit()" << endl;
+  KU::KUser *user;
   DelIt dit( mDelSucc );
   AddIt ait( mAddSucc );
   ModIt mit = mModSucc.begin();
@@ -1041,9 +1041,9 @@ void KUsers::commit()
   cancelMods();
 }
 
-void KUsers::cancelMods()
+void KU::KUsers::cancelMods()
 {
-  KUser *user;
+  KU::KUser *user;
   while ( (user = mAdd.first()) ) {
     delete user;
     mAdd.remove();

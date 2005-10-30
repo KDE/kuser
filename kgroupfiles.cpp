@@ -67,7 +67,7 @@ KGroupFiles::~KGroupFiles()
 bool KGroupFiles::reload()
 {
   struct group *p;
-  KGroup *tmpKG = 0;
+  KU::KGroup *tmpKG = 0;
   struct stat st;
   QString filename;
   QString group_filename;
@@ -130,7 +130,7 @@ bool KGroupFiles::reload()
     setgrent();
     while ((p = getgrent()) != NULL) {
 #endif
-      tmpKG = new KGroup();
+      tmpKG = new KU::KGroup();
       tmpKG->setGID(p->gr_gid);
       tmpKG->setName(QString::fromLocal8Bit(p->gr_name));
       tmpKG->setPwd(QString::fromLocal8Bit(p->gr_passwd));
@@ -255,8 +255,8 @@ bool KGroupFiles::save()
     }
   }
 
-  QPtrListIterator<KGroup> it( mGroups );
-  KGroup *gr;
+  QPtrListIterator<KU::KGroup> it( mGroups );
+  KU::KGroup *gr;
   bool addok = false;
 
   gr = (*it);
@@ -265,7 +265,7 @@ bool KGroupFiles::save()
 
     if ( gr == 0 ) {
       if ( addok ) break;
-      it = QPtrListIterator<KGroup> ( mAdd );
+      it = QPtrListIterator<KU::KGroup> ( mAdd );
       gr = (*it);
       addok = true;
       if ( gr == 0 ) break;

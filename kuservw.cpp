@@ -24,7 +24,7 @@
 #include "kuservw.h"
 
 
-KUserViewItem::KUserViewItem(KListView *parent, KUser *aku)
+KUserViewItem::KUserViewItem(KListView *parent, KU::KUser *aku)
  : KListViewItem(parent), mUser(aku)
 {
 }
@@ -62,14 +62,14 @@ QString KUserViewItem::text(int num) const
 {
   switch(num)
   {
-     case 0: return mUser->getCaps() & KUser::Cap_POSIX ? 
+     case 0: return mUser->getCaps() & KU::KUser::Cap_POSIX ? 
       QString::number( mUser->getUID() ) : QString::null;
      case 1: return mUser->getName();
      case 2: return mUser->getFullName();
      case 3: return mUser->getHomeDir();
      case 4: return mUser->getShell();
      case 5: return mUser->getSID().getDOM();
-     case 6: return mUser->getCaps() & KUser::Cap_Samba ? 
+     case 6: return mUser->getCaps() & KU::KUser::Cap_Samba ? 
       QString::number( mUser->getSID().getRID() ) : QString::null;
      case 7: return mUser->getLoginScript();
      case 8: return mUser->getProfilePath();
@@ -90,12 +90,12 @@ KUserView::~KUserView()
 {
 }
 
-void KUserView::insertItem(KUser *aku) {
+void KUserView::insertItem(KU::KUser *aku) {
   KUserViewItem *userItem = new KUserViewItem(this, aku);
   KListView::insertItem(userItem);
 }
 
-void KUserView::removeItem(KUser *aku) {
+void KUserView::removeItem(KU::KUser *aku) {
   KUserViewItem *userItem = (KUserViewItem *)firstChild();
 
   while(userItem)
@@ -125,7 +125,7 @@ void KUserView::init()
     addColumn(i18n("Login Shell"));
   }
 
-  if ( kug->getUsers().getCaps() & KUsers::Cap_Samba ) {
+  if ( kug->getUsers().getCaps() & KU::KUsers::Cap_Samba ) {
     addColumn(i18n("Domain SID"));
     addColumn(i18n("RID"));
     addColumn(i18n("Samba Login Script"));
@@ -135,7 +135,7 @@ void KUserView::init()
   }
 }
 
-KUser *KUserView::getCurrentUser() {
+KU::KUser *KUserView::getCurrentUser() {
   KUserViewItem *userItem = (KUserViewItem *)currentItem();
   if (!userItem) return 0;
 

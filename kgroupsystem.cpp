@@ -31,7 +31,7 @@
 #include "kgroupsystem.h"
 #include "misc.h"
 
-KGroupSystem::KGroupSystem( KUserPrefsBase *cfg ) : KGroups( cfg )
+KGroupSystem::KGroupSystem( KUserPrefsBase *cfg ) : KU::KGroups( cfg )
 {
   caps = Cap_ReadOnly | Cap_Passwd;
 
@@ -46,11 +46,11 @@ KGroupSystem::~KGroupSystem()
 bool KGroupSystem::reload()
 {
   struct group *p;
-  KGroup *tmpKG = 0;
+  KU::KGroup *tmpKG = 0;
 
   setgrent();
   while ((p = getgrent()) != NULL) {
-    tmpKG = new KGroup();
+    tmpKG = new KU::KGroup();
     tmpKG->setGID(p->gr_gid);
     tmpKG->setName(QString::fromLocal8Bit(p->gr_name));
     tmpKG->setPwd(QString::fromLocal8Bit(p->gr_passwd));

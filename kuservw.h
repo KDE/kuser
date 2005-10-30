@@ -30,14 +30,14 @@
 class KUserViewItem : public KListViewItem
 {
 public:
-  KUserViewItem(KListView *parent, KUser *aku);
-  KUser *user() { return mUser; }
+  KUserViewItem(KListView *parent, KU::KUser *aku);
+  KU::KUser *user() { return mUser; }
 private:  
   virtual QString text ( int ) const;
   virtual void paintCell( QPainter *p, const QColorGroup &cg,
     int column, int width, int alignment );
   virtual int compare( QListViewItem *i, int col, bool ascending ) const;
-  KUser *mUser;
+  KU::KUser *mUser;
 };
 
 class KUserView : public KListView
@@ -49,9 +49,9 @@ public:
 
   virtual ~KUserView();
 
-  void insertItem(KUser *aku);
-  void removeItem(KUser *aku);
-  KUser *getCurrentUser();
+  void insertItem(KU::KUser *aku);
+  void removeItem(KU::KUser *aku);
+  KU::KUser *getCurrentUser();
   void init();
 };
 

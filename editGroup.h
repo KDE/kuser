@@ -35,7 +35,7 @@ class editGroup : public KDialogBase
   Q_OBJECT
 public:
 
-  editGroup(KGroup *akg, bool samba, bool add, 
+  editGroup(KU::KGroup *akg, bool samba, bool add, 
     QWidget* parent = NULL, const char* name = NULL);
 
   virtual ~editGroup();
@@ -49,7 +49,7 @@ protected slots:
 private:
   bool mSamba, mAdd;
   bool ro;
-  KGroup *kg;
+  KU::KGroup *kg;
   KListView *m_list_in,*m_list_notin;
   KLineEdit   *legrpname;
   KLineEdit   *legid;

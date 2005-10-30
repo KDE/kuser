@@ -29,7 +29,7 @@
 
 #include "kgroupldap.moc"
 
-KGroupLDAP::KGroupLDAP( KUserPrefsBase *cfg ) : KGroups( cfg )
+KGroupLDAP::KGroupLDAP( KUserPrefsBase *cfg ) : KU::KGroups( cfg )
 {
   mGroups.setAutoDelete(TRUE);
 
@@ -70,7 +70,7 @@ KGroupLDAP::~KGroupLDAP()
   mGroups.clear();
 }
 
-QString KGroupLDAP::getRDN( KGroup *group )
+QString KGroupLDAP::getRDN( KU::KGroup *group )
 {
   switch ( mCfg->ldapgrouprdn() ) {
     case KUserPrefsBase::EnumLdapgrouprdn::cn:
@@ -120,7 +120,7 @@ void KGroupLDAP::data( KIO::Job*, const QByteArray& data )
         val = QString::fromUtf8( value, value.size() );
         if ( name == "objectclass" ) {
           if ( val.lower() == "sambagroupmapping" ) 
-            mGroup->setCaps( KGroup::Cap_Samba );
+            mGroup->setCaps( KU::KGroup::Cap_Samba );
         } else if ( name == "gidnumber" )
           mGroup->setGID( val.toLong() );
         else if ( name == "cn" )
@@ -139,8 +139,8 @@ void KGroupLDAP::data( KIO::Job*, const QByteArray& data )
           mGroup->setDesc( val );
         break;
       case KABC::LDIF::EndEntry: {
-        KGroup newGroup;
-        mGroups.append( new KGroup( mGroup ) );
+        KU::KGroup newGroup;
+        mGroups.append( new KU::KGroup( mGroup ) );
         mGroup->copy( &newGroup );
         if ( ( mGroups.count() & 7 ) == 7 ) {
           mProg->progressBar()->advance( mAdv );
@@ -158,7 +158,7 @@ void KGroupLDAP::data( KIO::Job*, const QByteArray& data )
 bool KGroupLDAP::reload()
 {
   kdDebug() << "KGroupLDAP::reload()" << endl;
-  mGroup = new KGroup();
+  mGroup = new KU::KGroup();
   mParser.startParsing();
 
   mProg = new KProgressDialog( 0, "", "", i18n("Loading Groups From LDAP"), true );
@@ -236,7 +236,7 @@ void KGroupLDAP::putData( KIO::Job*, QByteArray& data )
     data.resize(0);
 }
 
-void KGroupLDAP::addData( KGroup *group )
+void KGroupLDAP::addData( KU::KGroup *group )
 {
   ldif = "dn: " + getRDN( group ).utf8() + "," +
     mUrl.dn().utf8() + "\n" + "objectclass: posixGroup\n";
@@ -248,7 +248,7 @@ void KGroupLDAP::addData( KGroup *group )
   for ( uint i=0; i < group->count(); i++ ) {
     ldif += KABC::LDIF::assembleLine( "memberuid", group->user(i) ) + "\n";
   }
-  if ( ( getCaps() & Cap_Samba ) && ( group->getCaps() & KGroup::Cap_Samba ) ) {
+  if ( ( getCaps() & Cap_Samba ) && ( group->getCaps() & KU::KGroup::Cap_Samba ) ) {
     ldif += "objectclass: sambagroupmapping\n" +
       KABC::LDIF::assembleLine( "sambasid", group->getSID().getSID() ) + "\n" +
       KABC::LDIF::assembleLine( "displayname", group->getDisplayName() ) + "\n" +
@@ -259,14 +259,14 @@ void KGroupLDAP::addData( KGroup *group )
   kdDebug() << "ldif: " << ldif << endl;
 }
 
-void KGroupLDAP::delData( KGroup *group )
+void KGroupLDAP::delData( KU::KGroup *group )
 {
   ldif = "dn: " + getRDN( group ).utf8() + "," +
     mUrl.dn().utf8() + "\n" + "changetype: delete\n\n";
   kdDebug() << "ldif: " << ldif << endl;
 }
 
-void KGroupLDAP::modData( KGroup *group )
+void KGroupLDAP::modData( KU::KGroup *group )
 {
   QString oldrdn = getRDN( mGroup );
   QString newrdn = getRDN( group );
@@ -283,7 +283,7 @@ void KGroupLDAP::modData( KGroup *group )
     "changetype: modify\n" +
     "replace: objectclass\n" +
     "objectclass: posixgroup\n";
-  if ( ( getCaps() & Cap_Samba ) && ( group->getCaps() & KGroup::Cap_Samba ) ) {
+  if ( ( getCaps() & Cap_Samba ) && ( group->getCaps() & KU::KGroup::Cap_Samba ) ) {
     ldif += "objectclass: sambagroupmapping\n";
   }
   ldif +=
@@ -298,7 +298,7 @@ void KGroupLDAP::modData( KGroup *group )
     ldif += KABC::LDIF::assembleLine( "memberuid", group->user(i)) + "\n";
   }
   if ( getCaps() & Cap_Samba ) {
-    if ( group->getCaps() & KGroup::Cap_Samba ) {
+    if ( group->getCaps() & KU::KGroup::Cap_Samba ) {
       ldif +=
         "-\nreplace: sambasid\n" +
         KABC::LDIF::assembleLine( "sambasid", group->getSID().getSID() ) +

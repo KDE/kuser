@@ -32,13 +32,13 @@ public:
   void initCfg( const QString &connection );
   
   KUserPrefsBase *kcfg() { return cfg; }
-  KUsers &getUsers();
-  KGroups &getGroups();
+  KU::KUsers &getUsers();
+  KU::KGroups &getGroups();
   
 private:
 
-  KUsers *users;
-  KGroups *groups;
+  KU::KUsers *users;
+  KU::KGroups *groups;
   
   KUserPrefsBase *cfg;
 };

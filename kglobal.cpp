@@ -75,12 +75,12 @@ KUserGlobals::~KUserGlobals()
   delete cfg;
 }
 
-KUsers &KUserGlobals::getUsers() 
+KU::KUsers &KUserGlobals::getUsers() 
 {
   return (*users);
 }
 
-KGroups &KUserGlobals::getGroups() 
+KU::KGroups &KUserGlobals::getGroups() 
 {
   return (*groups);
 }

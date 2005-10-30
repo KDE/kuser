@@ -28,7 +28,7 @@
 class delUser: public KDialogBase {
   Q_OBJECT
 public:
-  delUser(KUser *AUser, QWidget *parent = 0, const char *name = 0);
+  delUser(KU::KUser *AUser, QWidget *parent = 0, const char *name = 0);
 
   bool getDeleteHomeDir()
      { return m_deleteHomeDir->isChecked(); }

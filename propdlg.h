@@ -44,13 +44,13 @@ class propdlg : public KDialogBase
   Q_OBJECT
 
 public:
-  propdlg( const QPtrList<KUser> &users,
+  propdlg( const QPtrList<KU::KUser> &users,
     QWidget *parent = 0, const char *name = 0 );
-  propdlg( KUser *AUser, bool fixedprivgroup, 
+  propdlg( KU::KUser *AUser, bool fixedprivgroup, 
     QWidget *parent = 0, const char *name = 0 );
   ~propdlg();
 
-  void mergeUser( KUser *user, KUser *newuser );
+  void mergeUser( KU::KUser *user, KU::KUser *newuser );
 
 protected slots:
   virtual void slotOk();
@@ -85,7 +85,7 @@ protected:
   QGridLayout *frontlayout;
   int frontrow;
 
-  QPtrList<KUser> mUsers;
+  QPtrList<KU::KUser> mUsers;
   QMap<QWidget*, QCheckBox*> mNoChanges;
   bool ismoreshells;
   bool ischanged;

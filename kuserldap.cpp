@@ -30,7 +30,7 @@
 
 #include "kuserldap.moc"
 
-KUserLDAP::KUserLDAP(KUserPrefsBase *cfg) : KUsers( cfg )
+KUserLDAP::KUserLDAP(KUserPrefsBase *cfg) : KU::KUsers( cfg )
 {
   schemaversion = 0;
 
@@ -114,9 +114,9 @@ void KUserLDAP::data( KIO::Job *, const QByteArray& data )
         val = QString::fromUtf8( value, value.size() );
         if ( name == "objectclass" ) {
           if ( val.lower() == "posixaccount" )
-            mUser->setCaps( mUser->getCaps() | KUser::Cap_POSIX );
+            mUser->setCaps( mUser->getCaps() | KU::KUser::Cap_POSIX );
           else if ( val.lower() == "sambasamaccount" )
-            mUser->setCaps( mUser->getCaps() | KUser::Cap_Samba );
+            mUser->setCaps( mUser->getCaps() | KU::KUser::Cap_Samba );
 	  else if ( val.lower() != "inetorgperson" &&
 	            val.lower() != "shadowaccount" &&
                     val.lower() != "account" )
@@ -204,9 +204,9 @@ void KUserLDAP::data( KIO::Job *, const QByteArray& data )
           schemaversion = 1; 
         break;
       case KABC::LDIF::EndEntry: {
-        KUser emptyUser, *newUser;
+        KU::KUser emptyUser, *newUser;
         kdDebug() << "new user: " << mUser->getName() << endl;
-        newUser = new KUser( mUser );
+        newUser = new KU::KUser( mUser );
         mUsers.append( newUser );
         if ( !mOc.isEmpty() ) {
           mObjectClasses.insert( newUser, mOc );
@@ -235,7 +235,7 @@ bool KUserLDAP::reload()
   kdDebug() << "kuserldap::reload()" << endl;
   mObjectClasses.clear();
   mOc.clear();
-  mUser = new KUser();
+  mUser = new KU::KUser();
   mUser->setPwd( "" );
   mUser->setSPwd( "" );
   mParser.startParsing();
@@ -259,7 +259,7 @@ bool KUserLDAP::reload()
   return( mOk );
 }
 
-QString KUserLDAP::getRDN(KUser *user)
+QString KUserLDAP::getRDN(KU::KUser *user)
 {
   switch ( mCfg->ldapuserrdn() ) {
     case KUserPrefsBase::EnumLdapuserrdn::uid:
@@ -275,7 +275,7 @@ QString KUserLDAP::getRDN(KUser *user)
   return "";
 }
 
-void KUserLDAP::createPassword( KUser *user, const QString &password )
+void KUserLDAP::createPassword( KU::KUser *user, const QString &password )
 {
   switch ( mCfg->ldappasswordhash() ) {
     case KUserPrefsBase::EnumLdappasswordhash::Clear:
@@ -361,7 +361,7 @@ void KUserLDAP::createPassword( KUser *user, const QString &password )
   }
 }
 
-void KUserLDAP::getLDIF( KUser *user, bool mod )
+void KUserLDAP::getLDIF( KU::KUser *user, bool mod )
 {
   QString gecos, cn, pwd, samflags;
   ldif.resize( 0 );
@@ -407,13 +407,13 @@ void KUserLDAP::getLDIF( KUser *user, bool mod )
   else
     ldif += "objectClass: account\n";
 
-  if ( user->getCaps() & KUser::Cap_POSIX ) {
+  if ( user->getCaps() & KU::KUser::Cap_POSIX ) {
     ldif += "objectClass: posixAccount\n";
   }
-  if ( ( caps & Cap_Shadow ) && ( user->getCaps() & KUser::Cap_POSIX ) ) {
+  if ( ( caps & Cap_Shadow ) && ( user->getCaps() & KU::KUser::Cap_POSIX ) ) {
     ldif += "objectClass: shadowAccount\n";
   }
-  if ( ( caps & Cap_Samba ) && ( user->getCaps() & KUser::Cap_Samba ) ) {
+  if ( ( caps & Cap_Samba ) && ( user->getCaps() & KU::KUser::Cap_Samba ) ) {
     ldif += "objectClass: sambaSamAccount\n";
   }
   if ( mod && mObjectClasses.contains( mUser ) ) {
@@ -438,13 +438,13 @@ void KUserLDAP::getLDIF( KUser *user, bool mod )
   }
   if ( mod ) ldif += "-\n";
 
-  if ( ( user->getCaps() & KUser::Cap_POSIX ) || ( caps & Cap_InetOrg ) ) {
+  if ( ( user->getCaps() & KU::KUser::Cap_POSIX ) || ( caps & Cap_InetOrg ) ) {
     if ( mod ) ldif += "replace: userpassword\n";
     ldif += KABC::LDIF::assembleLine( "userpassword", pwd )+"\n";
     if ( mod ) ldif += "-\n";
   }
 
-  if ( user->getCaps() & KUser::Cap_POSIX ) {
+  if ( user->getCaps() & KU::KUser::Cap_POSIX ) {
     if ( mod ) ldif += "replace: uidnumber\n";
     ldif += KABC::LDIF::assembleLine( "uidnumber",
       QString::number( user->getUID() ) )+"\n";
@@ -488,7 +488,7 @@ void KUserLDAP::getLDIF( KUser *user, bool mod )
   }
 
   if ( caps & Cap_Samba ) {
-    if ( user->getCaps() & KUser::Cap_Samba ) {
+    if ( user->getCaps() & KU::KUser::Cap_Samba ) {
       if ( mod ) ldif += "replace: sambadomainname\n";
       ldif += KABC::LDIF::assembleLine( "sambadomainname", user->getDomain() ) + "\n";
       if ( mod ) ldif += "-\nreplace: sambauserworkstations\n";
@@ -553,7 +553,7 @@ void KUserLDAP::getLDIF( KUser *user, bool mod )
   }
 
   if ( caps & Cap_Shadow ) {
-    if ( user->getCaps() & KUser::Cap_POSIX ) {
+    if ( user->getCaps() & KU::KUser::Cap_POSIX ) {
       if ( mod ) ldif += "replace: shadowlastchange\n"; //sambapwdlastset
       ldif += KABC::LDIF::assembleLine( "shadowlastchange",
         QString::number( timeToDays( user->getLastChange() ) ) ) + "\n";
@@ -593,7 +593,7 @@ void KUserLDAP::getLDIF( KUser *user, bool mod )
 //  kdDebug() << "ldif: " << ldif << endl;
 }
 
-void KUserLDAP::delData( KUser *user )
+void KUserLDAP::delData( KU::KUser *user )
 {
   ldif = "dn: " + getRDN( user ).utf8() + "," + mUrl.dn().utf8() + "\n" +
     "changetype: delete\n\n";

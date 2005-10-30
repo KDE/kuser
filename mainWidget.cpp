@@ -140,7 +140,7 @@ void mainWidget::init()
   md->clearUsers();
   md->clearGroups();
   kug->init();
-  rw = ! ( kug->getUsers().getCaps() & KUsers::Cap_ReadOnly );
+  rw = ! ( kug->getUsers().getCaps() & KU::KUsers::Cap_ReadOnly );
   kdDebug() << "Users rw()" << rw << endl;
   actionCollection()->action("add_user")->setEnabled( rw );
   actionCollection()->action("edit_user")->setEnabled( rw );
@@ -157,7 +157,7 @@ void mainWidget::init()
     disconnect( md, SIGNAL(userSelected(bool)), 0, 0 );
   }
 
-  rw = ! ( kug->getGroups().getCaps() & KGroups::Cap_ReadOnly );
+  rw = ! ( kug->getGroups().getCaps() & KU::KGroups::Cap_ReadOnly );
   kdDebug() << "Groups rw()" << rw << endl;
   actionCollection()->action("add_group")->setEnabled( rw );
   actionCollection()->action("edit_group")->setEnabled( rw );

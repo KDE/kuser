@@ -34,7 +34,7 @@
 #include "kglobal_.h"
 #include "editGroup.h"
 
-editGroup::editGroup(KGroup *akg, bool samba, bool add,
+editGroup::editGroup(KU::KGroup *akg, bool samba, bool add,
    QWidget* parent, const char* name)
   : KDialogBase(parent, name, true, i18n("Group Properties"), Ok | Cancel, Ok, true)
 {
@@ -43,7 +43,7 @@ editGroup::editGroup(KGroup *akg, bool samba, bool add,
   mSamba = samba;
   mOldName = kg->getName();
   SID sid = kg->getSID();
-  ro = kug->getGroups().getCaps() & KGroups::Cap_ReadOnly;
+  ro = kug->getGroups().getCaps() & KU::KGroups::Cap_ReadOnly;
 
   RID rid;
   rid.rid = 512; rid.name = i18n("Domain Admins"); rid.desc = i18n("Admins"); mRids.append( rid );
@@ -155,7 +155,7 @@ editGroup::editGroup(KGroup *akg, bool samba, bool add,
     connect( cbsamba, SIGNAL(toggled(bool)), letype, SLOT(setDisabled(bool)) );
     connect( cbsamba, SIGNAL(toggled(bool)), ledomsid, SLOT(setDisabled(bool)) );
     if ( mAdd ) connect( cbsamba, SIGNAL(toggled(bool)), lerid, SLOT(setDisabled(bool)) );
-    if ( !mAdd ) cbsamba->setChecked( !( kg->getCaps() & KGroup::Cap_Samba ) );
+    if ( !mAdd ) cbsamba->setChecked( !( kg->getCaps() & KU::KGroup::Cap_Samba ) );
   }
 
   m_list_in = new KListView(page);
@@ -181,7 +181,7 @@ editGroup::editGroup(KGroup *akg, bool samba, bool add,
 
 
   for (unsigned int i = 0; i<kug->getUsers().count(); i++) {
-    KUser *user;
+    KU::KUser *user;
     user = kug->getUsers()[i];
     QString userName = user->getName();
     if ( kg->lookup_user(userName) || user->getGID() == kg->getGID() ) {
@@ -294,7 +294,7 @@ void editGroup::slotOk()
   kg->setName(legrpname->text());
   kg->setGID(s.toInt());
   if ( mSamba && !cbsamba->isChecked() ) {
-    kg->setCaps ( KGroup::Cap_Samba );
+    kg->setCaps ( KU::KGroup::Cap_Samba );
     kg->setSID( sid );
     switch ( letype->currentItem() ) {
       case 0:

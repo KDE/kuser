@@ -98,7 +98,7 @@ KIntSpinBox *propdlg::addDaysGroup(QWidget *parent, QGridLayout *layout, int row
 
 void propdlg::initDlg()
 {
-  ro = kug->getUsers().getCaps() & KUsers::Cap_ReadOnly;
+  ro = kug->getUsers().getCaps() & KU::KUsers::Cap_ReadOnly;
 
   QString whatstr;
 
@@ -134,7 +134,7 @@ void propdlg::initDlg()
     connect(lefname, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
     lefname->setFocus();
 
-    if ( kug->getUsers().getCaps() & KUsers::Cap_InetOrg ) {
+    if ( kug->getUsers().getCaps() & KU::KUsers::Cap_InetOrg ) {
       lesurname = new KLineEdit(frame);
 //    whatstr = i18n("WHAT IS THIS: Surname");
       addRow(frame, layout, row++, lesurname, i18n("Surname:"), whatstr);
@@ -165,7 +165,7 @@ void propdlg::initDlg()
 
     // FreeBSD appears to use the comma separated fields in the GECOS entry
     // differently than Linux.
-    if ( kug->getUsers().getCaps() & KUsers::Cap_BSD ) {
+    if ( kug->getUsers().getCaps() & KU::KUsers::Cap_BSD ) {
       leoffice = new KLineEdit(frame);
       connect(leoffice, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
 //    whatstr = i18n("WHAT IS THIS: Office");
@@ -205,7 +205,7 @@ void propdlg::initDlg()
     connect(cbdisabled, SIGNAL(stateChanged(int)), this, SLOT(changed()));
     addRow(frame, layout, row++, cbdisabled, i18n("Account &disabled"), whatstr);
 
-    if ( kug->getUsers().getCaps() & KUsers::Cap_Disable_POSIX ) {
+    if ( kug->getUsers().getCaps() & KU::KUsers::Cap_Disable_POSIX ) {
       cbposix = new QCheckBox(frame);
       connect(cbposix, SIGNAL(stateChanged(int)), this, SLOT(changed()));
       connect(cbposix, SIGNAL(stateChanged(int)), this, SLOT(cbposixChanged()));
@@ -216,9 +216,9 @@ void propdlg::initDlg()
     frontrow = row;
   }
 
-  if ( kug->getUsers().getCaps() & KUsers::Cap_Shadow ||
-       kug->getUsers().getCaps() & KUsers::Cap_Samba ||
-       kug->getUsers().getCaps() & KUsers::Cap_BSD ) {
+  if ( kug->getUsers().getCaps() & KU::KUsers::Cap_Shadow ||
+       kug->getUsers().getCaps() & KU::KUsers::Cap_Samba ||
+       kug->getUsers().getCaps() & KU::KUsers::Cap_BSD ) {
 
   // Tab 2 : Password Management
     QFrame *frame = addPage(i18n("Password Management"));
@@ -232,7 +232,7 @@ void propdlg::initDlg()
     layout->addMultiCellWidget(new KSeparator(KSeparator::HLine, frame), row, row, 0, 3);
     row++;
 
-    if ( kug->getUsers().getCaps() & KUsers::Cap_Shadow ) {
+    if ( kug->getUsers().getCaps() & KU::KUsers::Cap_Shadow ) {
       layout->addWidget( new QLabel( "POSIX parameters:", frame ), row++, 0 );
       lesmin = addDaysGroup(frame, layout, row++, i18n("Time before password may &not be changed after last password change:"), false);
       lesmax = addDaysGroup(frame, layout, row++, i18n("Time when password &expires after last password change:") );
@@ -242,7 +242,7 @@ void propdlg::initDlg()
       row++;
     }
     /*
-    if ( kug->getUsers().getCaps() & KUsers::Cap_Samba ) {
+    if ( kug->getUsers().getCaps() & KU::KUsers::Cap_Samba ) {
       layout->addWidget( new QLabel( "SAMBA parameters:", frame ), row++, 0 );
       layout->addMultiCellWidget(new KSeparator(KSeparator::HLine, frame), row, row, 0, 3);
       row++;
@@ -263,7 +263,7 @@ void propdlg::initDlg()
   }
 
   // Tab 3: Samba
-  if ( kug->getUsers().getCaps() & KUsers::Cap_Samba ) {
+  if ( kug->getUsers().getCaps() & KU::KUsers::Cap_Samba ) {
     QFrame *frame = addPage(i18n("Samba"));
     QGridLayout *layout = new QGridLayout(frame, 10, 4, marginHint(), spacingHint());
     int row = 0;
@@ -339,7 +339,7 @@ void propdlg::initDlg()
 
 }
 
-propdlg::propdlg( const QPtrList<KUser> &users,
+propdlg::propdlg( const QPtrList<KU::KUser> &users,
   QWidget *parent, const char *name ) :
   KDialogBase(Tabbed, i18n("User Properties"), Ok | Cancel, Ok, parent, name, true)
 
@@ -354,7 +354,7 @@ propdlg::propdlg( const QPtrList<KUser> &users,
   isgchanged = false;
 }
 
-propdlg::propdlg( KUser *AUser, bool fixedprivgroup,
+propdlg::propdlg( KU::KUser *AUser, bool fixedprivgroup,
   QWidget *parent, const char *name ) :
   KDialogBase(Tabbed, i18n("User Properties"), Ok | Cancel, Ok, parent, name, true)
 
@@ -377,7 +377,7 @@ void propdlg::cbposixChanged()
   leid->setEnabled( posix  & ( mUsers.getFirst() == mUsers.getLast() ) );
   leshell->setEnabled( posix );
   lehome->setEnabled( posix );
-  if ( kug->getUsers().getCaps() & KUsers::Cap_Shadow ) {
+  if ( kug->getUsers().getCaps() & KU::KUsers::Cap_Shadow ) {
     lesmin->setEnabled( posix );
     lesmax->setEnabled( posix );
     leswarn->setEnabled( posix );
@@ -446,7 +446,7 @@ void propdlg::setSB( KIntSpinBox *sb, int val, bool first )
 
 void propdlg::selectuser()
 {
-  KUser *user;
+  KU::KUser *user;
   bool first = true, one = ( mUsers.getFirst() == mUsers.getLast() );
 
   ismoreshells = false;
@@ -457,9 +457,9 @@ void propdlg::selectuser()
   lstchg = user->getLastChange();
   QDateTime datetime;
   datetime.setTime_t( lstchg );
-  if ( kug->getUsers().getCaps() & KUsers::Cap_Shadow ||
-       kug->getUsers().getCaps() & KUsers::Cap_Samba ||
-       kug->getUsers().getCaps() & KUsers::Cap_BSD ) {
+  if ( kug->getUsers().getCaps() & KU::KUsers::Cap_Shadow ||
+       kug->getUsers().getCaps() & KU::KUsers::Cap_Samba ||
+       kug->getUsers().getCaps() & KU::KUsers::Cap_BSD ) {
 
     leslstchg->setText( KGlobal::locale()->formatDateTime( datetime, false ) );
   }
@@ -468,13 +468,13 @@ void propdlg::selectuser()
     lbuser->setText( user->getName() );
     leid->setText( QString::number( user->getUID() ) );
     if ( ro ) leid->setReadOnly( true );
-    if ( kug->getUsers().getCaps() & KUsers::Cap_Samba ) {
+    if ( kug->getUsers().getCaps() & KU::KUsers::Cap_Samba ) {
       lerid->setText( QString::number( user->getSID().getRID() ) );
       if ( ro ) lerid->setReadOnly( true );
     }
   } else {
     leid->setEnabled( false );
-    if ( kug->getUsers().getCaps() & KUsers::Cap_Samba ) {
+    if ( kug->getUsers().getCaps() & KU::KUsers::Cap_Samba ) {
       lerid->setEnabled( false );
     }
   }
@@ -515,11 +515,11 @@ void propdlg::selectuser()
     }
 
     setCB( cbdisabled, user->getDisabled(), first );
-    if ( kug->getUsers().getCaps() & KUsers::Cap_Disable_POSIX ) {
-      setCB( cbposix, !(user->getCaps() & KUser::Cap_POSIX), first );
+    if ( kug->getUsers().getCaps() & KU::KUsers::Cap_Disable_POSIX ) {
+      setCB( cbposix, !(user->getCaps() & KU::KUser::Cap_POSIX), first );
     }
 
-    if ( kug->getUsers().getCaps() & KUsers::Cap_Samba ) {
+    if ( kug->getUsers().getCaps() & KU::KUsers::Cap_Samba ) {
       setLE( leliscript, user->getLoginScript(), first );
       QString profile;
       profile = user->getProfilePath();
@@ -532,12 +532,12 @@ void propdlg::selectuser()
       setLE( leworkstations, user->getWorkstations(), first );
       setLE( ledomain, user->getDomain(), first );
       setLE( ledomsid, user->getSID().getDOM(), first );
-      setCB( cbsamba, !(user->getCaps() & KUser::Cap_Samba), first );
+      setCB( cbsamba, !(user->getCaps() & KU::KUser::Cap_Samba), first );
     }
 
-    if ( kug->getUsers().getCaps() & KUsers::Cap_Shadow ||
-         kug->getUsers().getCaps() & KUsers::Cap_Samba ||
-         kug->getUsers().getCaps() & KUsers::Cap_BSD ) {
+    if ( kug->getUsers().getCaps() & KU::KUsers::Cap_Shadow ||
+         kug->getUsers().getCaps() & KU::KUsers::Cap_Samba ||
+         kug->getUsers().getCaps() & KU::KUsers::Cap_BSD ) {
 
       if ( user->getLastChange() != lstchg ) {
         leslstchg->setText( "" );
@@ -559,18 +559,18 @@ void propdlg::selectuser()
       }
     }
 
-    if ( kug->getUsers().getCaps() & KUsers::Cap_Shadow ) {
+    if ( kug->getUsers().getCaps() & KU::KUsers::Cap_Shadow ) {
       setSB( lesmin, user->getMin(), first );
       setSB( lesmax, user->getMax(), first );
       setSB( leswarn, user->getWarn(), first );
       setSB( lesinact, user->getInactive(), first );
     }
 
-    if ( kug->getUsers().getCaps() & KUsers::Cap_InetOrg ) {
+    if ( kug->getUsers().getCaps() & KU::KUsers::Cap_InetOrg ) {
       setLE( lesurname, user->getSurname(), first );
       setLE( lemail, user->getEmail(), first );
     }
-    if ( kug->getUsers().getCaps() & KUsers::Cap_BSD ) {
+    if ( kug->getUsers().getCaps() & KU::KUsers::Cap_BSD ) {
       setLE( leoffice, user->getOffice(), first );
       setLE( leophone, user->getWorkPhone(), first );
       setLE( lehphone, user->getHomePhone(), first );
@@ -592,11 +592,11 @@ void propdlg::loadgroups( bool fixedprivgroup )
 
   primaryGroupWasOn = false;
 
-  KGroup *group = kug->getGroups().first();
+  KU::KGroup *group = kug->getGroups().first();
   while ( group ) {
     QString groupName = group->getName();
     QCheckListItem *item = new QCheckListItem(lstgrp, groupName, QCheckListItem::CheckBox);
-    KUser *user = mUsers.first();
+    KU::KUser *user = mUsers.first();
     while ( user ) {
       bool prigr =
         ( !fixedprivgroup && group->getGID() == user->getGID() ) ||
@@ -626,7 +626,7 @@ void propdlg::loadgroups( bool fixedprivgroup )
   }
 
   if ( fixedprivgroup ) {
-    KUser *user = mUsers.first();
+    KU::KUser *user = mUsers.first();
     kdDebug() << "privgroup: " << user->getName() << endl;
     if ( !wasprivgr ) {
       QCheckListItem *item = new QCheckListItem(lstgrp, user->getName(), QCheckListItem::CheckBox);
@@ -700,7 +700,7 @@ int propdlg::mergeSB( KIntSpinBox *sb, int val, bool one )
   return ( one || ( cb && !cb->isChecked() ) ) ? sb->value() : val;
 }
 
-void propdlg::mergeUser( KUser *user, KUser *newuser )
+void propdlg::mergeUser( KU::KUser *user, KU::KUser *newuser )
 {
   QDateTime epoch ;
   epoch.setTime_t(0);
@@ -709,13 +709,13 @@ void propdlg::mergeUser( KUser *user, KUser *newuser )
 
   newuser->copy( user );
 
-  if ( kug->getUsers().getCaps() & KUsers::Cap_Disable_POSIX && cbposix->state() != QButton::NoChange ) {
+  if ( kug->getUsers().getCaps() & KU::KUsers::Cap_Disable_POSIX && cbposix->state() != QButton::NoChange ) {
     if ( cbposix->isChecked() )
-      newuser->setCaps( newuser->getCaps() & ~KUser::Cap_POSIX );
+      newuser->setCaps( newuser->getCaps() & ~KU::KUser::Cap_POSIX );
     else
-      newuser->setCaps( newuser->getCaps() | KUser::Cap_POSIX );
+      newuser->setCaps( newuser->getCaps() | KU::KUser::Cap_POSIX );
   }
-  posix = newuser->getCaps() & KUser::Cap_POSIX;
+  posix = newuser->getCaps() & KU::KUser::Cap_POSIX;
   kdDebug() << "posix: " << posix << endl;
   if ( one ) {
 //    newuser->setName( leuser->text() );
@@ -726,14 +726,14 @@ void propdlg::mergeUser( KUser *user, KUser *newuser )
     newuser->setLastChange( lstchg );
   }
   newuser->setFullName( mergeLE( lefname, user->getFullName(), one ) );
-  if ( kug->getUsers().getCaps() & KUsers::Cap_Samba ) {
+  if ( kug->getUsers().getCaps() & KU::KUsers::Cap_Samba ) {
     if ( cbsamba->state() != QButton::NoChange ) {
       if ( cbsamba->isChecked() )
-        newuser->setCaps( newuser->getCaps() & ~KUser::Cap_Samba );
+        newuser->setCaps( newuser->getCaps() & ~KU::KUser::Cap_Samba );
       else
-        newuser->setCaps( newuser->getCaps() | KUser::Cap_Samba );
+        newuser->setCaps( newuser->getCaps() | KU::KUser::Cap_Samba );
     }
-    samba = newuser->getCaps() & KUser::Cap_Samba;
+    samba = newuser->getCaps() & KU::KUser::Cap_Samba;
     kdDebug() << "user : " << newuser->getName() << " caps: " << newuser->getCaps() << " samba: " << samba << endl;
 
     SID sid;
@@ -756,7 +756,7 @@ void propdlg::mergeUser( KUser *user, KUser *newuser )
       mergeLE( ledomain, user->getDomain(), one ) : QString::null );
   }
 
-  if ( kug->getUsers().getCaps() & KUsers::Cap_BSD ) {
+  if ( kug->getUsers().getCaps() & KU::KUsers::Cap_BSD ) {
     newuser->setOffice( mergeLE( leoffice, user->getOffice(), one ) );
     newuser->setWorkPhone( mergeLE( leophone, user->getWorkPhone(), one ) );
     newuser->setHomePhone( mergeLE( lehphone, user->getHomePhone(), one ) );
@@ -787,21 +787,21 @@ void propdlg::mergeUser( KUser *user, KUser *newuser )
 
   newuser->setDisabled( (cbdisabled->state() == QButton::NoChange) ? user->getDisabled() : cbdisabled->isChecked() );
 
-  if ( kug->getUsers().getCaps() & KUsers::Cap_InetOrg ) {
+  if ( kug->getUsers().getCaps() & KU::KUsers::Cap_InetOrg ) {
     newuser->setSurname( mergeLE( lesurname, user->getSurname(), one ) );
     newuser->setEmail( mergeLE( lemail, user->getEmail(), one ) );
   }
 
-  if ( kug->getUsers().getCaps() & KUsers::Cap_Shadow ) {
+  if ( kug->getUsers().getCaps() & KU::KUsers::Cap_Shadow ) {
     newuser->setMin( posix ? mergeSB( lesmin, user->getMin(), one ) : 0 );
     newuser->setMax( posix ? mergeSB( lesmax, user->getMax(), one ) : 0 );
     newuser->setWarn( posix ? mergeSB( leswarn, user->getWarn(), one ) : 0 );
     newuser->setInactive( posix ? mergeSB( lesinact, user->getInactive(), one ) : 0 );
   }
 
-  if ( ( (kug->getUsers().getCaps() & KUsers::Cap_Shadow) && posix ) ||
-       ( (kug->getUsers().getCaps() & KUsers::Cap_Samba) && samba ) ||
-       ( (kug->getUsers().getCaps() & KUsers::Cap_BSD) && posix ) ) {
+  if ( ( (kug->getUsers().getCaps() & KU::KUsers::Cap_Shadow) && posix ) ||
+       ( (kug->getUsers().getCaps() & KU::KUsers::Cap_Samba) && samba ) ||
+       ( (kug->getUsers().getCaps() & KU::KUsers::Cap_BSD) && posix ) ) {
 
     switch ( cbexpire->state() ) {
       case QButton::NoChange:
@@ -820,10 +820,10 @@ void propdlg::mergeUser( KUser *user, KUser *newuser )
   }
 
   if ( !primaryGroup.isEmpty() ) {
-    KGroup *group = kug->getGroups().lookup( primaryGroup );
+    KU::KGroup *group = kug->getGroups().lookup( primaryGroup );
     if ( group ) {
       newuser->setGID( group->getGID() );
-      if ( kug->getUsers().getCaps() & KUsers::Cap_Samba ) {
+      if ( kug->getUsers().getCaps() & KU::KUsers::Cap_Samba ) {
         newuser->setPGSID( group->getSID() );
       }
     }
@@ -835,7 +835,7 @@ bool propdlg::saveg()
   if ( !isgchanged ) return true;
 
   QCheckListItem *item = (QCheckListItem *) lstgrp->firstChild();
-  KGroup *group;
+  KU::KGroup *group;
 
   while(item)
   {
@@ -843,10 +843,10 @@ bool propdlg::saveg()
     group = kug->getGroups().lookup(item->text());
     if ( group && item->state() != QCheckListItem::NoChange ) {
 
-      KGroup newgroup( group );
+      KU::KGroup newgroup( group );
       bool mod = false;
       bool on = item->isOn();
-      KUser *user = mUsers.first();
+      KU::KUser *user = mUsers.first();
 
       while ( user ) {
         if ( on && (( !primaryGroup.isEmpty() && primaryGroup != group->getName() ) ||
@@ -876,7 +876,7 @@ bool propdlg::checkShell(const QString &shell)
 bool propdlg::check()
 {
   bool one = ( mUsers.getFirst() == mUsers.getLast() );
-  bool posix = !( kug->getUsers().getCaps() & KUsers::Cap_Disable_POSIX ) || !( cbposix->isChecked() );
+  bool posix = !( kug->getUsers().getCaps() & KU::KUsers::Cap_Disable_POSIX ) || !( cbposix->isChecked() );
 
   if ( one && posix && leid->text().isEmpty() ) {
     KMessageBox::sorry( 0, i18n("You need to specify an UID.") );
@@ -888,14 +888,14 @@ bool propdlg::check()
     return false;
   }
 
-  if ( kug->getUsers().getCaps() & KUsers::Cap_InetOrg ) {
+  if ( kug->getUsers().getCaps() & KU::KUsers::Cap_InetOrg ) {
     if ( one && lesurname->text().isEmpty() ) {
       KMessageBox::sorry( 0, i18n("You must fill the surname field.") );
       return false;
     }
   }
 
-  if ( kug->getUsers().getCaps() & KUsers::Cap_Samba ) {
+  if ( kug->getUsers().getCaps() & KU::KUsers::Cap_Samba ) {
     if ( one && lerid->text().isEmpty() && !( cbsamba->isChecked() ) ) {
       KMessageBox::sorry( 0, i18n("You need to specify a samba RID.") );
       return false;
@@ -931,7 +931,7 @@ void propdlg::slotOk()
 
   uid_t newuid = leid->text().toULong();
 
-  if ( one && ( !( kug->getUsers().getCaps() & KUsers::Cap_Disable_POSIX ) || !cbposix->isChecked() )
+  if ( one && ( !( kug->getUsers().getCaps() & KU::KUsers::Cap_Disable_POSIX ) || !cbposix->isChecked() )
                && olduid != newuid )
   {
     if (kug->getUsers().lookup(newuid)) {
@@ -941,7 +941,7 @@ void propdlg::slotOk()
     }
   }
 
-  if ( one && ( kug->getUsers().getCaps() & KUsers::Cap_Samba ) && !cbsamba->isChecked() ) {
+  if ( one && ( kug->getUsers().getCaps() & KU::KUsers::Cap_Samba ) && !cbsamba->isChecked() ) {
     uint newrid = lerid->text().toInt();
     if ( oldrid != newrid ) {
       if (kug->getUsers().lookup_sam(newrid)) {

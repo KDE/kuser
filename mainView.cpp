@@ -91,7 +91,7 @@ void mainView::clearGroups()
 
 void mainView::reloadUsers()
 {
-  KUser *ku;
+  KU::KUser *ku;
 
   lbusers->clear();
   lbusers->init();
@@ -108,7 +108,7 @@ void mainView::reloadUsers()
 
 void mainView::reloadGroups()
 {
-  KGroup *kg;
+  KU::KGroup *kg;
 
   lbgroups->clear();
   lbgroups->init();
@@ -128,7 +128,7 @@ void mainView::useredit()
 
 void mainView::userdel()
 {
-  KUser *user = lbusers->getCurrentUser();
+  KU::KUser *user = lbusers->getCurrentUser();
   if (!user)
     return;
 
@@ -145,13 +145,13 @@ void mainView::userdel()
   kug->getUsers().del( user );
   if ( !updateUsers() ) return;
 
-  KGroup *group = 0;
+  KU::KGroup *group = 0;
   group = kug->getGroups().first();
   while ( group ) {
     kdDebug() << "group: " << group->getName() << endl;
     if ( group->lookup_user( username ) ) {
       kdDebug() << "group: " << group->getName() << " found user: " << username << endl;
-      KGroup newgroup( group );
+      KU::KGroup newgroup( group );
       newgroup.removeUser( username );
       kug->getGroups().mod( group, newgroup );
     }
@@ -177,14 +177,14 @@ void mainView::userdel()
 
 void mainView::useradd()
 {
-  KUser *tk;
+  KU::KUser *tk;
 
   showPage(lbusers);
 
   uid_t uid, rid = 0;
-  bool samba = kug->getUsers().getCaps() & KUsers::Cap_Samba;
+  bool samba = kug->getUsers().getCaps() & KU::KUsers::Cap_Samba;
 
-  if ((uid = kug->getUsers().first_free()) == KUsers::NO_FREE) {
+  if ((uid = kug->getUsers().first_free()) == KU::KUsers::NO_FREE) {
     KMessageBox::sorry( 0, i18n("You have run out of uid space.") );
     return;
   }
@@ -207,8 +207,8 @@ void mainView::useradd()
     return;
   }
 
-  tk = new KUser();
-  tk->setCaps( samba ? KUser::Cap_POSIX | KUser::Cap_Samba : KUser::Cap_POSIX );
+  tk = new KU::KUser();
+  tk->setCaps( samba ? KU::KUser::Cap_POSIX | KU::KUser::Cap_Samba : KU::KUser::Cap_POSIX );
   tk->setUID( uid );
   tk->setName( name );
 
@@ -226,7 +226,7 @@ void mainView::useradd()
 
   tk->setShell( kug->kcfg()->shell() );
   tk->setHomeDir( kug->kcfg()->homepath().replace( "%U", name ) );
-  if ( kug->getUsers().getCaps() & KUsers::Cap_Shadow || samba ) {
+  if ( kug->getUsers().getCaps() & KU::KUsers::Cap_Shadow || samba ) {
     tk->setLastChange( now() );
   }
 
@@ -251,7 +251,7 @@ void mainView::useradd()
     return;
   }
   if ( privgroup ) {
-    KGroup *tg;
+    KU::KGroup *tg;
 
     if ((tg = kug->getGroups().lookup(tk->getName())) == 0) {
       gid_t gid;
@@ -264,20 +264,20 @@ void mainView::useradd()
       uid_t rid = 0;
 //      if ( samba ) rid = kug->getGroups().first_free_sam();
       if ( samba ) rid = SID::gid2rid( gid );
-      if ( gid == KGroups::NO_FREE || ( samba && rid == 0 ) ) {
+      if ( gid == KU::KGroups::NO_FREE || ( samba && rid == 0 ) ) {
         kug->getGroups().cancelMods();
         delete tk;
         return;
       }
-      tg = new KGroup();
+      tg = new KU::KGroup();
       tg->setGID( gid );
-      if ( samba && ( tk->getCaps() & KUser::Cap_Samba ) ) {
+      if ( samba && ( tk->getCaps() & KU::KUser::Cap_Samba ) ) {
         SID sid;
         sid.setDOM( kug->getGroups().getDOMSID() );
         sid.setRID( rid );
         tg->setSID( sid );
         tg->setDisplayName( tk->getName() );
-        tg->setCaps( KGroup::Cap_Samba );
+        tg->setCaps( KU::KGroup::Cap_Samba );
       }
       tg->setName( tk->getName() );
       kug->getGroups().add( tg );
@@ -310,7 +310,7 @@ void mainView::setpwd()
   pwddlg d( this );
   if ( d.exec() != QDialog::Accepted ) return;
 
-  KUser newuser, *user;
+  KU::KUser newuser, *user;
   QListViewItem *item;
 
   item = lbusers->firstChild();
@@ -330,13 +330,13 @@ void mainView::setpwd()
 
 void mainView::groupSelected()
 {
-  bool samba = kug->getGroups().getCaps() & KGroups::Cap_Samba;
-  KGroup *tmpKG = lbgroups->getCurrentGroup();
+  bool samba = kug->getGroups().getCaps() & KU::KGroups::Cap_Samba;
+  KU::KGroup *tmpKG = lbgroups->getCurrentGroup();
   if ( !tmpKG ) return;
-  KGroup newGroup( tmpKG );
+  KU::KGroup newGroup( tmpKG );
 
   kdDebug() << "The SID for group " << newGroup.getName() << " is: '" << newGroup.getSID().getSID() << "'" << endl;
-  if ( samba && ( newGroup.getCaps() & KGroup::Cap_Samba ) && 
+  if ( samba && ( newGroup.getCaps() & KU::KGroup::Cap_Samba ) && 
       newGroup.getSID().isEmpty() ) {
     SID sid;
     sid.setDOM( kug->getGroups().getDOMSID() );
@@ -356,7 +356,7 @@ void mainView::groupSelected()
 void mainView::userSelected()
 {
   QListViewItem *item;
-  QPtrList<KUser> ulist;
+  QPtrList<KU::KUser> ulist;
 
   item = lbusers->firstChild();
   while ( item ) {
@@ -370,7 +370,7 @@ void mainView::userSelected()
   propdlg editUser( ulist, this );
   if ( editUser.exec() == QDialog::Rejected ) return;
 
-  KUser *user, newuser;
+  KU::KUser *user, newuser;
   user = ulist.first();
   while ( user ) {
     editUser.mergeUser( user, &newuser );
@@ -389,9 +389,9 @@ void mainView::grpadd()
   uid_t rid = 0;
   bool samba;
 
-  samba = kug->getGroups().getCaps() & KGroups::Cap_Samba;
+  samba = kug->getGroups().getCaps() & KU::KGroups::Cap_Samba;
 
-  if ( (gid = kug->getGroups().first_free()) == KGroups::NO_FREE )
+  if ( (gid = kug->getGroups().first_free()) == KU::KGroups::NO_FREE )
   {
     KMessageBox::sorry( 0, i18n("You have run out of gid space.") );
     return;
@@ -405,7 +405,7 @@ void mainView::grpadd()
 */
   if ( samba ) rid = SID::gid2rid( gid );
 
-  KGroup *tk = new KGroup();
+  KU::KGroup *tk = new KU::KGroup();
   tk->setGID(gid);
   if ( samba ) {
     SID sid;
@@ -431,7 +431,7 @@ void mainView::grpedit()
 void mainView::grpdel()
 {
   QListViewItem *item;
-  KGroup *group = NULL;
+  KU::KGroup *group = NULL;
   int selected = 0;
 
   item = lbgroups->firstChild();
@@ -441,7 +441,7 @@ void mainView::grpdel()
       selected++;
       group = ((KGroupViewItem*) item)->group();
 
-      KUser *user = kug->getUsers().first();
+      KU::KUser *user = kug->getUsers().first();
       while ( user ) {
         if ( user->getGID() == group->getGID() ) {
           KMessageBox::error( 0, i18n( "The group '%1' is the primary group of one or more users (such as '%2'); it cannot be deleted." ).arg( group->getName() ).arg( user->getName() ) );
@@ -483,9 +483,9 @@ bool mainView::updateGroups()
   kdDebug() << "updateGroups() " << endl;
   ret = kug->getGroups().dbcommit();
 
-  KGroup *group;
-  KGroups::DelIt dit( kug->getGroups().mDelSucc );
-  KGroups::AddIt ait( kug->getGroups().mAddSucc );
+  KU::KGroup *group;
+  KU::KGroups::DelIt dit( kug->getGroups().mDelSucc );
+  KU::KGroups::AddIt ait( kug->getGroups().mAddSucc );
 
   while ( (group = dit.current()) != 0 ) {
     ++dit;
@@ -506,9 +506,9 @@ bool mainView::updateUsers()
   kdDebug() << "updateUsers() " << endl;
   ret = kug->getUsers().dbcommit();
 
-  KUser *user;
-  KUsers::DelIt dit( kug->getUsers().mDelSucc );
-  KUsers::AddIt ait( kug->getUsers().mAddSucc );
+  KU::KUser *user;
+  KU::KUsers::DelIt dit( kug->getUsers().mDelSucc );
+  KU::KUsers::AddIt ait( kug->getUsers().mAddSucc );
 
   while ( (user = dit.current()) != 0 ) {
     ++dit;

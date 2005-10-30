@@ -26,7 +26,7 @@
 #include "kgroup.h"
 #include "misc.h"
 
-KGroup::KGroup()
+KU::KGroup::KGroup()
 {
   pwd = QString::fromLatin1("*");
   gid = 0;
@@ -34,16 +34,16 @@ KGroup::KGroup()
   caps = 0;
 }
 
-KGroup::KGroup(KGroup *group) 
+KU::KGroup::KGroup(KU::KGroup *group) 
 {
   copy( group );
 }
 
-KGroup::~KGroup()
+KU::KGroup::~KGroup()
 {
 }
 
-void KGroup::copy( const KGroup *group )
+void KU::KGroup::copy( const KU::KGroup *group )
 {
   if ( group != this ) {
     caps    = group->caps;
@@ -58,92 +58,92 @@ void KGroup::copy( const KGroup *group )
   }
 }
 
-void KGroup::setCaps( int data )
+void KU::KGroup::setCaps( int data )
 {
   caps = data;
 }
 
-int KGroup::getCaps()
+int KU::KGroup::getCaps()
 {
   return caps;
 }
 
-const QString &KGroup::getName() const 
+const QString &KU::KGroup::getName() const 
 {
   return name;
 }
 
-const QString &KGroup::getPwd() const 
+const QString &KU::KGroup::getPwd() const 
 {
   return pwd;
 }
 
-gid_t KGroup::getGID() const 
+gid_t KU::KGroup::getGID() const 
 {
   return gid;
 }
 
-const SID &KGroup::getSID() const
+const SID &KU::KGroup::getSID() const
 {
   return sid;
 }
 
-int KGroup::getType() const
+int KU::KGroup::getType() const
 {
   return type;
 }
 
-const QString &KGroup::getDisplayName() const
+const QString &KU::KGroup::getDisplayName() const
 {
   return displayname;
 }
 
-const QString &KGroup::getDesc() const
+const QString &KU::KGroup::getDesc() const
 {
   return desc;
 }
 
-void KGroup::setName(const QString &data) 
+void KU::KGroup::setName(const QString &data) 
 {
   name = data;
 }
 
-void KGroup::setPwd(const QString &data) 
+void KU::KGroup::setPwd(const QString &data) 
 {
   pwd = data;
 }
 
-void KGroup::setGID(gid_t data) 
+void KU::KGroup::setGID(gid_t data) 
 {
   gid = data;
 }
 
-void KGroup::setSID(const SID &data)
+void KU::KGroup::setSID(const SID &data)
 {
   sid = data;
 }
 
-void KGroup::setType(int data)
+void KU::KGroup::setType(int data)
 {
   type = data;
 }
 
-void KGroup::setDisplayName(const QString &data)
+void KU::KGroup::setDisplayName(const QString &data)
 {
   displayname = data;
 }
 
-void KGroup::setDesc(const QString &data)
+void KU::KGroup::setDesc(const QString &data)
 {
   desc = data;
 }
 
-bool KGroup::lookup_user(const QString &name) 
+bool KU::KGroup::lookup_user(const QString &name) 
 {
   return (u.find(name) != u.end());
 }
 
-bool KGroup::addUser(const QString &name) 
+bool KU::KGroup::addUser(const QString &name) 
 {
   if (!lookup_user(name)) {
     u.append(name);
@@ -152,78 +152,78 @@ bool KGroup::addUser(const QString &name)
     return false;
 }
 
-bool KGroup::removeUser(const QString &name) 
+bool KU::KGroup::removeUser(const QString &name) 
 {
   return ( u.remove(name) > 0 );
 }
 
-uint KGroup::count() const 
+uint KU::KGroup::count() const 
 {
   return u.count();
 }
 
-QString KGroup::user(uint i) 
+QString KU::KGroup::user(uint i) 
 {
   return u[i];
 }
 
-void KGroup::clear() 
+void KU::KGroup::clear() 
 {
   u.clear();
 }
 
-KGroups::KGroups(KUserPrefsBase *cfg) 
+KU::KGroups::KGroups(KUserPrefsBase *cfg) 
 {
   mGroups.setAutoDelete(TRUE);
   mCfg = cfg;
 }
 
-KGroup *KGroups::lookup(const QString &name) 
+KU::KGroup *KU::KGroups::lookup(const QString &name) 
 {
-  KGroup *group;
-  QPtrListIterator<KGroup> it( mGroups );
+  KU::KGroup *group;
+  QPtrListIterator<KU::KGroup> it( mGroups );
   
   while ( (group = it.current()) != 0 && group->getName() != name ) ++it;
   return group;
 }
 
-KGroup *KGroups::lookup(gid_t gid) 
+KU::KGroup *KU::KGroups::lookup(gid_t gid) 
 {
-  KGroup *group;
-  QPtrListIterator<KGroup> it( mGroups );
+  KU::KGroup *group;
+  QPtrListIterator<KU::KGroup> it( mGroups );
   
   while ( (group = it.current()) != 0 && group->getGID() != gid ) ++it;
   return group;
 }
 
-KGroup *KGroups::lookup_sam( const SID &sid )
+KU::KGroup *KU::KGroups::lookup_sam( const SID &sid )
 {
-  KGroup *group;
-  QPtrListIterator<KGroup> it( mGroups );
+  KU::KGroup *group;
+  QPtrListIterator<KU::KGroup> it( mGroups );
   
   while ( (group = it.current()) != 0 && group->getSID() != sid ) ++it;
   return group;
 }
 
-KGroup *KGroups::lookup_sam( const QString &sid )
+KU::KGroup *KU::KGroups::lookup_sam( const QString &sid )
 {
-  KGroup *group;
-  QPtrListIterator<KGroup> it( mGroups );
+  KU::KGroup *group;
+  QPtrListIterator<KU::KGroup> it( mGroups );
   
   while ( (group = it.current()) != 0 && group->getSID().getSID() != sid ) ++it;
   return group;
 }
 
-KGroup *KGroups::lookup_sam( uint rid )
+KU::KGroup *KU::KGroups::lookup_sam( uint rid )
 {
-  KGroup *group;
-  QPtrListIterator<KGroup> it( mGroups );
+  KU::KGroup *group;
+  QPtrListIterator<KU::KGroup> it( mGroups );
   
   while ( (group = it.current()) != 0 && group->getSID().getRID() != rid ) ++it;
   return group;
 }
 
-gid_t KGroups::first_free() 
+gid_t KU::KGroups::first_free() 
 {
   gid_t t;
 
@@ -234,7 +234,7 @@ gid_t KGroups::first_free()
   return NO_FREE;
 }
 
-uint KGroups::first_free_sam()
+uint KU::KGroups::first_free_sam()
 {
   uint t;
 
@@ -245,58 +245,58 @@ uint KGroups::first_free_sam()
   return 0;
 }
 
-KGroups::~KGroups() 
+KU::KGroups::~KGroups() 
 {
   mGroups.clear();
 }
 
-KGroup *KGroups::operator[](uint num) 
+KU::KGroup *KU::KGroups::operator[](uint num) 
 {
   return mGroups.at(num);
 }
 
-KGroup *KGroups::first() 
+KU::KGroup *KU::KGroups::first() 
 {
   return mGroups.first();
 }
 
-KGroup *KGroups::next() 
+KU::KGroup *KU::KGroups::next() 
 {
   return mGroups.next();
 }
 
-uint KGroups::count() const 
+uint KU::KGroups::count() const 
 {
   return mGroups.count();
 }
 
-const QString &KGroups::getDOMSID() const
+const QString &KU::KGroups::getDOMSID() const
 {
   return domsid;
 }
 
-void KGroups::add(KGroup *group) 
+void KU::KGroups::add(KU::KGroup *group) 
 {
   kdDebug() << "adding group: " << group->getName() << " gid: " << group->getGID() << endl;
   mAdd.append( group );
 }
 
-void KGroups::del(KGroup *group) 
+void KU::KGroups::del(KU::KGroup *group) 
 {
   kdDebug() << "deleting group: " << group->getName() << " gid: " << group->getGID() << endl;
   mDel.append( group );
 }
 
-void KGroups::mod(KGroup *gold, const KGroup &gnew)
+void KU::KGroups::mod(KU::KGroup *gold, const KU::KGroup &gnew)
 {
   kdDebug() << "modify group " << gnew.getName() << " gid: " << gnew.getGID() << endl;
   mMod.insert( gold, gnew );
 }
 
-void KGroups::commit()
+void KU::KGroups::commit()
 {
-  kdDebug() << "KGroups::commit()" << endl;
-  KGroup *group;
+  kdDebug() << "KU::KGroups::commit()" << endl;
+  KU::KGroup *group;
   DelIt dit( mDelSucc );
   AddIt ait( mAddSucc );
   ModIt mit = mModSucc.begin();
@@ -316,9 +316,9 @@ void KGroups::commit()
   cancelMods();  
 }
 
-void KGroups::cancelMods()
+void KU::KGroups::cancelMods()
 {
-  KGroup *group;
+  KU::KGroup *group;
   while ( (group = mAdd.first()) ) {
     delete group;
     mAdd.remove();

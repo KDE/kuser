@@ -29,6 +29,8 @@
 #include "globals.h"
 #include "sid.h"
 
+namespace KU {
+
 class KUsers;
 
 class KUser {
@@ -301,5 +303,7 @@ protected:
   void fillGecos( KUser *user, const char *gecos );
   
 };
+
+} //namespace KU
 
 #endif // _KU_USER_H_

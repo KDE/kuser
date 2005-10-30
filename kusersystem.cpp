@@ -34,7 +34,7 @@
 #include "misc.h"
 #include "kusersystem.h"
 
-KUserSystem::KUserSystem(KUserPrefsBase *cfg) : KUsers( cfg )
+KUserSystem::KUserSystem(KUserPrefsBase *cfg) : KU::KUsers( cfg )
 {
   mUsers.setAutoDelete(TRUE);
 
@@ -69,12 +69,12 @@ bool KUserSystem::reload()
 bool KUserSystem::loadpwd()
 {
   passwd *p;
-  KUser *tmpKU = 0;
+  KU::KUser *tmpKU = 0;
   QString tmp;
 
   setpwent(); //This should be enough for BSDs
   while ((p = getpwent()) != NULL) {
-    tmpKU = new KUser();
+    tmpKU = new KU::KUser();
     tmpKU->setUID(p->pw_uid);
     tmpKU->setGID(p->pw_gid);
     tmpKU->setName(QString::fromLocal8Bit(p->pw_name));
@@ -108,7 +108,7 @@ bool KUserSystem::loadsdw()
 {
 #ifdef HAVE_SHADOW
   struct spwd *spw;
-  KUser *up = NULL;
+  KU::KUser *up = NULL;
   QString tmp;
 
   setspent();

@@ -32,7 +32,7 @@
 
 #include "kgroup.h"
 
-class KGroupLDAP : public QObject, public KGroups {
+class KGroupLDAP : public QObject, public KU::KGroups {
 Q_OBJECT
 public:
   KGroupLDAP( KUserPrefsBase *cfg );
@@ -50,16 +50,16 @@ private:
   KABC::LDAPUrl mUrl;
   KProgressDialog *mProg;
     
-  KGroup *mGroup, *mDelGroup, *mAddGroup;
+  KU::KGroup *mGroup, *mDelGroup, *mAddGroup;
   
   bool first, mOk, mCancel;
   int mAdv;
   QCString ldif;
 
-  QString getRDN( KGroup *group );
-  void addData( KGroup *group );
-  void delData( KGroup *group );
-  void modData( KGroup *group );
+  QString getRDN( KU::KGroup *group );
+  void addData( KU::KGroup *group );
+  void delData( KU::KGroup *group );
+  void modData( KU::KGroup *group );
 };
 
 #endif // _KU_GROUPLDAP_H_

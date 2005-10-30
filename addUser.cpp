@@ -37,7 +37,7 @@
 #include "addUser.h"
 #include <kmessagebox.h>
 
-addUser::addUser( KUser *AUser, bool useprivategroup,
+addUser::addUser( KU::KUser *AUser, bool useprivategroup,
   QWidget *parent, const char *name ) :
   propdlg( AUser, useprivategroup, parent, name )
 {
@@ -57,20 +57,20 @@ addUser::addUser( KUser *AUser, bool useprivategroup,
 
 void addUser::slotOk()
 {
-  KUser *user = mUsers.first();
+  KU::KUser *user = mUsers.first();
 
   if ( !check() ) return;
 
   mergeUser( user, user );
 
-  if ( ( user->getCaps() & KUser::Cap_POSIX ) && 
+  if ( ( user->getCaps() & KU::KUser::Cap_POSIX ) && 
     kug->getUsers().lookup( user->getUID() ) ) {
     KMessageBox::sorry( 0, i18n("User with UID %1 already exists.").arg( user->getUID() ) );
     return;
   }
 
-  if ( ( kug->getUsers().getCaps() & KUsers::Cap_Samba ) && 
-     ( user->getCaps() & KUser::Cap_Samba ) ) {
+  if ( ( kug->getUsers().getCaps() & KU::KUsers::Cap_Samba ) && 
+     ( user->getCaps() & KU::KUser::Cap_Samba ) ) {
     if ( kug->getUsers().lookup_sam( user->getSID().getRID() ) ) {
       KMessageBox::sorry( 0, i18n("User with RID %1 already exists.").arg( user->getSID().getRID() ) );
       return;
@@ -99,7 +99,7 @@ void addUser::slotOk()
 
 bool addUser::checkHome()
 {
-  KUser *user = mUsers.first();
+  KU::KUser *user = mUsers.first();
 
   struct stat s;
   int r;
@@ -131,7 +131,7 @@ bool addUser::checkHome()
 bool addUser::checkMailBox()
 {
   QString mailboxpath;
-  KUser *user = mUsers.first();
+  KU::KUser *user = mUsers.first();
 
   struct stat s;
   int r;

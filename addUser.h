@@ -27,7 +27,7 @@
 class addUser: public propdlg {
   Q_OBJECT
 public:
-  addUser(KUser *AUser, bool useprivategroup, 
+  addUser(KU::KUser *AUser, bool useprivategroup, 
     QWidget *parent = 0, const char *name = 0 );
 
   void setCreateHomeDir(bool b)

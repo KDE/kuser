@@ -32,7 +32,7 @@
 
 #include "kuser.h"
 
-class KUserLDAP : public QObject, public KUsers {
+class KUserLDAP : public QObject, public KU::KUsers {
 Q_OBJECT
 public:
   KUserLDAP(KUserPrefsBase *cfg);
@@ -50,18 +50,18 @@ private:
   KABC::LDAPUrl mUrl;
   KProgressDialog *mProg;
   bool mOk, mCancel;
-  KUser *mUser, *mDelUser, *mAddUser;
+  KU::KUser *mUser, *mDelUser, *mAddUser;
   int mAdv;
   QCString ldif;
   int schemaversion;
   QStringList mOc;
-  QMap<KUser*, QStringList> mObjectClasses;
+  QMap<KU::KUser*, QStringList> mObjectClasses;
   
-  QString getRDN( KUser *user );
-  void getLDIF( KUser *user, bool mod );
-  void delData( KUser *user );
+  QString getRDN( KU::KUser *user );
+  void getLDIF( KU::KUser *user, bool mod );
+  void delData( KU::KUser *user );
   
-  virtual void createPassword( KUser *user, const QString &password );
+  virtual void createPassword( KU::KUser *user, const QString &password );
 };
 
 #endif // _KUSERLDAP_H_

@@ -234,7 +234,7 @@ void propdlg::initDlg()
     leslstchg = new QLabel(frame);
     addRow(frame, layout, row++, leslstchg, i18n("Last password change:"), QString::null, true);
 
-    layout->addMultiCellWidget(new KSeparator(KSeparator::HLine, frame), row, row, 0, 3);
+    layout->addMultiCellWidget(new KSeparator(Qt::Horizontal, frame), row, row, 0, 3);
     row++;
 
     if ( kug->getUsers().getCaps() & KUsers::Cap_Shadow ) {
@@ -243,13 +243,13 @@ void propdlg::initDlg()
       lesmax = addDaysGroup(frame, layout, row++, i18n("Time when password &expires after last password change:") );
       leswarn = addDaysGroup(frame, layout, row++, i18n("Time before password expires to &issue an expire warning:"));
       lesinact = addDaysGroup(frame, layout, row++, i18n("Time when account will be &disabled after expiration of password:"));
-      layout->addMultiCellWidget(new KSeparator(KSeparator::HLine, frame), row, row, 0, 3);
+      layout->addMultiCellWidget(new KSeparator(Qt::Horizontal, frame), row, row, 0, 3);
       row++;
     }
     /*
     if ( kug->getUsers().getCaps() & KUsers::Cap_Samba ) {
       layout->addWidget( new QLabel( "SAMBA parameters:", frame ), row++, 0 );
-      layout->addMultiCellWidget(new KSeparator(KSeparator::HLine, frame), row, row, 0, 3);
+      layout->addMultiCellWidget(new KSeparator(Qt::Horizontal, frame), row, row, 0, 3);
       row++;
     }
     */

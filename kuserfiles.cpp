@@ -104,7 +104,7 @@ bool KUserFiles::loadpwd()
   #define P_NISPASSWD 0x02
   #define MAXFILES 2
 
-  // Read KU::KUser configuration
+  // Read KUser configuration
 
   passwd_filename = mCfg->passwdsrc();
   nispasswd_filename = mCfg->nispasswdsrc();
@@ -115,7 +115,7 @@ bool KUserFiles::loadpwd()
     mCfg->setPasswdsrc( PASSWORD_FILE );
     mCfg->setGroupsrc( GROUP_FILE );
     passwd_filename = mCfg->passwdsrc();
-    KMessageBox::error( 0, i18n("KU::KUser sources were not configured.\nLocal passwd source set to %1\nLocal group source set to %2.").arg(mCfg->passwdsrc().arg(mCfg->groupsrc())) );
+    KMessageBox::error( 0, i18n("KUser sources were not configured.\nLocal passwd source set to %1\nLocal group source set to %2.").arg(mCfg->passwdsrc().arg(mCfg->groupsrc())) );
   }
 
   if(!passwd_filename.isEmpty()) {
@@ -128,7 +128,7 @@ bool KUserFiles::loadpwd()
   for(int i = 0; i < MAXFILES; i++) {
     rc = stat(QFile::encodeName(filename), &st);
     if(rc != 0) {
-      KMessageBox::error( 0, i18n("Stat call on file %1 failed: %2\nCheck KU::KUser settings.").arg(filename).arg(QString::fromLocal8Bit(strerror(errno))) );
+      KMessageBox::error( 0, i18n("Stat call on file %1 failed: %2\nCheck KUser settings.").arg(filename).arg(QString::fromLocal8Bit(strerror(errno))) );
       if( (processing_file & P_PASSWD) != 0 ) {
         passwd_errno = errno;
         if(!nispasswd_filename.isEmpty()) {
@@ -308,7 +308,7 @@ bool KUserFiles::savepwd()
     #define NOMINUID    0x01
     #define NONISPASSWD 0x02
 
-  // Read KU::KUser configuration info
+  // Read KUser configuration info
 
   passwd_filename = mCfg->passwdsrc();
   nispasswd_filename = mCfg->nispasswdsrc();
@@ -471,11 +471,11 @@ bool KUserFiles::savepwd()
   }
 
   if( (errors_found & NOMINUID) != 0 ) {
-    KMessageBox::error( 0, i18n("Unable to process NIS passwd file without a minimum UID specified.\nPlease update KU::KUser settings (Files).") );
+    KMessageBox::error( 0, i18n("Unable to process NIS passwd file without a minimum UID specified.\nPlease update KUser settings (Files).") );
   }
 
   if( (errors_found & NONISPASSWD) != 0 ) {
-    KMessageBox::error( 0, i18n("Specifying NIS minimum UID requires NIS file(s).\nPlease update KU::KUser settings (Files).") );
+    KMessageBox::error( 0, i18n("Specifying NIS minimum UID requires NIS file(s).\nPlease update KUser settings (Files).") );
   }
 
   // need to run a utility program to build /etc/passwd, /etc/pwd.db

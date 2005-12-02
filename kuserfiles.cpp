@@ -239,6 +239,7 @@ bool KUserFiles::loadsdw()
   kdDebug() << "open shadow file: " << shadow_file << endl;
   if ((f = fopen( QFile::encodeName(shadow_file), "r")) == NULL) {
     KMessageBox::error( 0, i18n("Error opening %1 for reading.").arg(shadow_file) );
+    caps &= ~Cap_Shadow;
     return TRUE;
   }
   while ((spw = fgetspent( f ))) {     // read a shadow password structure
@@ -605,7 +606,7 @@ bool KUserFiles::dbcommit()
 
   mode = umask(0077);
   ret = savepwd();
-  if ( ret ) ret = savesdw();
+  if ( ret && ( caps & Cap_Shadow ) ) ret = savesdw();
   umask( mode );
   if ( !ret ) return false;
 

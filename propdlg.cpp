@@ -915,7 +915,12 @@ void propdlg::setpwd()
     lstchg = now();
     QDateTime datetime;
     datetime.setTime_t( lstchg );
-    leslstchg->setText( KGlobal::locale()->formatDateTime( datetime, false ) );
+    if ( kug->getUsers().getCaps() & KU::KUsers::Cap_Shadow ||
+        kug->getUsers().getCaps() & KU::KUsers::Cap_Samba ||
+        kug->getUsers().getCaps() & KU::KUsers::Cap_BSD ) {
+
+        leslstchg->setText( KGlobal::locale()->formatDateTime( datetime, false ) );
+    }
     cbdisabled->setChecked( false );
   }
 }

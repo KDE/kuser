@@ -85,7 +85,7 @@ protected:
   KIntSpinBox *addDaysGroup( QWidget  *parent, QGridLayout *layout, int row, 
     const QString &title, bool never=true );
 
-  Q3Frame *frontpage;
+  QFrame *frontpage;
   QGridLayout *frontlayout;
   int frontrow;
 

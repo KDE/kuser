@@ -18,9 +18,8 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-#include <q3grid.h>
-//Added by qt3to4:
 #include <QLabel>
+#include <QGridLayout>
 
 #include <kmessagebox.h>
 
@@ -30,7 +29,7 @@
 pwddlg::pwddlg( QWidget* parent, const char* name )
   : KDialogBase(parent, name, true, i18n("Enter Password"), Ok | Cancel, Ok, true)
 {
-  Q3Grid *page = makeGridMainWidget(2, Qt::Horizontal);
+  QFrame *page = makeMainWidget();
 
   QLabel* lb1 = new QLabel(page, "lb1");
   lb1->setText(i18n("Password:"));
@@ -62,6 +61,13 @@ pwddlg::pwddlg( QWidget* parent, const char* name )
   // clear text
   lepw2->clear();
   lepw2->setEchoMode(KLineEdit::Password);
+  
+  QGridLayout *layout = new QGridLayout;
+  layout->addWidget(lb1, 0, 0);
+  layout->addWidget(lepw1, 0, 1);
+  layout->addWidget(lb2, 1, 0);
+  layout->addWidget(lepw2, 1, 1);
+  page->setLayout(layout);
 }
 
 pwddlg::~pwddlg()

@@ -421,7 +421,7 @@ void KUserLDAP::getLDIF( KUser *user, bool mod )
   if ( mod && mObjectClasses.contains( mUser ) ) {
     QStringList ocs = mObjectClasses[ mUser ];
     kdDebug() << user->getName() << " has additional objectclasses: " << ocs.join(",") << endl;
-    Q3ValueListIterator<QString> it;
+    QStringList::iterator it;
     for ( it = ocs.begin(); it != ocs.end(); ++it ) {
       ldif += "objectClass: ";
       ldif += (*it).utf8();

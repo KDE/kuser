@@ -80,7 +80,7 @@ int copyFile(const QString & from, const QString & to)
     return (-1);
   }
 
-  if (!fo.open(IO_Raw | QIODevice::WriteOnly | QIODevice::Truncate)) {
+  if (!fo.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
     KMessageBox::error( 0, i18n("Cannot open file %1 for writing.").arg(to) );
     return (-1);
   }

@@ -226,7 +226,7 @@ public:
   };
   typedef Q3PtrListIterator<KUser> DelIt;
   typedef Q3PtrListIterator<KUser> AddIt;
-  typedef QMapIterator<KUser*, KUser> ModIt;
+  typedef QMap<KUser*, KUser>::iterator ModIt;
   
   Q3PtrList<KUser> mDelSucc;
   Q3PtrList<KUser> mAddSucc;

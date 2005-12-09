@@ -378,7 +378,7 @@ propdlg::~propdlg()
 
 void propdlg::cbposixChanged()
 {
-  bool posix = !( cbposix->state() == Q3Button::On );
+  bool posix = !( cbposix->checkState() == Qt::Checked );
   leid->setEnabled( posix  & ( mUsers.getFirst() == mUsers.getLast() ) );
   leshell->setEnabled( posix );
   lehome->setEnabled( posix );
@@ -392,7 +392,7 @@ void propdlg::cbposixChanged()
 
 void propdlg::cbsambaChanged()
 {
-  bool samba = !( cbsamba->state() == Q3Button::On );
+  bool samba = !( cbsamba->checkState() == Qt::Checked );
   lerid->setEnabled( samba & ( mUsers.getFirst() == mUsers.getLast() ) );
   leliscript->setEnabled( samba );
   leprofile->setEnabled( samba );
@@ -808,14 +808,14 @@ void propdlg::mergeUser( KUser *user, KUser *newuser )
        ( (kug->getUsers().getCaps() & KUsers::Cap_Samba) && samba ) ||
        ( (kug->getUsers().getCaps() & KUsers::Cap_BSD) && posix ) ) {
 
-    switch ( cbexpire->state() ) {
-      case QCheckBox::NoChange:
+    switch ( cbexpire->checkState() ) {
+      case Qt::PartiallyChecked:
         newuser->setExpire( user->getExpire() );
         break;
-      case Q3Button::On:
+      case Qt::Checked:
         newuser->setExpire( -1 );
         break;
-      case Q3Button::Off:
+      case Qt::Unchecked:
         newuser->setExpire( !one && lesexpire->dateTime().toTime_t() == 0 ?
           user->getExpire() : lesexpire->dateTime().toTime_t() );
         break;
@@ -920,7 +920,12 @@ void propdlg::setpwd()
     lstchg = now();
     QDateTime datetime;
     datetime.setTime_t( lstchg );
-    leslstchg->setText( KGlobal::locale()->formatDateTime( datetime, false ) );
+    if ( kug->getUsers().getCaps() & KUsers::Cap_Shadow ||
+        kug->getUsers().getCaps() & KUsers::Cap_Samba ||
+        kug->getUsers().getCaps() & KUsers::Cap_BSD ) {
+
+        leslstchg->setText( KGlobal::locale()->formatDateTime( datetime, false ) );
+    }
     cbdisabled->setChecked( false );
   }
 }

@@ -94,7 +94,7 @@ public:
 
   typedef Q3PtrListIterator<KGroup> DelIt;
   typedef Q3PtrListIterator<KGroup> AddIt;
-  typedef QMapIterator<KGroup*, KGroup> ModIt;
+  typedef QMap<KGroup*, KGroup>::iterator ModIt;
   
   Q3PtrList<KGroup> mDelSucc;
   Q3PtrList<KGroup> mAddSucc;

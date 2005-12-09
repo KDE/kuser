@@ -1,4 +1,4 @@
-/*
+/*OB
  *  Copyright (c) 1998 Denis Perchine <dyp@perchine.com>
  *  Copyright (c) 2004 Szombathelyi György <gyurco@freemail.hu>
  *  Former maintainer: Adriaan de Groot <groot@kde.org>
@@ -19,14 +19,8 @@
  **/
 
 
-#include <qlabel.h>
-#include <qlayout.h>
-#include <q3vbox.h>
-#include <qvalidator.h>
-#include <q3whatsthis.h>
-//Added by qt3to4:
-#include <Q3Frame>
-#include <Q3ValueList>
+#include <QLabel>
+#include <QVBoxLayout>
 #include <QGridLayout>
 
 #include <kapplication.h>
@@ -76,7 +70,7 @@ editGroup::editGroup(KGroup *akg, bool samba, bool add,
     lb->setText(i18n("Group rid:"));
     lerid = new KComboBox( page );
     lerid->setEditable( !ro );
-    Q3ValueList<RID>::Iterator it;
+    QList<RID>::Iterator it;
     for ( it = mRids.begin(); it != mRids.end(); ++it ) {
       lerid->insertItem( QString::number( (*it).rid ) + " - " + (*it).name );
     }
@@ -168,9 +162,15 @@ editGroup::editGroup(KGroup *akg, bool samba, bool add,
   m_list_in->setSelectionMode( Q3ListView::Extended );
   layout->addWidget( m_list_in, 8, 0 );
 
-  Q3VBox *vbox = new Q3VBox(page);
+  QWidget *vbox = new QWidget;
   QPushButton *btadd = new QPushButton(i18n("Add <-"), vbox);
   QPushButton *btdel = new QPushButton(i18n("Remove ->"), vbox);
+
+  QVBoxLayout *vlayout = new QVBoxLayout;
+  vlayout->addWidget(btadd);
+  vlayout->addWidget(btdel);
+  vbox->setLayout(vlayout);
+			    
   layout->addWidget( vbox, 8, 1 );
 
   m_list_notin = new KListView(page);

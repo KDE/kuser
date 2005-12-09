@@ -16,15 +16,9 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-#include <qpixmap.h>
-#include <qlayout.h>
-
-#include <qlabel.h>
-#include <q3grid.h>
-#include <qregexp.h>
-//Added by qt3to4:
+#include <QLabel>
+#include <QRegExp>
 #include <QVBoxLayout>
-#include <Q3Frame>
 
 #include <kdebug.h>
 #include <kapplication.h>

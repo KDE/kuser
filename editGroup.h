@@ -22,9 +22,9 @@
 #ifndef _KU_EDITGROUP_H_
 #define _KU_EDITGROUP_H_
 
-#include <qcheckbox.h>
-//Added by qt3to4:
-#include <Q3ValueList>
+#include <QCheckBox>
+#include <QList>
+
 #include <kdialogbase.h>
 #include <klistview.h>
 #include <kcombobox.h>
@@ -67,6 +67,6 @@ private:
     uint rid;
     QString name,desc;
   } RID;
-  Q3ValueList<RID> mRids;
+  QList<RID> mRids;
 };
 #endif // _KU_EDITGROUP_H_

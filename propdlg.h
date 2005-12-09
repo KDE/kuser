@@ -21,16 +21,10 @@
 #ifndef _KU_PROPDLG_H_
 #define _KU_PROPDLG_H_
 
-#include <qlabel.h>
-#include <qpushbutton.h>
-#include <qwidget.h>
-#include <q3listbox.h>
-#include <qtooltip.h>
-#include <qcheckbox.h>
-#include <qlayout.h>
-#include <qmap.h>
-//Added by qt3to4:
-#include <Q3Frame>
+#include <QLabel>
+#include <QPushButton>
+#include <QCheckBox>
+#include <QMap>
 #include <QGridLayout>
 #include <Q3PtrList>
 

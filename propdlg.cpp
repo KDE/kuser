@@ -21,16 +21,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <qdatetime.h>
-
-#include <qlayout.h>
-#include <q3groupbox.h>
-#include <qfile.h>
-//Added by qt3to4:
+#include <QDateTime>
 #include <QGridLayout>
 #include <Q3PtrList>
-#include <Q3Frame>
-#include <QLabel>
 
 #include <kseparator.h>
 #include <kmessagebox.h>

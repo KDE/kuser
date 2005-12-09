@@ -23,11 +23,7 @@
 
 #include <stdlib.h>
 
-#include <qevent.h>
-#include <q3ptrlist.h>
-#include <qpushbutton.h>
-#include <qpixmap.h>
-#include <qtabwidget.h>
+#include <QTabWidget>
 
 #include "kuservw.h"
 #include "kgroupvw.h"

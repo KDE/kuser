@@ -21,9 +21,8 @@
 #ifndef _KU_EDITDEFAULTS_H_
 #define _KU_EDITDEFAULTS_H_
 
-#include <q3memarray.h>
-//Added by qt3to4:
-#include <Q3ValueList>
+#include <QList>
+
 #include <kconfigdialog.h>
 #include <kprogress.h>
 #include <kabc/ldif.h>
@@ -50,7 +49,7 @@ private:
   KABC::LDIF mLdif;
   bool mCancelled;
   QString mErrorMsg;
-  Q3ValueList<SambaDomain> mResult;
+  QList<SambaDomain> mResult;
   SambaDomain mDomain;
 private slots:
   void slotQueryClicked();

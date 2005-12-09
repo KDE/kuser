@@ -26,10 +26,8 @@
 #include <sys/file.h>
 #include <sys/stat.h>
 
-#include <qdir.h>
-#include <q3groupbox.h>
-//Added by qt3to4:
 #include <QVBoxLayout>
+#include <QGroupBox>
 
 #include <kdebug.h>
 
@@ -43,7 +41,7 @@ addUser::addUser( KUser *AUser, bool useprivategroup,
   QWidget *parent, const char *name ) :
   propdlg( AUser, useprivategroup, parent, name )
 {
-  Q3GroupBox *group = new Q3GroupBox(frontpage);
+  QGroupBox *group = new QGroupBox(frontpage);
   group->setTitle(i18n("New Account Options"));
   QVBoxLayout *groupLayout = new QVBoxLayout(group, marginHint(), spacingHint());
   groupLayout->addSpacing(group->fontMetrics().lineSpacing());

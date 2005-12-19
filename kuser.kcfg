@@ -289,7 +289,7 @@
     </entry>
     <entry name="samridbase" type="Int">
       <label>Algorithmic RID base</label>
-      <whatsthis>This values is an offset for the algorithmic mapping from uids and gids to rids. The default (and minimum) value is 1000, it must be even, and the LDAP database and smb.conf must store the same values.</whatsthis>
+      <whatsthis>This value is an offset for the algorithmic mapping from uids and gids to rids. The default (and minimum) value is 1000, it must be even, and the LDAP database and smb.conf must store the same values.</whatsthis>
       <default>1000</default>
     </entry>
     <entry name="samloginscript" type="String">

@@ -25,7 +25,7 @@
 #include <qstringlist.h>
 #include <q3ptrlist.h>
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 
 #include <kprogress.h>
 #include <kabc/ldapurl.h>
@@ -56,7 +56,7 @@ private:
   
   bool first, mOk, mCancel;
   int mAdv;
-  Q3CString ldif;
+  QByteArray ldif;
 
   QString getRDN( KGroup *group );
   void addData( KGroup *group );

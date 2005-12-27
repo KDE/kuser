@@ -30,7 +30,7 @@
 #endif
 #include <qfile.h>
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 
 #include <kmessagebox.h>
 #include <krandom.h>
@@ -135,9 +135,9 @@ void addShell(const QString &shell)
     fclose(f);
 }
 
-Q3CString genSalt( int len )
+QByteArray genSalt( int len )
 {
-  Q3CString salt( len + 1 );
+  QByteArray salt( len + 1 );
   const char * set = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./";
     
   salt[0] = set[getpid() % strlen(set)];
@@ -149,7 +149,7 @@ Q3CString genSalt( int len )
 
 QString encryptPass( const QString &pass, bool md5 )
 {
-  Q3CString salt;
+  QByteArray salt;
   char tmp[128];
   
   if ( md5 ) {

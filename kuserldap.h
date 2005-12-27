@@ -25,7 +25,7 @@
 #include <qstring.h>
 #include <q3ptrlist.h>
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 
 #include <kprogress.h>
 #include <kabc/ldapurl.h>
@@ -54,7 +54,7 @@ private:
   bool mOk, mCancel;
   KUser *mUser, *mDelUser, *mAddUser;
   int mAdv;
-  Q3CString ldif;
+  QByteArray ldif;
   int schemaversion;
   QStringList mOc;
   QMap<KUser*, QStringList> mObjectClasses;

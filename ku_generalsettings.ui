@@ -1,0 +1,240 @@
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<class>KU_GeneralSettings</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>KU_GeneralSettings</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>311</width>
+            <height>237</height>
+        </rect>
+    </property>
+    <vbox>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout1</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>textLabel1</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Source of user/group database:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>kcfg_source</cstring>
+                    </property>
+                </widget>
+                <widget class="KComboBox">
+                    <item>
+                        <property name="text">
+                            <string>Files</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>LDAP</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>System</string>
+                        </property>
+                    </item>
+                    <property name="name">
+                        <cstring>kcfg_source</cstring>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout6</cstring>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="KLineEdit" row="1" column="1">
+                    <property name="name">
+                        <cstring>kcfg_homepath</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="3" column="0">
+                    <property name="name">
+                        <cstring>textLabel2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>First normal GID:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>kcfg_firstGID</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="1" column="0">
+                    <property name="name">
+                        <cstring>textLabel1_2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Home path template:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>kcfg_homepath</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="0" column="0">
+                    <property name="name">
+                        <cstring>textLabel1_3</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Shell:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>kcfg_shell</cstring>
+                    </property>
+                </widget>
+                <widget class="KComboBox" row="0" column="1">
+                    <property name="name">
+                        <cstring>kcfg_shell</cstring>
+                    </property>
+                    <property name="editable">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="2" column="0">
+                    <property name="name">
+                        <cstring>textLabel1_3_2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>First normal UID:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>kcfg_firstUID</cstring>
+                    </property>
+                </widget>
+                <widget class="KLineEdit" row="3" column="1">
+                    <property name="name">
+                        <cstring>kcfg_firstGID</cstring>
+                    </property>
+                </widget>
+                <widget class="KLineEdit" row="2" column="1">
+                    <property name="name">
+                        <cstring>kcfg_firstUID</cstring>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+        <widget class="QCheckBox">
+            <property name="name">
+                <cstring>kcfg_createHomeDir</cstring>
+            </property>
+            <property name="text">
+                <string>Create home folder</string>
+            </property>
+        </widget>
+        <widget class="QCheckBox">
+            <property name="name">
+                <cstring>kcfg_copySkel</cstring>
+            </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
+            <property name="text">
+                <string>Copy skeleton to home folder</string>
+            </property>
+        </widget>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout5</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>kcfg_userPrivateGroup</cstring>
+                    </property>
+                    <property name="text">
+                        <string>User private groups</string>
+                    </property>
+                </widget>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>textLabel1_4</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Default group:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>kcfg_defaultgroup</cstring>
+                    </property>
+                </widget>
+                <widget class="QSpinBox">
+                    <property name="name">
+                        <cstring>kcfg_defaultgroup</cstring>
+                    </property>
+                    <property name="maxValue">
+                        <number>65536</number>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
+        <spacer>
+            <property name="name">
+                <cstring>spacer5</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>16</height>
+                </size>
+            </property>
+        </spacer>
+    </vbox>
+</widget>
+<connections>
+    <connection>
+        <sender>kcfg_userPrivateGroup</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>kcfg_defaultgroup</receiver>
+        <slot>setDisabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>kcfg_createHomeDir</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>kcfg_copySkel</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+</connections>
+<tabstops>
+    <tabstop>kcfg_source</tabstop>
+    <tabstop>kcfg_shell</tabstop>
+    <tabstop>kcfg_homepath</tabstop>
+    <tabstop>kcfg_firstUID</tabstop>
+    <tabstop>kcfg_firstGID</tabstop>
+    <tabstop>kcfg_createHomeDir</tabstop>
+    <tabstop>kcfg_copySkel</tabstop>
+    <tabstop>kcfg_userPrivateGroup</tabstop>
+</tabstops>
+<slots>
+    <slot>kcfg_createHomeDir_toggled( bool )</slot>
+</slots>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

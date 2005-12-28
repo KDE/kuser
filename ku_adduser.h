@@ -1,7 +1,7 @@
 /*
  *  Copyright (c) 1998 Denis Perchine <dyp@perchine.com>
  *  Copyright (c) 2004 Szombathelyi György <gyurco@freemail.hu>
- *  Maintained by Adriaan de Groot <groot@kde.org>
+ *  Former maintainer: Adriaan de Groot <groot@kde.org>
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public
@@ -18,40 +18,32 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-#ifndef _KU_GROUPVW_H_
-#define _KU_GROUPVW_H_
+#ifndef _KU_ADDUSER_H_
+#define _KU_ADDUSER_H_
 
-#include <qwidget.h>
+#include <QCheckBox>
+#include "ku_edituser.h"
 
-#include <klistview.h>
-
-#include "ku_group.h"
-
-class KGroupViewItem : public KListViewItem
-{
+class KU_AddUser: public KU_EditUser {
+  Q_OBJECT
 public:
-  KGroupViewItem(KListView *parent, KU_Group *aku);
-  KU_Group *group() { return mGroup; }
-private:  
-  virtual QString text ( int ) const;
-  virtual int compare( Q3ListViewItem *i, int col, bool ascending ) const;
-  
-  KU_Group *mGroup;
+  KU_AddUser(KU_User *AUser, bool useprivategroup, 
+    QWidget *parent = 0, const char *name = 0 );
+
+  void setCreateHomeDir(bool b)
+     { createhome->setChecked(b); }
+
+  void setCopySkel(bool b)
+     { copyskel->setChecked(b); }
+
+protected slots:
+  virtual void slotOk();
+protected:
+  bool checkHome();
+  bool checkMailBox();
+
+  QCheckBox *createhome;
+  QCheckBox *copyskel;
 };
 
-class KGroupView : public KListView
-{
-    Q_OBJECT
-
-public:
-  KGroupView( QWidget* parent = 0, const char* name = 0 );
-
-  virtual ~KGroupView();
-
-  void insertItem(KU_Group *aku);
-  void removeItem(KU_Group *aku);
-  KU_Group *getCurrentGroup();
-  void init();
-};
-
-#endif // _KGROUPVW_H_
+#endif // _KU_ADDUSER_H_

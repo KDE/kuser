@@ -18,40 +18,19 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-#ifndef _KU_GROUPVW_H_
-#define _KU_GROUPVW_H_
-
-#include <qwidget.h>
-
-#include <klistview.h>
+#ifndef _KU_GROUPSYSTEM_H_
+#define _KU_GROUPSYSTEM_H_
 
 #include "ku_group.h"
 
-class KGroupViewItem : public KListViewItem
-{
+class KU_GroupSystem : public KU_Groups {
 public:
-  KGroupViewItem(KListView *parent, KU_Group *aku);
-  KU_Group *group() { return mGroup; }
-private:  
-  virtual QString text ( int ) const;
-  virtual int compare( Q3ListViewItem *i, int col, bool ascending ) const;
-  
-  KU_Group *mGroup;
+  KU_GroupSystem( KU_PrefsBase *cfg );
+  virtual ~KU_GroupSystem();
+
+  virtual bool reload();
+  virtual bool dbcommit() { return true; }
 };
 
-class KGroupView : public KListView
-{
-    Q_OBJECT
+#endif // _KU_GROUPSYSTEM_H_
 
-public:
-  KGroupView( QWidget* parent = 0, const char* name = 0 );
-
-  virtual ~KGroupView();
-
-  void insertItem(KU_Group *aku);
-  void removeItem(KU_Group *aku);
-  KU_Group *getCurrentGroup();
-  void init();
-};
-
-#endif // _KGROUPVW_H_

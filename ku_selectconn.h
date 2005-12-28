@@ -1,7 +1,5 @@
 /*
- *  Copyright (c) 1998 Denis Perchine <dyp@perchine.com>
  *  Copyright (c) 2004 Szombathelyi György <gyurco@freemail.hu>
- *  Maintained by Adriaan de Groot <groot@kde.org>
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public
@@ -18,40 +16,28 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-#ifndef _KU_GROUPVW_H_
-#define _KU_GROUPVW_H_
+#ifndef _KU_SELECTCONN_H_
+#define _KU_SELECTCONN_H_
 
-#include <qwidget.h>
+#include <kdialogbase.h>
+#include <kcombobox.h>
 
-#include <klistview.h>
-
-#include "ku_group.h"
-
-class KGroupViewItem : public KListViewItem
-{
+class KU_SelectConn : public KDialogBase {
+  Q_OBJECT
 public:
-  KGroupViewItem(KListView *parent, KU_Group *aku);
-  KU_Group *group() { return mGroup; }
-private:  
-  virtual QString text ( int ) const;
-  virtual int compare( Q3ListViewItem *i, int col, bool ascending ) const;
+  KU_SelectConn( const QString &selected, QWidget* parent, const char * name);
+  QString connSelected();
+protected slots:
+  void slotUser1();
+  void slotUser2();
+  void slotUser3();  
+  void slotNewApplySettings();
+  void slotApplySettings();
+  void slotApply();
   
-  KU_Group *mGroup;
+protected:
+  KComboBox *mCombo;
+  QString conn, newconn, mSelected;
 };
 
-class KGroupView : public KListView
-{
-    Q_OBJECT
-
-public:
-  KGroupView( QWidget* parent = 0, const char* name = 0 );
-
-  virtual ~KGroupView();
-
-  void insertItem(KU_Group *aku);
-  void removeItem(KU_Group *aku);
-  KU_Group *getCurrentGroup();
-  void init();
-};
-
-#endif // _KGROUPVW_H_
+#endif // _KU_SELECTCONN_H_

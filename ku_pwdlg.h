@@ -18,40 +18,27 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-#ifndef _KU_GROUPVW_H_
-#define _KU_GROUPVW_H_
+#ifndef _KU_PWDLG_H_
+#define _KU_PWDLG_H_
 
-#include <qwidget.h>
+#include <QString>
+#include <klineedit.h>
+#include <kdialogbase.h>
 
-#include <klistview.h>
-
-#include "ku_group.h"
-
-class KGroupViewItem : public KListViewItem
-{
-public:
-  KGroupViewItem(KListView *parent, KU_Group *aku);
-  KU_Group *group() { return mGroup; }
-private:  
-  virtual QString text ( int ) const;
-  virtual int compare( Q3ListViewItem *i, int col, bool ascending ) const;
-  
-  KU_Group *mGroup;
-};
-
-class KGroupView : public KListView
-{
-    Q_OBJECT
+class KU_PwDlg : public KDialogBase {
+  Q_OBJECT
 
 public:
-  KGroupView( QWidget* parent = 0, const char* name = 0 );
+  KU_PwDlg( QWidget* parent = NULL, const char* name = NULL );
+  ~KU_PwDlg();
 
-  virtual ~KGroupView();
+  QString getPassword() const;
+protected slots:
+  void slotOk();
 
-  void insertItem(KU_Group *aku);
-  void removeItem(KU_Group *aku);
-  KU_Group *getCurrentGroup();
-  void init();
+private:
+  KLineEdit   *lepw1;
+  KLineEdit   *lepw2;
 };
 
-#endif // _KGROUPVW_H_
+#endif // _KU_PWDLG_H_

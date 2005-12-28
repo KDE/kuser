@@ -18,40 +18,39 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-#ifndef _KU_GROUPVW_H_
-#define _KU_GROUPVW_H_
+#ifndef _KU_MAINWIDGET_H_
+#define _KU_MAINWIDGET_H_
 
-#include <qwidget.h>
+#include <kmainwindow.h>
 
-#include <klistview.h>
+class KU_SelectConn;
+class KU_MainView;
+class KToggleAction;
 
-#include "ku_group.h"
-
-class KGroupViewItem : public KListViewItem
-{
+class KU_MainWidget : public KMainWindow {
+Q_OBJECT
 public:
-  KGroupViewItem(KListView *parent, KU_Group *aku);
-  KU_Group *group() { return mGroup; }
-private:  
-  virtual QString text ( int ) const;
-  virtual int compare( Q3ListViewItem *i, int col, bool ascending ) const;
-  
-  KU_Group *mGroup;
-};
+  KU_MainWidget(const char *name = 0);
+  ~KU_MainWidget();
+  bool queryClose();
 
-class KGroupView : public KListView
-{
-    Q_OBJECT
-
-public:
-  KGroupView( QWidget* parent = 0, const char* name = 0 );
-
-  virtual ~KGroupView();
-
-  void insertItem(KU_Group *aku);
-  void removeItem(KU_Group *aku);
-  KU_Group *getCurrentGroup();
+protected:
   void init();
+  void setupActions();
+
+protected slots:
+  void showSys();
+  void properties();
+  void slotApplySettings();
+  void slotApplyConnection();
+  void selectconn();
+  void reload();
+
+private:
+  KToggleAction *mShowSys;
+  KU_MainView *mv;
+  KU_SelectConn *sc;
+
 };
 
-#endif // _KGROUPVW_H_
+#endif // _KU_MAINWIDGET_H_

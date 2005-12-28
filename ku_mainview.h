@@ -18,40 +18,59 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-#ifndef _KU_GROUPVW_H_
-#define _KU_GROUPVW_H_
+#ifndef _KU_MAINVIEW_H_
+#define _KU_MAINVIEW_H_
 
-#include <qwidget.h>
+#include <stdlib.h>
 
-#include <klistview.h>
+#include <QTabWidget>
 
-#include "ku_group.h"
+#include "kuservw.h"
+#include "kgroupvw.h"
 
-class KGroupViewItem : public KListViewItem
-{
+class KU_MainView : public QTabWidget {
+Q_OBJECT
 public:
-  KGroupViewItem(KListView *parent, KU_Group *aku);
-  KU_Group *group() { return mGroup; }
-private:  
-  virtual QString text ( int ) const;
-  virtual int compare( Q3ListViewItem *i, int col, bool ascending ) const;
-  
-  KU_Group *mGroup;
-};
+  KU_MainView(QWidget *parent = 0);
+  ~KU_MainView();
 
-class KGroupView : public KListView
-{
-    Q_OBJECT
-
-public:
-  KGroupView( QWidget* parent = 0, const char* name = 0 );
-
-  virtual ~KGroupView();
-
-  void insertItem(KU_Group *aku);
-  void removeItem(KU_Group *aku);
-  KU_Group *getCurrentGroup();
   void init();
+  void setShowSys( bool b ) { mShowSys = b; }
+
+  bool queryClose();
+
+  void clearUsers();
+  void clearGroups();
+  void reloadUsers();
+  void reloadGroups();
+
+public slots:
+  void slotTabChanged();
+
+  void userSelected();
+  void groupSelected();
+
+  void useradd();
+  void useredit();
+  void userdel();
+
+  void grpadd();
+  void grpedit();
+  void grpdel();
+
+  void setpwd();
+  
+signals:
+  void userSelected(bool);
+  void groupSelected(bool);
+
+protected:
+  bool updateUsers();  
+  bool updateGroups();  
+
+  KUserView *lbusers;
+  KGroupView *lbgroups;
+  bool mShowSys;
 };
 
-#endif // _KGROUPVW_H_
+#endif // _KU_MAINVIEW_H_

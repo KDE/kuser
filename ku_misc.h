@@ -18,40 +18,25 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-#ifndef _KU_GROUPVW_H_
-#define _KU_GROUPVW_H_
+#ifndef _KU_MISC_H_
+#define _KU_MISC_H_
 
-#include <qwidget.h>
+#include <sys/time.h>
 
-#include <klistview.h>
+#include <QString>
+#include <QByteArray>
 
-#include "ku_group.h"
+#include <klocale.h>
+#include <kapplication.h>
 
-class KGroupViewItem : public KListViewItem
-{
-public:
-  KGroupViewItem(KListView *parent, KU_Group *aku);
-  KU_Group *group() { return mGroup; }
-private:  
-  virtual QString text ( int ) const;
-  virtual int compare( Q3ListViewItem *i, int col, bool ascending ) const;
-  
-  KU_Group *mGroup;
-};
+bool backup(const QString & name);
+QByteArray genSalt( int len );
+QString encryptPass( const QString &pass, bool md5 );
+time_t now();
+int copyFile(const QString & from, const QString & to);
+QStringList readShells();
+void addShell(const QString &shell);
+int timeToDays(time_t time);
+time_t daysToTime(int days);
 
-class KGroupView : public KListView
-{
-    Q_OBJECT
-
-public:
-  KGroupView( QWidget* parent = 0, const char* name = 0 );
-
-  virtual ~KGroupView();
-
-  void insertItem(KU_Group *aku);
-  void removeItem(KU_Group *aku);
-  KU_Group *getCurrentGroup();
-  void init();
-};
-
-#endif // _KGROUPVW_H_
+#endif // _KU_MISC_H_

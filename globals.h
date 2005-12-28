@@ -28,7 +28,7 @@
 #include <paths.h>
 #endif
 #include <kconfig.h>
-#include "kuserprefs.h"
+#include "ku_prefs.h"
 
 #define KU_BACKUP_EXT ".bak"
 #define KU_CREATE_EXT ".new"

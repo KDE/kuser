@@ -18,40 +18,36 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-#ifndef _KU_GROUPVW_H_
-#define _KU_GROUPVW_H_
+#ifndef _KU_GROUPFILES_H_
+#define _KU_GROUPFILES_H_
 
-#include <qwidget.h>
+#include <sys/types.h>
 
-#include <klistview.h>
+#include <QString>
+#include <QStringList>
+#include <Q3PtrList>
 
 #include "ku_group.h"
 
-class KGroupViewItem : public KListViewItem
-{
+class KU_GroupFiles : public KU_Groups {
 public:
-  KGroupViewItem(KListView *parent, KU_Group *aku);
-  KU_Group *group() { return mGroup; }
-private:  
-  virtual QString text ( int ) const;
-  virtual int compare( Q3ListViewItem *i, int col, bool ascending ) const;
+  KU_GroupFiles( KU_PrefsBase *cfg );
+  virtual ~KU_GroupFiles();
+
+  virtual bool reload();
+  virtual bool dbcommit();
+
+private:
+  int gr_backuped;
+  int gn_backuped;
+  int gs_backuped;
+
+  int mode, smode;
+  uid_t uid;
+  gid_t gid;
   
-  KU_Group *mGroup;
+  bool save();
 };
 
-class KGroupView : public KListView
-{
-    Q_OBJECT
+#endif // _KU_GROUPFILES_H_
 
-public:
-  KGroupView( QWidget* parent = 0, const char* name = 0 );
-
-  virtual ~KGroupView();
-
-  void insertItem(KU_Group *aku);
-  void removeItem(KU_Group *aku);
-  KU_Group *getCurrentGroup();
-  void init();
-};
-
-#endif // _KGROUPVW_H_

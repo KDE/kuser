@@ -18,40 +18,55 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-#ifndef _KU_GROUPVW_H_
-#define _KU_GROUPVW_H_
 
-#include <qwidget.h>
+#ifndef _KU_EDITGROUP_H_
+#define _KU_EDITGROUP_H_
 
+#include <QCheckBox>
+#include <QList>
+
+#include <kdialogbase.h>
 #include <klistview.h>
+#include <kcombobox.h>
+#include <klineedit.h>
 
 #include "ku_group.h"
 
-class KGroupViewItem : public KListViewItem
+class KU_EditGroup : public KDialogBase
 {
+  Q_OBJECT
 public:
-  KGroupViewItem(KListView *parent, KU_Group *aku);
-  KU_Group *group() { return mGroup; }
-private:  
-  virtual QString text ( int ) const;
-  virtual int compare( Q3ListViewItem *i, int col, bool ascending ) const;
-  
-  KU_Group *mGroup;
+
+  KU_EditGroup(KU_Group *akg, bool samba, bool add, 
+    QWidget* parent = NULL, const char* name = NULL);
+
+  virtual ~KU_EditGroup();
+
+protected slots:
+  virtual void slotOk();
+  void addClicked();
+  void delClicked();
+  void ridSelected( int index );
+
+private:
+  bool mSamba, mAdd;
+  bool ro;
+  KU_Group *kg;
+  KListView *m_list_in,*m_list_notin;
+  KLineEdit   *legrpname;
+  KLineEdit   *legid;
+  KComboBox   *lerid;
+  KLineEdit   *ledom;
+  KLineEdit   *ledispname;
+  KLineEdit   *ledesc;
+  KLineEdit   *ledomsid;
+  KComboBox   *letype;
+  QCheckBox   *cbsamba;
+  QString mOldName;
+  typedef struct _RID {
+    uint rid;
+    QString name,desc;
+  } RID;
+  QList<RID> mRids;
 };
-
-class KGroupView : public KListView
-{
-    Q_OBJECT
-
-public:
-  KGroupView( QWidget* parent = 0, const char* name = 0 );
-
-  virtual ~KGroupView();
-
-  void insertItem(KU_Group *aku);
-  void removeItem(KU_Group *aku);
-  KU_Group *getCurrentGroup();
-  void init();
-};
-
-#endif // _KGROUPVW_H_
+#endif // _KU_EDITGROUP_H_

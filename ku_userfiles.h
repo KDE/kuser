@@ -18,40 +18,44 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-#ifndef _KU_GROUPVW_H_
-#define _KU_GROUPVW_H_
+#ifndef _KU_USERFILES_H_
+#define _KU_USERFILES_H_
 
-#include <qwidget.h>
+#include <sys/types.h>
 
-#include <klistview.h>
+#include <qstring.h>
+#include <q3ptrlist.h>
 
-#include "ku_group.h"
+#include "ku_user.h"
 
-class KGroupViewItem : public KListViewItem
-{
+class KU_UserFiles : public KU_Users {
 public:
-  KGroupViewItem(KListView *parent, KU_Group *aku);
-  KU_Group *group() { return mGroup; }
-private:  
-  virtual QString text ( int ) const;
-  virtual int compare( Q3ListViewItem *i, int col, bool ascending ) const;
-  
-  KU_Group *mGroup;
+  KU_UserFiles(KU_PrefsBase *cfg);
+  virtual ~KU_UserFiles();
+
+  virtual bool dbcommit();
+  virtual bool reload();
+  virtual void createPassword( KU_User *user, const QString &password );
+
+private:
+  bool pw_backuped;
+  bool pn_backuped;
+  bool s_backuped;
+
+  mode_t pwd_mode;
+  mode_t sdw_mode;
+
+  uid_t pwd_uid;
+  gid_t pwd_gid;
+
+  uid_t sdw_uid;
+  gid_t sdw_gid;
+
+  bool loadpwd();
+  bool loadsdw();
+
+  bool savepwd();
+  bool savesdw();
 };
+#endif // _KU_USERFILES_H_
 
-class KGroupView : public KListView
-{
-    Q_OBJECT
-
-public:
-  KGroupView( QWidget* parent = 0, const char* name = 0 );
-
-  virtual ~KGroupView();
-
-  void insertItem(KU_Group *aku);
-  void removeItem(KU_Group *aku);
-  KU_Group *getCurrentGroup();
-  void init();
-};
-
-#endif // _KGROUPVW_H_

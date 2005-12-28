@@ -9,27 +9,27 @@ kuser_LDADD	=	$(LIB_KDEUI) $(LIBCRYPT) $(LIBSHADOW) $(LIBGEN) $(LIB_KABC) -lkntl
 ####### Files
 
 kuser_SOURCES	=	\
-	mainWidget.cpp editGroup.cpp kuservw.cpp \
-	kgroupvw.cpp delUser.cpp \
-	kuser.cpp kgroup.cpp main.cpp mainView.cpp \
-	propdlg.cpp misc.cpp pwddlg.cpp \
-	addUser.cpp editDefaults.cpp \
-	kglobal.cpp sid.cpp\
-	kuserfiles.cpp kgroupfiles.cpp kuserldap.cpp kgroupldap.cpp \
-	kusersystem.cpp kgroupsystem.cpp selectconn.cpp\
-	sha1.cpp kuserprefs.kcfgc \
-	filessettings.ui generalsettings.ui ldapsettings.ui ldapsamba.ui passwordpolicy.ui
+	ku_mainwidget.cpp ku_mainview.cpp ku_edituser.cpp ku_editgroup.cpp \
+	kuservw.cpp kgroupvw.cpp ku_deluser.cpp \
+	ku_user.cpp ku_group.cpp ku_main.cpp \
+	ku_misc.cpp ku_pwdlg.cpp \
+	ku_adduser.cpp ku_configdlg.cpp \
+	ku_global.cpp sid.cpp\
+	ku_userfiles.cpp ku_groupfiles.cpp ku_userldap.cpp ku_groupldap.cpp \
+	ku_usersystem.cpp ku_groupsystem.cpp ku_selectconn.cpp\
+	sha1.cpp ku_prefs.kcfgc \
+	ku_filessettings.ui ku_generalsettings.ui ku_ldapsettings.ui ku_ldapsamba.ui ku_passwordpolicy.ui
 
 kuser_METASOURCES = AUTO
 
 # the following are only useful, if you want to use "make dist"
 noinst_HEADERS	=	\
-	mainWidget.h editGroup.h kuservw.h \
-	kuser.h mainView.h kgroup.h delUser.h \
-	kgroupvw.h propdlg.h globals.h misc.h \
-	pwddlg.h addUser.h \
-	editDefaults.h selectconn.h sha1.h sid.h kglobal_.h \
-	kusersystem.h kgroupsystem.h kuserfiles.h kgroupfiles.h kuserldap.h kgroupldap.h
+	globals.h       ku_edituser.h     ku_mainview.h    ku_userfiles.h \
+	kgroupvw.h      ku_global.h       ku_mainwidget.h  ku_user.h \
+	ku_adduser.h    ku_groupfiles.h   ku_misc.h        ku_userldap.h \
+	ku_configdlg.h  ku_group.h        ku_pwdlg.h       ku_usersystem.h \
+	ku_deluser.h    ku_groupldap.h    ku_selectconn.h  sha1.h \
+	ku_editgroup.h  ku_groupsystem.h  kuservw.h        sid.h \
 
 kde_kcfg_DATA = kuser.kcfg
 

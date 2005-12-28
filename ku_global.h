@@ -18,40 +18,31 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-#ifndef _KU_GROUPVW_H_
-#define _KU_GROUPVW_H_
+#ifndef _KU_GLOBAL_H_
+#define _KU_GLOBAL_H_
 
-#include <qwidget.h>
-
-#include <klistview.h>
-
+#include "ku_user.h"
 #include "ku_group.h"
 
-class KGroupViewItem : public KListViewItem
-{
+class KU_Global {
 public:
-  KGroupViewItem(KListView *parent, KU_Group *aku);
-  KU_Group *group() { return mGroup; }
-private:  
-  virtual QString text ( int ) const;
-  virtual int compare( Q3ListViewItem *i, int col, bool ascending ) const;
-  
-  KU_Group *mGroup;
-};
-
-class KGroupView : public KListView
-{
-    Q_OBJECT
-
-public:
-  KGroupView( QWidget* parent = 0, const char* name = 0 );
-
-  virtual ~KGroupView();
-
-  void insertItem(KU_Group *aku);
-  void removeItem(KU_Group *aku);
-  KU_Group *getCurrentGroup();
+  KU_Global();
+  ~KU_Global();
   void init();
+  void initCfg( const QString &connection );
+  
+  KU_PrefsBase *kcfg() { return cfg; }
+  KU_Users &getUsers();
+  KU_Groups &getGroups();
+  
+private:
+
+  KU_Users *users;
+  KU_Groups *groups;
+  
+  KU_PrefsBase *cfg;
 };
 
-#endif // _KGROUPVW_H_
+extern KU_Global *kug;
+
+#endif //_KU_GLOBAL_H_

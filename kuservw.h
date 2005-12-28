@@ -25,19 +25,19 @@
 
 #include <klistview.h>
 
-#include "kuser.h"
+#include "ku_user.h"
 
 class KUserViewItem : public KListViewItem
 {
 public:
-  KUserViewItem(KListView *parent, KUser *aku);
-  KUser *user() { return mUser; }
+  KUserViewItem(KListView *parent, KU_User *aku);
+  KU_User *user() { return mUser; }
 private:  
   virtual QString text ( int ) const;
   virtual void paintCell( QPainter *p, const QColorGroup &cg,
     int column, int width, int alignment );
   virtual int compare( Q3ListViewItem *i, int col, bool ascending ) const;
-  KUser *mUser;
+  KU_User *mUser;
 };
 
 class KUserView : public KListView
@@ -49,9 +49,9 @@ public:
 
   virtual ~KUserView();
 
-  void insertItem(KUser *aku);
-  void removeItem(KUser *aku);
-  KUser *getCurrentUser();
+  void insertItem(KU_User *aku);
+  void removeItem(KU_User *aku);
+  KU_User *getCurrentUser();
   void init();
 };
 

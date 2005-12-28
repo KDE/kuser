@@ -18,13 +18,13 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-#include "kglobal_.h"
-#include "misc.h"
+#include "ku_global.h"
+#include "ku_misc.h"
 
 #include "kgroupvw.h"
 
 
-KGroupViewItem::KGroupViewItem(KListView *parent, KGroup *aku)
+KGroupViewItem::KGroupViewItem(KListView *parent, KU_Group *aku)
  : KListViewItem(parent), mGroup(aku)
 {
 }
@@ -59,12 +59,12 @@ QString KGroupViewItem::text(int num) const
   {
      case 0: return QString::number(mGroup->getGID());
      case 1: return mGroup->getName();
-     case 2: return ( mGroup->getCaps() & KGroup::Cap_Samba ) ? 
+     case 2: return ( mGroup->getCaps() & KU_Group::Cap_Samba ) ? 
        mGroup->getSID().getDOM() : QString::null;
-     case 3: return ( mGroup->getCaps() & KGroup::Cap_Samba ) ?
+     case 3: return ( mGroup->getCaps() & KU_Group::Cap_Samba ) ?
       QString::number( mGroup->getSID().getRID() ) : QString::null;
      case 4: {
-       if ( mGroup->getCaps() & KGroup::Cap_Samba ) {
+       if ( mGroup->getCaps() & KU_Group::Cap_Samba ) {
          switch ( mGroup->getType() ) {
            case 2: return i18n("Domain");
            case 4: return i18n("Local");
@@ -92,13 +92,13 @@ KGroupView::~KGroupView()
 {
 }
 
-void KGroupView::insertItem(KGroup *aku) 
+void KGroupView::insertItem(KU_Group *aku) 
 {
   KGroupViewItem *groupItem = new KGroupViewItem(this, aku);
   KListView::insertItem(groupItem);
 }
 
-void KGroupView::removeItem(KGroup *aku) 
+void KGroupView::removeItem(KU_Group *aku) 
 {
   KGroupViewItem *groupItem = (KGroupViewItem *)firstChild();
 
@@ -125,7 +125,7 @@ void KGroupView::init()
     setColumnAlignment(0, Qt::AlignRight);
     addColumn(i18n("Group Name"));
   }
-  if ( kug->getGroups().getCaps() & KGroups::Cap_Samba ) {
+  if ( kug->getGroups().getCaps() & KU_Groups::Cap_Samba ) {
     addColumn(i18n("Domain SID"));
     addColumn(i18n("RID"));
     addColumn(i18n("Type"));
@@ -134,7 +134,7 @@ void KGroupView::init()
   }
 }
 
-KGroup *KGroupView::getCurrentGroup() 
+KU_Group *KGroupView::getCurrentGroup() 
 {
   KGroupViewItem *groupItem = (KGroupViewItem *)currentItem();
   if (!groupItem) return 0;

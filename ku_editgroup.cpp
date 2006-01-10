@@ -329,3 +329,5 @@ void KU_EditGroup::slotOk()
   }
   accept();
 }
+
+#include "ku_editgroup.moc"

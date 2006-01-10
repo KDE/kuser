@@ -524,3 +524,5 @@ bool KU_MainView::updateUsers()
   kug->getUsers().commit();
   return ret;
 }
+
+#include "ku_mainview.moc"

@@ -655,3 +655,5 @@ void KU_UserLDAP::putData( KIO::Job *, QByteArray& data )
   } else
     data.resize(0);
 }
+
+#include "ku_userldap.moc"

@@ -145,3 +145,5 @@ void KU_SelectConn::slotApplySettings()
   if ( connSelected() == mSelected )
     emit( applyClicked() );
 }
+
+#include "ku_selectconn.moc"

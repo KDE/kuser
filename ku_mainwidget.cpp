@@ -197,3 +197,5 @@ void KU_MainWidget::selectconn()
   connect( sc, SIGNAL(okClicked()), SLOT(slotApplyConnection()) );
   sc->show();
 }
+
+#include "ku_mainwidget.moc"

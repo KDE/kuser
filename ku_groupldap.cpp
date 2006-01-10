@@ -316,3 +316,5 @@ void KU_GroupLDAP::modData( KU_Group *group )
   ldif += "-\n\n";
   kdDebug() << "ldif: " << ldif << endl;
 }
+
+#include "ku_groupldap.moc"

@@ -80,6 +80,7 @@ GenericName[ven]=Murangaphanda wa Mushumisi
 GenericName[wa]=Manaedjeu d' uzeus
 GenericName[xh]=Umphathi We Calendar
 GenericName[zh_CN]=用户管理程序
+GenericName[zh_HK]=用戶管理員
 GenericName[zh_TW]=使用者管理程式
 GenericName[zu]=Umphathi we Calendar
 Exec=kuser %i %m -caption "%c"

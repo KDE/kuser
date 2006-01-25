@@ -18,14 +18,14 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-#include "ku_global.h"
-#include "ku_misc.h"
+#include <klocale.h>
 
+#include "ku_global.h"
 #include "kuservw.h"
 
 
-KUserViewItem::KUserViewItem(KListView *parent, KU_User *aku)
- : KListViewItem(parent), mUser(aku)
+KUserViewItem::KUserViewItem(KListView *parent, int index)
+ : KListViewItem(parent), mIndex(index)
 {
 }
 
@@ -34,8 +34,8 @@ int KUserViewItem::compare( Q3ListViewItem *i, int col, bool ascending ) const
   if ( col == 0 ) {
     uid_t uid1, uid2;
 
-    uid1 = mUser->getUID();
-    uid2 = ((KUserViewItem*) i)->mUser->getUID();
+    uid1 = kug->getUsers()->at(mIndex).getUID();
+    uid2 = kug->getUsers()->at(((KUserViewItem*) i)->mIndex).getUID();
 
     if ( uid1 == uid2 ) return 0;
     return ( uid1 < uid2) ? -1: 1;
@@ -50,7 +50,7 @@ void KUserViewItem::paintCell( QPainter *p, const QColorGroup &cg,
     QColorGroup _cg( cg );
     QColor c = _cg.text();
 
-    if ( mUser->getDisabled() )
+    if ( kug->getUsers()->at(mIndex).getDisabled() )
         _cg.setColor( QColorGroup::Text, KGlobalSettings::visitedLinkColor() );
 
     KListViewItem::paintCell( p, _cg, column, width, alignment );
@@ -60,21 +60,23 @@ void KUserViewItem::paintCell( QPainter *p, const QColorGroup &cg,
 
 QString KUserViewItem::text(int num) const
 {
+  KU_User user = kug->getUsers()->at(mIndex);
+
   switch(num)
   {
-     case 0: return mUser->getCaps() & KU_User::Cap_POSIX ? 
-      QString::number( mUser->getUID() ) : QString::null;
-     case 1: return mUser->getName();
-     case 2: return mUser->getFullName();
-     case 3: return mUser->getHomeDir();
-     case 4: return mUser->getShell();
-     case 5: return mUser->getSID().getDOM();
-     case 6: return mUser->getCaps() & KU_User::Cap_Samba ? 
-      QString::number( mUser->getSID().getRID() ) : QString::null;
-     case 7: return mUser->getLoginScript();
-     case 8: return mUser->getProfilePath();
-     case 9: return mUser->getHomeDrive();
-     case 10: return mUser->getHomePath();
+     case 0: return user.getCaps() & KU_User::Cap_POSIX ?
+      QString::number( user.getUID() ) : QString::null;
+     case 1: return user.getName();
+     case 2: return user.getFullName();
+     case 3: return user.getHomeDir();
+     case 4: return user.getShell();
+     case 5: return user.getSID().getDOM();
+     case 6: return user.getCaps() & KU_User::Cap_Samba ?
+      QString::number( user.getSID().getRID() ) : QString::null;
+     case 7: return user.getLoginScript();
+     case 8: return user.getProfilePath();
+     case 9: return user.getHomeDrive();
+     case 10: return user.getHomePath();
   }
 
   return QString::null;
@@ -90,17 +92,17 @@ KUserView::~KUserView()
 {
 }
 
-void KUserView::insertItem(KU_User *aku) {
-  KUserViewItem *userItem = new KUserViewItem(this, aku);
+void KUserView::insertItem(int index) {
+  KUserViewItem *userItem = new KUserViewItem(this, index);
   KListView::insertItem(userItem);
 }
 
-void KUserView::removeItem(KU_User *aku) {
+void KUserView::removeItem(int index) {
   KUserViewItem *userItem = (KUserViewItem *)firstChild();
 
   while(userItem)
   {
-     if (userItem->user() == aku)
+     if (userItem->index() == index)
      {
         delete userItem;
         return;
@@ -125,7 +127,7 @@ void KUserView::init()
     addColumn(i18n("Login Shell"));
   }
 
-  if ( kug->getUsers().getCaps() & KU_Users::Cap_Samba ) {
+  if ( kug->getUsers()->getCaps() & KU_Users::Cap_Samba ) {
     addColumn(i18n("Domain SID"));
     addColumn(i18n("RID"));
     addColumn(i18n("Samba Login Script"));
@@ -135,11 +137,11 @@ void KUserView::init()
   }
 }
 
-KU_User *KUserView::getCurrentUser() {
+int KUserView::getCurrentIndex() {
   KUserViewItem *userItem = (KUserViewItem *)currentItem();
-  if (!userItem) return 0;
+  if (!userItem) return -1;
 
-  return userItem->user();
+  return userItem->index();
 }
 
 #include "kuservw.moc"

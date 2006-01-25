@@ -18,7 +18,7 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-#include <qfont.h>
+#include "globals.h"
 
 #include <kiconloader.h>
 #include <kapplication.h>

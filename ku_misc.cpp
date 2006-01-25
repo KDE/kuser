@@ -20,7 +20,12 @@
 
 #include "globals.h"
 
-#include <stdio.h>
+#include <config.h>
+
+#ifdef HAVE_SYS_STAT_H
+#include <sys/stat.h>
+#endif
+#include <errno.h>
 #include <stdlib.h>
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -28,10 +33,13 @@
 #ifdef HAVE_CRYPT_H
 #include <crypt.h>
 #endif
+
 #include <QFile>
+#include <QDir>
 
 #include <kmessagebox.h>
 #include <krandom.h>
+#include <klocale.h>
 
 #include "ku_misc.h"
 
@@ -54,6 +62,80 @@ time_t now() {
   
   gettimeofday( &tv, NULL );
   return ( tv.tv_sec );
+}
+
+void copyDir(const QString &srcPath, const QString &dstPath, uid_t uid, gid_t gid)
+{
+  mode_t mode;
+  QDir s(srcPath);
+  QDir d(dstPath);
+
+  QString dot = QString::fromLatin1(".");
+  QString dotdot = QString::fromLatin1("..");
+  
+  s.setFilter( QDir::All | QDir::Hidden | QDir::System );
+
+  for (uint i=0; i<s.count(); i++) {
+    QString name(s[i]);
+
+    if (name == dot)
+      continue;
+    if (name == dotdot)
+      continue;
+
+    QString filename(s.filePath(name));
+
+    QFileInfo info(filename);
+    mode = 0;
+    if ( info.permission(QFileInfo::ReadOwner) ) mode |=  S_IRUSR;
+    if ( info.permission(QFileInfo::WriteOwner) ) mode |=  S_IWUSR;
+    if ( info.permission(QFileInfo::ExeOwner) ) mode |=  S_IXUSR;
+    if ( info.permission(QFileInfo::ReadGroup) ) mode |=  S_IRGRP;
+    if ( info.permission(QFileInfo::WriteGroup) ) mode |=  S_IWGRP;
+    if ( info.permission(QFileInfo::ExeGroup) ) mode |=  S_IXGRP;
+    if ( info.permission(QFileInfo::ReadOther) ) mode |=  S_IROTH;
+    if ( info.permission(QFileInfo::WriteOther) ) mode |=  S_IWOTH;
+    if ( info.permission(QFileInfo::ExeOther) ) mode |=  S_IXOTH;
+
+    if ( info.isSymLink() ) {
+      QString link = info.readLink();
+
+      if (symlink(QFile::encodeName(link),QFile::encodeName(d.filePath(name))) != 0) {
+        KMessageBox::error( 0, i18n("Error creating symlink %1.\nError: %2")
+                  .arg(d.filePath(s[i])).arg(QString::fromLocal8Bit(strerror(errno))) );
+      }
+    } else if ( info.isDir() ) {
+      QDir dir(filename);
+
+      d.mkdir(name, FALSE);
+      copyDir(s.filePath(name), d.filePath(name), uid, gid);
+
+      if (chown(QFile::encodeName(d.filePath(name)), uid, gid) != 0) {
+        KMessageBox::error( 0, i18n("Cannot change owner of folder %1.\nError: %2")
+                  .arg(d.filePath(s[i])).arg(QString::fromLocal8Bit(strerror(errno))) );
+      }
+
+      if (chmod(QFile::encodeName(d.filePath(name)), mode) != 0) {
+        KMessageBox::error( 0, i18n("Cannot change permissions on folder %1.\nError: %2")
+                  .arg(d.filePath(s[i])).arg(QString::fromLocal8Bit(strerror(errno))) );
+      }
+
+    } else {
+      if (copyFile(filename, d.filePath(name)) == -1) {
+        continue;
+      }
+
+      if (chown(QFile::encodeName(d.filePath(name)), uid, gid) != 0) {
+        KMessageBox::error( 0, i18n("Cannot change owner of file %1.\nError: %2")
+                  .arg(d.filePath(s[i])).arg(QString::fromLocal8Bit(strerror(errno))) );
+      }
+
+      if (chmod(QFile::encodeName(d.filePath(name)), mode) != 0) {
+        KMessageBox::error( 0, i18n("Cannot change permissions on file %1.\nError: %2")
+                  .arg(d.filePath(s[i])).arg(QString::fromLocal8Bit(strerror(errno))) );
+      }
+    }
+  }
 }
 
 #define BLOCK_SIZE 65536

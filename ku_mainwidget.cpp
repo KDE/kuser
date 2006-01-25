@@ -1,6 +1,6 @@
 /*
  *  Copyright (c) 1998 Denis Perchine <dyp@perchine.com>
- *  Copyright (c) 2004 Szombathelyi György <gyurco@freemail.hu>
+ *  Copyright (c) 2004 Szombathelyi GyĂśrgy <gyurco@freemail.hu>
  *  Former maintainer: Adriaan de Groot <groot@kde.org>
  *
  *  This program is free software; you can redistribute it and/or
@@ -52,7 +52,7 @@ KU_MainWidget::KU_MainWidget(const char *name) : KMainWindow(0,name)
   setCentralWidget(mv);
 
   setupGUI();
-	
+
   statusBar()->changeItem(i18n("Ready"), 0);
 }
 
@@ -100,7 +100,7 @@ void KU_MainWidget::setupActions()
     SLOT(reload()), actionCollection(), "reload");
 
 #undef BarIconC
-	
+
   (void) new KAction(i18n("&Select Connection..."),
     0, this,
     SLOT(selectconn()), actionCollection(), "select_conn");
@@ -140,7 +140,7 @@ void KU_MainWidget::init()
   mv->clearUsers();
   mv->clearGroups();
   kug->init();
-  rw = ! ( kug->getUsers().getCaps() & KU_Users::Cap_ReadOnly );
+  rw = ! ( kug->getUsers()->getCaps() & KU_Users::Cap_ReadOnly );
   kdDebug() << "Users rw()" << rw << endl;
   actionCollection()->action("add_user")->setEnabled( rw );
   actionCollection()->action("edit_user")->setEnabled( rw );
@@ -157,7 +157,7 @@ void KU_MainWidget::init()
     disconnect( mv, SIGNAL(userSelected(bool)), 0, 0 );
   }
 
-  rw = ! ( kug->getGroups().getCaps() & KU_Groups::Cap_ReadOnly );
+  rw = ! ( kug->getGroups()->getCaps() & KU_Groups::Cap_ReadOnly );
   kdDebug() << "Groups rw()" << rw << endl;
   actionCollection()->action("add_group")->setEnabled( rw );
   actionCollection()->action("edit_group")->setEnabled( rw );
@@ -192,7 +192,7 @@ void KU_MainWidget::slotApplyConnection()
 
 void KU_MainWidget::selectconn()
 {
-  sc = new KU_SelectConn( kug->kcfg()->connection(), this, "selectconn" );
+  sc = new KU_SelectConn( kug->kcfg()->connection(), this );
   connect( sc, SIGNAL(applyClicked()), SLOT(slotApplyConnection()) );
   connect( sc, SIGNAL(okClicked()), SLOT(slotApplyConnection()) );
   sc->show();

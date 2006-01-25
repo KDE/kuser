@@ -27,7 +27,7 @@
 class KU_AddUser: public KU_EditUser {
   Q_OBJECT
 public:
-  KU_AddUser(KU_User *AUser, bool useprivategroup, 
+  KU_AddUser(KU_User &user, bool useprivategroup,
     QWidget *parent = 0, const char *name = 0 );
 
   void setCreateHomeDir(bool b)
@@ -35,6 +35,8 @@ public:
 
   void setCopySkel(bool b)
      { copyskel->setChecked(b); }
+
+  const KU_User &getNewUser() const { return mNewUser; };
 
 protected slots:
   virtual void slotOk();
@@ -44,6 +46,8 @@ protected:
 
   QCheckBox *createhome;
   QCheckBox *copyskel;
+private:
+  KU_User mNewUser;
 };
 
 #endif // _KU_ADDUSER_H_

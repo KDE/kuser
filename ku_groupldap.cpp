@@ -16,19 +16,16 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-#include <QString>
+#include <QLabel>
 
 #include <kdebug.h>
+#include <klocale.h>
 #include <kmessagebox.h>
 
 #include "ku_groupldap.h"
-#include "ku_misc.h"
-
 
 KU_GroupLDAP::KU_GroupLDAP( KU_PrefsBase *cfg ) : KU_Groups( cfg )
 {
-  mGroups.setAutoDelete(TRUE);
-
   if ( mCfg->ldapssl() )
     mUrl.setProtocol("ldaps");
   else
@@ -63,16 +60,15 @@ KU_GroupLDAP::KU_GroupLDAP( KU_PrefsBase *cfg ) : KU_Groups( cfg )
 
 KU_GroupLDAP::~KU_GroupLDAP()
 {
-  mGroups.clear();
 }
 
-QString KU_GroupLDAP::getRDN( KU_Group *group )
+QString KU_GroupLDAP::getRDN( const KU_Group &group )
 {
   switch ( mCfg->ldapgrouprdn() ) {
     case KU_PrefsBase::EnumLdapgrouprdn::cn:
-      return "cn=" + group->getName();
+      return "cn=" + group.getName();
     case KU_PrefsBase::EnumLdapgrouprdn::gidNumber:
-      return "gidNumber=" + QString::number( group->getGID() );
+      return "gidNumber=" + QString::number( group.getGID() );
     default:
       return "";
   }
@@ -116,32 +112,31 @@ void KU_GroupLDAP::data( KIO::Job*, const QByteArray& data )
         val = QString::fromUtf8( value, value.size() );
         if ( name == "objectclass" ) {
           if ( val.toLower() == "sambagroupmapping" ) 
-            mGroup->setCaps( KU_Group::Cap_Samba );
+            mGroup.setCaps( KU_Group::Cap_Samba );
         } else if ( name == "gidnumber" )
-          mGroup->setGID( val.toLong() );
+          mGroup.setGID( val.toLong() );
         else if ( name == "cn" )
-          mGroup->setName( val );
+          mGroup.setName( val );
         else if ( name == "userpassword" )
-          mGroup->setPwd( val );
+          mGroup.setPwd( val );
         else if ( name == "memberuid" )
-          mGroup->addUser( val );
+          mGroup.addUser( val );
         else if ( name == "sambasid" )
-          mGroup->setSID( val );
+          mGroup.setSID( val );
         else if ( name == "sambagrouptype" )
-          mGroup->setType( val.toInt() );
+          mGroup.setType( val.toInt() );
         else if ( name == "displayname" )
-          mGroup->setDisplayName( val );
+          mGroup.setDisplayName( val );
         else if ( name == "description" )
-          mGroup->setDesc( val );
+          mGroup.setDesc( val );
         break;
       case KABC::LDIF::EndEntry: {
-        KU_Group newGroup;
-        mGroups.append( new KU_Group( mGroup ) );
-        mGroup->copy( &newGroup );
-        if ( ( mGroups.count() & 7 ) == 7 ) {
-          mProg->progressBar()->advance( mAdv );
-          if ( mProg->progressBar()->progress() == 0 ) mAdv = 1;
-          if ( mProg->progressBar()->progress() == mProg->progressBar()->totalSteps()-1 ) mAdv = -1;
+        append( mGroup );
+        mGroup = KU_Group();
+        if ( ( count() & 7 ) == 7 ) {
+          mProg->setValue( mProg->value() + mAdv );
+          if ( mProg->value() == 0 ) mAdv = 1;
+          if ( mProg->value() == mProg->maximum()-1 ) mAdv = -1;
         }
         break;
       }
@@ -154,13 +149,13 @@ void KU_GroupLDAP::data( KIO::Job*, const QByteArray& data )
 bool KU_GroupLDAP::reload()
 {
   kdDebug() << "KU_GroupLDAP::reload()" << endl;
-  mGroup = new KU_Group();
+  mGroup = KU_Group();
   mParser.startParsing();
 
-  mProg = new KProgressDialog( 0, "", "", i18n("Loading Groups From LDAP"), true );
+  mProg = new QProgressDialog( 0 );
+  mProg->setLabel( new QLabel (i18n("Loading Groups From LDAP")) );
   mProg->setAutoClose( false );
-  mProg->progressBar()->setFormat( "" );
-  mProg->progressBar()->setTotalSteps( 100 );
+  mProg->setMaximum( 100 );
   mAdv = 1;
   mCancel = true;
   ldif = "";
@@ -173,7 +168,6 @@ bool KU_GroupLDAP::reload()
   mProg->exec();
   if ( mCancel ) job->kill();
 
-  delete mGroup;
   return( mOk );
 }
 
@@ -181,13 +175,14 @@ bool KU_GroupLDAP::dbcommit()
 {
   mAddSucc.clear();
   mDelSucc.clear();
-  mModSucc.clear();
+//  mModSucc.clear();
   mAdd.first();
   mDel.first();
   mAddGroup = 0; mDelGroup = 0; mGroup = 0;
   ldif = "";
 
-  mProg = new KProgressDialog( 0, "", i18n("LDAP Operation"), "", true );
+  mProg = new QProgressDialog( 0 );
+  mProg->setLabel( new QLabel(i18n("LDAP Operation")) );
   KIO::Job *job = KIO::put( mUrl, -1, false, false, false );
   connect( job, SIGNAL( dataReq( KIO::Job*, QByteArray& ) ),
     this, SLOT( putData( KIO::Job*, QByteArray& ) ) );
@@ -199,6 +194,7 @@ bool KU_GroupLDAP::dbcommit()
 
 void KU_GroupLDAP::putData( KIO::Job*, QByteArray& data )
 {
+/*
   ModIt mit = mMod.begin();
 
   if ( mAddGroup ) {
@@ -230,6 +226,7 @@ void KU_GroupLDAP::putData( KIO::Job*, QByteArray& data )
     data = ldif;
   } else
     data.resize(0);
+*/
 }
 
 void KU_GroupLDAP::addData( KU_Group *group )

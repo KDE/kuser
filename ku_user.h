@@ -1,6 +1,6 @@
 /*
  *  Copyright (c) 1998 Denis Perchine <dyp@perchine.com>
- *  Copyright (c) 2004 Szombathelyi György <gyurco@freemail.hu>
+ *  Copyright (c) 2004 Szombathelyi GyĂśrgy <gyurco@freemail.hu>
  *  Maintained by Adriaan de Groot <groot@kde.org>
  *
  *  This program is free software; you can redistribute it and/or
@@ -24,15 +24,75 @@
 #include <sys/types.h>
 
 #include <QString>
-#include <Q3PtrList>
+#include <QSharedDataPointer>
 
 #include "globals.h"
+#include "ku_prefs.h"
 #include "sid.h"
 
 class KU_Users;
 
+class KU_User_Private: public QSharedData
+{
+public:
+KU_User_Private();
+
+int Caps;
+QString Name;
+QString Surname;
+QString Email;
+QString Pwd;
+QString HomeDir;
+QString Shell;
+QString FullName;
+uid_t UID;
+uid_t GID;
+bool Disabled;
+
+//gecos
+//--BSD gecos
+QString Office;
+QString WorkPhone;
+QString HomePhone;
+QString Class;
+//--BSD end
+QString Office1;
+QString Office2;
+QString Address;
+
+//shadow
+QString SPwd;
+time_t Expire;
+time_t LastChange;
+int Min;
+int Max;
+int Warn;
+int Inactive;
+int Flag;
+
+//samba
+QString LMPwd;
+QString NTPwd;
+QString LoginScript;
+QString ProfilePath;
+QString HomeDrive;
+QString HomePath;
+QString Workstations;
+QString Domain;
+class SID SID;
+class SID PGSID;
+
+//Administrative
+bool CreateHome;
+bool CreateMailBox;
+bool CopySkel;
+bool DeleteHome;
+bool DeleteMailBox;
+};
+
 class KU_User {
 public:
+
   enum Cap {
     Cap_POSIX = 1,
     Cap_Samba = 2
@@ -42,109 +102,60 @@ public:
   ~KU_User();
 
   void copy(const KU_User *user);
-  void setCaps( int data );
-  int getCaps();
+  bool operator ==(const KU_User &other) const;
 
 //General
-  const QString &getName() const;
-  const QString &getSurname() const;
-  const QString &getEmail() const;
-  const QString &getPwd() const;
-  const QString &getHomeDir() const;
-  const QString &getShell() const;
-  const QString &getFullName() const;
-
-  uid_t getUID() const;
-  uid_t getGID() const;
-  bool getDisabled() const;
-
-  void setName(const QString &data);
-  void setSurname(const QString &data);
-  void setEmail(const QString &data);
-  void setPwd(const QString &data);
-  void setHomeDir(const QString &data);
-  void setShell(const QString &data);
-  void setFullName(const QString &data);
-
-  void setUID(uid_t data);
-  void setGID(uid_t data);
-  void setDisabled(bool data);
+  KU_PROPERTY(int,Caps);
+  KU_PROPERTY(QString,Name);
+  KU_PROPERTY(QString,Surname);
+  KU_PROPERTY(QString,Email);
+  KU_PROPERTY(QString,Pwd);
+  KU_PROPERTY(QString,HomeDir);
+  KU_PROPERTY(QString,Shell);
+  KU_PROPERTY(QString,FullName);
+  KU_PROPERTY(uid_t,UID);
+  KU_PROPERTY(uid_t,GID);
+  KU_PROPERTY(bool,Disabled);
 
 //gecos
 //--BSD gecos
-  const QString &getOffice() const;
-  const QString &getWorkPhone() const;
-  const QString &getHomePhone() const;
-  const QString &getClass() const;
+  KU_PROPERTY(QString,Office);
+  KU_PROPERTY(QString,WorkPhone);
+  KU_PROPERTY(QString,HomePhone);
+  KU_PROPERTY(QString,Class);
 //--BSD end
-  const QString &getOffice1() const;
-  const QString &getOffice2() const;
-  const QString &getAddress() const;
-
-//--BSD
-  void setOffice(const QString &data);
-  void setWorkPhone(const QString &data);
-  void setHomePhone(const QString &data);
-  void setClass(const QString &data);
-//--BSD end
-  void setOffice1(const QString &data);
-  void setOffice2(const QString &data);
-  void setAddress(const QString &data);
+  KU_PROPERTY(QString,Office1);
+  KU_PROPERTY(QString,Office2);
+  KU_PROPERTY(QString,Address);
 
 //shadow
-  const QString &getSPwd() const;
-  time_t getExpire() const;
-  time_t getLastChange() const;
-  int getMin() const;
-  int getMax() const;
-  int getWarn() const;
-  int getInactive() const;
-  int getFlag() const;
-
-  void setSPwd(const QString &data);
-  void setLastChange(time_t data);
-  void setMin(int data);
-  void setMax(int data);
-  void setWarn(int data);
-  void setInactive(int data);
-  void setExpire(time_t data);
-  void setFlag(int data);
+  KU_PROPERTY(QString,SPwd);
+  KU_PROPERTY(time_t,Expire);
+  KU_PROPERTY(time_t,LastChange);
+  KU_PROPERTY(int,Min);
+  KU_PROPERTY(int,Max);
+  KU_PROPERTY(int,Warn);
+  KU_PROPERTY(int,Inactive);
+  KU_PROPERTY(int,Flag);
 
 //samba
-  const QString &getLMPwd() const; //  sam_lmpwd,
-  const QString &getNTPwd() const; //sam_ntpwd,
-  const QString &getLoginScript() const; //sam_loginscript,
-  const QString &getProfilePath() const; //  sam_profile,
-  const QString &getHomeDrive() const; //sam_homedrive,
-  const QString &getHomePath() const; //sam_homepath;
-  const QString &getWorkstations() const; //sam_workstations
-  const QString &getDomain() const; //sam_domain
-  const SID &getSID() const; //sid,
-  const SID &getPGSID() const; //pgroup_sid;
-  
-  void setLMPwd( const QString &data ); //  sam_lmpwd,
-  void setNTPwd( const QString &data ); //sam_ntpwd,
-  void setLoginScript( const QString &data ); //sam_loginscript,
-  void setProfilePath( const QString &data); //  sam_profile,
-  void setHomeDrive( const QString &data ); //sam_homedrive,
-  void setHomePath( const QString &data ); //sam_homepath;
-  void setWorkstations( const QString &data ); //sam_workstations
-  void setDomain( const QString &data ); //sam_domain
-  void setSID( const SID &data ); //sid,
-  void setPGSID( const SID &data ); //pgroup_sid;
-  
-//Administrative
-  bool getCreateHome();
-  bool getCreateMailBox();
-  bool getCopySkel();
-  bool getDeleteHome();
-  bool getDeleteMailBox();
+  KU_PROPERTY(QString, LMPwd);
+  KU_PROPERTY(QString, NTPwd);
+  KU_PROPERTY(QString, LoginScript);
+  KU_PROPERTY(QString, ProfilePath);
+  KU_PROPERTY(QString, HomeDrive);
+  KU_PROPERTY(QString, HomePath);
+  KU_PROPERTY(QString, Workstations);
+  KU_PROPERTY(QString, Domain);
+  KU_PROPERTY(SID, SID);
+  KU_PROPERTY(SID, PGSID);
 
-  void setCreateHome(bool data);
-  void setCreateMailBox(bool data);
-  void setCopySkel(bool data);
-  void setDeleteHome(bool data);
-  void setDeleteMailBox(bool data);
+//Administrative
+  KU_PROPERTY(bool, CreateHome);
+  KU_PROPERTY(bool, CreateMailBox);
+  KU_PROPERTY(bool, CopySkel);
+  KU_PROPERTY(bool, DeleteHome);
+  KU_PROPERTY(bool, DeleteMailBox);
 
 protected:
   friend class KU_Users;
@@ -158,62 +169,11 @@ protected:
   int removeCrontabs();
   int removeMailBox();
   int removeProcesses();
-
-  void copyDir(const QString &srcPath, const QString &dstPath);
-
-  int caps;
-  QString
-    p_name,                        // parsed pw information
-    p_surname,
-    p_email,
-    p_pwd,
-    p_dir,
-    p_shell,
-    p_fname,                        // parsed comment information
-    p_office1,
-    p_office2,
-    p_address,
-//BSD  
-    p_office,
-    p_ophone,
-    p_hphone,
-    p_class;
-  time_t
-    p_change,
-    p_expire;
-//BSD end
-  uid_t p_uid;
-  gid_t p_gid;
-
-  QString
-    s_pwd,                         // parsed shadow password
-    sam_lmpwd,
-    sam_ntpwd,
-    sam_loginscript,
-    sam_profile,
-    sam_homedrive,
-    sam_homepath,
-    sam_workstations,
-    sam_domain;
-  SID 
-    sid,
-    pgroup_sid;
-  signed int
-    s_min,                         // days until pwchange allowed.
-    s_max,                         // days before change required
-    s_warn,                        // days warning for expiration
-    s_inact,                       // days before  account  inactive
-    s_flag;                        // reserved for future use
-  bool
-    isDisabled,                // account disabled?
-    isCreateHome,              // create homedir
-    isCreateMailBox,           // create mailbox
-    isCopySkel,                // copy skeleton
-    isDeleteHome,              // delete home dir
-    isDeleteMailBox;           // delete mailbox
+private:
+  QSharedDataPointer<KU_User_Private> d;
 };
 
-class KU_Users {
+class KU_Users : public QList<KU_User> {
 public:
   enum Cap {
     Cap_ReadOnly = 1,
@@ -224,55 +184,51 @@ public:
     Cap_Disable_POSIX = 32,
     Cap_BSD = 64
   };
-  typedef Q3PtrListIterator<KU_User> DelIt;
-  typedef Q3PtrListIterator<KU_User> AddIt;
-  typedef QMap<KU_User*, KU_User>::iterator ModIt;
-  
-  Q3PtrList<KU_User> mDelSucc;
-  Q3PtrList<KU_User> mAddSucc;
-  QMap<KU_User*, KU_User> mModSucc;
-  
+  typedef QList<KU_User> AddList;
+  typedef QList<int> DelList;
+  typedef QMap<int, KU_User> ModList;
+
+  AddList mAddSucc;
+  DelList mDelSucc;
+  ModList mModSucc;
+
   KU_Users(KU_PrefsBase *cfg);
   virtual ~KU_Users();
-  KU_User *lookup(const QString & name);
-  KU_User *lookup(uid_t uid);
-  KU_User *lookup_sam( const SID &sid );
-  KU_User *lookup_sam( const QString &sid );
-  KU_User *lookup_sam( uint rid );
-  
+
   int getCaps() const { return caps; }
   const QString &getDOMSID() const;
-  
-  KU_User *first();
-  KU_User *next();
-  uint count() const;
-  KU_User *operator[](uint num);
 
-  void add( KU_User *user );
-  void del( KU_User *user );
-  void mod( KU_User *uold, const KU_User &unew );
+  int lookup(const QString & name) const;
+  int lookup(uid_t uid) const;
+  int lookup_sam( const SID &sid ) const;
+  int lookup_sam( const QString &sid ) const;
+  int lookup_sam( uint rid ) const;
+
+  void add( const KU_User &user );
+  void del( int index );
+  void mod( int index, const KU_User &newuser );
   void commit();
   void cancelMods();
-  
+
   enum {
     NO_FREE = (uid_t) -1
   };
 
   /**
-  * May be reimplemented in descendant classes. 
+  * May be reimplemented in descendant classes.
   * It should return the first available UID, or KU_Users::NO_FREE if no more UID.
   */
-  virtual uid_t first_free();
+  virtual uid_t first_free() const;
   /**
-  * May be reimplemented in descendant classes. 
+  * May be reimplemented in descendant classes.
   * It should return the first available user RID, or 0 if no more RID.
   */
-  virtual uint first_free_sam();
+  virtual uint first_free_sam() const;
   /**
-  * Must be reimplemented in various backends. It should encode @param password 
+  * Must be reimplemented in various backends. It should encode @param password
   * into the appropriate fields in @param user.
   */
-  virtual void createPassword( KU_User *user, const QString &password ) = 0;
+  virtual void createPassword( KU_User &user, const QString &password ) = 0;
   /**
   * Must load the users from the storage backend.
   */
@@ -282,24 +238,22 @@ public:
   * write successful modifications into mDelSucc, mAddSucc and mModSucc.
   */
   virtual bool dbcommit() = 0;
-  
+
 protected:
-  Q3PtrList<KU_User> mUsers;
   int caps;
   KU_PrefsBase *mCfg;
-  
-  Q3PtrList<KU_User> mDel;
-  Q3PtrList<KU_User> mAdd;
-  QMap<KU_User*, KU_User> mMod;
+
+  AddList mAdd;
+  DelList mDel;
+  ModList mMod;
 
   QString domsid;
-  
+
   bool doCreate( KU_User *user );
   bool doDelete( KU_User *user );
   void parseGecos( const char *gecos, QString &name,
     QString &field1, QString &field2, QString &field3 );
-  void fillGecos( KU_User *user, const char *gecos );
-  
+  void fillGecos( KU_User &user, const char *gecos );
 };
 
 #endif // _KU_USER_H_

@@ -30,7 +30,7 @@ public:
 
   virtual bool dbcommit() { return true; }
   virtual bool reload();
-  virtual void createPassword( KU_User * /*user*/, const QString & /*password*/ ) {}
+  virtual void createPassword( KU_User & /*user*/, const QString & /*password*/ ) {}
 
 private:
 

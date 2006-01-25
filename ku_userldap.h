@@ -21,12 +21,10 @@
 
 #include <sys/types.h>
 
-#include <qobject.h>
-#include <qstring.h>
-#include <q3ptrlist.h>
-#include <QByteArray>
+#include <QObject>
+#include <QString>
+#include <QProgressDialog>
 
-#include <kprogress.h>
 #include <kabc/ldapurl.h>
 #include <kabc/ldif.h>
 #include <kio/job.h>
@@ -47,22 +45,24 @@ private slots:
   void putData( KIO::Job *job, QByteArray& data );
   void result( KIO::Job* );
 private:
+  enum LastOperation{ None, Mod, Add, Del };
+  LastOperation mLastOperation;
   KABC::LDIF mParser;
   KABC::LDAPUrl mUrl;
-  KProgressDialog *mProg;
+  QProgressDialog *mProg;
   bool mOk, mCancel;
-  KU_User *mUser, *mDelUser, *mAddUser;
-  int mAdv;
-  QByteArray ldif;
+  KU_User mUser, *mDelUser, *mAddUser;
+  int mAdv, mAddIndex, mDelIndex;
+  ModList::Iterator mModIt;
   int schemaversion;
   QStringList mOc;
-  QMap<KU_User*, QStringList> mObjectClasses;
-  
-  QString getRDN( KU_User *user );
-  void getLDIF( KU_User *user, bool mod );
-  void delData( KU_User *user );
-  
-  virtual void createPassword( KU_User *user, const QString &password );
+  QMap<int, QStringList> mObjectClasses;
+
+  QString getRDN( const KU_User &user ) const;
+  QByteArray getLDIF( const KU_User &user, int oldindex = -1 );
+  QByteArray delData( const KU_User &user );
+
+  virtual void createPassword( KU_User &user, const QString &password );
 };
 
 #endif // _KU_USERLDAP_H_

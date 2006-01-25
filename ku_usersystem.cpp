@@ -35,8 +35,6 @@
 
 KU_UserSystem::KU_UserSystem(KU_PrefsBase *cfg) : KU_Users( cfg )
 {
-  mUsers.setAutoDelete(TRUE);
-
   caps = Cap_ReadOnly | Cap_Passwd;
 #ifdef HAVE_SHADOW
   if ( !mCfg->shadowsrc().isEmpty() ) caps |= Cap_Shadow;
@@ -68,33 +66,34 @@ bool KU_UserSystem::reload()
 bool KU_UserSystem::loadpwd()
 {
   passwd *p;
-  KU_User *tmpKU = 0;
+  KU_User user;
   QString tmp;
 
   setpwent(); //This should be enough for BSDs
   while ((p = getpwent()) != NULL) {
-    tmpKU = new KU_User();
-    tmpKU->setUID(p->pw_uid);
-    tmpKU->setGID(p->pw_gid);
-    tmpKU->setName(QString::fromLocal8Bit(p->pw_name));
+    user = KU_User();
+    user.setCaps( KU_User::Cap_POSIX );
+    user.setUID(p->pw_uid);
+    user.setGID(p->pw_gid);
+    user.setName(QString::fromLocal8Bit(p->pw_name));
     tmp  = QString::fromLocal8Bit( p->pw_passwd );
     if ( tmp != "x" && tmp != "*" && !tmp.startsWith("!") )
-      tmpKU->setDisabled( false );
+      user.setDisabled( false );
     else
-      tmpKU->setDisabled( true );
+      user.setDisabled( true );
     if ( tmp.startsWith("!") ) tmp.remove(0, 1);
-    tmpKU->setPwd( tmp );
-    tmpKU->setHomeDir(QString::fromLocal8Bit(p->pw_dir));
-    tmpKU->setShell(QString::fromLocal8Bit(p->pw_shell));
+    user.setPwd( tmp );
+    user.setHomeDir(QString::fromLocal8Bit(p->pw_dir));
+    user.setShell(QString::fromLocal8Bit(p->pw_shell));
 #if defined(__FreeBSD__) || defined(__bsdi__)
-    tmpKU->setClass(QString::fromLatin1(p->pw_class));
-    tmpKU->setLastChange(p->pw_change);
-    tmpKU->setExpire(p->pw_expire);
+    user.setClass(QString::fromLatin1(p->pw_class));
+    user.setLastChange(p->pw_change);
+    user.setExpire(p->pw_expire);
 #endif
 
     if ((p->pw_gecos != 0) && (p->pw_gecos[0] != 0))
-      fillGecos(tmpKU, p->pw_gecos);
-    mUsers.append(tmpKU);
+      fillGecos(user, p->pw_gecos);
+    append(user);
   }
 
   endpwent();
@@ -107,33 +106,37 @@ bool KU_UserSystem::loadsdw()
 {
 #ifdef HAVE_SHADOW
   struct spwd *spw;
-  KU_User *up = NULL;
+  KU_User user;
   QString tmp;
-
+  int index;
+  
   setspent();
   while ((spw = getspent())) {     // read a shadow password structure
 
-    if ((up = lookup(QString::fromLocal8Bit(spw->sp_namp))) == NULL) {
+
+    if ((index = lookup(QString::fromLocal8Bit(spw->sp_namp))) == -1) {
       continue;
     }
 
+    user = at( index );
     tmp = QString::fromLocal8Bit( spw->sp_pwdp );
     if ( tmp.startsWith("!!") || tmp == "*" ) {
-      up->setDisabled( true );
+      user.setDisabled( true );
       tmp.remove( 0, 2 );
     } else
-      up->setDisabled( false );
+      user.setDisabled( false );
 
-    up->setSPwd( tmp );        // cp the encrypted pwd
-    up->setLastChange( daysToTime( spw->sp_lstchg ) );
-    up->setMin(spw->sp_min);
-    up->setMax(spw->sp_max);
+    user.setSPwd( tmp );        // cp the encrypted pwd
+    user.setLastChange( daysToTime( spw->sp_lstchg ) );
+    user.setMin(spw->sp_min);
+    user.setMax(spw->sp_max);
 #ifndef _SCO_DS
-    up->setWarn(spw->sp_warn);
-    up->setInactive(spw->sp_inact);
-    up->setExpire( daysToTime( spw->sp_expire ) );
-    up->setFlag(spw->sp_flag);
+    user.setWarn(spw->sp_warn);
+    user.setInactive(spw->sp_inact);
+    user.setExpire( daysToTime( spw->sp_expire ) );
+    user.setFlag(spw->sp_flag);
 #endif
+    replace( index, user );
   }
 
   endspent();

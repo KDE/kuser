@@ -1,6 +1,6 @@
 /*
  *  Copyright (c) 1998 Denis Perchine <dyp@perchine.com>
- *  Copyright (c) 2004 Szombathelyi György <gyurco@freemail.hu>
+ *  Copyright (c) 2004 Szombathelyi GyĂśrgy <gyurco@freemail.hu>
  *  Former maintainer: Adriaan de Groot <groot@kde.org>
  *
  *  This program is free software; you can redistribute it and/or
@@ -18,33 +18,34 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-#include "ku_global.h"
-#include "ku_misc.h"
+#include <klocale.h>
 
+#include "ku_global.h"
 #include "kgroupvw.h"
 
 
-KGroupViewItem::KGroupViewItem(KListView *parent, KU_Group *aku)
- : KListViewItem(parent), mGroup(aku)
+KGroupViewItem::KGroupViewItem(KListView *parent, int index)
+ : KListViewItem(parent), mIndex(index)
 {
 }
 
 int KGroupViewItem::compare( Q3ListViewItem *i, int col, bool ascending ) const
 {
+  KU_Groups *groups = kug->getGroups();
   switch ( col ) {
     case 0: {
       gid_t gid1, gid2;
 
-      gid1 = mGroup->getGID();
-      gid2 = ((KGroupViewItem*) i)->mGroup->getGID();
+      gid1 = groups->at(mIndex).getGID();
+      gid2 = groups->at(((KGroupViewItem*) i)->mIndex).getGID();
 
       if ( gid1 == gid2 ) return 0;
       return ( gid1 < gid2) ? -1: 1;
     }
     case 2: {
       uint rid1,rid2;
-      rid1 = mGroup->getSID().getRID();
-      rid2 = ((KGroupViewItem*) i)->mGroup->getSID().getRID();
+      rid1 = groups->at(mIndex).getSID().getRID();
+      rid2 = groups->at(((KGroupViewItem*) i)->mIndex).getSID().getRID();
       if ( rid1 == rid2 ) return 0;
       return ( rid1 < rid2) ? -1: 1;
     }
@@ -55,17 +56,18 @@ int KGroupViewItem::compare( Q3ListViewItem *i, int col, bool ascending ) const
 
 QString KGroupViewItem::text(int num) const
 {
+  KU_Group group = kug->getGroups()->at(mIndex);
   switch(num)
   {
-     case 0: return QString::number(mGroup->getGID());
-     case 1: return mGroup->getName();
-     case 2: return ( mGroup->getCaps() & KU_Group::Cap_Samba ) ? 
-       mGroup->getSID().getDOM() : QString::null;
-     case 3: return ( mGroup->getCaps() & KU_Group::Cap_Samba ) ?
-      QString::number( mGroup->getSID().getRID() ) : QString::null;
+     case 0: return QString::number(group.getGID());
+     case 1: return group.getName();
+     case 2: return ( group.getCaps() & KU_Group::Cap_Samba ) ? 
+       group.getSID().getDOM() : QString::null;
+     case 3: return ( group.getCaps() & KU_Group::Cap_Samba ) ?
+      QString::number( group.getSID().getRID() ) : QString::null;
      case 4: {
-       if ( mGroup->getCaps() & KU_Group::Cap_Samba ) {
-         switch ( mGroup->getType() ) {
+       if ( group.getCaps() & KU_Group::Cap_Samba ) {
+         switch ( group.getType() ) {
            case 2: return i18n("Domain");
            case 4: return i18n("Local");
            case 5: return i18n("Builtin");
@@ -75,8 +77,8 @@ QString KGroupViewItem::text(int num) const
          return QString::null;
        }
      }
-     case 5: return mGroup->getDisplayName();
-     case 6: return mGroup->getDesc();
+     case 5: return group.getDisplayName();
+     case 6: return group.getDesc();
   }
   return QString::null;
 }
@@ -92,19 +94,19 @@ KGroupView::~KGroupView()
 {
 }
 
-void KGroupView::insertItem(KU_Group *aku) 
+void KGroupView::insertItem(int index) 
 {
-  KGroupViewItem *groupItem = new KGroupViewItem(this, aku);
+  KGroupViewItem *groupItem = new KGroupViewItem(this, index);
   KListView::insertItem(groupItem);
 }
 
-void KGroupView::removeItem(KU_Group *aku) 
+void KGroupView::removeItem(int index) 
 {
   KGroupViewItem *groupItem = (KGroupViewItem *)firstChild();
 
   while(groupItem)
   {
-     if (groupItem->group() == aku)
+     if (groupItem->index() == index)
      {
         delete groupItem;
         return;
@@ -125,7 +127,7 @@ void KGroupView::init()
     setColumnAlignment(0, Qt::AlignRight);
     addColumn(i18n("Group Name"));
   }
-  if ( kug->getGroups().getCaps() & KU_Groups::Cap_Samba ) {
+  if ( kug->getGroups()->getCaps() & KU_Groups::Cap_Samba ) {
     addColumn(i18n("Domain SID"));
     addColumn(i18n("RID"));
     addColumn(i18n("Type"));
@@ -134,12 +136,12 @@ void KGroupView::init()
   }
 }
 
-KU_Group *KGroupView::getCurrentGroup() 
+int KGroupView::getCurrentIndex() 
 {
   KGroupViewItem *groupItem = (KGroupViewItem *)currentItem();
-  if (!groupItem) return 0;
+  if (!groupItem) return -1;
 
-  return groupItem->group();
+  return groupItem->index();
 }
 
 #include "kgroupvw.moc"

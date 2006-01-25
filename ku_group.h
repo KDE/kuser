@@ -1,6 +1,6 @@
 /*
  *  Copyright (c) 1998 Denis Perchine <dyp@perchine.com>
- *  Copyright (c) 2004 Szombathelyi György <gyurco@freemail.hu>
+ *  Copyright (c) 2004 Szombathelyi GyĂśrgy <gyurco@freemail.hu>
  *  Maintained by Adriaan de Groot <groot@kde.org>
  *
  *  This program is free software; you can redistribute it and/or
@@ -25,10 +25,31 @@
 
 #include <QString>
 #include <QStringList>
-#include <Q3PtrList>
+#include <QList>
+#include <QSharedDataPointer>
 
+#include "globals.h"
 #include "ku_prefs.h"
 #include "sid.h"
+
+class KU_Group_Private : public QSharedData
+{
+public:
+KU_Group_Private();
+
+int Caps;
+
+QString Name;
+QString Pwd;
+gid_t GID;
+QStringList users;
+
+  //Samba
+class SID SID;
+int Type;
+QString DisplayName;
+QString Desc;
+};
 
 class KU_Group {
 public:
@@ -40,50 +61,32 @@ public:
     Cap_Samba = 1
   };
 
+  bool operator==(const KU_Group &other) const;
   void copy(const KU_Group *group);
-  void setCaps( int data );
-  int getCaps();
 
-  const QString &getName() const;
-  const QString &getPwd() const;
-  gid_t getGID() const;
-  const SID &getSID() const;
-  int getType() const;
-  const QString &getDisplayName() const;
-  const QString &getDesc() const;
+  KU_PROPERTY(int, Caps);
 
-  void setName(const QString &data);
-  void setPwd(const QString &data);
-  void setGID(gid_t data);
-  void setSID(const SID &data);
-  void setType(int data);
-  void setDisplayName(const QString &data);
-  void setDesc(const QString &data);
+  KU_PROPERTY(QString, Name);
+  KU_PROPERTY(QString, Pwd);
+  KU_PROPERTY(gid_t, GID );
+
+  //Samba
+  KU_PROPERTY(SID, SID);
+  KU_PROPERTY(int, Type);
+  KU_PROPERTY(QString, DisplayName);
+  KU_PROPERTY(QString, Desc);
 
   bool addUser(const QString &name);
   bool removeUser(const QString &name);
-  bool lookup_user(const QString &name);
+  bool lookup_user(const QString &name) const;
   uint count() const;
-  QString user(uint i);
+  QString user(uint i) const;
   void clear();
-
-protected:
-  QString
-    name,
-    pwd;
-  gid_t gid;
-
-//samba attributes  
-  SID sid;
-  int type;
-  int caps;
-  QString displayname;
-  QString desc;
-  
-  QStringList u;
+private:
+  QSharedDataPointer<KU_Group_Private> d;
 };
 
-class KU_Groups {
+class KU_Groups : public QList<KU_Group> {
 public:
   enum Cap {
     Cap_ReadOnly = 1,
@@ -92,53 +95,47 @@ public:
     Cap_Samba = 8
   };
 
-  typedef Q3PtrListIterator<KU_Group> DelIt;
-  typedef Q3PtrListIterator<KU_Group> AddIt;
-  typedef QMap<KU_Group*, KU_Group>::iterator ModIt;
-  
-  Q3PtrList<KU_Group> mDelSucc;
-  Q3PtrList<KU_Group> mAddSucc;
-  QMap<KU_Group*, KU_Group> mModSucc;
-  
+  typedef QList<KU_Group> AddList;
+  typedef QList<int> DelList;
+  typedef QMap<int,KU_Group> ModList;
+
+  AddList mAddSucc;
+  DelList mDelSucc;
+  ModList mModSucc;
+
   KU_Groups( KU_PrefsBase *cfg );
   virtual ~KU_Groups();
-  
+
   int getCaps() const { return caps; }
   const QString &getDOMSID() const;
 
-  KU_Group *lookup( const QString &name );
-  KU_Group *lookup( gid_t gid );
-  KU_Group *lookup_sam( const SID &sid );
-  KU_Group *lookup_sam( const QString &sid );
-  KU_Group *lookup_sam( uint rid );
-  
-  KU_Group *first();
-  KU_Group *next();
-  KU_Group *operator[](uint num);
-  uint count() const;
+  int lookup( const QString &name ) const;
+  int lookup( gid_t gid ) const;
+  int lookup_sam( const SID &sid ) const;
+  int lookup_sam( const QString &sid ) const;
+  int lookup_sam( uint rid ) const;
 
-  void add(KU_Group *group);
-  void del(KU_Group *group);
-  void mod(KU_Group *gold, const KU_Group &gnew);
+  void add(const KU_Group &group);
+  void del(int index);
+  void mod(int index, const KU_Group &newgroup);
   void commit();
   void cancelMods();
-  
+
   enum {
-	NO_FREE = (gid_t) -1
+        NO_FREE = (gid_t) -1
   };
 
-  virtual gid_t first_free();
-  virtual uint first_free_sam();
+  virtual gid_t first_free() const;
+  virtual uint first_free_sam() const;
   virtual bool reload() = 0;
   virtual bool dbcommit() = 0;
 
 protected:
   KU_PrefsBase *mCfg;
-  Q3PtrList<KU_Group> mGroups;
-  
-  Q3PtrList<KU_Group> mDel;
-  Q3PtrList<KU_Group> mAdd;
-  QMap<KU_Group*, KU_Group> mMod;
+
+  AddList mAdd;
+  DelList mDel;
+  ModList mMod;
   int caps;
   QString domsid;
 };

@@ -36,29 +36,28 @@ KU_GroupSystem::KU_GroupSystem( KU_PrefsBase *cfg ) : KU_Groups( cfg )
 
 KU_GroupSystem::~KU_GroupSystem()
 {
-  mGroups.clear();
 }
 
 bool KU_GroupSystem::reload()
 {
   struct group *p;
-  KU_Group *tmpKG = 0;
+  KU_Group group;
 
   setgrent();
   while ((p = getgrent()) != NULL) {
-    tmpKG = new KU_Group();
-    tmpKG->setGID(p->gr_gid);
-    tmpKG->setName(QString::fromLocal8Bit(p->gr_name));
-    tmpKG->setPwd(QString::fromLocal8Bit(p->gr_passwd));
+    group.setGID(p->gr_gid);
+    group.setName(QString::fromLocal8Bit(p->gr_name));
+    group.setPwd(QString::fromLocal8Bit(p->gr_passwd));
 
     char *u_name;
     int i = 0;
     while ((u_name = p->gr_mem[i])!=0) {
-      tmpKG->addUser(QString::fromLocal8Bit(u_name));
+      group.addUser(QString::fromLocal8Bit(u_name));
       i++;
     }
 
-    mGroups.append(tmpKG);
+    append(group);
+    group = KU_Group();
   }
 
   endgrent();

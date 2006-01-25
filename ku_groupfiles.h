@@ -25,7 +25,6 @@
 
 #include <QString>
 #include <QStringList>
-#include <Q3PtrList>
 
 #include "ku_group.h"
 

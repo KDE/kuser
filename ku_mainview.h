@@ -1,6 +1,6 @@
 /*
  *  Copyright (c) 1998 Denis Perchine <dyp@perchine.com>
- *  Copyright (c) 2004 Szombathelyi György <gyurco@freemail.hu>
+ *  Copyright (c) 2004 Szombathelyi GyĂśrgy <gyurco@freemail.hu>
  *  Maintained by Adriaan de Groot <groot@kde.org>
  *
  *  This program is free software; you can redistribute it and/or
@@ -59,18 +59,21 @@ public slots:
   void grpdel();
 
   void setpwd();
-  
+
 signals:
   void userSelected(bool);
   void groupSelected(bool);
 
 protected:
-  bool updateUsers();  
-  bool updateGroups();  
+  bool updateUsers();
+  bool updateGroups();
 
   KUserView *lbusers;
   KGroupView *lbgroups;
   bool mShowSys;
+
+  KU_Groups *groups;
+  KU_Users *users;
 };
 
 #endif // _KU_MAINVIEW_H_

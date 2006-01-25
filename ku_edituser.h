@@ -26,13 +26,13 @@
 #include <QCheckBox>
 #include <QMap>
 #include <QGridLayout>
-#include <Q3PtrList>
+#include <QList>
+#include <QListWidget>
 
 #include <klineedit.h>
 #include <kdatetimewidget.h>
 #include <knuminput.h>
 #include <kdialogbase.h>
-#include <klistview.h>
 #include <kcombobox.h>
 
 #include "ku_user.h"
@@ -42,13 +42,13 @@ class KU_EditUser : public KDialogBase
   Q_OBJECT
 
 public:
-  KU_EditUser( const Q3PtrList<KU_User> &users,
-    QWidget *parent = 0, const char *name = 0 );
-  KU_EditUser( KU_User *AUser, bool fixedprivgroup, 
-    QWidget *parent = 0, const char *name = 0 );
+  KU_EditUser( const QList<int> &users,
+    QWidget *parent = 0 );
+  KU_EditUser( KU_User &user, bool fixedprivgroup,
+    QWidget *parent = 0 );
   ~KU_EditUser();
 
-  void mergeUser( KU_User *user, KU_User *newuser );
+  void mergeUser( const KU_User &user, KU_User &newuser );
 
 protected slots:
   virtual void slotOk();
@@ -67,8 +67,8 @@ protected:
   bool check();
   void loadgroups( bool fixedprivgroup );
   bool checkShell(const QString &shell);
-  void addRow( QWidget *parent, QGridLayout *layout, int row, 
-  QWidget *widget, const QString &label, const QString &what, 
+  void addRow( QWidget *parent, QGridLayout *layout, int row,
+  QWidget *widget, const QString &label, const QString &what,
   bool two_column=true, bool nochange=true );
   void setLE( KLineEdit *le, const QString &val, bool first );
   void setCB( QCheckBox *cb, bool val, bool first );
@@ -76,14 +76,13 @@ protected:
   QString mergeLE( KLineEdit *le, const QString &val, bool one );
   int mergeSB( KIntSpinBox *sb, int val, bool one );
 
-  KIntSpinBox *addDaysGroup( QWidget  *parent, QGridLayout *layout, int row, 
+  KIntSpinBox *addDaysGroup( QWidget  *parent, QGridLayout *layout, int row,
     const QString &title, bool never=true );
 
   QFrame *frontpage;
   QGridLayout *frontlayout;
   int frontrow;
 
-  Q3PtrList<KU_User> mUsers;
   QMap<QWidget*, QCheckBox*> mNoChanges;
   bool ismoreshells;
   bool ischanged;
@@ -98,7 +97,7 @@ protected:
   QString newpass;
   time_t lstchg;
 
-  KListView *lstgrp;
+  QListWidget *lstgrp;
 
   QPushButton *pbsetpwd;
 
@@ -134,7 +133,7 @@ protected:
   KDateTimeWidget  *lesexpire;
   QCheckBox *cbexpire;
 
-//samba specific:  
+//samba specific:
   KLineEdit   *lerid;
   KLineEdit   *leliscript;
   KLineEdit   *leprofile;
@@ -143,6 +142,9 @@ protected:
   KLineEdit   *leworkstations;
   KLineEdit   *ledomain;
   KLineEdit   *ledomsid;
+private:
+  QList<int> mSelected;
+  KU_User mUser;
 };
 
 #endif // _KU_EDITUSER_H_

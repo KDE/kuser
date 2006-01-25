@@ -50,7 +50,6 @@ private:
   KToggleAction *mShowSys;
   KU_MainView *mv;
   KU_SelectConn *sc;
-
 };
 
 #endif // _KU_MAINWIDGET_H_

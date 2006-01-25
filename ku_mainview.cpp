@@ -1,6 +1,6 @@
 /*
  *  Copyright (c) 1998 Denis Perchine <dyp@perchine.com>
- *  Copyright (c) 2004 Szombathelyi György <gyurco@freemail.hu>
+ *  Copyright (c) 2004 Szombathelyi GyĂśrgy <gyurco@freemail.hu>
  *  Former maintainer: Adriaan de Groot <groot@kde.org>
  *
  *  This program is free software; you can redistribute it and/or
@@ -23,13 +23,12 @@
 
 #include <qtooltip.h>
 #include <qfile.h>
-//Added by qt3to4:
-#include <Q3PtrList>
 
 #include <kinputdialog.h>
 #include <ktoolbar.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
+#include <klocale.h>
 #include <kdebug.h>
 
 #include "ku_misc.h"
@@ -48,6 +47,8 @@ KU_MainView::KU_MainView(QWidget *parent) : QTabWidget(parent)
 }
 
 void KU_MainView::init() {
+
+  groups = 0;
 
   lbusers = new KUserView( this, "lbusers" );
   addTab( lbusers, i18n("Users") );
@@ -94,16 +95,14 @@ void KU_MainView::clearGroups()
 
 void KU_MainView::reloadUsers()
 {
-  KU_User *ku;
+  users = kug->getUsers();
 
   lbusers->clear();
   lbusers->init();
   uid_t uid = kug->kcfg()->firstUID();
 
-  ku = kug->getUsers().first();
-  while ( ku ) {
-    if ( ku->getUID() >= uid || mShowSys ) lbusers->insertItem( ku );
-    ku = kug->getUsers().next();
+  for (int i = 0; i<users->count(); i++) {
+    if ( users->at(i).getUID() >= uid || mShowSys ) lbusers->insertItem(i);
   }
   if (lbusers->firstChild())
     lbusers->setSelected(lbusers->firstChild(), true);
@@ -111,189 +110,15 @@ void KU_MainView::reloadUsers()
 
 void KU_MainView::reloadGroups()
 {
-  KU_Group *kg;
+  groups = kug->getGroups();
 
   lbgroups->clear();
   lbgroups->init();
   gid_t gid = kug->kcfg()->firstGID();
 
-  kg = kug->getGroups().first();
-  while ( kg ) {
-    if ( kg->getGID() >= gid || mShowSys ) lbgroups->insertItem(kg);
-    kg = kug->getGroups().next();
+  for (int i = 0; i<groups->count(); i++) {
+    if ( groups->at(i).getGID() >= gid || mShowSys ) lbgroups->insertItem(i);
   }
-}
-
-void KU_MainView::useredit()
-{
-  userSelected();
-}
-
-void KU_MainView::userdel()
-{
-  KU_User *user = lbusers->getCurrentUser();
-  if (!user)
-    return;
-
-  QString username = user->getName();
-  gid_t gid = user->getGID();
-  KU_DelUser dlg(user, this);
-
-  if ( dlg.exec() == QDialog::Rejected )
-     return;
-
-  user->setDeleteHome( dlg.getDeleteHomeDir() );
-  user->setDeleteMailBox( dlg.getDeleteMailBox() );
-
-  kug->getUsers().del( user );
-  if ( !updateUsers() ) return;
-
-  KU_Group *group = 0;
-  group = kug->getGroups().first();
-  while ( group ) {
-    kdDebug() << "group: " << group->getName() << endl;
-    if ( group->lookup_user( username ) ) {
-      kdDebug() << "group: " << group->getName() << " found user: " << username << endl;
-      KU_Group newgroup( group );
-      newgroup.removeUser( username );
-      kug->getGroups().mod( group, newgroup );
-    }
-    group = kug->getGroups().next();
-  }
-
-  if ( kug->kcfg()->userPrivateGroup() ) {
-
-    group = kug->getGroups().lookup( gid );
-
-    if ( group &&
-      KMessageBox::questionYesNo( 0, i18n("You are using private groups.\n"
-        "Do you want to delete the user's private group '%1'?")
-        .arg(group->getName()), QString::null,
-        KStdGuiItem::del(), i18n("Do Not Delete")) == KMessageBox::Yes) {
-      kdDebug() << "del private group" << endl;
-      kug->getGroups().del( group );
-    }
-  }
-  kdDebug() << "update groups" << endl;
-  updateGroups();
-}
-
-void KU_MainView::useradd()
-{
-  KU_User *tk;
-
-  showPage(lbusers);
-
-  uid_t uid, rid = 0;
-  bool samba = kug->getUsers().getCaps() & KU_Users::Cap_Samba;
-
-  if ((uid = kug->getUsers().first_free()) == KU_Users::NO_FREE) {
-    KMessageBox::sorry( 0, i18n("You have run out of uid space.") );
-    return;
-  }
-/*
-  if ( samba && (rid = kug->getUsers().first_free_sam()) == 0) {
-    KMessageBox::sorry( 0, i18n("You have run out of user RID space.") );
-    return;
-  }
-*/
-  if ( samba ) rid = SID::uid2rid( uid );
-  bool ok;
-  QString name = KInputDialog::getText( QString::null,
-    i18n("Please type the name of the new user:"),
-    QString::null, &ok );
-
-  if ( !ok ) return;
-
-  if ( kug->getUsers().lookup( name ) ) {
-    KMessageBox::sorry( 0, i18n("User with name %1 already exists.").arg( name ) );
-    return;
-  }
-
-  tk = new KU_User();
-  tk->setCaps( samba ? KU_User::Cap_POSIX | KU_User::Cap_Samba : KU_User::Cap_POSIX );
-  tk->setUID( uid );
-  tk->setName( name );
-
-  if ( samba ) {
-    SID sid;
-    sid.setDOM( kug->getUsers().getDOMSID() );
-    sid.setRID( rid );
-    tk->setSID( sid );
-    tk->setProfilePath( kug->kcfg()->samprofilepath().replace( "%U",name ) );
-    tk->setHomePath( kug->kcfg()->samhomepath().replace( "%U", name ) );
-    tk->setHomeDrive( kug->kcfg()->samhomedrive() );
-    tk->setLoginScript( kug->kcfg()->samloginscript() );
-    tk->setDomain( kug->kcfg()->samdomain() );
-  }
-
-  tk->setShell( kug->kcfg()->shell() );
-  tk->setHomeDir( kug->kcfg()->homepath().replace( "%U", name ) );
-  if ( kug->getUsers().getCaps() & KU_Users::Cap_Shadow || samba ) {
-    tk->setLastChange( now() );
-  }
-
-  tk->setMin( kug->kcfg()->smin() );
-  tk->setMax( kug->kcfg()->smax() );
-  tk->setWarn( kug->kcfg()->swarn() );
-  tk->setInactive( kug->kcfg()->sinact() );
-  tk->setExpire( kug->kcfg()->sneverexpire() ? (uint) -1 :
-    (kug->kcfg()->sexpire()).toTime_t() );
-
-  bool privgroup = kug->kcfg()->userPrivateGroup();
-
-  if ( !privgroup ) tk->setGID( kug->kcfg()->defaultgroup() );
-
-  KU_AddUser au( tk, privgroup, this );
-
-  au.setCreateHomeDir( kug->kcfg()->createHomeDir() );
-  au.setCopySkel( kug->kcfg()->copySkel() );
-
-  if ( au.exec() == QDialog::Rejected ) {
-    delete tk;
-    return;
-  }
-  if ( privgroup ) {
-    KU_Group *tg;
-
-    if ((tg = kug->getGroups().lookup(tk->getName())) == 0) {
-      gid_t gid;
-      if ( kug->getGroups().lookup( tk->getUID() ) == 0 ) {
-        gid = tk->getUID();
-      } else {
-        gid = kug->getGroups().first_free();
-      }
-      kdDebug() << "private group GID: " << gid << endl;
-      uid_t rid = 0;
-//      if ( samba ) rid = kug->getGroups().first_free_sam();
-      if ( samba ) rid = SID::gid2rid( gid );
-      if ( gid == KU_Groups::NO_FREE || ( samba && rid == 0 ) ) {
-        kug->getGroups().cancelMods();
-        delete tk;
-        return;
-      }
-      tg = new KU_Group();
-      tg->setGID( gid );
-      if ( samba && ( tk->getCaps() & KU_User::Cap_Samba ) ) {
-        SID sid;
-        sid.setDOM( kug->getGroups().getDOMSID() );
-        sid.setRID( rid );
-        tg->setSID( sid );
-        tg->setDisplayName( tk->getName() );
-        tg->setCaps( KU_Group::Cap_Samba );
-      }
-      tg->setName( tk->getName() );
-      kug->getGroups().add( tg );
-    }
-    tk->setGID( tg->getGID() );
-    tk->setPGSID( tg->getSID() );
-  }
-  kug->getUsers().add( tk );
-  if ( !updateUsers() ) {
-    kug->getGroups().cancelMods();
-    return;
-  }
-  updateGroups();
 }
 
 bool KU_MainView::queryClose()
@@ -313,75 +138,226 @@ void KU_MainView::setpwd()
   KU_PwDlg d( this );
   if ( d.exec() != QDialog::Accepted ) return;
 
-  KU_User newuser, *user;
+  KU_User user;
   Q3ListViewItem *item;
+  int index;
 
   item = lbusers->firstChild();
   while ( item ) {
     if ( item->isSelected() ) {
-      user = ((KUserViewItem*) item)->user();
-      newuser.copy( user );
-      kug->getUsers().createPassword( &newuser, d.getPassword() );
-      newuser.setLastChange( now() );
-      newuser.setDisabled( false );
-      kug->getUsers().mod( user, newuser );
+      index = ((KUserViewItem*) item)->index();
+      user = users->at( index );
+      users->createPassword( user, d.getPassword() );
+      user.setLastChange( now() );
+      user.setDisabled( false );
+      users->mod( index, user );
     }
     item = item->nextSibling();
   }
   updateUsers();
-}
-
-void KU_MainView::groupSelected()
-{
-  bool samba = kug->getGroups().getCaps() & KU_Groups::Cap_Samba;
-  KU_Group *tmpKG = lbgroups->getCurrentGroup();
-  if ( !tmpKG ) return;
-  KU_Group newGroup( tmpKG );
-
-  kdDebug() << "The SID for group " << newGroup.getName() << " is: '" << newGroup.getSID().getSID() << "'" << endl;
-  if ( samba && ( newGroup.getCaps() & KU_Group::Cap_Samba ) && 
-      newGroup.getSID().isEmpty() ) {
-    SID sid;
-    sid.setDOM( kug->getGroups().getDOMSID() );
-//    sid.setRID( kug->getGroups().first_free_sam() );
-    sid.setRID( SID::gid2rid( newGroup.getGID() ) );
-    newGroup.setSID( sid );
-    kdDebug() << "The new SID for group " << newGroup.getName() << " is: " << sid.getSID() << endl;
-  }
-  KU_EditGroup egdlg( &newGroup, samba, false );
-
-  if ( egdlg.exec() == QDialog::Accepted ) {
-    kug->getGroups().mod( tmpKG, newGroup );
-    updateGroups();
-  }
 }
 
 void KU_MainView::userSelected()
 {
+  useredit();
+}
+
+void KU_MainView::groupSelected()
+{
+  grpedit();
+}
+
+void KU_MainView::useradd()
+{
+  KU_User user;
+
+  showPage(lbusers);
+
+  uid_t uid, rid = 0;
+  bool samba = users->getCaps() & KU_Users::Cap_Samba;
+
+  if ((uid = users->first_free()) == KU_Users::NO_FREE) {
+    KMessageBox::sorry( 0, i18n("You have run out of uid space.") );
+    return;
+  }
+/*
+  if ( samba && (rid = users->first_free_sam()) == 0) {
+    KMessageBox::sorry( 0, i18n("You have run out of user RID space.") );
+    return;
+  }
+*/
+  if ( samba ) rid = SID::uid2rid( uid );
+  bool ok;
+  QString name = KInputDialog::getText( QString::null,
+    i18n("Please type the name of the new user:"),
+    QString::null, &ok );
+
+  if ( !ok ) return;
+
+  if ( users->lookup( name ) != -1 ) {
+    KMessageBox::sorry( 0, i18n("User with name %1 already exists.").arg( name ) );
+    return;
+  }
+
+  user.setCaps( samba ? KU_User::Cap_POSIX | KU_User::Cap_Samba : KU_User::Cap_POSIX );
+  user.setUID( uid );
+  user.setName( name );
+
+  if ( samba ) {
+    SID sid;
+    sid.setDOM( users->getDOMSID() );
+    sid.setRID( rid );
+    user.setSID( sid );
+    user.setProfilePath( kug->kcfg()->samprofilepath().replace( "%U",name ) );
+    user.setHomePath( kug->kcfg()->samhomepath().replace( "%U", name ) );
+    user.setHomeDrive( kug->kcfg()->samhomedrive() );
+    user.setLoginScript( kug->kcfg()->samloginscript() );
+    user.setDomain( kug->kcfg()->samdomain() );
+  }
+
+  user.setShell( kug->kcfg()->shell() );
+  user.setHomeDir( kug->kcfg()->homepath().replace( "%U", name ) );
+  if ( users->getCaps() & KU_Users::Cap_Shadow || samba ) {
+    user.setLastChange( now() );
+  }
+
+  user.setMin( kug->kcfg()->smin() );
+  user.setMax( kug->kcfg()->smax() );
+  user.setWarn( kug->kcfg()->swarn() );
+  user.setInactive( kug->kcfg()->sinact() );
+  user.setExpire( kug->kcfg()->sneverexpire() ? (uint) -1 :
+    (kug->kcfg()->sexpire()).toTime_t() );
+
+  bool privgroup = kug->kcfg()->userPrivateGroup();
+
+  if ( !privgroup ) user.setGID( kug->kcfg()->defaultgroup() );
+
+  KU_AddUser au( user, privgroup, this );
+
+  au.setCreateHomeDir( kug->kcfg()->createHomeDir() );
+  au.setCopySkel( kug->kcfg()->copySkel() );
+
+  if ( au.exec() == QDialog::Rejected ) {
+    return;
+  }
+  if ( privgroup ) {
+    KU_Group group;
+    int index;
+
+    index = groups->lookup(user.getName());
+    //if no group exists with the user's name, create one
+    if ( index == -1 ) {
+      gid_t gid;
+      if ( groups->lookup( user.getUID() ) == -1 ) {
+        gid = user.getUID();
+      } else {
+        gid = groups->first_free();
+      }
+      kdDebug() << "private group GID: " << gid << endl;
+      uid_t rid = 0;
+//      if ( samba ) rid = kug->getGroups().first_free_sam();
+      if ( samba ) rid = SID::gid2rid( gid );
+      if ( gid == KU_Groups::NO_FREE || ( samba && rid == 0 ) ) {
+        groups->cancelMods();
+        return;
+      }
+      group.setGID( gid );
+      if ( samba && ( user.getCaps() & KU_User::Cap_Samba ) ) {
+        SID sid;
+        sid.setDOM( groups->getDOMSID() );
+        sid.setRID( rid );
+        group.setSID( sid );
+        group.setDisplayName( user.getName() );
+        group.setCaps( KU_Group::Cap_Samba );
+      }
+      group.setName( user.getName() );
+      groups->add( group );
+    } else {
+      group = groups->at(index);
+    }
+    user.setGID( group.getGID() );
+    user.setPGSID( group.getSID() );
+  }
+  users->add( user );
+  if ( !updateUsers() ) {
+    groups->cancelMods();
+    return;
+  }
+  updateGroups();
+}
+
+void KU_MainView::useredit()
+{
   Q3ListViewItem *item;
-  Q3PtrList<KU_User> ulist;
+  QList<int> selected;
 
   item = lbusers->firstChild();
   while ( item ) {
     if ( item->isSelected() ) {
-      ulist.append( ((KUserViewItem*) item)->user() );
+      selected.append( ((KUserViewItem*) item)->index() );
     }
     item = item->nextSibling();
   }
-  if ( ulist.isEmpty() ) return;
+  if ( selected.isEmpty() ) return;
 
-  KU_EditUser editUser( ulist, this );
+  KU_EditUser editUser( selected, this );
   if ( editUser.exec() == QDialog::Rejected ) return;
 
-  KU_User *user, newuser;
-  user = ulist.first();
-  while ( user ) {
-    editUser.mergeUser( user, &newuser );
-    kug->getUsers().mod( user, newuser );
-    user = ulist.next();
+  KU_User user;
+  foreach(int i, selected) {
+    editUser.mergeUser( users->at(i), user );
+    users->mod( i, user );
   }
   updateUsers();
   updateGroups();
+}
+
+void KU_MainView::userdel()
+{
+  int index = lbusers->getCurrentIndex();
+  if ( index == -1 )
+    return;
+
+  KU_User user = users->at(index);
+  QString username = user.getName();
+  gid_t gid = user.getGID();
+  KU_DelUser dlg(&user, this);
+
+  if ( dlg.exec() == QDialog::Rejected )
+     return;
+
+  user.setDeleteHome( dlg.getDeleteHomeDir() );
+  user.setDeleteMailBox( dlg.getDeleteMailBox() );
+
+
+  users->del( index );
+  if ( !updateUsers() ) return;
+
+  for ( int i = 0; i < groups->count(); i++ ) {
+    KU_Group group = groups->at(i);
+    kdDebug() << "group: " << group.getName() << endl;
+    if ( group.lookup_user( username ) ) {
+      kdDebug() << "group: " << group.getName() << " found user: " << username << endl;
+      group.removeUser( username );
+      groups->mod( i, group );
+    }
+  }
+
+  if ( kug->kcfg()->userPrivateGroup() ) {
+
+    int i = groups->lookup( gid );
+    if ( i != -1 &&
+      KMessageBox::questionYesNo( 0, i18n("You are using private groups.\n"
+        "Do you want to delete the user's private group '%1'?")
+        .arg(groups->at(i).getName()), QString::null,
+        KStdGuiItem::del(), i18n("Do Not Delete")) == KMessageBox::Yes) {
+      kdDebug() << "del private group" << endl;
+      groups->del( i );
+    }
+  }
+  kdDebug() << "update groups" << endl;
+  updateGroups();
+
 }
 
 void KU_MainView::grpadd()
@@ -389,12 +365,8 @@ void KU_MainView::grpadd()
   showPage(lbgroups);
 
   gid_t gid;
-  uid_t rid = 0;
-  bool samba;
 
-  samba = kug->getGroups().getCaps() & KU_Groups::Cap_Samba;
-
-  if ( (gid = kug->getGroups().first_free()) == KU_Groups::NO_FREE )
+  if ( (gid = groups->first_free()) == KU_Groups::NO_FREE )
   {
     KMessageBox::sorry( 0, i18n("You have run out of gid space.") );
     return;
@@ -406,51 +378,69 @@ void KU_MainView::grpadd()
     return;
   }
 */
-  if ( samba ) rid = SID::gid2rid( gid );
-
-  KU_Group *tk = new KU_Group();
-  tk->setGID(gid);
-  if ( samba ) {
+  KU_Group group;
+  group.setGID(gid);
+  if ( groups->getCaps() & KU_Groups::Cap_Samba ) {
+    uid_t rid = SID::gid2rid( gid );
     SID sid;
     sid.setRID( rid );
-    sid.setDOM( kug->getGroups().getDOMSID() );
-    tk->setSID( sid );
+    sid.setDOM( groups->getDOMSID() );
+    group.setSID( sid );
   }
-  KU_EditGroup egdlg( tk, samba, true );
+  KU_EditGroup egdlg( group, true );
 
   if ( egdlg.exec() == QDialog::Rejected ) {
-    delete tk;
     return;
   }
-  kug->getGroups().add(tk);
+  groups->add(egdlg.getGroup());
   updateGroups();
 }
 
 void KU_MainView::grpedit()
 {
-  groupSelected();
+  int index = lbgroups->getCurrentIndex();
+  if ( index == -1 ) return;
+  KU_Group group = groups->at(index);
+
+  kdDebug() << "The SID for group " << group.getName() << " is: '" << group.getSID().getSID() << "'" << endl;
+  if ( ( groups->getCaps() & KU_Groups::Cap_Samba ) &&
+       ( group.getCaps() & KU_Group::Cap_Samba ) &&
+         group.getSID().isEmpty() ) {
+    SID sid;
+    sid.setDOM( groups->getDOMSID() );
+//    sid.setRID( kug->getGroups().first_free_sam() );
+    sid.setRID( SID::gid2rid( group.getGID() ) );
+    group.setSID( sid );
+    kdDebug() << "The new SID for group " << group.getName() << " is: " << sid.getSID() << endl;
+  }
+  KU_EditGroup egdlg( group, false );
+
+  if ( egdlg.exec() == QDialog::Accepted ) {
+    groups->mod( index, egdlg.getGroup() );
+    updateGroups();
+  }
 }
 
 void KU_MainView::grpdel()
 {
   Q3ListViewItem *item;
-  KU_Group *group = NULL;
-  int selected = 0;
+  KU_Group group;
+  int selected = 0, index;
 
   item = lbgroups->firstChild();
   while ( item ) {
     if ( item->isSelected() ) {
 
       selected++;
-      group = ((KGroupViewItem*) item)->group();
+      group = groups->at(((KGroupViewItem*) item)->index());
 
-      KU_User *user = kug->getUsers().first();
-      while ( user ) {
-        if ( user->getGID() == group->getGID() ) {
-          KMessageBox::error( 0, i18n( "The group '%1' is the primary group of one or more users (such as '%2'); it cannot be deleted." ).arg( group->getName() ).arg( user->getName() ) );
+      KU_Users::const_iterator it = users->constBegin();
+      while ( it != users->constEnd() ) {
+        if ( it->getGID() == group.getGID() ) {
+          KMessageBox::error( 0, i18n( "The group '%1' is the primary group of one or more users (such as '%2'); it cannot be deleted." ).arg( group.getName() ).arg( it->getName() ) );
           return;
         }
-        user = kug->getUsers().next();
+        ++it;
       }
     }
     item = item->nextSibling();
@@ -460,7 +450,7 @@ void KU_MainView::grpdel()
     case 0: return;
     case 1:
       if (KMessageBox::warningContinueCancel( 0,
-        i18n("Do you really want to delete the group '%1'?").arg(group->getName()),
+        i18n("Do you really want to delete the group '%1'?").arg(group.getName()),
         QString::null, KStdGuiItem::del()) != KMessageBox::Continue) return;
       break;
     default:
@@ -472,56 +462,51 @@ void KU_MainView::grpdel()
   item = lbgroups->firstChild();
   while ( item ) {
     if ( item->isSelected() ) {
-      group = ((KGroupViewItem*) item)->group();
-      kug->getGroups().del( group );
+      index = ((KGroupViewItem*) item)->index();
+      groups->del( index );
     }
     item = item->nextSibling();
   }
   updateGroups();
 }
 
-bool KU_MainView::updateGroups()
-{
-  bool ret;
-  kdDebug() << "updateGroups() " << endl;
-  ret = kug->getGroups().dbcommit();
-
-  KU_Group *group;
-  KU_Groups::DelIt dit( kug->getGroups().mDelSucc );
-  KU_Groups::AddIt ait( kug->getGroups().mAddSucc );
-
-  while ( (group = dit.current()) != 0 ) {
-    ++dit;
-    lbgroups->removeItem( group );
-  }
-  while ( (group = ait.current()) != 0 ) {
-    ++ait;
-    lbgroups->insertItem( group );
-  }
-  kdDebug() << "commit groups" << endl;
-  kug->getGroups().commit();
-  return ret;
-}
-
 bool KU_MainView::updateUsers()
 {
   bool ret;
   kdDebug() << "updateUsers() " << endl;
-  ret = kug->getUsers().dbcommit();
+  ret = users->dbcommit();
 
-  KU_User *user;
-  KU_Users::DelIt dit( kug->getUsers().mDelSucc );
-  KU_Users::AddIt ait( kug->getUsers().mAddSucc );
+  for ( KU_Users::DelList::Iterator it = users->mDelSucc.begin() ;
+      it != users->mDelSucc.end(); ++it ) {
+    lbusers->removeItem(*it);
+  }
+  kdDebug() << "commit users" << endl;
+  users->commit();
+  for ( KU_Users::AddList::Iterator it = users->mAddSucc.begin() ;
+      it != users->mAddSucc.end(); ++it ) {
+    lbusers->insertItem(users->indexOf(*it));
+  }
 
-  while ( (user = dit.current()) != 0 ) {
-    ++dit;
-    lbusers->removeItem( user );
+  return ret;
+}
+
+bool KU_MainView::updateGroups()
+{
+  bool ret;
+  kdDebug() << "updateGroups() " << endl;
+  ret = groups->dbcommit();
+
+  for ( KU_Groups::DelList::Iterator it = groups->mDelSucc.begin() ;
+      it != groups->mDelSucc.end(); ++it ) {
+    lbgroups->removeItem(*it);
   }
-  while ( (user = ait.current()) != 0 ) {
-    ++ait;
-    lbusers->insertItem( user );
+  kdDebug() << "commit groups" << endl;
+  groups->commit();
+  for ( KU_Groups::AddList::Iterator it = groups->mAddSucc.begin() ;
+      it != groups->mAddSucc.end(); ++it ) {
+    lbgroups->insertItem(groups->indexOf(*it));
   }
-  kug->getUsers().commit();
+
   return ret;
 }
 

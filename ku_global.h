@@ -1,6 +1,6 @@
 /*
  *  Copyright (c) 1998 Denis Perchine <dyp@perchine.com>
- *  Copyright (c) 2004 Szombathelyi György <gyurco@freemail.hu>
+ *  Copyright (c) 2004 Szombathelyi GyĂśrgy <gyurco@freemail.hu>
  *  Maintained by Adriaan de Groot <groot@kde.org>
  *
  *  This program is free software; you can redistribute it and/or
@@ -30,16 +30,16 @@ public:
   ~KU_Global();
   void init();
   void initCfg( const QString &connection );
-  
+
   KU_PrefsBase *kcfg() { return cfg; }
-  KU_Users &getUsers();
-  KU_Groups &getGroups();
-  
+  KU_Users *getUsers();
+  KU_Groups *getGroups();
+
 private:
 
   KU_Users *users;
   KU_Groups *groups;
-  
+
   KU_PrefsBase *cfg;
 };
 

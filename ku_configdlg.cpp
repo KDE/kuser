@@ -20,7 +20,8 @@
 
 #include <kdebug.h>
 
-#include <ktabwidget.h>
+#include <QTabWidget>
+
 #include <kcombobox.h>
 #include <kmessagebox.h>
 #include <klineedit.h>
@@ -28,6 +29,7 @@
 #include <kpushbutton.h>
 #include <kabc/ldapconfigwidget.h>
 #include <kabc/ldapurl.h>
+#include <klocale.h>
 
 #include "ku_configdlg.h"
 #include "ku_generalsettings.h"
@@ -41,21 +43,32 @@ KU_ConfigDlg::KU_ConfigDlg( KConfigSkeleton *config, QWidget *parent, const char
   KConfigDialog( parent, name, config, IconList,
   Default|Ok|Apply|Cancel|Help, Ok, true )
 {
-  KTabWidget *page1 = new KTabWidget( this );
+  QTabWidget *page1 = new QTabWidget( this );
   page1->setMargin( KDialog::marginHint() );
 
-  KU_GeneralSettings *page1a = new KU_GeneralSettings( this );
-  page1a->kcfg_shell->insertItem( i18n("<Empty>" ) );
-  page1a->kcfg_shell->insertStringList( readShells() );
-  page1->addTab( page1a, i18n("Connection") );
-  KU_PasswordPolicy *page1b = new KU_PasswordPolicy( this );
-  page1->addTab( page1b, i18n("Password Policy") );
+  {
+    QDialog *page1a = new QDialog ( 0 );
+    Ui::KU_GeneralSettings *ui = new Ui::KU_GeneralSettings();
+    ui->setupUi( page1a );
+    ui->kcfg_shell->insertItem( i18n("<Empty>" ) );
+    ui->kcfg_shell->insertStringList( readShells() );
+    page1->addTab( page1a, i18n("Connection") );
+  }
+  {
+    QDialog *page1b = new QDialog( 0 );
+    Ui::KU_PasswordPolicy *ui = new Ui::KU_PasswordPolicy();
+    ui->setupUi( page1b );
+    page1->addTab( page1b, i18n("Password Policy") );
+  }
   addPage( page1, i18n("General"), "", i18n("General Settings") );
 
-  KU_FilesSettings *page2 = new KU_FilesSettings( this );
-  addPage( page2, i18n("Files"), "", i18n("File Source Settings") );
-
-  KTabWidget *page3 = new KTabWidget( this );
+  {
+    QDialog *page2 = new QDialog( 0 );
+    Ui::KU_FilesSettings *ui = new Ui::KU_FilesSettings();
+    ui->setupUi( page2 );
+    addPage( page2, i18n("Files"), "", i18n("File Source Settings") );
+  }
+  QTabWidget *page3 = new QTabWidget( 0 );
   page3->setMargin( KDialog::marginHint() );
   ldconf =
     new KABC::LdapConfigWidget(
@@ -69,20 +82,28 @@ KU_ConfigDlg::KU_ConfigDlg( KConfigSkeleton *config, QWidget *parent, const char
        KABC::LdapConfigWidget::W_DN |
        KABC::LdapConfigWidget::W_SECBOX |
        KABC::LdapConfigWidget::W_AUTHBOX,
-        page3 );
+        0 );
   page3->addTab( ldconf, i18n("Connection") );
 
-  KU_LdapSettings *page3b = new KU_LdapSettings( this );
-  page3->addTab( page3b, i18n("Settings") );
-
-  page3c = new KU_LdapSamba( this );
-  connect( page3c->domQuery, SIGNAL(clicked()), SLOT(slotQueryClicked()) );
-  page3->addTab( page3c, i18n("Samba") );
+  {
+    QDialog *page3b = new QDialog( 0 );
+    Ui::KU_LdapSettings *ui = new Ui::KU_LdapSettings();
+    ui->setupUi( page3b );
+    page3->addTab( page3b, i18n("Settings") );
+  }
+  {
+    QDialog *page3c = new QDialog( 0 );
+    Ui::KU_LdapSamba *ui = new Ui::KU_LdapSamba();
+    ui->setupUi( page3c );
+    connect( ui->domQuery, SIGNAL(clicked()), SLOT(slotQueryClicked()) );
+    page3->addTab( page3c, i18n("Samba") );
+  }
   addPage( page3, i18n("LDAP"), "", i18n("LDAP Source Settings") );
 }
 
 void KU_ConfigDlg::slotQueryClicked()
 {
+/*
   KABC::LDAPUrl _url = ldconf->url();
 
   mResult.clear();
@@ -133,6 +154,7 @@ void KU_ConfigDlg::slotQueryClicked()
     }
   }
   kdDebug() << "domQueryx" << endl;
+*/
 }
 
 void KU_ConfigDlg::loadData( KIO::Job*, const QByteArray& d )

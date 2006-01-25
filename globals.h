@@ -21,14 +21,21 @@
 #ifndef _KU_GLOBALS_H_
 #define _KU_GLOBALS_H_
 
-#define _KU_VERSION "2.1"
+#define _KU_VERSION "2.2"
 
 #include <config.h>
 #ifdef HAVE_PATHS_H
 #include <paths.h>
 #endif
-#include <kconfig.h>
-#include "ku_prefs.h"
+
+#define KU_PROPERTY(Type,Name) \
+    const Type &get##Name() const ; \
+    void set##Name(Type data);
+
+#define KU_PROPERTY_IMPL(Class,Type,Name) \
+    const Type &Class::get##Name() const { return d->Name; }; \
+    void Class::set##Name(Type data) { d->Name = data; };
+
 
 #define KU_BACKUP_EXT ".bak"
 #define KU_CREATE_EXT ".new"

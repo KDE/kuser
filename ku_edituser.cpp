@@ -1,6 +1,6 @@
 /*
  *  Copyright (c) 1998 Denis Perchine <dyp@perchine.com>
- *  Copyright (c) 2004 Szombathelyi György <gyurco@freemail.hu>
+ *  Copyright (c) 2004 Szombathelyi GyĂśrgy <gyurco@freemail.hu>
  *  Former maintainer: Adriaan de Groot <groot@kde.org>
  *
  *  This program is free software; you can redistribute it and/or
@@ -18,18 +18,18 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
+#include "globals.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 
 #include <QDateTime>
 #include <QGridLayout>
-#include <Q3PtrList>
 
 #include <kseparator.h>
 #include <kmessagebox.h>
 #include <kdebug.h>
-
-#include <qvalidator.h>
+#include <klocale.h>
 
 #include "ku_edituser.h"
 #include "ku_pwdlg.h"
@@ -96,7 +96,7 @@ KIntSpinBox *KU_EditUser::addDaysGroup(QWidget *parent, QGridLayout *layout, int
 
 void KU_EditUser::initDlg()
 {
-  ro = kug->getUsers().getCaps() & KU_Users::Cap_ReadOnly;
+  ro = kug->getUsers()->getCaps() & KU_Users::Cap_ReadOnly;
 
   QString whatstr;
 
@@ -132,7 +132,7 @@ void KU_EditUser::initDlg()
     connect(lefname, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
     lefname->setFocus();
 
-    if ( kug->getUsers().getCaps() & KU_Users::Cap_InetOrg ) {
+    if ( kug->getUsers()->getCaps() & KU_Users::Cap_InetOrg ) {
       lesurname = new KLineEdit(frame);
 //    whatstr = i18n("WHAT IS THIS: Surname");
       addRow(frame, layout, row++, lesurname, i18n("Surname:"), whatstr);
@@ -163,7 +163,7 @@ void KU_EditUser::initDlg()
 
     // FreeBSD appears to use the comma separated fields in the GECOS entry
     // differently than Linux.
-    if ( kug->getUsers().getCaps() & KU_Users::Cap_BSD ) {
+    if ( kug->getUsers()->getCaps() & KU_Users::Cap_BSD ) {
       leoffice = new KLineEdit(frame);
       connect(leoffice, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
 //    whatstr = i18n("WHAT IS THIS: Office");
@@ -203,7 +203,7 @@ void KU_EditUser::initDlg()
     connect(cbdisabled, SIGNAL(stateChanged(int)), this, SLOT(changed()));
     addRow(frame, layout, row++, cbdisabled, i18n("Account &disabled"), whatstr);
 
-    if ( kug->getUsers().getCaps() & KU_Users::Cap_Disable_POSIX ) {
+    if ( kug->getUsers()->getCaps() & KU_Users::Cap_Disable_POSIX ) {
       cbposix = new QCheckBox(frame);
       connect(cbposix, SIGNAL(stateChanged(int)), this, SLOT(changed()));
       connect(cbposix, SIGNAL(stateChanged(int)), this, SLOT(cbposixChanged()));
@@ -214,9 +214,9 @@ void KU_EditUser::initDlg()
     frontrow = row;
   }
 
-  if ( kug->getUsers().getCaps() & KU_Users::Cap_Shadow ||
-       kug->getUsers().getCaps() & KU_Users::Cap_Samba ||
-       kug->getUsers().getCaps() & KU_Users::Cap_BSD ) {
+  if ( kug->getUsers()->getCaps() & KU_Users::Cap_Shadow ||
+       kug->getUsers()->getCaps() & KU_Users::Cap_Samba ||
+       kug->getUsers()->getCaps() & KU_Users::Cap_BSD ) {
 
   // Tab 2 : Password Management
     QFrame *frame = addPage(i18n("Password Management"));
@@ -230,7 +230,7 @@ void KU_EditUser::initDlg()
     layout->addMultiCellWidget(new KSeparator(Qt::Horizontal, frame), row, row, 0, 3);
     row++;
 
-    if ( kug->getUsers().getCaps() & KU_Users::Cap_Shadow ) {
+    if ( kug->getUsers()->getCaps() & KU_Users::Cap_Shadow ) {
       layout->addWidget( new QLabel( "POSIX parameters:", frame ), row++, 0 );
       lesmin = addDaysGroup(frame, layout, row++, i18n("Time before password may &not be changed after last password change:"), false);
       lesmax = addDaysGroup(frame, layout, row++, i18n("Time when password &expires after last password change:") );
@@ -240,7 +240,7 @@ void KU_EditUser::initDlg()
       row++;
     }
     /*
-    if ( kug->getUsers().getCaps() & KU_Users::Cap_Samba ) {
+    if ( kug->getUsers()->getCaps() & KU_Users::Cap_Samba ) {
       layout->addWidget( new QLabel( "SAMBA parameters:", frame ), row++, 0 );
       layout->addMultiCellWidget(new KSeparator(Qt::Horizontal, frame), row, row, 0, 3);
       row++;
@@ -261,7 +261,7 @@ void KU_EditUser::initDlg()
   }
 
   // Tab 3: Samba
-  if ( kug->getUsers().getCaps() & KU_Users::Cap_Samba ) {
+  if ( kug->getUsers()->getCaps() & KU_Users::Cap_Samba ) {
     QFrame *frame = addPage(i18n("Samba"));
     QGridLayout *layout = new QGridLayout(frame, 10, 4, marginHint(), spacingHint());
     int row = 0;
@@ -318,10 +318,10 @@ void KU_EditUser::initDlg()
     QFrame *frame = addPage(i18n("Groups"));
     QGridLayout *layout = new QGridLayout(frame, 2, 2, marginHint(), spacingHint());
 
-    lstgrp = new KListView(frame);
-    lstgrp->setFullWidth(true); // Single column, full widget width.
-    lstgrp->addColumn( i18n("Groups") );
-    if ( ro ) lstgrp->setSelectionMode( Q3ListView::NoSelection );
+    lstgrp = new QListWidget(frame);
+//    lstgrp->setFullWidth(true); // Single column, full widget width.
+//    lstgrp->addColumn( i18n("Groups") );
+    if ( ro ) lstgrp->setSelectionMode( QListWidget::NoSelection );
 //    QString whatstr = i18n("Select the groups that this user belongs to.");
     lstgrp->setWhatsThis( whatstr);
     layout->addMultiCellWidget(lstgrp, 0, 0, 0, 1);
@@ -332,19 +332,23 @@ void KU_EditUser::initDlg()
       layout->addWidget( pbprigr, 1, 1 );
       connect( pbprigr, SIGNAL(clicked()), this, SLOT(setpgroup()) );
     }
-    connect( lstgrp, SIGNAL(clicked(Q3ListViewItem *)), this, SLOT(gchanged()) );
+    connect( lstgrp, SIGNAL(itemClicked(QListWidgetItem *)), this, SLOT(gchanged()) );
   }
 
 }
 
-KU_EditUser::KU_EditUser( const Q3PtrList<KU_User> &users,
-  QWidget *parent, const char *name ) :
-  KDialogBase(Tabbed, i18n("User Properties"), Ok | Cancel, Ok, parent, name, true)
+KU_EditUser::KU_EditUser( const QList<int> &selected,
+  QWidget *parent ) :
+  KDialogBase(Tabbed, 0, parent, 0, true, i18n("User Properties"), Ok | Cancel, Ok )
 
 {
-  mUsers = users;
-  if ( mUsers.getFirst() != mUsers.getLast() )
-    setCaption( i18n("User Properties - %1 Selected Users").arg( mUsers.count() ) );
+  mSelected = selected;
+  if ( mSelected.count() > 1 )
+    setCaption( i18n("User Properties - %1 Selected Users").arg( mSelected.count() ) );
+  else {
+    mUser = kug->getUsers()->at( selected[0] );
+    mSelected.clear();
+  }
   initDlg();
   loadgroups( false );
   selectuser();
@@ -352,12 +356,12 @@ KU_EditUser::KU_EditUser( const Q3PtrList<KU_User> &users,
   isgchanged = false;
 }
 
-KU_EditUser::KU_EditUser( KU_User *AUser, bool fixedprivgroup,
-  QWidget *parent, const char *name ) :
-  KDialogBase(Tabbed, i18n("User Properties"), Ok | Cancel, Ok, parent, name, true)
+KU_EditUser::KU_EditUser( KU_User &user, bool fixedprivgroup,
+  QWidget *parent ) :
+  KDialogBase(Tabbed, 0, parent, 0, true, i18n("User Properties"), Ok | Cancel, Ok )
 
 {
-  mUsers.append( AUser );
+  mUser = user;
   initDlg();
   loadgroups( fixedprivgroup );
   selectuser();
@@ -372,10 +376,10 @@ KU_EditUser::~KU_EditUser()
 void KU_EditUser::cbposixChanged()
 {
   bool posix = !( cbposix->checkState() == Qt::Checked );
-  leid->setEnabled( posix  & ( mUsers.getFirst() == mUsers.getLast() ) );
+  leid->setEnabled( posix  && mSelected.isEmpty() );
   leshell->setEnabled( posix );
   lehome->setEnabled( posix );
-  if ( kug->getUsers().getCaps() & KU_Users::Cap_Shadow ) {
+  if ( kug->getUsers()->getCaps() & KU_Users::Cap_Shadow ) {
     lesmin->setEnabled( posix );
     lesmax->setEnabled( posix );
     leswarn->setEnabled( posix );
@@ -386,7 +390,7 @@ void KU_EditUser::cbposixChanged()
 void KU_EditUser::cbsambaChanged()
 {
   bool samba = !( cbsamba->checkState() == Qt::Checked );
-  lerid->setEnabled( samba & ( mUsers.getFirst() == mUsers.getLast() ) );
+  lerid->setEnabled( samba && mSelected.isEmpty() );
   leliscript->setEnabled( samba );
   leprofile->setEnabled( samba );
   lehomedrive->setEnabled( samba );
@@ -444,49 +448,51 @@ void KU_EditUser::setSB( KIntSpinBox *sb, int val, bool first )
 
 void KU_EditUser::selectuser()
 {
-  KU_User *user;
-  bool first = true, one = ( mUsers.getFirst() == mUsers.getLast() );
+  KU_User user;
+  bool one = mSelected.isEmpty();
+  int index = 0;
 
   ismoreshells = false;
-  user = mUsers.first();
-  olduid = user->getUID();
-  oldrid = user->getSID().getRID();
-  oldshell = user->getShell();
-  lstchg = user->getLastChange();
+  user = one ? mUser : kug->getUsers()->at(mSelected[0]);
+  olduid = user.getUID();
+  oldrid = user.getSID().getRID();
+  oldshell = user.getShell();
+  lstchg = user.getLastChange();
   QDateTime datetime;
   datetime.setTime_t( lstchg );
-  if ( kug->getUsers().getCaps() & KU_Users::Cap_Shadow ||
-       kug->getUsers().getCaps() & KU_Users::Cap_Samba ||
-       kug->getUsers().getCaps() & KU_Users::Cap_BSD ) {
+  if ( kug->getUsers()->getCaps() & KU_Users::Cap_Shadow ||
+       kug->getUsers()->getCaps() & KU_Users::Cap_Samba ||
+       kug->getUsers()->getCaps() & KU_Users::Cap_BSD ) {
 
     leslstchg->setText( KGlobal::locale()->formatDateTime( datetime, false ) );
   }
 
   if ( one ) {
-    lbuser->setText( user->getName() );
-    leid->setText( QString::number( user->getUID() ) );
+    lbuser->setText( user.getName() );
+    leid->setText( QString::number( user.getUID() ) );
     if ( ro ) leid->setReadOnly( true );
-    if ( kug->getUsers().getCaps() & KU_Users::Cap_Samba ) {
-      lerid->setText( QString::number( user->getSID().getRID() ) );
+    if ( kug->getUsers()->getCaps() & KU_Users::Cap_Samba ) {
+      lerid->setText( QString::number( user.getSID().getRID() ) );
       if ( ro ) lerid->setReadOnly( true );
     }
   } else {
     leid->setEnabled( false );
-    if ( kug->getUsers().getCaps() & KU_Users::Cap_Samba ) {
+    if ( kug->getUsers()->getCaps() & KU_Users::Cap_Samba ) {
       lerid->setEnabled( false );
     }
   }
   if ( ro ) leshell->setEditable( false );
 
-  while ( user ) {
-
-    setLE( lefname, user->getFullName(), first );
+  bool first;
+  while ( true ) {
+    first = (index == 0);
+    setLE( lefname, user.getFullName(), first );
     QString home;
-    home = user->getHomeDir();
-    if ( !one ) home.replace( user->getName(), "%U" );
+    home = user.getHomeDir();
+    if ( !one ) home.replace( user.getName(), "%U" );
     setLE( lehome, home, first );
 
-    QString shell = user->getShell();
+    QString shell = user.getShell();
     if ( first ) {
       if ( !shell.isEmpty() ) {
         bool tested = false;
@@ -512,39 +518,39 @@ void KU_EditUser::selectuser()
       }
     }
 
-    setCB( cbdisabled, user->getDisabled(), first );
-    if ( kug->getUsers().getCaps() & KU_Users::Cap_Disable_POSIX ) {
-      setCB( cbposix, !(user->getCaps() & KU_User::Cap_POSIX), first );
+    setCB( cbdisabled, user.getDisabled(), first );
+    if ( kug->getUsers()->getCaps() & KU_Users::Cap_Disable_POSIX ) {
+      setCB( cbposix, !(user.getCaps() & KU_User::Cap_POSIX), first );
     }
 
-    if ( kug->getUsers().getCaps() & KU_Users::Cap_Samba ) {
-      setLE( leliscript, user->getLoginScript(), first );
+    if ( kug->getUsers()->getCaps() & KU_Users::Cap_Samba ) {
+      setLE( leliscript, user.getLoginScript(), first );
       QString profile;
-      profile = user->getProfilePath();
-      if ( !one ) profile.replace( user->getName(), "%U" );
+      profile = user.getProfilePath();
+      if ( !one ) profile.replace( user.getName(), "%U" );
       setLE( leprofile, profile, first );
-      setLE( lehomedrive, user->getHomeDrive(), first );
-      home = user->getHomePath();
-      if ( !one ) home.replace( user->getName(), "%U" );
+      setLE( lehomedrive, user.getHomeDrive(), first );
+      home = user.getHomePath();
+      if ( !one ) home.replace( user.getName(), "%U" );
       setLE( lehomepath, home, first );
-      setLE( leworkstations, user->getWorkstations(), first );
-      setLE( ledomain, user->getDomain(), first );
-      setLE( ledomsid, user->getSID().getDOM(), first );
-      setCB( cbsamba, !(user->getCaps() & KU_User::Cap_Samba), first );
+      setLE( leworkstations, user.getWorkstations(), first );
+      setLE( ledomain, user.getDomain(), first );
+      setLE( ledomsid, user.getSID().getDOM(), first );
+      setCB( cbsamba, !(user.getCaps() & KU_User::Cap_Samba), first );
     }
 
-    if ( kug->getUsers().getCaps() & KU_Users::Cap_Shadow ||
-         kug->getUsers().getCaps() & KU_Users::Cap_Samba ||
-         kug->getUsers().getCaps() & KU_Users::Cap_BSD ) {
+    if ( kug->getUsers()->getCaps() & KU_Users::Cap_Shadow ||
+         kug->getUsers()->getCaps() & KU_Users::Cap_Samba ||
+         kug->getUsers()->getCaps() & KU_Users::Cap_BSD ) {
 
-      if ( user->getLastChange() != lstchg ) {
+      if ( user.getLastChange() != lstchg ) {
         leslstchg->setText( "" );
         lstchg = 0;
       }
 
       QDateTime expire;
-      expire.setTime_t( user->getExpire() );
-      kdDebug() << "expiration: " << user->getExpire() << endl;
+      expire.setTime_t( user.getExpire() );
+      kdDebug() << "expiration: " << user.getExpire() << endl;
       setCB( cbexpire, (int) expire.toTime_t() == -1, first );
       if ( (int) expire.toTime_t() == -1 ) expire.setTime_t( 0 );
       if ( first ) {
@@ -557,30 +563,31 @@ void KU_EditUser::selectuser()
       }
     }
 
-    if ( kug->getUsers().getCaps() & KU_Users::Cap_Shadow ) {
-      setSB( lesmin, user->getMin(), first );
-      setSB( lesmax, user->getMax(), first );
-      setSB( leswarn, user->getWarn(), first );
-      setSB( lesinact, user->getInactive(), first );
+    if ( kug->getUsers()->getCaps() & KU_Users::Cap_Shadow ) {
+      setSB( lesmin, user.getMin(), first );
+      setSB( lesmax, user.getMax(), first );
+      setSB( leswarn, user.getWarn(), first );
+      setSB( lesinact, user.getInactive(), first );
     }
 
-    if ( kug->getUsers().getCaps() & KU_Users::Cap_InetOrg ) {
-      setLE( lesurname, user->getSurname(), first );
-      setLE( lemail, user->getEmail(), first );
+    if ( kug->getUsers()->getCaps() & KU_Users::Cap_InetOrg ) {
+      setLE( lesurname, user.getSurname(), first );
+      setLE( lemail, user.getEmail(), first );
     }
-    if ( kug->getUsers().getCaps() & KU_Users::Cap_BSD ) {
-      setLE( leoffice, user->getOffice(), first );
-      setLE( leophone, user->getWorkPhone(), first );
-      setLE( lehphone, user->getHomePhone(), first );
-      setLE( leclass, user->getClass(), first );
+    if ( kug->getUsers()->getCaps() & KU_Users::Cap_BSD ) {
+      setLE( leoffice, user.getOffice(), first );
+      setLE( leophone, user.getWorkPhone(), first );
+      setLE( lehphone, user.getHomePhone(), first );
+      setLE( leclass, user.getClass(), first );
     } else {
-      setLE( leoffice1, user->getOffice1(), first );
-      setLE( leoffice2, user->getOffice2(), first );
-      setLE( leaddress, user->getAddress(), first );
+      setLE( leoffice1, user.getOffice1(), first );
+      setLE( leoffice2, user.getOffice2(), first );
+      setLE( leaddress, user.getAddress(), first );
     }
 
     first = false;
-    user = mUsers.next();
+    if ( index == mSelected.count() ) break;
+    user = kug->getUsers()->at(mSelected[++index]);
   }
 }
 
@@ -590,19 +597,22 @@ void KU_EditUser::loadgroups( bool fixedprivgroup )
 
   primaryGroupWasOn = false;
 
-  KU_Group *group = kug->getGroups().first();
-  while ( group ) {
-    QString groupName = group->getName();
-    Q3CheckListItem *item = new Q3CheckListItem(lstgrp, groupName, Q3CheckListItem::CheckBox);
-    KU_User *user = mUsers.first();
-    while ( user ) {
+  for ( QList<KU_Group>::Iterator it = kug->getGroups()->begin();
+        it != kug->getGroups()->end(); ++it ) {
+    QString groupName = (*it).getName();
+    QListWidgetItem *item = new QListWidgetItem(groupName, lstgrp);
+    item->setFlags( Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsUserCheckable );
+    int index = 0;
+    KU_User user = mSelected.count() > 0 ?
+      kug->getUsers()->at(mSelected[0]) : mUser;
+    while ( true ) {
       bool prigr =
-        ( !fixedprivgroup && group->getGID() == user->getGID() ) ||
-        ( fixedprivgroup && groupName == user->getName() );
-      bool on = group->lookup_user( user->getName() ) || prigr;
+        ( !fixedprivgroup && (*it).getGID() == user.getGID() ) ||
+        ( fixedprivgroup && groupName == user.getName() );
+      bool on = (*it).lookup_user( user.getName() ) || prigr;
 
       if ( prigr ) {
-        item->setEnabled( false );
+        item->setFlags( item->flags() & ~(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable) );
         if ( !wasprivgr )
           primaryGroup = groupName;
         else
@@ -611,26 +621,26 @@ void KU_EditUser::loadgroups( bool fixedprivgroup )
         wasprivgr = true;
       }
 
-      if ( mUsers.getFirst() == user )
-        item->setOn( on );
-      else
-        if ( item->isOn() != on ) {
-          item->setTristate( true );
-          item->setState( Q3CheckListItem::NoChange );
+      if ( index == 0 ) {
+        item->setCheckState( on ? Qt::Checked : Qt::Unchecked );
+      } else
+        if ( item->checkState() != ( on ? Qt::Checked : Qt::Unchecked ) ) {
+          item->setFlags( item->flags() | Qt::ItemIsTristate );
+          item->setCheckState( Qt::PartiallyChecked );
         }
-      user = mUsers.next();
+      if ( index == mSelected.count() ) break;
+      user = kug->getUsers()->at(mSelected[++index]);
     }
-    group = kug->getGroups().next();
   }
 
   if ( fixedprivgroup ) {
-    KU_User *user = mUsers.first();
-    kdDebug() << "privgroup: " << user->getName() << endl;
+    KU_User user = mSelected.isEmpty() ? mUser : kug->getUsers()->at(mSelected[0]);
+    kdDebug() << "privgroup: " << user.getName() << endl;
     if ( !wasprivgr ) {
-      Q3CheckListItem *item = new Q3CheckListItem(lstgrp, user->getName(), Q3CheckListItem::CheckBox);
-      item->setOn(true);
-      item->setEnabled(false);
-      primaryGroup = user->getName();
+      QListWidgetItem *item = new QListWidgetItem(user.getName(),lstgrp);
+      item->setCheckState( Qt::Checked );
+      item->setFlags( item->flags() & ~(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable) );
+      primaryGroup = user.getName();
     }
   }
   leprigr->setText( i18n("Primary group: ") + primaryGroup );
@@ -639,34 +649,30 @@ void KU_EditUser::loadgroups( bool fixedprivgroup )
 void KU_EditUser::setpgroup()
 {
   isgchanged = true;
-  Q3CheckListItem *item;
-  item = (Q3CheckListItem *) lstgrp->selectedItem();
-  if ( item == 0 || item->text() == primaryGroup )
-     return;
+  QList<QListWidgetItem*> items = lstgrp->selectedItems();
+  if ( items.isEmpty() ) return;
+  QListWidgetItem *item = items[0];
+
+  if ( item->text() == primaryGroup ) return;
 
   bool prevPrimaryGroupWasOn = primaryGroupWasOn;
-  primaryGroup = ((Q3CheckListItem *) lstgrp->selectedItem())->text();
+  primaryGroup = item->text();
 
-  item = (Q3CheckListItem *) lstgrp->firstChild();
+  for ( int row = 0; row < lstgrp->count(); row++ ) {
 
-  while(item)
-  {
+     item = lstgrp->item( row );
      QString groupName = item->text();
-     if ( !item->isEnabled() )
+     if ( !(item->flags() & Qt::ItemIsEnabled) )
      {
-        item->setEnabled(true);
-        item->setOn(prevPrimaryGroupWasOn);
-        item->repaint();
+        item->setFlags( item->flags() | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable );
+        item->setCheckState(prevPrimaryGroupWasOn ? Qt::Checked : Qt::Unchecked );
      }
      if ( groupName == primaryGroup )
      {
-        primaryGroupWasOn = item->isOn();
-        item->setEnabled(false);
-        item->setOn(true);
-        item->repaint();
+        primaryGroupWasOn = ( item->checkState() == Qt::Checked );
+        item->setFlags( item->flags() & ~(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable) );
+        item->setCheckState( Qt::Checked );
      }
-
-     item = (Q3CheckListItem *) item->nextSibling();
   }
   leprigr->setText( i18n("Primary group: ") + primaryGroup );
 }
@@ -698,131 +704,132 @@ int KU_EditUser::mergeSB( KIntSpinBox *sb, int val, bool one )
   return ( one || ( cb && !cb->isChecked() ) ) ? sb->value() : val;
 }
 
-void KU_EditUser::mergeUser( KU_User *user, KU_User *newuser )
+void KU_EditUser::mergeUser( const KU_User &user, KU_User &newuser )
 {
   QDateTime epoch ;
   epoch.setTime_t(0);
-  bool one = ( mUsers.getFirst() == mUsers.getLast() );
+  bool one = mSelected.isEmpty();
   bool posix, samba = false;
 
-  newuser->copy( user );
+  newuser = user;
 
-  if ( kug->getUsers().getCaps() & KU_Users::Cap_Disable_POSIX && cbposix->state() != QCheckBox::NoChange ) {
+  if ( kug->getUsers()->getCaps() & KU_Users::Cap_Disable_POSIX && cbposix->state() != QCheckBox::NoChange ) {
     if ( cbposix->isChecked() )
-      newuser->setCaps( newuser->getCaps() & ~KU_User::Cap_POSIX );
+      newuser.setCaps( newuser.getCaps() & ~KU_User::Cap_POSIX );
     else
-      newuser->setCaps( newuser->getCaps() | KU_User::Cap_POSIX );
+      newuser.setCaps( newuser.getCaps() | KU_User::Cap_POSIX );
   }
-  posix = newuser->getCaps() & KU_User::Cap_POSIX;
+  posix = newuser.getCaps() & KU_User::Cap_POSIX;
   kdDebug() << "posix: " << posix << endl;
   if ( one ) {
 //    newuser->setName( leuser->text() );
-    newuser->setUID( posix ? leid->text().toInt() : 0 );
+    newuser.setUID( posix ? leid->text().toInt() : 0 );
   }
   if ( !newpass.isNull() ) {
-    kug->getUsers().createPassword( newuser, newpass );
-    newuser->setLastChange( lstchg );
+    kug->getUsers()->createPassword( newuser, newpass );
+    newuser.setLastChange( lstchg );
   }
-  newuser->setFullName( mergeLE( lefname, user->getFullName(), one ) );
-  if ( kug->getUsers().getCaps() & KU_Users::Cap_Samba ) {
+  newuser.setFullName( mergeLE( lefname, user.getFullName(), one ) );
+  if ( kug->getUsers()->getCaps() & KU_Users::Cap_Samba ) {
     if ( cbsamba->state() != QCheckBox::NoChange ) {
       if ( cbsamba->isChecked() )
-        newuser->setCaps( newuser->getCaps() & ~KU_User::Cap_Samba );
+        newuser.setCaps( newuser.getCaps() & ~KU_User::Cap_Samba );
       else
-        newuser->setCaps( newuser->getCaps() | KU_User::Cap_Samba );
+        newuser.setCaps( newuser.getCaps() | KU_User::Cap_Samba );
     }
-    samba = newuser->getCaps() & KU_User::Cap_Samba;
-    kdDebug() << "user : " << newuser->getName() << " caps: " << newuser->getCaps() << " samba: " << samba << endl;
+    samba = newuser.getCaps() & KU_User::Cap_Samba;
+    kdDebug() << "user : " << newuser.getName() << " caps: " << newuser.getCaps() << " samba: " << samba << endl;
 
     SID sid;
     if ( samba ) {
-      sid.setRID( one ? lerid->text().toUInt() : user->getSID().getRID() );
-      sid.setDOM( mergeLE( ledomsid, user->getSID().getDOM(), one ) );
+      sid.setRID( one ? lerid->text().toUInt() : user.getSID().getRID() );
+      sid.setDOM( mergeLE( ledomsid, user.getSID().getDOM(), one ) );
     }
-    newuser->setSID( sid );
-    newuser->setLoginScript( samba ? 
-      mergeLE( leliscript, user->getLoginScript(), one ) : QString::null  );
-    newuser->setProfilePath( samba ? 
-      mergeLE( leprofile, user->getProfilePath(), one ).replace( "%U", newuser->getName() ) : QString::null );
-    newuser->setHomeDrive( samba ? 
-      mergeLE( lehomedrive, user->getHomeDrive(), one ) : QString::null );
-    newuser->setHomePath( samba ? 
-      mergeLE( lehomepath, user->getHomePath(), one ).replace( "%U", newuser->getName() ) : QString::null );
-    newuser->setWorkstations( samba ? 
-      mergeLE( leworkstations, user->getWorkstations(), one ) : QString::null );
-    newuser->setDomain( samba ? 
-      mergeLE( ledomain, user->getDomain(), one ) : QString::null );
+    newuser.setSID( sid );
+    newuser.setLoginScript( samba ?
+      mergeLE( leliscript, user.getLoginScript(), one ) : QString::null  );
+    newuser.setProfilePath( samba ?
+      mergeLE( leprofile, user.getProfilePath(), one ).replace( "%U", newuser.getName() ) : QString::null );
+    newuser.setHomeDrive( samba ?
+      mergeLE( lehomedrive, user.getHomeDrive(), one ) : QString::null );
+    newuser.setHomePath( samba ?
+      mergeLE( lehomepath, user.getHomePath(), one ).replace( "%U", newuser.getName() ) : QString::null );
+    newuser.setWorkstations( samba ?
+      mergeLE( leworkstations, user.getWorkstations(), one ) : QString::null );
+    newuser.setDomain( samba ?
+      mergeLE( ledomain, user.getDomain(), one ) : QString::null );
   }
 
-  if ( kug->getUsers().getCaps() & KU_Users::Cap_BSD ) {
-    newuser->setOffice( mergeLE( leoffice, user->getOffice(), one ) );
-    newuser->setWorkPhone( mergeLE( leophone, user->getWorkPhone(), one ) );
-    newuser->setHomePhone( mergeLE( lehphone, user->getHomePhone(), one ) );
-    newuser->setClass( mergeLE( leclass, user->getClass(), one ) );
+  if ( kug->getUsers()->getCaps() & KU_Users::Cap_BSD ) {
+    newuser.setOffice( mergeLE( leoffice, user.getOffice(), one ) );
+    newuser.setWorkPhone( mergeLE( leophone, user.getWorkPhone(), one ) );
+    newuser.setHomePhone( mergeLE( lehphone, user.getHomePhone(), one ) );
+    newuser.setClass( mergeLE( leclass, user.getClass(), one ) );
   } else {
-    newuser->setOffice1( mergeLE( leoffice1, user->getOffice1(), one ) );
-    newuser->setOffice2( mergeLE( leoffice2, user->getOffice2(), one ) );
-    newuser->setAddress( mergeLE( leaddress, user->getAddress(), one ) );
+    newuser.setOffice1( mergeLE( leoffice1, user.getOffice1(), one ) );
+    newuser.setOffice2( mergeLE( leoffice2, user.getOffice2(), one ) );
+    newuser.setAddress( mergeLE( leaddress, user.getAddress(), one ) );
   }
 
-  newuser->setHomeDir( posix ? 
-    mergeLE( lehome, user->getHomeDir(), one ).replace( "%U", newuser->getName() ) : 
+  newuser.setHomeDir( posix ?
+    mergeLE( lehome, user.getHomeDir(), one ).replace( "%U", newuser.getName() ) :
     QString::null );
   if ( posix ) {
     if ( leshell->currentItem() == 0 && ismoreshells ) {
-      newuser->setShell( user->getShell() );
+      newuser.setShell( user.getShell() );
     } else if  (
       ( leshell->currentItem() == 0 && !ismoreshells ) ||
       ( leshell->currentItem() == 1 && ismoreshells ) ) {
 
-      newuser->setShell( QString::null );
+      newuser.setShell( QString::null );
     } else {
   // TODO: Check shell.
-      newuser->setShell( leshell->currentText() );
+      newuser.setShell( leshell->currentText() );
     }
   } else
-    newuser->setShell( QString::null );
+    newuser.setShell( QString::null );
 
-  newuser->setDisabled( (cbdisabled->state() == QCheckBox::NoChange) ? user->getDisabled() : cbdisabled->isChecked() );
+  newuser.setDisabled( (cbdisabled->state() == QCheckBox::NoChange) ? user.getDisabled() : cbdisabled->isChecked() );
 
-  if ( kug->getUsers().getCaps() & KU_Users::Cap_InetOrg ) {
-    newuser->setSurname( mergeLE( lesurname, user->getSurname(), one ) );
-    newuser->setEmail( mergeLE( lemail, user->getEmail(), one ) );
+  if ( kug->getUsers()->getCaps() & KU_Users::Cap_InetOrg ) {
+    newuser.setSurname( mergeLE( lesurname, user.getSurname(), one ) );
+    newuser.setEmail( mergeLE( lemail, user.getEmail(), one ) );
   }
 
-  if ( kug->getUsers().getCaps() & KU_Users::Cap_Shadow ) {
-    newuser->setMin( posix ? mergeSB( lesmin, user->getMin(), one ) : 0 );
-    newuser->setMax( posix ? mergeSB( lesmax, user->getMax(), one ) : 0 );
-    newuser->setWarn( posix ? mergeSB( leswarn, user->getWarn(), one ) : 0 );
-    newuser->setInactive( posix ? mergeSB( lesinact, user->getInactive(), one ) : 0 );
+  if ( kug->getUsers()->getCaps() & KU_Users::Cap_Shadow ) {
+    newuser.setMin( posix ? mergeSB( lesmin, user.getMin(), one ) : 0 );
+    newuser.setMax( posix ? mergeSB( lesmax, user.getMax(), one ) : 0 );
+    newuser.setWarn( posix ? mergeSB( leswarn, user.getWarn(), one ) : 0 );
+    newuser.setInactive( posix ? mergeSB( lesinact, user.getInactive(), one ) : 0 );
   }
 
-  if ( ( (kug->getUsers().getCaps() & KU_Users::Cap_Shadow) && posix ) ||
-       ( (kug->getUsers().getCaps() & KU_Users::Cap_Samba) && samba ) ||
-       ( (kug->getUsers().getCaps() & KU_Users::Cap_BSD) && posix ) ) {
+  if ( ( (kug->getUsers()->getCaps() & KU_Users::Cap_Shadow) && posix ) ||
+       ( (kug->getUsers()->getCaps() & KU_Users::Cap_Samba) && samba ) ||
+       ( (kug->getUsers()->getCaps() & KU_Users::Cap_BSD) && posix ) ) {
 
     switch ( cbexpire->checkState() ) {
       case Qt::PartiallyChecked:
-        newuser->setExpire( user->getExpire() );
+        newuser.setExpire( user.getExpire() );
         break;
       case Qt::Checked:
-        newuser->setExpire( -1 );
+        newuser.setExpire( -1 );
         break;
       case Qt::Unchecked:
-        newuser->setExpire( !one && lesexpire->dateTime().toTime_t() == 0 ?
-          user->getExpire() : lesexpire->dateTime().toTime_t() );
+        newuser.setExpire( !one && lesexpire->dateTime().toTime_t() == 0 ?
+          user.getExpire() : lesexpire->dateTime().toTime_t() );
         break;
     }
   } else {
-    newuser->setExpire( -1 );
+    newuser.setExpire( -1 );
   }
 
   if ( !primaryGroup.isEmpty() ) {
-    KU_Group *group = kug->getGroups().lookup( primaryGroup );
-    if ( group ) {
-      newuser->setGID( group->getGID() );
-      if ( kug->getUsers().getCaps() & KU_Users::Cap_Samba ) {
-        newuser->setPGSID( group->getSID() );
+    int index = kug->getGroups()->lookup( primaryGroup );
+    if ( index != -1 ) {
+      KU_Group group = kug->getGroups()->at( index );
+      newuser.setGID( group.getGID() );
+      if ( kug->getUsers()->getCaps() & KU_Users::Cap_Samba ) {
+        newuser.setPGSID( group.getSID() );
       }
     }
   }
@@ -832,34 +839,36 @@ bool KU_EditUser::saveg()
 {
   if ( !isgchanged ) return true;
 
-  Q3CheckListItem *item = (Q3CheckListItem *) lstgrp->firstChild();
-  KU_Group *group;
+  for ( int row = 0; row < lstgrp->count(); row++ ) {
 
-  while(item)
-  {
+    QListWidgetItem *item = lstgrp->item( row );
+
     kdDebug() << "saveg: group name: " << item->text() << endl;
-    group = kug->getGroups().lookup(item->text());
-    if ( group && item->state() != Q3CheckListItem::NoChange ) {
+    int grpindex = kug->getGroups()->lookup(item->text());
+    if ( grpindex != -1 && item->checkState() != Qt::PartiallyChecked ) {
 
-      KU_Group newgroup( group );
+      KU_Group group = kug->getGroups()->at( grpindex );
       bool mod = false;
-      bool on = item->isOn();
-      KU_User *user = mUsers.first();
+      int index = 0;
+      KU_User user = mSelected.isEmpty() ?
+        mUser : kug->getUsers()->at(mSelected[0]);
 
-      while ( user ) {
-        if ( on && (( !primaryGroup.isEmpty() && primaryGroup != group->getName() ) ||
-                    ( primaryGroup.isEmpty() && user->getGID() != group->getGID() )) ) {
-          if ( newgroup.addUser( user->getName() ) ) mod = true;
+      while ( true ) {
+        if ( item->checkState() == Qt::Checked && 
+	           (( !primaryGroup.isEmpty() && primaryGroup != group.getName() ) ||
+                    ( primaryGroup.isEmpty() && user.getGID() != group.getGID() )) ) {
+          if ( group.addUser( user.getName() ) ) mod = true;
         } else {
-          if ( newgroup.removeUser( user->getName() ) ) mod = true;
+          if ( group.removeUser( user.getName() ) ) mod = true;
         }
-        user = mUsers.next();
+        if ( index == mSelected.count() ) break;
+        user = kug->getUsers()->at(mSelected[++index]);
       }
 
-      if ( mod ) kug->getGroups().mod( group, newgroup );
+      if ( mod ) kug->getGroups()->mod( grpindex, group );
     }
-    item = (Q3CheckListItem *) item->nextSibling();
   }
+
   return true;
 }
 
@@ -873,8 +882,8 @@ bool KU_EditUser::checkShell(const QString &shell)
 
 bool KU_EditUser::check()
 {
-  bool one = ( mUsers.getFirst() == mUsers.getLast() );
-  bool posix = !( kug->getUsers().getCaps() & KU_Users::Cap_Disable_POSIX ) || !( cbposix->isChecked() );
+  bool one = mSelected.isEmpty();
+  bool posix = !( kug->getUsers()->getCaps() & KU_Users::Cap_Disable_POSIX ) || !( cbposix->isChecked() );
 
   if ( one && posix && leid->text().isEmpty() ) {
     KMessageBox::sorry( 0, i18n("You need to specify an UID.") );
@@ -886,14 +895,14 @@ bool KU_EditUser::check()
     return false;
   }
 
-  if ( kug->getUsers().getCaps() & KU_Users::Cap_InetOrg ) {
+  if ( kug->getUsers()->getCaps() & KU_Users::Cap_InetOrg ) {
     if ( one && lesurname->text().isEmpty() ) {
       KMessageBox::sorry( 0, i18n("You must fill the surname field.") );
       return false;
     }
   }
 
-  if ( kug->getUsers().getCaps() & KU_Users::Cap_Samba ) {
+  if ( kug->getUsers()->getCaps() & KU_Users::Cap_Samba ) {
     if ( one && lerid->text().isEmpty() && !( cbsamba->isChecked() ) ) {
       KMessageBox::sorry( 0, i18n("You need to specify a samba RID.") );
       return false;
@@ -913,9 +922,9 @@ void KU_EditUser::setpwd()
     lstchg = now();
     QDateTime datetime;
     datetime.setTime_t( lstchg );
-    if ( kug->getUsers().getCaps() & KU_Users::Cap_Shadow ||
-        kug->getUsers().getCaps() & KU_Users::Cap_Samba ||
-        kug->getUsers().getCaps() & KU_Users::Cap_BSD ) {
+    if ( kug->getUsers()->getCaps() & KU_Users::Cap_Shadow ||
+        kug->getUsers()->getCaps() & KU_Users::Cap_Samba ||
+        kug->getUsers()->getCaps() & KU_Users::Cap_BSD ) {
 
         leslstchg->setText( KGlobal::locale()->formatDateTime( datetime, false ) );
     }
@@ -930,24 +939,24 @@ void KU_EditUser::slotOk()
     return;
   }
 
-  bool one = ( mUsers.getFirst() == mUsers.getLast() );
+  bool one = mSelected.isEmpty();
 
   uid_t newuid = leid->text().toULong();
 
-  if ( one && ( !( kug->getUsers().getCaps() & KU_Users::Cap_Disable_POSIX ) || !cbposix->isChecked() )
+  if ( one && ( !( kug->getUsers()->getCaps() & KU_Users::Cap_Disable_POSIX ) || !cbposix->isChecked() )
                && olduid != newuid )
   {
-    if (kug->getUsers().lookup(newuid)) {
+    if ( kug->getUsers()->lookup(newuid) != -1 ) {
       KMessageBox::sorry( 0,
         i18n("User with UID %1 already exists").arg(newuid) );
       return;
     }
   }
 
-  if ( one && ( kug->getUsers().getCaps() & KU_Users::Cap_Samba ) && !cbsamba->isChecked() ) {
+  if ( one && ( kug->getUsers()->getCaps() & KU_Users::Cap_Samba ) && !cbsamba->isChecked() ) {
     uint newrid = lerid->text().toInt();
     if ( oldrid != newrid ) {
-      if (kug->getUsers().lookup_sam(newrid)) {
+      if ( kug->getUsers()->lookup_sam(newrid) != -1 ) {
         KMessageBox::sorry( 0,
           i18n("User with RID %1 already exists").arg(newrid) );
         return;

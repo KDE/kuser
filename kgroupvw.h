@@ -30,13 +30,13 @@
 class KGroupViewItem : public KListViewItem
 {
 public:
-  KGroupViewItem(KListView *parent, KU_Group *aku);
-  KU_Group *group() { return mGroup; }
-private:  
+  KGroupViewItem(KListView *parent, int index);
+  int index() { return mIndex; }
+private:
   virtual QString text ( int ) const;
   virtual int compare( Q3ListViewItem *i, int col, bool ascending ) const;
-  
-  KU_Group *mGroup;
+
+  int mIndex;
 };
 
 class KGroupView : public KListView
@@ -48,9 +48,9 @@ public:
 
   virtual ~KGroupView();
 
-  void insertItem(KU_Group *aku);
-  void removeItem(KU_Group *aku);
-  KU_Group *getCurrentGroup();
+  void insertItem(int index);
+  void removeItem(int index);
+  int getCurrentIndex();
   void init();
 };
 

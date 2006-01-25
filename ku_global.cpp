@@ -1,6 +1,6 @@
 /*
  *  Copyright (c) 1998 Denis Perchine <dyp@perchine.com>
- *  Copyright (c) 2004 Szombathelyi György <gyurco@freemail.hu>
+ *  Copyright (c) 2004 Szombathelyi GyĂśrgy <gyurco@freemail.hu>
  *  Former maintainer: Adriaan de Groot <groot@kde.org>
  *
  *  This program is free software; you can redistribute it and/or
@@ -19,7 +19,7 @@
  **/
 
 #include <kapplication.h>
- 
+
 #include "ku_global.h"
 #include "ku_userfiles.h"
 #include "ku_groupfiles.h"
@@ -28,10 +28,10 @@
 #include "ku_usersystem.h"
 #include "ku_groupsystem.h"
 
-KU_Global::KU_Global() 
+KU_Global::KU_Global()
 {
   cfg = 0;
-  
+
   users = 0;
   groups = 0;
 }
@@ -41,12 +41,12 @@ void KU_Global::initCfg( const QString &connection )
   if ( cfg ) {
     cfg->writeConfig();
     delete cfg;
-  }    
+  }
   cfg = new KU_PrefsBase( kapp->sharedConfig(), connection );
   cfg->readConfig();
 }
 
-void KU_Global::init() 
+void KU_Global::init()
 {
   if ( users ) delete users;
   if ( groups ) delete groups;
@@ -68,19 +68,19 @@ void KU_Global::init()
   }
 }
 
-KU_Global::~KU_Global() 
+KU_Global::~KU_Global()
 {
   delete users;
   delete groups;
   delete cfg;
 }
 
-KU_Users &KU_Global::getUsers() 
+KU_Users *KU_Global::getUsers()
 {
-  return (*users);
+  return users;
 }
 
-KU_Groups &KU_Global::getGroups() 
+KU_Groups *KU_Global::getGroups()
 {
-  return (*groups);
+  return groups;
 }

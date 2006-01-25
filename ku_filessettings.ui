@@ -1,225 +1,210 @@
-<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
-<class>KU_FilesSettings</class>
-<widget class="QWidget">
-    <property name="name">
-        <cstring>KU_FilesSettings</cstring>
-    </property>
-    <property name="geometry">
-        <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>405</width>
-            <height>315</height>
-        </rect>
-    </property>
-    <property name="sizePolicy">
-        <sizepolicy>
-            <hsizetype>5</hsizetype>
-            <vsizetype>5</vsizetype>
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-        </sizepolicy>
-    </property>
-    <vbox>
-        <property name="name">
-            <cstring>unnamed</cstring>
+<ui version="4.0" >
+ <author></author>
+ <comment></comment>
+ <exportmacro></exportmacro>
+ <class>KU_FilesSettings</class>
+ <widget class="QWidget" name="KU_FilesSettings" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>437</width>
+    <height>367</height>
+   </rect>
+  </property>
+  <property name="sizePolicy" >
+   <sizepolicy>
+    <hsizetype>5</hsizetype>
+    <vsizetype>5</vsizetype>
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <layout class="QVBoxLayout" >
+   <property name="margin" >
+    <number>9</number>
+   </property>
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <item>
+    <widget class="QGroupBox" name="groupBox" >
+     <property name="title" >
+      <string>GroupBox</string>
+     </property>
+     <layout class="QGridLayout" >
+      <property name="margin" >
+       <number>9</number>
+      </property>
+      <property name="spacing" >
+       <number>6</number>
+      </property>
+      <item row="4" column="0" colspan="2" >
+       <widget class="QCheckBox" name="kcfg_md5shadow" >
+        <property name="text" >
+         <string>MD5 shadow passwords</string>
         </property>
-        <widget class="QGroupBox">
-            <property name="name">
-                <cstring>groupBox1</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>5</hsizetype>
-                    <vsizetype>5</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-            <property name="title">
-                <string>Local User Database Files</string>
-            </property>
-            <grid>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <widget class="QLabel" row="1" column="0">
-                    <property name="name">
-                        <cstring>textLabel4</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Group file:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>kcfg_groupsrc</cstring>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="0" column="0">
-                    <property name="name">
-                        <cstring>textLabel3</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Password file:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>kcfg_passwdsrc</cstring>
-                    </property>
-                </widget>
-                <widget class="KLineEdit" row="0" column="1" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>kcfg_passwdsrc</cstring>
-                    </property>
-                </widget>
-                <widget class="KLineEdit" row="1" column="1" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>kcfg_groupsrc</cstring>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="2" column="0" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>textLabel5</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Shadow password file:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>kcfg_shadowsrc</cstring>
-                    </property>
-                </widget>
-                <widget class="KLineEdit" row="2" column="2">
-                    <property name="name">
-                        <cstring>kcfg_shadowsrc</cstring>
-                    </property>
-                </widget>
-                <widget class="KLineEdit" row="3" column="2">
-                    <property name="name">
-                        <cstring>kcfg_gshadowsrc</cstring>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="3" column="0" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>textLabel6</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Shadow group file:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>kcfg_gshadowsrc</cstring>
-                    </property>
-                </widget>
-                <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="3">
-                    <property name="name">
-                        <cstring>kcfg_md5shadow</cstring>
-                    </property>
-                    <property name="text">
-                        <string>MD5 shadow passwords</string>
-                    </property>
-                </widget>
-            </grid>
-        </widget>
-        <widget class="QGroupBox">
-            <property name="name">
-                <cstring>groupBox2</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>5</hsizetype>
-                    <vsizetype>5</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-            <property name="title">
-                <string>NIS Settings</string>
-            </property>
-            <grid>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <widget class="QLabel" row="0" column="0">
-                    <property name="name">
-                        <cstring>textLabel3_2</cstring>
-                    </property>
-                    <property name="text">
-                        <string>NIS password source:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>kcfg_nispasswdsrc</cstring>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="1" column="0">
-                    <property name="name">
-                        <cstring>textLabel4_2</cstring>
-                    </property>
-                    <property name="text">
-                        <string>NIS group source:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>kcfg_nisgroupsrc</cstring>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="2" column="0">
-                    <property name="name">
-                        <cstring>textLabel5_2</cstring>
-                    </property>
-                    <property name="text">
-                        <string>NIS minimum UID:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>kcfg_nisminuid</cstring>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="3" column="0">
-                    <property name="name">
-                        <cstring>textLabel6_2</cstring>
-                    </property>
-                    <property name="text">
-                        <string>NIS minimum GID:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>kcfg_nismingid</cstring>
-                    </property>
-                </widget>
-                <widget class="KLineEdit" row="0" column="1">
-                    <property name="name">
-                        <cstring>kcfg_nispasswdsrc</cstring>
-                    </property>
-                </widget>
-                <widget class="KLineEdit" row="1" column="1">
-                    <property name="name">
-                        <cstring>kcfg_nisgroupsrc</cstring>
-                    </property>
-                </widget>
-                <widget class="KLineEdit" row="2" column="1">
-                    <property name="name">
-                        <cstring>kcfg_nisminuid</cstring>
-                    </property>
-                </widget>
-                <widget class="KLineEdit" row="3" column="1">
-                    <property name="name">
-                        <cstring>kcfg_nismingid</cstring>
-                    </property>
-                </widget>
-            </grid>
-        </widget>
-        <spacer>
-            <property name="name">
-                <cstring>spacer3</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>20</width>
-                    <height>40</height>
-                </size>
-            </property>
-        </spacer>
-    </vbox>
-</widget>
-<layoutdefaults spacing="6" margin="11"/>
-</UI>
+       </widget>
+      </item>
+      <item row="3" column="1" >
+       <widget class="KLineEdit" name="kcfg_gshadowsrc" />
+      </item>
+      <item row="3" column="0" >
+       <widget class="QLabel" name="textLabel6_3" >
+        <property name="text" >
+         <string>Shadow group file:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>kcfg_gshadowsrc</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1" >
+       <widget class="KLineEdit" name="kcfg_shadowsrc" />
+      </item>
+      <item row="2" column="0" >
+       <widget class="QLabel" name="textLabel5_3" >
+        <property name="text" >
+         <string>Shadow password file:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>kcfg_shadowsrc</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1" >
+       <widget class="KLineEdit" name="kcfg_groupsrc" />
+      </item>
+      <item row="1" column="0" >
+       <widget class="QLabel" name="textLabel4_3" >
+        <property name="text" >
+         <string>Group file:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>kcfg_groupsrc</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0" >
+       <widget class="QLabel" name="textLabel3_3" >
+        <property name="text" >
+         <string>Password file:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>kcfg_passwdsrc</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1" >
+       <widget class="KLineEdit" name="kcfg_passwdsrc" />
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_2" >
+     <property name="title" >
+      <string>GroupBox</string>
+     </property>
+     <layout class="QGridLayout" >
+      <property name="margin" >
+       <number>9</number>
+      </property>
+      <property name="spacing" >
+       <number>6</number>
+      </property>
+      <item row="3" column="1" >
+       <widget class="KLineEdit" name="kcfg_nismingid" />
+      </item>
+      <item row="3" column="0" >
+       <widget class="QLabel" name="textLabel6_4" >
+        <property name="text" >
+         <string>NIS minimum GID:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>kcfg_nismingid</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1" >
+       <widget class="KLineEdit" name="kcfg_nisminuid" />
+      </item>
+      <item row="2" column="0" >
+       <widget class="QLabel" name="textLabel5_4" >
+        <property name="text" >
+         <string>NIS minimum UID:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>kcfg_nisminuid</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" >
+       <widget class="QLabel" name="textLabel4_4" >
+        <property name="text" >
+         <string>NIS group source:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>kcfg_nisgroupsrc</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1" >
+       <widget class="KLineEdit" name="kcfg_nisgroupsrc" />
+      </item>
+      <item row="0" column="1" >
+       <widget class="KLineEdit" name="kcfg_nispasswdsrc" />
+      </item>
+      <item row="0" column="0" >
+       <widget class="QLabel" name="textLabel3_4" >
+        <property name="text" >
+         <string>NIS password source:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>kcfg_nispasswdsrc</cstring>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11" />
+ <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <customwidgets>
+  <customwidget>
+   <class>KLineEdit</class>
+   <extends></extends>
+   <header>klineedit.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>kcfg_passwdsrc</tabstop>
+  <tabstop>kcfg_groupsrc</tabstop>
+  <tabstop>kcfg_shadowsrc</tabstop>
+  <tabstop>kcfg_gshadowsrc</tabstop>
+  <tabstop>kcfg_md5shadow</tabstop>
+  <tabstop>kcfg_nispasswdsrc</tabstop>
+  <tabstop>kcfg_nisgroupsrc</tabstop>
+  <tabstop>kcfg_nisminuid</tabstop>
+  <tabstop>kcfg_nismingid</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

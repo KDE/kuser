@@ -30,9 +30,9 @@
 #include "ku_selectconn.h"
 #include "ku_configdlg.h"
 
-KU_SelectConn::KU_SelectConn(const QString &selected, QWidget* parent, const char * name) :
-  KDialogBase( Plain, Qt::WStyle_DialogBorder, parent, name, true,
-  i18n("Connection Selection"), Ok | Apply | Cancel | User1 | User2 | User3 )
+KU_SelectConn::KU_SelectConn(const QString &selected, QWidget *parent) :
+  KDialog( parent, i18n("Connection Selection"), 
+  Ok | Apply | Cancel | User1 | User2 | User3 )
 {
   QStringList conns;
 
@@ -40,7 +40,8 @@ KU_SelectConn::KU_SelectConn(const QString &selected, QWidget* parent, const cha
   setButtonText( User2, i18n("&Edit") );
   setButtonText( User1, i18n("&Delete") );
 
-  QFrame *page = plainPage();
+  QFrame *page = new QFrame();
+  setMainWidget( page );
   QVBoxLayout *topLayout = new QVBoxLayout( page, 0, KDialog::spacingHint() );
   QLabel *label = new QLabel( i18n("Defined connections:"), page );
   mCombo = new KComboBox( page );
@@ -65,6 +66,10 @@ KU_SelectConn::KU_SelectConn(const QString &selected, QWidget* parent, const cha
   mSelected = connSelected();
   topLayout->addWidget( label );
   topLayout->addWidget( mCombo );
+  
+  connect( this, SIGNAL(user1Clicked()), SLOT(slotUser1()) );
+  connect( this, SIGNAL(user2Clicked()), SLOT(slotUser2()) );
+  connect( this, SIGNAL(user3Clicked()), SLOT(slotUser3()) );
 }
 
 QString KU_SelectConn::connSelected()
@@ -118,7 +123,7 @@ void KU_SelectConn::slotUser1()
   if ( KMessageBox::warningContinueCancel( 0, i18n("Do you really want to delete the connection '%1'?").
     arg( conn ),i18n("Delete Connection"),KStdGuiItem::del() ) == KMessageBox::Cancel ) return;
 
-  kapp->sharedConfig()->deleteGroup( "connection-" + conn, true );
+  kapp->sharedConfig()->deleteGroup( "connection-" + conn );
   kapp->sharedConfig()->sync();
   mCombo->removeItem( mCombo->currentItem() );
   if ( mCombo->count() == 0 ) {

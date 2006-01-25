@@ -22,17 +22,16 @@
 #define _KU_MISC_H_
 
 #include <sys/time.h>
+#include <sys/types.h>
 
 #include <QString>
 #include <QByteArray>
-
-#include <klocale.h>
-#include <kapplication.h>
 
 bool backup(const QString & name);
 QByteArray genSalt( int len );
 QString encryptPass( const QString &pass, bool md5 );
 time_t now();
+void copyDir(const QString &srcPath, const QString &dstPath, uid_t uid, gid_t gid);
 int copyFile(const QString & from, const QString & to);
 QStringList readShells();
 void addShell(const QString &shell);

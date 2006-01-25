@@ -1,6 +1,6 @@
 /*
  *  Copyright (c) 1998 Denis Perchine <dyp@perchine.com>
- *  Copyright (c) 2004 Szombathelyi György <gyurco@freemail.hu>
+ *  Copyright (c) 2004 Szombathelyi GyĂśrgy <gyurco@freemail.hu>
  *  Former maintainer: Adriaan de Groot <groot@kde.org>
  *
  *  This program is free software; you can redistribute it and/or
@@ -19,6 +19,9 @@
  **/
 
 #include "globals.h"
+
+#include <config.h>
+
 #include <errno.h>
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -28,7 +31,6 @@
 #include <sys/stat.h>
 #include <grp.h>
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
 
 #include <QString>
@@ -37,6 +39,7 @@
 #include <kdebug.h>
 #include <kstandarddirs.h>
 #include <kmessagebox.h>
+#include <klocale.h>
 
 #include "ku_groupfiles.h"
 #include "ku_misc.h"
@@ -59,13 +62,12 @@ KU_GroupFiles::KU_GroupFiles( KU_PrefsBase *cfg ) : KU_Groups( cfg )
 
 KU_GroupFiles::~KU_GroupFiles()
 {
-  mGroups.clear();
 }
 
 bool KU_GroupFiles::reload()
 {
   struct group *p;
-  KU_Group *tmpKG = 0;
+  KU_Group group;
   struct stat st;
   QString filename;
   QString group_filename;
@@ -128,19 +130,19 @@ bool KU_GroupFiles::reload()
     setgrent();
     while ((p = getgrent()) != NULL) {
 #endif
-      tmpKG = new KU_Group();
-      tmpKG->setGID(p->gr_gid);
-      tmpKG->setName(QString::fromLocal8Bit(p->gr_name));
-      tmpKG->setPwd(QString::fromLocal8Bit(p->gr_passwd));
+      group = KU_Group();
+      group.setGID(p->gr_gid);
+      group.setName(QString::fromLocal8Bit(p->gr_name));
+      group.setPwd(QString::fromLocal8Bit(p->gr_passwd));
 
       char *u_name;
       int i = 0;
       while ((u_name = p->gr_mem[i])!=0) {
-        tmpKG->addUser(QString::fromLocal8Bit(u_name));
+        group.addUser(QString::fromLocal8Bit(u_name));
         i++;
       }
 
-      mGroups.append(tmpKG);
+      append(group);
     }
 
     // End reading filename
@@ -252,54 +254,51 @@ bool KU_GroupFiles::save()
       return false;
     }
   }
-
-  Q3PtrListIterator<KU_Group> it( mGroups );
-  KU_Group *gr;
-  bool addok = false;
-
-  gr = (*it);
-
+/******************/
+  KU_Group group;
+  int groupsindex = 0, addindex = 0;
   while (true) {
 
-    if ( gr == 0 ) {
-      if ( addok ) break;
-      it = Q3PtrListIterator<KU_Group> ( mAdd );
-      gr = (*it);
-      addok = true;
-      if ( gr == 0 ) break;
-    };
-
-    if ( mDel.containsRef( gr ) ) {
-      ++it;
-      gr = (*it);
-      continue;
+    if ( groupsindex == count() ) {
+      if ( addindex == mAdd.count() ) break;
+      group = mAdd.at(addindex);
+      addindex++;
+    } else {
+        if ( mDel.contains( groupsindex ) ) {
+          groupsindex++;
+          continue;
+        }
+        if ( mMod.contains(groupsindex) )
+          group = mMod.value(groupsindex);
+        else
+          group = at(groupsindex);
+        groupsindex++;
     }
-    if ( mMod.contains( gr ) ) gr = &( mMod[ gr ] );
 
 #ifdef HAVE_SHADOW
-    if ( addok && !mCfg->gshadowsrc().isEmpty() )
-      gr->setPwd("x");
+    if ( addindex && !mCfg->gshadowsrc().isEmpty() )
+      group.setPwd("x");
 #endif
 
-    tmpGe = gr->getName();
+    tmpGe = group.getName();
     tmpGe.replace( ',', "_" );
     tmpGe.replace( ':', "_" );
-    gr->setName( tmpGe );
+    group.setName( tmpGe );
 
-    tmp_gid = gr->getGID();
+    tmp_gid = group.getGID();
     tmpGe += ":" +
-            gr->getPwd() + ":" +
-            QString::number( gr->getGID() ) + ":";
-    tmpSe = gr->getName() + ":!::";
-    for (uint j=0; j<gr->count(); j++) {
+            group.getPwd() + ":" +
+            QString::number( group.getGID() ) + ":";
+    tmpSe = group.getName() + ":!::";
+    for (uint j=0; j<group.count(); j++) {
        if (j != 0) {
          tmpGe += ',';
          tmpSe += ',';
        }
-       gr->user( j ).replace( ',', "_" );
-       gr->user( j ).replace( ':', "_" );
-       tmpGe += gr->user( j) ;
-       tmpSe += gr->user( j );
+       group.user( j ).replace( ',', "_" );
+       group.user( j ).replace( ':', "_" );
+       tmpGe += group.user( j) ;
+       tmpSe += group.user( j );
     }
     tmpGe += '\n'; tmpSe += '\n';
 
@@ -307,8 +306,6 @@ bool KU_GroupFiles::save()
       if(mingid <= tmp_gid) {
         fputs(tmpGe.local8Bit(), nisgroup_fd);
         nis_groups_written++;
-        ++it;
-        gr = (*it);
         continue;
       }
     }
@@ -323,10 +320,8 @@ bool KU_GroupFiles::save()
 
     fputs( tmpGe.local8Bit(), group_fd );
     if ( gshadow_fd ) fputs( tmpSe.local8Bit(), gshadow_fd );
-    ++it;
-    gr = (*it);
   }
-
+/***********************/
   if(group_fd) {
     fclose(group_fd);
     chmod(QFile::encodeName(new_group_filename), mode);

@@ -25,25 +25,29 @@
 #include <QCheckBox>
 #include <QList>
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 #include <klistview.h>
 #include <kcombobox.h>
 #include <klineedit.h>
 
 #include "ku_group.h"
 
-class KU_EditGroup : public KDialogBase
+class KU_EditGroup : public KDialog
 {
   Q_OBJECT
 public:
 
-  KU_EditGroup(KU_Group *akg, bool samba, bool add, 
-    QWidget* parent = NULL, const char* name = NULL);
+  KU_EditGroup(const KU_Group &group, bool add,
+    QWidget* parent = 0);
 
   virtual ~KU_EditGroup();
 
+  const KU_Group &getGroup() const { return mGroup; };
+
+public slots:
+  virtual void accept();
+
 protected slots:
-  virtual void slotOk();
   void addClicked();
   void delClicked();
   void ridSelected( int index );
@@ -51,7 +55,7 @@ protected slots:
 private:
   bool mSamba, mAdd;
   bool ro;
-  KU_Group *kg;
+  KU_Group mGroup;
   KListView *m_list_in,*m_list_notin;
   KLineEdit   *legrpname;
   KLineEdit   *legid;

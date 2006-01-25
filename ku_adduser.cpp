@@ -18,6 +18,10 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
+#include "globals.h"
+
+#include <config.h>
+
 #include <errno.h>
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -31,15 +35,15 @@
 
 #include <kmessagebox.h>
 #include <kdebug.h>
+#include <klocale.h>
 
 #include "ku_global.h"
-#include "ku_misc.h"
 
 #include "ku_adduser.h"
 
-KU_AddUser::KU_AddUser( KU_User *AUser, bool useprivategroup,
+KU_AddUser::KU_AddUser( KU_User &user, bool useprivategroup,
   QWidget *parent, const char *name ) :
-  KU_EditUser( AUser, useprivategroup, parent, name )
+  KU_EditUser( user, useprivategroup, parent )
 {
   QGroupBox *group = new QGroupBox(frontpage);
   group->setTitle(i18n("New Account Options"));
@@ -57,41 +61,39 @@ KU_AddUser::KU_AddUser( KU_User *AUser, bool useprivategroup,
 
 void KU_AddUser::slotOk()
 {
-  KU_User *user = mUsers.first();
-
   if ( !check() ) return;
 
-  mergeUser( user, user );
+  mergeUser( mNewUser, mNewUser );
 
-  if ( ( user->getCaps() & KU_User::Cap_POSIX ) && 
-    kug->getUsers().lookup( user->getUID() ) ) {
-    KMessageBox::sorry( 0, i18n("User with UID %1 already exists.").arg( user->getUID() ) );
+  if ( ( mNewUser.getCaps() & KU_User::Cap_POSIX ) &&
+    kug->getUsers()->lookup( mNewUser.getUID() ) != -1 ) {
+    KMessageBox::sorry( 0, i18n("User with UID %1 already exists.").arg( mNewUser.getUID() ) );
     return;
   }
 
-  if ( ( kug->getUsers().getCaps() & KU_Users::Cap_Samba ) && 
-     ( user->getCaps() & KU_User::Cap_Samba ) ) {
-    if ( kug->getUsers().lookup_sam( user->getSID().getRID() ) ) {
-      KMessageBox::sorry( 0, i18n("User with RID %1 already exists.").arg( user->getSID().getRID() ) );
+  if ( ( kug->getUsers()->getCaps() & KU_Users::Cap_Samba ) &&
+     ( mNewUser.getCaps() & KU_User::Cap_Samba ) ) {
+    if ( kug->getUsers()->lookup_sam( mNewUser.getSID().getRID() ) != -1 ) {
+      KMessageBox::sorry( 0, i18n("User with RID %1 already exists.").arg( mNewUser.getSID().getRID() ) );
       return;
     }
   }
 
   if (createhome->isChecked())
   {
-    user->setCreateHome(true);
-    user->setCreateMailBox(true);
+    mNewUser.setCreateHome(true);
+    mNewUser.setCreateMailBox(true);
   }
   if (copyskel->isChecked())
   {
-    user->setCopySkel(true);
+    mNewUser.setCopySkel(true);
   }
 
-  if (user->getCreateHome() && !checkHome())
+  if (mNewUser.getCreateHome() && !checkHome())
      return;
 
-  if (user->getCreateMailBox() && !checkMailBox())
-     user->setCreateMailBox(false);
+  if (mNewUser.getCreateMailBox() && !checkMailBox())
+     mNewUser.setCreateMailBox(false);
 
   saveg();
   accept();
@@ -99,12 +101,10 @@ void KU_AddUser::slotOk()
 
 bool KU_AddUser::checkHome()
 {
-  KU_User *user = mUsers.first();
-
   struct stat s;
   int r;
 
-  QString h_dir = user->getHomeDir();
+  QString h_dir = mNewUser.getHomeDir();
   r = stat( QFile::encodeName(h_dir), &s );
 
   if ( (r == -1) && (errno == ENOENT) )
@@ -115,7 +115,7 @@ bool KU_AddUser::checkHome()
        if ( KMessageBox::
          warningContinueCancel ( 0,
            i18n("Folder %1 already exists!\n%2 may become owner and permissions may change.\nDo you really want to use %3?").
-           arg(h_dir).arg(user->getName()).arg(h_dir), QString::null, KStdGuiItem::cont() ) == KMessageBox::Cancel )
+           arg(h_dir).arg(mNewUser.getName()).arg(h_dir), QString::null, KStdGuiItem::cont() ) == KMessageBox::Cancel )
 
          return false;
        else
@@ -131,12 +131,11 @@ bool KU_AddUser::checkHome()
 bool KU_AddUser::checkMailBox()
 {
   QString mailboxpath;
-  KU_User *user = mUsers.first();
 
   struct stat s;
   int r;
 
-  mailboxpath = QFile::decodeName(MAIL_SPOOL_DIR) + "/" + user->getName();
+  mailboxpath = QFile::decodeName(MAIL_SPOOL_DIR) + "/" + mNewUser.getName();
   r = stat(QFile::encodeName(mailboxpath), &s);
 
   if ((r == -1) && (errno == ENOENT))

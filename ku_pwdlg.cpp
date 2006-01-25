@@ -22,15 +22,15 @@
 #include <QGridLayout>
 
 #include <kmessagebox.h>
+#include <klocale.h>
 
 #include "ku_pwdlg.h"
-#include "ku_misc.h"
 
-KU_PwDlg::KU_PwDlg( QWidget* parent, const char* name )
-  : KDialogBase(parent, name, true, i18n("Enter Password"), Ok | Cancel, Ok, true)
+KU_PwDlg::KU_PwDlg( QWidget* parent )
+  : KDialog(parent, i18n("Enter Password"), Ok | Cancel)
 {
-  QFrame *page = makeMainWidget();
-
+  QFrame *page = new QFrame( this );
+  setMainWidget( page );
   QLabel* lb1 = new QLabel(page, "lb1");
   lb1->setText(i18n("Password:"));
   lb1->setMinimumSize(lb1->sizeHint());
@@ -76,7 +76,7 @@ KU_PwDlg::~KU_PwDlg()
   delete lepw2;
 }
 
-void KU_PwDlg::slotOk()
+void KU_PwDlg::accept()
 {
   if ( lepw1->text() != lepw2->text() ) {
     KMessageBox::sorry( 0, i18n("Passwords are not identical.\nTry again.") );
@@ -84,7 +84,7 @@ void KU_PwDlg::slotOk()
     lepw2->clear();
     lepw1->setFocus();
   } else {
-    accept();
+    QDialog::accept();
   }
 }
 

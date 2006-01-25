@@ -23,18 +23,18 @@
 
 #include <QString>
 #include <klineedit.h>
-#include <kdialogbase.h>
+#include <kdialog.h>
 
-class KU_PwDlg : public KDialogBase {
+class KU_PwDlg : public KDialog {
   Q_OBJECT
 
 public:
-  KU_PwDlg( QWidget* parent = NULL, const char* name = NULL );
+  KU_PwDlg( QWidget* parent = 0 );
   ~KU_PwDlg();
 
   QString getPassword() const;
 protected slots:
-  void slotOk();
+  virtual void accept();
 
 private:
   KLineEdit   *lepw1;

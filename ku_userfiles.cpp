@@ -1,6 +1,6 @@
 /*
  *  Copyright (c) 1998 Denis Perchine <dyp@perchine.com>
- *  Copyright (c) 2004 Szombathelyi György <gyurco@freemail.hu>
+ *  Copyright (c) 2004 Szombathelyi GyĂśrgy <gyurco@freemail.hu>
  *  Former maintainer: Adriaan de Groot <groot@kde.org>
  *
  *  This program is free software; you can redistribute it and/or
@@ -19,6 +19,9 @@
  **/
 
 #include "globals.h"
+
+#include <config.h>
+
 #include <errno.h>
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -29,26 +32,24 @@
 #include <pwd.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #ifdef HAVE_SHADOW
 #include <shadow.h>
 #endif
 
-#include <qstring.h>
-#include <qdir.h>
+#include <kstandarddirs.h>
+#include <kmessagebox.h>
+#include <kdebug.h>
+#include <klocale.h>
 
 #include "ku_userfiles.h"
 #include "ku_misc.h"
 
-#include <kstandarddirs.h>
-#include <kmessagebox.h>
-#include <kdebug.h>
 
 KU_UserFiles::KU_UserFiles(KU_PrefsBase *cfg) : KU_Users( cfg )
 {
-  pw_backuped = FALSE;
-  pn_backuped = FALSE;
-  s_backuped = FALSE;
+  pw_backuped = false;
+  pn_backuped = false;
+  s_backuped = false;
 
   pwd_mode = 0644;
   pwd_uid = 0;
@@ -57,8 +58,6 @@ KU_UserFiles::KU_UserFiles(KU_PrefsBase *cfg) : KU_Users( cfg )
   sdw_mode = 0600;
   sdw_uid = 0;
   sdw_gid = 0;
-
-  mUsers.setAutoDelete(TRUE);
 
   caps = Cap_Passwd;
 #ifdef HAVE_SHADOW
@@ -77,12 +76,12 @@ KU_UserFiles::~KU_UserFiles()
 
 bool KU_UserFiles::reload() {
   if (!loadpwd())
-    return FALSE;
+    return false;
 
   if (!loadsdw())
-    return FALSE;
+    return false;
 
-  return TRUE;
+  return true;
 }
 
 // Load passwd file
@@ -90,11 +89,11 @@ bool KU_UserFiles::reload() {
 bool KU_UserFiles::loadpwd()
 {
   passwd *p;
-  KU_User *tmpKU = 0;
   struct stat st;
   QString filename;
   QString passwd_filename;
   QString nispasswd_filename;
+  KU_User user;
   int rc = 0;
   int passwd_errno = 0;
   int nispasswd_errno = 0;
@@ -155,7 +154,7 @@ bool KU_UserFiles::loadpwd()
     FILE *fpwd = fopen(QFile::encodeName(filename), "r");
     if(fpwd == NULL) {
       KMessageBox::error( 0, i18n("Error opening %1 for reading.").arg(filename) );
-      return FALSE;
+      return false;
     }
 
     while ((p = fgetpwent(fpwd)) != NULL) {
@@ -163,29 +162,30 @@ bool KU_UserFiles::loadpwd()
     setpwent(); //This should be enough for BSDs
     while ((p = getpwent()) != NULL) {
 #endif
-      tmpKU = new KU_User();
-      tmpKU->setCaps( KU_User::Cap_POSIX );
-      tmpKU->setUID(p->pw_uid);
-      tmpKU->setGID(p->pw_gid);
-      tmpKU->setName(QString::fromLocal8Bit(p->pw_name));
+      user = KU_User();
+      user.setCaps( KU_User::Cap_POSIX );
+      user.setUID(p->pw_uid);
+      user.setGID(p->pw_gid);
+      user.setName(QString::fromLocal8Bit(p->pw_name));
       tmp  = QString::fromLocal8Bit( p->pw_passwd );
       if ( tmp != "x" && tmp != "*" && !tmp.startsWith("!") )
-        tmpKU->setDisabled( false );
+        user.setDisabled( false );
       else
-        tmpKU->setDisabled( true );
+        user.setDisabled( true );
       if ( tmp.startsWith("!") ) tmp.remove(0, 1);
-      tmpKU->setPwd( tmp );
-      tmpKU->setHomeDir(QString::fromLocal8Bit(p->pw_dir));
-      tmpKU->setShell(QString::fromLocal8Bit(p->pw_shell));
+      user.setPwd( tmp );
+      user.setHomeDir(QString::fromLocal8Bit(p->pw_dir));
+      user.setShell(QString::fromLocal8Bit(p->pw_shell));
 #if defined(__FreeBSD__) || defined(__bsdi__)
-      tmpKU->setClass(QString::fromLatin1(p->pw_class));
-      tmpKU->setLastChange(p->pw_change);
-      tmpKU->setExpire(p->pw_expire);
+      user.setClass(QString::fromLatin1(p->pw_class));
+      user.setLastChange(p->pw_change);
+      user.setExpire(p->pw_expire);
 #endif
 
       if ((p->pw_gecos != 0) && (p->pw_gecos[0] != 0))
-        fillGecos(tmpKU, p->pw_gecos);
-      mUsers.append(tmpKU);
+        fillGecos(user, p->pw_gecos);
+      append(user);
+      kdDebug() << "added: " << user.getName() << endl;
     }
 
     // End reading passwd_filename
@@ -207,11 +207,11 @@ bool KU_UserFiles::loadpwd()
   } // end of processing files, for loop
 
   if( (passwd_errno == 0) && (nispasswd_errno == 0) )
-    return (TRUE);
+    return (true);
   if( (passwd_errno != 0) && (nispasswd_errno != 0) )
-    return (FALSE);
+    return (false);
   else
-    return(TRUE);
+    return(true);
 }
 
 // Load shadow passwords
@@ -220,13 +220,14 @@ bool KU_UserFiles::loadsdw()
 {
 #ifdef HAVE_SHADOW
   QString shadow_file,tmp;
+  KU_User user;
+  int index;
   struct spwd *spw;
-  KU_User *up = NULL;
   struct stat st;
 
   shadow_file = mCfg->shadowsrc();
   if ( shadow_file.isEmpty() )
-    return TRUE;
+    return true;
 
   stat( QFile::encodeName(shadow_file), &st);
   sdw_mode = st.st_mode & 0666;
@@ -239,7 +240,7 @@ bool KU_UserFiles::loadsdw()
   if ((f = fopen( QFile::encodeName(shadow_file), "r")) == NULL) {
     KMessageBox::error( 0, i18n("Error opening %1 for reading.").arg(shadow_file) );
     caps &= ~Cap_Shadow;
-    return TRUE;
+    return true;
   }
   while ((spw = fgetspent( f ))) {     // read a shadow password structure
 #else
@@ -248,28 +249,30 @@ bool KU_UserFiles::loadsdw()
 #endif
 
     kdDebug() << "shadow entry: " << spw->sp_namp << endl;
-    if ((up = lookup(QString::fromLocal8Bit(spw->sp_namp))) == NULL) {
+    if ((index = lookup(QString::fromLocal8Bit(spw->sp_namp))) == -1) {
       KMessageBox::error( 0, i18n("No /etc/passwd entry for %1.\nEntry will be removed at the next `Save'-operation.").arg(QString::fromLocal8Bit(spw->sp_namp)) );
       continue;
     }
-
+    user = at(index);
+    
     tmp = QString::fromLocal8Bit( spw->sp_pwdp );
     if ( tmp.startsWith("!!") || tmp == "*" ) {
-      up->setDisabled( true );
+      user.setDisabled( true );
       tmp.remove( 0, 2 );
     } else
-      up->setDisabled( false );
+      user.setDisabled( false );
 
-    up->setSPwd( tmp );        // cp the encrypted pwd
-    up->setLastChange( daysToTime( spw->sp_lstchg ) );
-    up->setMin(spw->sp_min);
-    up->setMax(spw->sp_max);
+    user.setSPwd( tmp );        // cp the encrypted pwd
+    user.setLastChange( daysToTime( spw->sp_lstchg ) );
+    user.setMin(spw->sp_min);
+    user.setMax(spw->sp_max);
 #ifndef _SCO_DS
-    up->setWarn(spw->sp_warn);
-    up->setInactive(spw->sp_inact);
-    up->setExpire( daysToTime( spw->sp_expire ) );
-    up->setFlag(spw->sp_flag);
+    user.setWarn(spw->sp_warn);
+    user.setInactive(spw->sp_inact);
+    user.setExpire( daysToTime( spw->sp_expire ) );
+    user.setFlag(spw->sp_flag);
 #endif
+    replace( index, user );
   }
 
 #ifdef HAVE_FGETSPENT
@@ -279,21 +282,23 @@ bool KU_UserFiles::loadsdw()
 #endif
 
 #endif // HAVE_SHADOW
-  return TRUE;
+
+return true;
 }
 
 // Save password file
 
-#define escstr(a,b) tmp2 = user->a(); \
+#define escstr(a) tmp2 = user.get##a(); \
                     tmp2.replace(':',"_"); \
                     tmp2.replace(',',"_"); \
-                    user->b( tmp2 );
+                    user.set##a( tmp2 );
 
 
 bool KU_UserFiles::savepwd()
 {
   FILE *passwd_fd = NULL;
   FILE *nispasswd_fd = NULL;
+  FILE *shadow_fd = NULL;
   uid_t minuid = 0;
   int nis_users_written = 0;
   uid_t tmp_uid = 0;
@@ -302,7 +307,13 @@ bool KU_UserFiles::savepwd()
   QString tmp, tmp2;
   QString passwd_filename;
   QString nispasswd_filename;
-
+  QString shadow_filename;
+  bool write_shadow = false;
+#ifdef HAVE_SHADOW
+  struct spwd spwd;
+  shadow_filename = mCfg->shadowsrc();
+  if ( !shadow_filename.isEmpty() && (caps & Cap_Shadow) ) write_shadow = true;
+#endif
 
   char errors_found = '\0';
     #define NOMINUID    0x01
@@ -315,7 +326,9 @@ bool KU_UserFiles::savepwd()
   QString new_passwd_filename =
     passwd_filename + QString::fromLatin1(KU_CREATE_EXT);
   QString new_nispasswd_filename =
-    nispasswd_filename+QString::fromLatin1(KU_CREATE_EXT);
+    nispasswd_filename + QString::fromLatin1(KU_CREATE_EXT);
+  QString new_shadow_filename = 
+    shadow_filename + QString::fromLatin1(KU_CREATE_EXT);
 
   if( nispasswd_filename != passwd_filename ) {
     minuid = mCfg->nisminuid();
@@ -323,21 +336,32 @@ bool KU_UserFiles::savepwd()
 
   // Backup file(s)
 
+  if ( write_shadow ) {
+    if (!s_backuped) {
+      if (!backup(shadow_filename)) return false;
+      s_backuped = true;
+    }
+  }
+
   if(!passwd_filename.isEmpty()) {
     if (!pw_backuped) {
-      if (!backup(passwd_filename)) return FALSE;
-      pw_backuped = TRUE;
+      if (!backup(passwd_filename)) return false;
+      pw_backuped = true;
     }
   }
   if(!nispasswd_filename.isEmpty() &&
     (nispasswd_filename != passwd_filename)) {
     if (!pn_backuped) {
-      if (!backup(nispasswd_filename)) return FALSE;
-      pn_backuped = TRUE;
+      if (!backup(nispasswd_filename)) return false;
+      pn_backuped = true;
     }
   }
 
   // Open file(s)
+  if ((shadow_fd = fopen(QFile::encodeName(new_shadow_filename), "w")) == NULL) {
+    KMessageBox::error( 0, i18n("Error opening %1 for writing.").arg(new_shadow_filename) );
+    return false;
+  }
 
   if(!passwd_filename.isEmpty()) {
     if ((passwd_fd =
@@ -351,73 +375,79 @@ bool KU_UserFiles::savepwd()
         KMessageBox::error( 0, i18n("Error opening %1 for writing.").arg(nispasswd_filename) );
   }
 
-  Q3PtrListIterator<KU_User> it( mUsers );
-  KU_User *user;
-  bool addok = false;
-  user = (*it);
-  while (true) {
-    if ( user == 0 ) {
-      if ( addok ) break;
-      it = Q3PtrListIterator<KU_User> ( mAdd );
-      user = (*it);
-      addok = true;
-      if ( user == 0 ) break;
-    };
-    if ( mDel.containsRef( user ) ) {
-      ++it;
-      user = (*it);
-      continue;
-    }
-    if ( mMod.contains( user ) ) user = &( mMod[ user ] );
+  KU_User user;
+  int usersindex = 0, addindex = 0;
+#ifdef HAVE_SHADOW
+  spwd.sp_namp = (char *)malloc(200);
+  spwd.sp_pwdp = (char *)malloc(200);
+#endif
 
-    tmp_uid = user->getUID();
+  while (true) {
+    if ( usersindex == count() ) {
+      if ( addindex == mAdd.count() ) break;
+      user = mAdd.at( addindex );
+      addindex++;
+    } else {
+      if ( mDel.contains( usersindex ) ) {
+      	usersindex++;
+        continue;
+      }
+      if ( mMod.contains( usersindex ) ) {
+        user = mMod.value( usersindex );
+      } else {
+        user = at( usersindex );
+      }
+      usersindex++;
+    }
+
+    tmp_uid = user.getUID();
     if ( caps & Cap_Shadow )
       tmp = "x";
     else {
-      tmp = user->getPwd();
-      if ( user->getDisabled() && tmp != "x" && tmp != "*" )
+      tmp = user.getPwd();
+      if ( user.getDisabled() && tmp != "x" && tmp != "*" )
         tmp = "!" + tmp;
     }
 
-    escstr( getName, setName );
-    escstr( getHomeDir, setHomeDir );
-    escstr( getShell, setShell );
-    escstr( getName, setName );
-    escstr( getFullName, setFullName );
+    escstr( Name );
+    escstr( HomeDir );
+    escstr( Shell );
+    escstr( Name );
+    escstr( FullName );
 #if defined(__FreeBSD__) || defined(__bsdi__)
-    escstr( getClass, setClass );
-    escstr( getOffice, setOffice );
-    escstr( getWorkPhone, setWorkPhone );
-    escstr( getHomePhone, setHomePhone );
+    escstr( Class );
+    escstr( Office );
+    escstr( WorkPhone );
+    escstr( HomePhone );
     s =
-      user->getName() + ":" +
+      user.getName() + ":" +
       tmp + ":" +
-      QString::number( user->getUID() ) + ":" +
-      QString::number( user->getGID() ) + ":" +
-      user->getClass() + ":" +
-      QString::number( user->getLastChange() ) + ":" +
-      QString::number( user->getExpire() ) + ":";
+      QString::number( user.getUID() ) + ":" +
+      QString::number( user.getGID() ) + ":" +
+      user.getClass() + ":" +
+      QString::number( user.getLastChange() ) + ":" +
+      QString::number( user.getExpire() ) + ":";
 
     s1 =
-      user->getFullName() + "," +
-      user->getOffice() + "," +
-      user->getWorkPhone() + "," +
-      user->getHomePhone();
+      user.getFullName() + "," +
+      user.getOffice() + "," +
+      user.getWorkPhone() + "," +
+      user.getHomePhone();
 #else
-    escstr( getOffice1, setOffice1 );
-    escstr( getOffice2, setOffice2 );
-    escstr( getAddress, setAddress );
+    escstr( Office1 );
+    escstr( Office2 );
+    escstr( Address );
     s =
-      user->getName() + ":" +
+      user.getName() + ":" +
       tmp + ":" +
-      QString::number( user->getUID() ) + ":" +
-      QString::number( user->getGID() ) + ":";
+      QString::number( user.getUID() ) + ":" +
+      QString::number( user.getGID() ) + ":";
 
     s1 =
-      user->getFullName() + "," +
-      user->getOffice1() + "," +
-      user->getOffice2() + "," +
-      user->getAddress();
+      user.getFullName() + "," +
+      user.getOffice1() + "," +
+      user.getOffice2() + "," +
+      user.getAddress();
 
 #endif
     for (int j=(s1.length()-1); j>=0; j--) {
@@ -427,15 +457,34 @@ bool KU_UserFiles::savepwd()
     }
 
     s += s1 + ":" +
-      user->getHomeDir() + ":" +
-      user->getShell() + "\n";
+      user.getHomeDir() + ":" +
+      user.getShell() + "\n";
 
+#ifdef HAVE_SHADOW
+    if ( write_shadow ) {
+      strncpy( spwd.sp_namp, user.getName().local8Bit(), 200 );
+      if ( user.getDisabled() )
+        strncpy( spwd.sp_pwdp, QString("!!" + user.getSPwd()).local8Bit(), 200 );
+      else
+        strncpy( spwd.sp_pwdp, user.getSPwd().local8Bit(), 200 );
+
+      spwd.sp_lstchg = timeToDays( user.getLastChange() );
+      spwd.sp_min    = user.getMin();
+      spwd.sp_max    = user.getMax();
+#ifndef _SCO_DS
+      spwd.sp_warn   = user.getWarn();
+      spwd.sp_inact  = user.getInactive();
+      spwd.sp_expire = timeToDays( user.getExpire() );
+      spwd.sp_flag   = user.getFlag();
+#endif
+      putspent(&spwd, shadow_fd);
+    }
+#endif
+    
     if( (nispasswd_fd != 0) && (minuid != 0) ) {
       if (minuid <= tmp_uid) {
         fputs(s.local8Bit().data(), nispasswd_fd);
         nis_users_written++;
-        ++it;
-        user = (*it);
         continue;
       }
     }
@@ -449,9 +498,6 @@ bool KU_UserFiles::savepwd()
     }
     kdDebug() << s << endl;
     fputs(s.local8Bit().data(), passwd_fd);
-
-    ++it;
-    user = (*it);
   }
 
   if(passwd_fd) {
@@ -470,6 +516,19 @@ bool KU_UserFiles::savepwd()
       QFile::encodeName(nispasswd_filename));
   }
 
+  if(shadow_fd) {
+    fclose(shadow_fd);
+    chmod(QFile::encodeName(new_shadow_filename), sdw_mode);
+    chown(QFile::encodeName(new_shadow_filename), sdw_uid, sdw_gid);
+    rename(QFile::encodeName(new_shadow_filename),
+      QFile::encodeName(shadow_filename));
+  }
+
+#ifdef HAVE_SHADOW
+  ::free(spwd.sp_namp);
+  ::free(spwd.sp_pwdp);
+#endif
+
   if( (errors_found & NOMINUID) != 0 ) {
     KMessageBox::error( 0, i18n("Unable to process NIS passwd file without a minimum UID specified.\nPlease update KUser settings (Files).") );
   }
@@ -483,113 +542,31 @@ bool KU_UserFiles::savepwd()
 #if defined(__FreeBSD__) || defined(__bsdi__)
   if (system(PWMKDB) != 0) {
     KMessageBox::error( 0, i18n("Unable to build password database.") );
-    return FALSE;
+    return false;
   }
 #else
   if( (nis_users_written > 0) || (nispasswd_filename == passwd_filename) ) {
     if (system(PWMKDB) != 0) {
       KMessageBox::error( 0, i18n("Unable to build password databases.") );
-      return FALSE;
+      return false;
     }
   }
 #endif
 
-  return TRUE;
+  return true;
 }
 
 #undef escstr
 
 // Save shadow passwords file
 
-bool KU_UserFiles::savesdw()
-{
-#ifdef HAVE_SHADOW
-  bool addok = false;
-  QString tmp;
-  FILE *f;
-  struct spwd *spwp;
-  struct spwd s;
-  KU_User *up;
-  QString shadow_file = mCfg->shadowsrc();
-  QString new_shadow_file = shadow_file+QString::fromLatin1(KU_CREATE_EXT);
-
-  if ( shadow_file.isEmpty() )
-    return TRUE;
-
-  if (!s_backuped) {
-    if (!backup(shadow_file)) return FALSE;
-    s_backuped = TRUE;
-  }
-
-  if ((f = fopen(QFile::encodeName(new_shadow_file), "w")) == NULL) {
-    KMessageBox::error( 0, i18n("Error opening %1 for writing.").arg(new_shadow_file) );
-    return FALSE;
-  }
-
-  s.sp_namp = (char *)malloc(200);
-  s.sp_pwdp = (char *)malloc(200);
-
-  Q3PtrListIterator<KU_User> it( mUsers );
-  up = (*it);
-  while (true) {
-
-    if ( up == 0 ) {
-      if ( addok ) break;
-      it = Q3PtrListIterator<KU_User> ( mAdd );
-      up = (*it);
-      addok = true;
-      if ( up == 0 ) break;
-    };
-
-    if ( mDel.containsRef( up ) ) {
-      ++it;
-      up = (*it);
-      continue;
-    }
-    if ( mMod.contains( up ) ) up = &( mMod[ up ] );
-
-    strncpy( s.sp_namp, up->getName().local8Bit(), 200 );
-    if ( up->getDisabled() )
-      strncpy( s.sp_pwdp, QString("!!" + up->getSPwd()).local8Bit(), 200 );
-    else
-      strncpy( s.sp_pwdp, up->getSPwd().local8Bit(), 200 );
-
-    s.sp_lstchg = timeToDays( up->getLastChange() );
-    s.sp_min    = up->getMin();
-    s.sp_max    = up->getMax();
-#ifndef _SCO_DS
-    s.sp_warn   = up->getWarn();
-    s.sp_inact  = up->getInactive();
-    s.sp_expire = timeToDays( up->getExpire() );
-    s.sp_flag   = up->getFlag();
-#endif
-    spwp = &s;
-    putspent(spwp, f);
-
-    ++it;
-    up = (*it);
-  }
-  fclose(f);
-
-  chmod(QFile::encodeName(new_shadow_file), sdw_mode);
-  chown(QFile::encodeName(new_shadow_file), sdw_uid, sdw_gid);
-  rename(QFile::encodeName(new_shadow_file),
-    QFile::encodeName(shadow_file));
-
-  free(s.sp_namp);
-  free(s.sp_pwdp);
-#endif // HAVE_SHADOW
-  return TRUE;
-}
-
-
-void KU_UserFiles::createPassword( KU_User *user, const QString &password )
+void KU_UserFiles::createPassword( KU_User &user, const QString &password )
 {
   if ( caps & Cap_Shadow ) {
-    user->setSPwd( encryptPass( password, mCfg->md5shadow() ) );
-    user->setPwd( QString::fromLatin1("x") );
+    user.setSPwd( encryptPass( password, mCfg->md5shadow() ) );
+    user.setPwd( QString::fromLatin1("x") );
   } else
-    user->setPwd( encryptPass( password, false ) );
+    user.setPwd( encryptPass( password, false ) );
 }
 
 bool KU_UserFiles::dbcommit()
@@ -605,7 +582,6 @@ bool KU_UserFiles::dbcommit()
 
   mode = umask(0077);
   ret = savepwd();
-  if ( ret && ( caps & Cap_Shadow ) ) ret = savesdw();
   umask( mode );
   if ( !ret ) return false;
 
@@ -615,5 +591,5 @@ bool KU_UserFiles::dbcommit()
   mDel.clear();
   mAdd.clear();
   mMod.clear();
-  return TRUE;
+  return true;
 }

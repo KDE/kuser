@@ -19,14 +19,11 @@
 #ifndef _KU_GROUPLDAP_H_
 #define _KU_GROUPLDAP_H_
 
-#include <sys/types.h>
-
 #include <QString>
 #include <QStringList>
-#include <Q3PtrList>
+#include <QProgressDialog>
 #include <QByteArray>
 
-#include <kprogress.h>
 #include <kabc/ldapurl.h>
 #include <kabc/ldif.h>
 #include <kio/job.h>
@@ -49,15 +46,15 @@ private slots:
 private:
   KABC::LDIF mParser;
   KABC::LDAPUrl mUrl;
-  KProgressDialog *mProg;
-    
-  KU_Group *mGroup, *mDelGroup, *mAddGroup;
-  
+  QProgressDialog *mProg;
+
+  KU_Group mGroup, *mDelGroup, *mAddGroup;
+
   bool first, mOk, mCancel;
   int mAdv;
   QByteArray ldif;
 
-  QString getRDN( KU_Group *group );
+  QString getRDN( const KU_Group &group );
   void addData( KU_Group *group );
   void delData( KU_Group *group );
   void modData( KU_Group *group );

@@ -20,15 +20,15 @@
 #ifndef _KU_DELUSER_H_
 #define _KU_DELUSER_H_
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 #include <QCheckBox>
 
 #include "ku_user.h"
 
-class KU_DelUser: public KDialogBase {
+class KU_DelUser: public KDialog {
   Q_OBJECT
 public:
-  KU_DelUser(KU_User *AUser, QWidget *parent = 0, const char *name = 0);
+  KU_DelUser(KU_User *AUser, QWidget *parent = 0);
 
   bool getDeleteHomeDir()
      { return m_deleteHomeDir->isChecked(); }

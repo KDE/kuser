@@ -22,10 +22,10 @@
 #include <kdialogbase.h>
 #include <kcombobox.h>
 
-class KU_SelectConn : public KDialogBase {
+class KU_SelectConn : public KDialog {
   Q_OBJECT
 public:
-  KU_SelectConn( const QString &selected, QWidget* parent, const char * name);
+  KU_SelectConn( const QString &selected, QWidget* parent );
   QString connSelected();
 protected slots:
   void slotUser1();

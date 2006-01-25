@@ -23,9 +23,6 @@
 
 #include <sys/types.h>
 
-#include <qstring.h>
-#include <q3ptrlist.h>
-
 #include "ku_user.h"
 
 class KU_UserFiles : public KU_Users {
@@ -35,7 +32,7 @@ public:
 
   virtual bool dbcommit();
   virtual bool reload();
-  virtual void createPassword( KU_User *user, const QString &password );
+  virtual void createPassword( KU_User &user, const QString &password );
 
 private:
   bool pw_backuped;
@@ -55,7 +52,6 @@ private:
   bool loadsdw();
 
   bool savepwd();
-  bool savesdw();
 };
 #endif // _KU_USERFILES_H_
 

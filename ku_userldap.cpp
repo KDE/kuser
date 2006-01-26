@@ -76,8 +76,7 @@ KU_UserLDAP::~KU_UserLDAP()
 
 void KU_UserLDAP::result( KIO::Job *job )
 {
-  delete mProg;
-  mCancel = false;
+  mProg->close();
   if ( job->error() ) {
     QString errstr = job->errorString();
     if ( !errstr.isEmpty() ) {
@@ -235,7 +234,6 @@ bool KU_UserLDAP::reload()
   mUser.setPwd( "" );
   mUser.setSPwd( "" );
   mParser.startParsing();
-  mCancel = true;
   mProg = new QProgressDialog( 0 );
   mProg->setLabel( new QLabel( i18n("Loading Users From LDAP") ) );
   mProg->setAutoClose( false );
@@ -250,7 +248,8 @@ bool KU_UserLDAP::reload()
     this, SLOT( result( KIO::Job* ) ) );
 //  job->addMetaData( "SERVER_CTRL0", "1.2.840.113556.1.4.473 true: uidNumber");
   mProg->exec();
-  if ( mCancel ) job->kill();
+  if ( mProg->wasCanceled() ) job->kill();
+  delete mProg;
   return( mOk );
 }
 
@@ -356,7 +355,7 @@ void KU_UserLDAP::createPassword( KU_User &user, const QString &password )
   }
 }
 
-QByteArray KU_UserLDAP::getLDIF( const KU_User &user, int oldindex )
+QByteArray KU_UserLDAP::getLDIF( const KU_User &user, int oldindex ) const
 {
   QString gecos, cn, pwd, samflags;
   QByteArray ldif;
@@ -592,7 +591,7 @@ QByteArray KU_UserLDAP::getLDIF( const KU_User &user, int oldindex )
   return ldif;
 }
 
-QByteArray KU_UserLDAP::delData( const KU_User &user )
+QByteArray KU_UserLDAP::delData( const KU_User &user ) const
 {
   QByteArray ldif = "dn: " + getRDN( user ).utf8() + "," + mUrl.dn().utf8() + "\n" +
     "changetype: delete\n\n";
@@ -617,6 +616,7 @@ bool KU_UserLDAP::dbcommit()
   connect( job, SIGNAL( result( KIO::Job* ) ),
     this, SLOT( result( KIO::Job* ) ) );
   mProg->exec();
+  delete mProg;
   return( mOk );
 }
 
@@ -653,50 +653,11 @@ void KU_UserLDAP::putData( KIO::Job *, QByteArray& data )
     data = delData( at(mDel.at( mDelIndex ) ));
     mLastOperation = Del;
   } else if ( mAddIndex < mAdd.count() ) {
-    data = getLDIF( mAdd.at( mAddIndex ), false );
+    data = getLDIF( mAdd.at( mAddIndex ), -1 );
     mLastOperation = Add;
   } else {
     data.resize( 0 );
   }
-/*
-  ModIt mit = mMod.begin();
-
-  if ( mAddUser ) {
-    mAddSucc.append( mAddUser );
-    mAdd.remove();
-    mAddUser = 0;
-  }
-  if ( mDelUser ) {
-    kdDebug() << "delete ok for: " << mDelUser->getName() << endl;
-    mDelSucc.append( mDelUser );
-    if ( mObjectClasses.contains( mDelUser ) ) {
-      kdDebug() << "deleting additonal objectclasses!" << endl;
-      mObjectClasses.remove( mDelUser );
-    }
-    mDel.remove();
-    mDelUser = 0;
-  }
-  if ( mUser ) {
-    mModSucc.insert( mUser, mit.data() );
-    mMod.remove( mit );
-    mit = mMod.begin();
-    mUser = 0;
-  }
-
-  if ( (mAddUser = mAdd.current()) ) {
-    getLDIF( mAddUser, false );
-    data = ldif;
-  } else if ( mit != mMod.end() ) {
-    mUser = mit.key();
-    getLDIF( &(mit.data()), true );
-    data = ldif;
-  } else if ( (mDelUser = mDel.current()) ) {
-    kdDebug() << "deleting: " << mDelUser->getName() << endl;
-    delData( mDelUser );
-    data = ldif;
-  } else
-    data.resize(0);
-*/
 }
 
 #include "ku_userldap.moc"

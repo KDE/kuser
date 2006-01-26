@@ -50,8 +50,8 @@ private:
   KABC::LDIF mParser;
   KABC::LDAPUrl mUrl;
   QProgressDialog *mProg;
-  bool mOk, mCancel;
-  KU_User mUser, *mDelUser, *mAddUser;
+  bool mOk;
+  KU_User mUser;
   int mAdv, mAddIndex, mDelIndex;
   ModList::Iterator mModIt;
   int schemaversion;
@@ -59,8 +59,8 @@ private:
   QMap<int, QStringList> mObjectClasses;
 
   QString getRDN( const KU_User &user ) const;
-  QByteArray getLDIF( const KU_User &user, int oldindex = -1 );
-  QByteArray delData( const KU_User &user );
+  QByteArray getLDIF( const KU_User &user, int oldindex = -1 ) const;
+  QByteArray delData( const KU_User &user ) const;
 
   virtual void createPassword( KU_User &user, const QString &password );
 };

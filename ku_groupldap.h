@@ -44,21 +44,21 @@ private slots:
   void putData( KIO::Job *job, QByteArray& data );
   void result( KIO::Job* );
 private:
+  enum LastOperation{ None, Mod, Add, Del };
+  LastOperation mLastOperation;
   KABC::LDIF mParser;
   KABC::LDAPUrl mUrl;
   QProgressDialog *mProg;
 
-  KU_Group mGroup, *mDelGroup, *mAddGroup;
+  KU_Group mGroup;
+  ModList::Iterator mModIt;
+  bool mOk;
+  int mAdv, mDelIndex, mAddIndex;
 
-  bool first, mOk, mCancel;
-  int mAdv;
-  QByteArray ldif;
-
-  QString getRDN( const KU_Group &group );
-  void addData( KU_Group *group );
-  void delData( KU_Group *group );
-  void modData( KU_Group *group );
+  QString getRDN( const KU_Group &group ) const;
+  QByteArray addData( const KU_Group &group ) const;
+  QByteArray delData( const KU_Group &group ) const;
+  QByteArray modData( const KU_Group &group, int oldindex ) const;
 };
 
 #endif // _KU_GROUPLDAP_H_
-

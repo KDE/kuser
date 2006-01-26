@@ -70,6 +70,7 @@ KU_ConfigDlg::KU_ConfigDlg( KConfigSkeleton *config, QWidget *parent, const char
   }
   QTabWidget *page3 = new QTabWidget( 0 );
   page3->setMargin( KDialog::marginHint() );
+
   ldconf =
     new KABC::LdapConfigWidget(
        KABC::LdapConfigWidget::W_USER |
@@ -83,6 +84,7 @@ KU_ConfigDlg::KU_ConfigDlg( KConfigSkeleton *config, QWidget *parent, const char
        KABC::LdapConfigWidget::W_SECBOX |
        KABC::LdapConfigWidget::W_AUTHBOX,
         0 );
+
   page3->addTab( ldconf, i18n("Connection") );
 
   {

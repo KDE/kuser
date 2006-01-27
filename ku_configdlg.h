@@ -26,6 +26,7 @@
 #include <kconfigdialog.h>
 #include <kprogressbar.h>
 #include <kabc/ldif.h>
+#include <kprogressdialog.h>
 
 class KU_LdapSamba;
 namespace KABC { class LdapConfigWidget; }

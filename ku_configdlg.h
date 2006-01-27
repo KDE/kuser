@@ -24,7 +24,7 @@
 #include <QList>
 
 #include <kconfigdialog.h>
-#include <kprogress.h>
+#include <kprogressbar.h>
 #include <kabc/ldif.h>
 
 class KU_LdapSamba;

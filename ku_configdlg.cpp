@@ -20,13 +20,12 @@
 
 #include <kdebug.h>
 
-#include <QTabWidget>
-
 #include <kcombobox.h>
 #include <kmessagebox.h>
 #include <klineedit.h>
 #include <knuminput.h>
 #include <kpushbutton.h>
+#include <ktabwidget.h>
 #include <kabc/ldapconfigwidget.h>
 #include <kabc/ldapurl.h>
 #include <klocale.h>
@@ -43,7 +42,7 @@ KU_ConfigDlg::KU_ConfigDlg( KConfigSkeleton *config, QWidget *parent, const char
   KConfigDialog( parent, name, config, IconList,
   Default|Ok|Apply|Cancel|Help, Ok, true )
 {
-  QTabWidget *page1 = new QTabWidget( this );
+  KTabWidget *page1 = new KTabWidget( this );
   page1->setMargin( KDialog::marginHint() );
 
   {
@@ -63,12 +62,13 @@ KU_ConfigDlg::KU_ConfigDlg( KConfigSkeleton *config, QWidget *parent, const char
   addPage( page1, i18n("General"), "", i18n("General Settings") );
 
   {
-    QDialog *page2 = new QDialog( 0 );
+    QDialog *page2 = new QDialog( this );
     Ui::KU_FilesSettings *ui = new Ui::KU_FilesSettings();
     ui->setupUi( page2 );
     addPage( page2, i18n("Files"), "", i18n("File Source Settings") );
   }
-  QTabWidget *page3 = new QTabWidget( 0 );
+
+  KTabWidget *page3 = new KTabWidget( this );
   page3->setMargin( KDialog::marginHint() );
 
   ldconf =
@@ -95,9 +95,9 @@ KU_ConfigDlg::KU_ConfigDlg( KConfigSkeleton *config, QWidget *parent, const char
   }
   {
     QDialog *page3c = new QDialog( 0 );
-    Ui::KU_LdapSamba *ui = new Ui::KU_LdapSamba();
-    ui->setupUi( page3c );
-    connect( ui->domQuery, SIGNAL(clicked()), SLOT(slotQueryClicked()) );
+    sambaui = new Ui::KU_LdapSamba();
+    sambaui->setupUi( page3c );
+    connect( sambaui->domQuery, SIGNAL(clicked()), SLOT(slotQueryClicked()) );
     page3->addTab( page3c, i18n("Samba") );
   }
   addPage( page3, i18n("LDAP"), "", i18n("LDAP Source Settings") );
@@ -105,18 +105,17 @@ KU_ConfigDlg::KU_ConfigDlg( KConfigSkeleton *config, QWidget *parent, const char
 
 void KU_ConfigDlg::slotQueryClicked()
 {
-/*
+
   KABC::LDAPUrl _url = ldconf->url();
 
   mResult.clear();
-  mCancelled = true;
   mDomain.name = "";
   mDomain.sid = "";
   mDomain.ridbase = 1000;
 
   QStringList attrs;
   QString filter = "(objectClass=sambaDomain)";
-  QString dom = page3c->kcfg_samdomain->text();
+  QString dom = sambaui->kcfg_samdomain->text();
   if ( !dom.isEmpty() ) filter = "(&(sambaDomainName=" + dom + ")"+filter+")";
   attrs.append("sambaDomainName");
   attrs.append("sambaSID");
@@ -135,13 +134,15 @@ void KU_ConfigDlg::slotQueryClicked()
   connect( job, SIGNAL( result( KIO::Job* ) ),
     this, SLOT( loadResult( KIO::Job* ) ) );
 
-  mProg = new KProgressDialog( this, 0, i18n("LDAP Query"), _url.prettyURL(), true );
-  mProg->progressBar()->setValue( 0 );
-  mProg->progressBar()->setTotalSteps( 1 );
+  mProg = new QProgressDialog( 0 );
+  mProg->setLabel( new QLabel(_url.prettyURL()) );
+  mProg->setValue( 0 );
+  mProg->setMaximum( 1 );
+  mProg->setAutoClose( false );
+  mProg->setAutoReset( false );
   mProg->exec();
-  delete mProg;
-  if ( mCancelled ) {
-    kdDebug(5700) << "query cancelled!" << endl;
+  if ( mProg->wasCanceled() ) {
+    kdDebug() << "query cancelled!" << endl;
     job->kill( true );
   } else {
     if ( !mErrorMsg.isEmpty() ) 
@@ -149,14 +150,15 @@ void KU_ConfigDlg::slotQueryClicked()
     else {
       mDomain = mResult.first();
       if ( !mDomain.name.isEmpty() && !mDomain.sid.isEmpty() ) {
-        page3c->kcfg_samdomain->setText( mDomain.name );
-        page3c->kcfg_samdomsid->setText( mDomain.sid );
-        page3c->kcfg_samridbase->setValue( mDomain.ridbase );
+        sambaui->kcfg_samdomain->setText( mDomain.name );
+        sambaui->kcfg_samdomsid->setText( mDomain.sid );
+        sambaui->kcfg_samridbase->setValue( mDomain.ridbase );
       }
     }
   }
+  delete mProg;
   kdDebug() << "domQueryx" << endl;
-*/
+
 }
 
 void KU_ConfigDlg::loadData( KIO::Job*, const QByteArray& d )
@@ -180,7 +182,7 @@ void KU_ConfigDlg::loadData( KIO::Job*, const QByteArray& d )
           mDomain.ridbase = QString::fromUtf8( mLdif.val(), mLdif.val().size() ).toUInt();
         break;
       case KABC::LDIF::EndEntry:
-        mProg->progressBar()->advance( 1 );
+        mProg->setValue( 1 );
         if ( !mDomain.name.isEmpty() && !mDomain.sid.isEmpty() )
           mResult.push_back( mDomain );
         mDomain.sid = "";
@@ -200,8 +202,7 @@ void KU_ConfigDlg::loadResult( KIO::Job* job)
   else
     mErrorMsg = "";
 
-  mCancelled = false;
-  mProg->close();
+  mProg->hide();
 }
 
 #include "ku_configdlg.moc"

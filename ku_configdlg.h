@@ -22,13 +22,13 @@
 #define _KU_CONFIGDLG_H_
 
 #include <QList>
+#include <QProgressDialog>
 
 #include <kconfigdialog.h>
-#include <kprogressbar.h>
 #include <kabc/ldif.h>
 #include <kprogressdialog.h>
 
-class KU_LdapSamba;
+class Ui_KU_LdapSamba;
 namespace KABC { class LdapConfigWidget; }
 namespace KIO { class Job; }
 
@@ -43,11 +43,10 @@ class KU_ConfigDlg : public KConfigDialog {
 public:
   KU_ConfigDlg( KConfigSkeleton *config, QWidget* parent, const char * name = 0 );
 private:
-  KProgressDialog *mProg;
-  KU_LdapSamba *page3c;
+  QProgressDialog *mProg;
+  Ui_KU_LdapSamba *sambaui;
   KABC::LdapConfigWidget *ldconf;
   KABC::LDIF mLdif;
-  bool mCancelled;
   QString mErrorMsg;
   QList<KU_SambaDomain> mResult;
   KU_SambaDomain mDomain;

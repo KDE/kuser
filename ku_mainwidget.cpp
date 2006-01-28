@@ -123,7 +123,7 @@ void KU_MainWidget::showSys()
 void KU_MainWidget::properties()
 {
   KU_ConfigDlg *configdlg = new KU_ConfigDlg( kug->kcfg(), this );
-  connect(configdlg, SIGNAL(settingsChanged()), this, SLOT(slotApplySettings()));
+  connect(configdlg, SIGNAL(settingsChanged(const QString&)), this, SLOT(slotApplySettings()));
 
   configdlg->show();
 }

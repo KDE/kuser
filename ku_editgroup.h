@@ -24,6 +24,7 @@
 
 #include <QCheckBox>
 #include <QList>
+#include <QTreeWidget>
 
 #include <kdialog.h>
 #include <klistview.h>
@@ -56,7 +57,7 @@ private:
   bool mSamba, mAdd;
   bool ro;
   KU_Group mGroup;
-  KListView *m_list_in,*m_list_notin;
+  QTreeWidget *m_list_in,*m_list_notin;
   KLineEdit   *legrpname;
   KLineEdit   *legid;
   KComboBox   *lerid;

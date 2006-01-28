@@ -180,6 +180,9 @@ bool KU_GroupLDAP::dbcommit()
 
   mProg = new QProgressDialog( 0 );
   mProg->setLabel( new QLabel(i18n("LDAP Operation")) );
+  mProg->setAutoClose( false );
+  mProg->setAutoReset( false );
+  mProg->setMaximum( mAdd.count() + mMod.count() + mDel.count() );
   KIO::Job *job = KIO::put( mUrl, -1, false, false, false );
   connect( job, SIGNAL( dataReq( KIO::Job*, QByteArray& ) ),
     this, SLOT( putData( KIO::Job*, QByteArray& ) ) );

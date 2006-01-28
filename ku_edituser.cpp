@@ -587,7 +587,7 @@ void KU_EditUser::selectuser()
 
     first = false;
     if ( index == mSelected.count() ) break;
-    user = kug->getUsers()->at(mSelected[++index]);
+    user = kug->getUsers()->at(mSelected[index++]);
   }
 }
 
@@ -629,7 +629,8 @@ void KU_EditUser::loadgroups( bool fixedprivgroup )
           item->setCheckState( Qt::PartiallyChecked );
         }
       if ( index == mSelected.count() ) break;
-      user = kug->getUsers()->at(mSelected[++index]);
+      kdDebug() << "index: " << index << " count: " << mSelected.count() << endl;
+      user = kug->getUsers()->at(mSelected[index++]);
     }
   }
 
@@ -862,7 +863,8 @@ bool KU_EditUser::saveg()
           if ( group.removeUser( user.getName() ) ) mod = true;
         }
         if ( index == mSelected.count() ) break;
-        user = kug->getUsers()->at(mSelected[++index]);
+        user = kug->getUsers()->at(mSelected[index++]);
+	
       }
 
       if ( mod ) kug->getGroups()->mod( grpindex, group );

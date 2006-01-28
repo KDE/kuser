@@ -76,7 +76,7 @@ KU_UserLDAP::~KU_UserLDAP()
 
 void KU_UserLDAP::result( KIO::Job *job )
 {
-  mProg->close();
+  mProg->hide();
   if ( job->error() ) {
     QString errstr = job->errorString();
     if ( !errstr.isEmpty() ) {
@@ -610,6 +610,9 @@ bool KU_UserLDAP::dbcommit()
 
   mProg = new QProgressDialog( 0 );
   mProg->setLabel( new QLabel(i18n("LDAP Operation") ) );
+  mProg->setAutoClose( false );
+  mProg->setAutoReset( false );
+  mProg->setMaximum( mAdd.count() + mDel.count() + mMod.count() );
   KIO::Job *job = KIO::put( mUrl, -1, false, false, false );
   connect( job, SIGNAL( dataReq( KIO::Job*, QByteArray& ) ),
     this, SLOT( putData( KIO::Job*, QByteArray& ) ) );
@@ -658,6 +661,7 @@ void KU_UserLDAP::putData( KIO::Job *, QByteArray& data )
   } else {
     data.resize( 0 );
   }
+  mProg->setValue( mProg->value() + 1 );
 }
 
 #include "ku_userldap.moc"

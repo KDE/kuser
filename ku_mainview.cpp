@@ -21,9 +21,6 @@
 
 #include <stdio.h>
 
-#include <qtooltip.h>
-#include <qfile.h>
-
 #include <kinputdialog.h>
 #include <ktoolbar.h>
 #include <kiconloader.h>

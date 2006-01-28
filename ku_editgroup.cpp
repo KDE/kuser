@@ -156,10 +156,14 @@ KU_EditGroup::KU_EditGroup(const KU_Group &group, bool add,
     if ( !mAdd ) cbsamba->setChecked( !( group.getCaps() & KU_Group::Cap_Samba ) );
   }
 
-  m_list_in = new KListView(page);
-  m_list_in->setFullWidth(true); // Single column, full widget width.
-  m_list_in->addColumn(i18n("Users in Group"));
-  m_list_in->setSelectionMode( Q3ListView::Extended );
+  QStringList sl;
+
+  m_list_in = new QTreeWidget(page);
+  m_list_in->setColumnCount( 1 );
+  sl.append(i18n("Users in Group"));
+  m_list_in->setHeaderLabels(sl);
+  m_list_in->setSelectionMode( QAbstractItemView::ExtendedSelection );
+  m_list_in->setSortingEnabled( true );
   layout->addWidget( m_list_in, 8, 0 );
 
   QWidget *vbox = new QWidget;
@@ -173,26 +177,30 @@ KU_EditGroup::KU_EditGroup(const KU_Group &group, bool add,
 
   layout->addWidget( vbox, 8, 1 );
 
-  m_list_notin = new KListView(page);
-  m_list_notin->setFullWidth(true); // Single column, full widget width.
-  m_list_notin->addColumn(i18n("Users NOT in Group"));
-  m_list_notin->setSelectionMode(Q3ListView::Extended);
+  sl.clear();
+  m_list_notin = new QTreeWidget( page );
+  m_list_notin->setColumnCount( 1 );
+  sl.append(i18n("Users NOT in Group"));
+  m_list_notin->setHeaderLabels(sl);
+  m_list_notin->setSelectionMode( QAbstractItemView::ExtendedSelection );
+  m_list_notin->setSortingEnabled( true );
   layout->addWidget( m_list_notin, 8, 2 );
-//  QString whatstr = i18n("Select the users that should be in this kg->");
-//  QWhatsThis::add(m_list, whatstr);
-//  connect(this,SIGNAL(okClicked(void)),
-          //this,SLOT(okClicked()));
 
-
-  for (unsigned int i = 0; i<kug->getUsers()->count(); i++) {
+  for ( int i = 0; i<kug->getUsers()->count(); i++ ) {
     KU_User user;
     user = kug->getUsers()->at(i);
     QString userName = user.getName();
+    sl.clear();
+    sl.append( userName );
     if ( group.lookup_user(userName) || user.getGID() == group.getGID() ) {
-      KListViewItem *item = new KListViewItem(m_list_in, userName);
-      if ( user.getGID() == group.getGID() ) item->setSelectable( false );
+      QTreeWidgetItem *item = new QTreeWidgetItem(m_list_in, sl);
+      if ( user.getGID() == group.getGID() ) 
+        item->setFlags( Qt::ItemIsEnabled );
+      else
+        item->setFlags( Qt::ItemIsEnabled | Qt::ItemIsSelectable );
     } else {
-      new KListViewItem(m_list_notin, userName);
+      QTreeWidgetItem *item = new QTreeWidgetItem(m_list_notin, sl);
+      item->setFlags( Qt::ItemIsEnabled | Qt::ItemIsSelectable );
     }
   }
 
@@ -219,35 +227,29 @@ void KU_EditGroup::ridSelected( int index )
 
 void KU_EditGroup::addClicked()
 {
-  Q3ListViewItem *item, *next;
-  QString name;
-
-  item = m_list_notin->firstChild();
-  while ( item ) {
-    next = item->nextSibling();
-    if ( item->isSelected() ) {
-      name = item->text( 0 );
-      delete item;
-      item = new KListViewItem( m_list_in, name );
+  int i = 0;  
+  while ( i < m_list_notin->topLevelItemCount() ) {
+    QTreeWidgetItem *item = m_list_notin->topLevelItem( i );
+    if ( m_list_notin->isItemSelected( item ) ) {
+      item = m_list_notin->takeTopLevelItem( i );
+      m_list_in->insertTopLevelItem( m_list_in->topLevelItemCount(), item );
+    } else {
+      i++;
     }
-    item = next;
   }
 }
 
 void KU_EditGroup::delClicked()
 {
-  Q3ListViewItem *item, *next;
-  QString name;
-
-  item = m_list_in->firstChild();
-  while ( item ) {
-    next = item->nextSibling();
-    if ( item->isSelected() ) {
-      name = item->text( 0 );
-      delete item;
-      item = new KListViewItem( m_list_notin, name );
+  int i = 0;  
+  while ( i < m_list_in->topLevelItemCount() ) {
+    QTreeWidgetItem *item = m_list_in->topLevelItem( i );
+    if ( m_list_in->isItemSelected( item ) ) {
+      item = m_list_in->takeTopLevelItem( i );
+      m_list_notin->insertTopLevelItem( m_list_notin->topLevelItemCount(), item );
+    } else {
+      i++;
     }
-    item = next;
   }
 }
 
@@ -319,11 +321,9 @@ void KU_EditGroup::accept()
     mGroup.setType( 0 );
   }
 
-  Q3ListViewItem *item;
-  item = m_list_in->firstChild();
-  while ( item ) {
+  for( int i = 0; i < m_list_in->topLevelItemCount(); i++ ) {
+    QTreeWidgetItem *item = m_list_in->topLevelItem( i );
     mGroup.addUser( item->text( 0 ) );
-    item = item->nextSibling();
   }
   done( Accepted );
 }

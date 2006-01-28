@@ -226,8 +226,14 @@
      </item>
      <item>
       <widget class="KIntSpinBox" name="kcfg_samridbase" >
+       <property name="maximum" >
+        <number>65000</number>
+       </property>
+       <property name="minimum" >
+        <number>500</number>
+       </property>
        <property name="value" >
-        <number>99</number>
+        <number>1000</number>
        </property>
       </widget>
      </item>
@@ -278,16 +284,16 @@
    <pixmap></pixmap>
   </customwidget>
   <customwidget>
-   <class>KIntSpinBox</class>
+   <class>KPushButton</class>
    <extends></extends>
-   <header>knuminput.h</header>
+   <header>kpushbutton.h</header>
    <container>0</container>
    <pixmap></pixmap>
   </customwidget>
   <customwidget>
-   <class>KPushButton</class>
+   <class>KIntSpinBox</class>
    <extends></extends>
-   <header>kpushbutton.h</header>
+   <header>knuminput.h</header>
    <container>0</container>
    <pixmap></pixmap>
   </customwidget>
@@ -307,5 +313,150 @@
   <include location="global" >knuminput.h</include>
  </includes>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>kcfg_ldapsam</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>kcfg_samloginscript</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>232</x>
+     <y>21</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>292</x>
+     <y>47</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>kcfg_ldapsam</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>kcfg_samprofilepath</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>232</x>
+     <y>21</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>292</x>
+     <y>68</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>kcfg_ldapsam</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>kcfg_samhomedrive</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>232</x>
+     <y>21</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>292</x>
+     <y>89</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>kcfg_ldapsam</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>kcfg_samhomepath</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>232</x>
+     <y>21</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>292</x>
+     <y>110</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>kcfg_ldapsam</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>kcfg_lanmanhash</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>232</x>
+     <y>21</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>232</x>
+     <y>135</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>kcfg_ldapsam</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>kcfg_samdomain</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>232</x>
+     <y>21</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>226</x>
+     <y>166</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>kcfg_ldapsam</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>domQuery</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>232</x>
+     <y>21</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>406</x>
+     <y>166</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>kcfg_ldapsam</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>kcfg_samdomsid</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>232</x>
+     <y>21</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>232</x>
+     <y>220</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>kcfg_ldapsam</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>kcfg_samridbase</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>232</x>
+     <y>21</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>160</x>
+     <y>251</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

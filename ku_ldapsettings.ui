@@ -246,7 +246,7 @@
  <customwidgets>
   <customwidget>
    <class>KComboBox</class>
-   <extends></extends>
+   <extends>QComboBox</extends>
    <header>kcombobox.h</header>
    <container>0</container>
    <pixmap></pixmap>

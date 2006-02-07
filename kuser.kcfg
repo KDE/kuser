@@ -167,6 +167,10 @@
       <label>LDAP Time limit</label>
       <default>0</default>
     </entry>
+    <entry name="ldappagesize" type="Int">
+      <label>LDAP Time limit</label>
+      <default>0</default>
+    </entry>
     <entry name="ldapdn" type="String">
       <label>LDAP Base DN</label>
     </entry>

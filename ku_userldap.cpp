@@ -56,6 +56,13 @@ KU_UserLDAP::KU_UserLDAP(KU_PrefsBase *cfg) : KU_Users( cfg )
   mUrl.setScope(KABC::LDAPUrl::One);
   mUrl.setExtension("x-dir","base");
 
+  if ( mCfg->ldaptimelimit() )
+    mUrl.setExtension("x-timelimit",QString::number(mCfg->ldaptimelimit()));
+  if ( mCfg->ldapsizelimit() )
+    mUrl.setExtension("x-sizelimit",QString::number(mCfg->ldapsizelimit()));
+  if ( mCfg->ldappagesize() )
+    mUrl.setExtension("x-pagesize",QString::number(mCfg->ldappagesize()));
+
   caps = Cap_Passwd | Cap_Disable_POSIX;
   if ( mCfg->ldapshadow() ) caps |= Cap_Shadow;
   if ( mCfg->ldapstructural() ==

@@ -82,7 +82,10 @@ KU_ConfigDlg::KU_ConfigDlg( KConfigSkeleton *config, QWidget *parent, const char
        KABC::LdapConfigWidget::W_VER |
        KABC::LdapConfigWidget::W_DN |
        KABC::LdapConfigWidget::W_SECBOX |
-       KABC::LdapConfigWidget::W_AUTHBOX,
+       KABC::LdapConfigWidget::W_AUTHBOX |
+       KABC::LdapConfigWidget::W_TIMELIMIT | 
+       KABC::LdapConfigWidget::W_SIZELIMIT | 
+       KABC::LdapConfigWidget::W_PAGESIZE,
         0 );
 
   page3->addTab( ldconf, i18n("Connection") );

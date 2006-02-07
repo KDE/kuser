@@ -18,7 +18,7 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-#include <kapplication.h>
+#include <kglobal.h>
 
 #include "ku_global.h"
 #include "ku_userfiles.h"
@@ -42,7 +42,8 @@ void KU_Global::initCfg( const QString &connection )
     cfg->writeConfig();
     delete cfg;
   }
-  cfg = new KU_PrefsBase( kapp->sharedConfig(), connection );
+  KSharedConfig::Ptr config( KGlobal::sharedConfig() );
+  cfg = new KU_PrefsBase( config, connection );
   cfg->readConfig();
 }
 

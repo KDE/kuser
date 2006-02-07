@@ -52,9 +52,9 @@ int main(int argc, char **argv)
 
   KApplication a;
 
-  kapp->sharedConfig()->setGroup( "general" );
+  KGlobal::sharedConfig()->setGroup( "general" );
   kug = new KU_Global();
-  kug->initCfg( kapp->sharedConfig()->readEntry( "connection", "default" ) );
+  kug->initCfg( KGlobal::sharedConfig()->readEntry( "connection", "default" ) );
   
   mw = new KU_MainWidget("kuser");
   a.setMainWidget(mw);

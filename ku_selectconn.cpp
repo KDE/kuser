@@ -21,7 +21,7 @@
 #include <QVBoxLayout>
 
 #include <kdebug.h>
-#include <kapplication.h>
+#include <kglobal.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kinputdialog.h>
@@ -48,7 +48,7 @@ KU_SelectConn::KU_SelectConn(const QString &selected, QWidget *parent) :
   mSelected = selected;
   kDebug() << "selected item: " << mSelected << endl;
 
-  conns = kapp->sharedConfig()->groupList();
+  conns = KGlobal::sharedConfig()->groupList();
   QStringList::iterator it = conns.begin();
   int i = 0, sel = 0;
   while ( it != conns.end() ) {
@@ -87,7 +87,8 @@ void KU_SelectConn::slotUser3()
     return;
   }
 
-  KU_PrefsBase kcfg( kapp->sharedConfig(), newconn );
+  KSharedConfig::Ptr config( KGlobal::sharedConfig() );
+  KU_PrefsBase kcfg( config, newconn );
 
   KU_ConfigDlg cfgdlg( &kcfg, this );
   connect(&cfgdlg, SIGNAL(settingsChanged(const QString&)), this, SLOT(slotNewApplySettings()));
@@ -109,7 +110,9 @@ void KU_SelectConn::slotNewApplySettings()
 void KU_SelectConn::slotUser2()
 {
   kDebug() << "slotUser2: " << connSelected() << endl;
-  KU_PrefsBase kcfg( kapp->sharedConfig(), connSelected() );
+
+  KSharedConfig::Ptr config( KGlobal::sharedConfig() );
+  KU_PrefsBase kcfg( config, newconn );
   kcfg.readConfig();
 
   KU_ConfigDlg cfgdlg( &kcfg, this );
@@ -123,8 +126,8 @@ void KU_SelectConn::slotUser1()
   if ( KMessageBox::warningContinueCancel( 0, i18n("Do you really want to delete the connection '%1'?").
     arg( conn ),i18n("Delete Connection"),KStdGuiItem::del() ) == KMessageBox::Cancel ) return;
 
-  kapp->sharedConfig()->deleteGroup( "connection-" + conn );
-  kapp->sharedConfig()->sync();
+  KGlobal::sharedConfig()->deleteGroup( "connection-" + conn );
+  KGlobal::sharedConfig()->sync();
   mCombo->removeItem( mCombo->currentItem() );
   if ( mCombo->count() == 0 ) {
     mCombo->insertItem( "default" );

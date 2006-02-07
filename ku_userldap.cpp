@@ -201,10 +201,10 @@ void KU_UserLDAP::data( KIO::Job *, const QByteArray& data )
           schemaversion = 1;
         break;
       case KABC::LDIF::EndEntry: {
-        kdDebug() << "new user: " << mUser.getName() << endl;
+        kDebug() << "new user: " << mUser.getName() << endl;
         if ( !mOc.isEmpty() ) {
           mObjectClasses.insert( count(), mOc );
-          kdDebug() << "user: " << mUser.getName() << " other objectclasses: " << mOc.join(",") << endl;
+          kDebug() << "user: " << mUser.getName() << " other objectclasses: " << mOc.join(",") << endl;
         }
         mOc.clear();
         append( mUser );
@@ -227,7 +227,7 @@ void KU_UserLDAP::data( KIO::Job *, const QByteArray& data )
 
 bool KU_UserLDAP::reload()
 {
-  kdDebug() << "kuserldap::reload()" << endl;
+  kDebug() << "kuserldap::reload()" << endl;
   mObjectClasses.clear();
   mOc.clear();
   mUser = KU_User();
@@ -415,7 +415,7 @@ QByteArray KU_UserLDAP::getLDIF( const KU_User &user, int oldindex ) const
 
   if ( mod && mObjectClasses.contains( oldindex ) ) {
     QStringList ocs = mObjectClasses[ oldindex ];
-    kdDebug() << user.getName() << " has additional objectclasses: " << ocs.join(",") << endl;
+    kDebug() << user.getName() << " has additional objectclasses: " << ocs.join(",") << endl;
     QStringList::iterator it;
     for ( it = ocs.begin(); it != ocs.end(); ++it ) {
       ldif += "objectClass: ";
@@ -587,7 +587,7 @@ QByteArray KU_UserLDAP::getLDIF( const KU_User &user, int oldindex ) const
     }
   }
   ldif += "\n";
-//  kdDebug() << "ldif: " << ldif << endl;
+//  kDebug() << "ldif: " << ldif << endl;
   return ldif;
 }
 
@@ -638,7 +638,7 @@ void KU_UserLDAP::putData( KIO::Job *, QByteArray& data )
       int deleteindex = mDel.at( mDelIndex );
       
       if ( mObjectClasses.contains( deleteindex ) ) {
-        kdDebug() << "deleting additonal objectclasses!" << endl;
+        kDebug() << "deleting additonal objectclasses!" << endl;
         mObjectClasses.remove( deleteindex );
       }
       mDelSucc.append( deleteindex );

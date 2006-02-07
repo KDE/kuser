@@ -147,7 +147,7 @@ void KU_GroupLDAP::data( KIO::Job*, const QByteArray& data )
 
 bool KU_GroupLDAP::reload()
 {
-  kdDebug() << "KU_GroupLDAP::reload()" << endl;
+  kDebug() << "KU_GroupLDAP::reload()" << endl;
   mGroup = KU_Group();
   mParser.startParsing();
 
@@ -247,7 +247,7 @@ QByteArray KU_GroupLDAP::addData( const KU_Group &group ) const
       KABC::LDIF::assembleLine( "sambagrouptype", QString::number( group.getType() ) ) + "\n";
   }
   ldif += "\n\n";
-  kdDebug() << "ldif: " << ldif << endl;
+  kDebug() << "ldif: " << ldif << endl;
   return ldif;
 }
 
@@ -255,7 +255,7 @@ QByteArray KU_GroupLDAP::delData( const KU_Group &group ) const
 {
   QByteArray ldif = "dn: " + getRDN( group ).utf8() + "," +
     mUrl.dn().utf8() + "\n" + "changetype: delete\n\n";
-  kdDebug() << "ldif: " << ldif << endl;
+  kDebug() << "ldif: " << ldif << endl;
   return ldif;
 }
 

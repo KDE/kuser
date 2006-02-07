@@ -185,7 +185,7 @@ bool KU_UserFiles::loadpwd()
       if ((p->pw_gecos != 0) && (p->pw_gecos[0] != 0))
         fillGecos(user, p->pw_gecos);
       append(user);
-      kdDebug() << "added: " << user.getName() << endl;
+      kDebug() << "added: " << user.getName() << endl;
     }
 
     // End reading passwd_filename
@@ -236,7 +236,7 @@ bool KU_UserFiles::loadsdw()
 
 #ifdef HAVE_FGETSPENT
   FILE *f;
-  kdDebug() << "open shadow file: " << shadow_file << endl;
+  kDebug() << "open shadow file: " << shadow_file << endl;
   if ((f = fopen( QFile::encodeName(shadow_file), "r")) == NULL) {
     KMessageBox::error( 0, i18n("Error opening %1 for reading.").arg(shadow_file) );
     caps &= ~Cap_Shadow;
@@ -248,7 +248,7 @@ bool KU_UserFiles::loadsdw()
   while ((spw = getspent())) {     // read a shadow password structure
 #endif
 
-    kdDebug() << "shadow entry: " << spw->sp_namp << endl;
+    kDebug() << "shadow entry: " << spw->sp_namp << endl;
     if ((index = lookup(QString::fromLocal8Bit(spw->sp_namp))) == -1) {
       KMessageBox::error( 0, i18n("No /etc/passwd entry for %1.\nEntry will be removed at the next `Save'-operation.").arg(QString::fromLocal8Bit(spw->sp_namp)) );
       continue;
@@ -496,7 +496,7 @@ bool KU_UserFiles::savepwd()
     if( (nispasswd_fd == 0) && (minuid != 0) ) {
       errors_found = errors_found | NONISPASSWD;
     }
-    kdDebug() << s << endl;
+    kDebug() << s << endl;
     fputs(s.local8Bit().data(), passwd_fd);
   }
 

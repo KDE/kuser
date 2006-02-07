@@ -187,25 +187,25 @@ const QString &KU_Groups::getDOMSID() const
 
 void KU_Groups::add(const KU_Group &group)
 {
-  kdDebug() << "adding group: " << group.getName() << " gid: " << group.getGID() << endl;
+  kDebug() << "adding group: " << group.getName() << " gid: " << group.getGID() << endl;
   mAdd.append( group );
 }
 
 void KU_Groups::del(int index)
 {
-  kdDebug() << "deleting group: " << at(index).getName() << " gid: " << at(index).getGID() << endl;
+  kDebug() << "deleting group: " << at(index).getName() << " gid: " << at(index).getGID() << endl;
   mDel.append( index );
 }
 
 void KU_Groups::mod(int index, const KU_Group &newgroup)
 {
-  kdDebug() << "modify group " << newgroup.getName() << " gid: " << newgroup.getGID() << endl;
+  kDebug() << "modify group " << newgroup.getName() << " gid: " << newgroup.getGID() << endl;
   mMod.insert( index, newgroup );
 }
 
 void KU_Groups::commit()
 {
-  kdDebug() << "KU_Groups::commit()" << endl;
+  kDebug() << "KU_Groups::commit()" << endl;
 
   for ( ModList::Iterator it = mModSucc.begin(); it != mModSucc.end(); ++it ) {
     replace(it.key(),*it);

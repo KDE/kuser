@@ -56,7 +56,7 @@ KU_EditGroup::KU_EditGroup(const KU_Group &group, bool add,
   legid = new KLineEdit(page);
   // ensure it fits at least 20 characters
   legid->setText( "XXXXXXXXXXXXXXXXXXX" );
-  kdDebug() << "gid: " << group.getGID() << endl;
+  kDebug() << "gid: " << group.getGID() << endl;
   legid->setText( QString::number(group.getGID()) );
   legid->setValidator( new QIntValidator(this) );
   legid->setEnabled( mAdd );

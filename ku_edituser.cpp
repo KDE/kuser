@@ -550,7 +550,7 @@ void KU_EditUser::selectuser()
 
       QDateTime expire;
       expire.setTime_t( user.getExpire() );
-      kdDebug() << "expiration: " << user.getExpire() << endl;
+      kDebug() << "expiration: " << user.getExpire() << endl;
       setCB( cbexpire, (int) expire.toTime_t() == -1, first );
       if ( (int) expire.toTime_t() == -1 ) expire.setTime_t( 0 );
       if ( first ) {
@@ -629,14 +629,14 @@ void KU_EditUser::loadgroups( bool fixedprivgroup )
           item->setCheckState( Qt::PartiallyChecked );
         }
       if ( index == mSelected.count() ) break;
-      kdDebug() << "index: " << index << " count: " << mSelected.count() << endl;
+      kDebug() << "index: " << index << " count: " << mSelected.count() << endl;
       user = kug->getUsers()->at(mSelected[index++]);
     }
   }
 
   if ( fixedprivgroup ) {
     KU_User user = mSelected.isEmpty() ? mUser : kug->getUsers()->at(mSelected[0]);
-    kdDebug() << "privgroup: " << user.getName() << endl;
+    kDebug() << "privgroup: " << user.getName() << endl;
     if ( !wasprivgr ) {
       QListWidgetItem *item = new QListWidgetItem(user.getName(),lstgrp);
       item->setCheckState( Qt::Checked );
@@ -683,7 +683,7 @@ void KU_EditUser::changed()
   QWidget *widget = (QWidget*) sender();
   if ( mNoChanges.contains( widget ) ) mNoChanges[ widget ]->setChecked( false );
   ischanged = true;
-  kdDebug() << "changed" << endl;
+  kDebug() << "changed" << endl;
 }
 
 void KU_EditUser::gchanged()
@@ -721,7 +721,7 @@ void KU_EditUser::mergeUser( const KU_User &user, KU_User &newuser )
       newuser.setCaps( newuser.getCaps() | KU_User::Cap_POSIX );
   }
   posix = newuser.getCaps() & KU_User::Cap_POSIX;
-  kdDebug() << "posix: " << posix << endl;
+  kDebug() << "posix: " << posix << endl;
   if ( one ) {
 //    newuser->setName( leuser->text() );
     newuser.setUID( posix ? leid->text().toInt() : 0 );
@@ -739,7 +739,7 @@ void KU_EditUser::mergeUser( const KU_User &user, KU_User &newuser )
         newuser.setCaps( newuser.getCaps() | KU_User::Cap_Samba );
     }
     samba = newuser.getCaps() & KU_User::Cap_Samba;
-    kdDebug() << "user : " << newuser.getName() << " caps: " << newuser.getCaps() << " samba: " << samba << endl;
+    kDebug() << "user : " << newuser.getName() << " caps: " << newuser.getCaps() << " samba: " << samba << endl;
 
     SID sid;
     if ( samba ) {
@@ -844,7 +844,7 @@ bool KU_EditUser::saveg()
 
     QListWidgetItem *item = lstgrp->item( row );
 
-    kdDebug() << "saveg: group name: " << item->text() << endl;
+    kDebug() << "saveg: group name: " << item->text() << endl;
     int grpindex = kug->getGroups()->lookup(item->text());
     if ( grpindex != -1 && item->checkState() != Qt::PartiallyChecked ) {
 

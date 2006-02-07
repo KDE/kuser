@@ -250,7 +250,7 @@ void KU_MainView::useradd()
       } else {
         gid = groups->first_free();
       }
-      kdDebug() << "private group GID: " << gid << endl;
+      kDebug() << "private group GID: " << gid << endl;
       uid_t rid = 0;
 //      if ( samba ) rid = kug->getGroups().first_free_sam();
       if ( samba ) rid = SID::gid2rid( gid );
@@ -332,9 +332,9 @@ void KU_MainView::userdel()
 
   for ( int i = 0; i < groups->count(); i++ ) {
     KU_Group group = groups->at(i);
-    kdDebug() << "group: " << group.getName() << endl;
+    kDebug() << "group: " << group.getName() << endl;
     if ( group.lookup_user( username ) ) {
-      kdDebug() << "group: " << group.getName() << " found user: " << username << endl;
+      kDebug() << "group: " << group.getName() << " found user: " << username << endl;
       group.removeUser( username );
       groups->mod( i, group );
     }
@@ -348,11 +348,11 @@ void KU_MainView::userdel()
         "Do you want to delete the user's private group '%1'?")
         .arg(groups->at(i).getName()), QString::null,
         KStdGuiItem::del(), i18n("Do Not Delete")) == KMessageBox::Yes) {
-      kdDebug() << "del private group" << endl;
+      kDebug() << "del private group" << endl;
       groups->del( i );
     }
   }
-  kdDebug() << "update groups" << endl;
+  kDebug() << "update groups" << endl;
   updateGroups();
 
 }
@@ -399,7 +399,7 @@ void KU_MainView::grpedit()
   if ( index == -1 ) return;
   KU_Group group = groups->at(index);
 
-  kdDebug() << "The SID for group " << group.getName() << " is: '" << group.getSID().getSID() << "'" << endl;
+  kDebug() << "The SID for group " << group.getName() << " is: '" << group.getSID().getSID() << "'" << endl;
   if ( ( groups->getCaps() & KU_Groups::Cap_Samba ) &&
        ( group.getCaps() & KU_Group::Cap_Samba ) &&
          group.getSID().isEmpty() ) {
@@ -408,7 +408,7 @@ void KU_MainView::grpedit()
 //    sid.setRID( kug->getGroups().first_free_sam() );
     sid.setRID( SID::gid2rid( group.getGID() ) );
     group.setSID( sid );
-    kdDebug() << "The new SID for group " << group.getName() << " is: " << sid.getSID() << endl;
+    kDebug() << "The new SID for group " << group.getName() << " is: " << sid.getSID() << endl;
   }
   KU_EditGroup egdlg( group, false );
 
@@ -470,14 +470,14 @@ void KU_MainView::grpdel()
 bool KU_MainView::updateUsers()
 {
   bool ret;
-  kdDebug() << "updateUsers() " << endl;
+  kDebug() << "updateUsers() " << endl;
   ret = users->dbcommit();
 
   for ( KU_Users::DelList::Iterator it = users->mDelSucc.begin() ;
       it != users->mDelSucc.end(); ++it ) {
     lbusers->removeItem(*it);
   }
-  kdDebug() << "commit users" << endl;
+  kDebug() << "commit users" << endl;
   users->commit();
   for ( KU_Users::AddList::Iterator it = users->mAddSucc.begin() ;
       it != users->mAddSucc.end(); ++it ) {
@@ -490,14 +490,14 @@ bool KU_MainView::updateUsers()
 bool KU_MainView::updateGroups()
 {
   bool ret;
-  kdDebug() << "updateGroups() " << endl;
+  kDebug() << "updateGroups() " << endl;
   ret = groups->dbcommit();
 
   for ( KU_Groups::DelList::Iterator it = groups->mDelSucc.begin() ;
       it != groups->mDelSucc.end(); ++it ) {
     lbgroups->removeItem(*it);
   }
-  kdDebug() << "commit groups" << endl;
+  kDebug() << "commit groups" << endl;
   groups->commit();
   for ( KU_Groups::AddList::Iterator it = groups->mAddSucc.begin() ;
       it != groups->mAddSucc.end(); ++it ) {

@@ -141,7 +141,7 @@ void KU_MainWidget::init()
   mv->clearGroups();
   kug->init();
   rw = ! ( kug->getUsers()->getCaps() & KU_Users::Cap_ReadOnly );
-  kdDebug() << "Users rw()" << rw << endl;
+  kDebug() << "Users rw()" << rw << endl;
   actionCollection()->action("add_user")->setEnabled( rw );
   actionCollection()->action("edit_user")->setEnabled( rw );
   actionCollection()->action("delete_user")->setEnabled( rw );
@@ -158,7 +158,7 @@ void KU_MainWidget::init()
   }
 
   rw = ! ( kug->getGroups()->getCaps() & KU_Groups::Cap_ReadOnly );
-  kdDebug() << "Groups rw()" << rw << endl;
+  kDebug() << "Groups rw()" << rw << endl;
   actionCollection()->action("add_group")->setEnabled( rw );
   actionCollection()->action("edit_group")->setEnabled( rw );
   actionCollection()->action("delete_group")->setEnabled( rw );
@@ -177,13 +177,13 @@ void KU_MainWidget::init()
 
 void KU_MainWidget::slotApplySettings()
 {
-  kdDebug() << "settings changed!" << endl;
+  kDebug() << "settings changed!" << endl;
   init();
 }
 
 void KU_MainWidget::slotApplyConnection()
 {
-  kdDebug() << "slotApplyConnection()" << endl;
+  kDebug() << "slotApplyConnection()" << endl;
   QString conn = sc->connSelected();
   kug->kcfg()->setConnection( conn );
   kug->initCfg( conn );

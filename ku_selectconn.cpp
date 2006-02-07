@@ -46,7 +46,7 @@ KU_SelectConn::KU_SelectConn(const QString &selected, QWidget *parent) :
   QLabel *label = new QLabel( i18n("Defined connections:"), page );
   mCombo = new KComboBox( page );
   mSelected = selected;
-  kdDebug() << "selected item: " << mSelected << endl;
+  kDebug() << "selected item: " << mSelected << endl;
 
   conns = kapp->sharedConfig()->groupList();
   QStringList::iterator it = conns.begin();
@@ -108,7 +108,7 @@ void KU_SelectConn::slotNewApplySettings()
 
 void KU_SelectConn::slotUser2()
 {
-  kdDebug() << "slotUser2: " << connSelected() << endl;
+  kDebug() << "slotUser2: " << connSelected() << endl;
   KU_PrefsBase kcfg( kapp->sharedConfig(), connSelected() );
   kcfg.readConfig();
 
@@ -130,14 +130,14 @@ void KU_SelectConn::slotUser1()
     mCombo->insertItem( "default" );
     mCombo->setCurrentItem( 0 );
   }
-  kdDebug() << "slotUser1: " << conn << " " << mSelected << endl;
+  kDebug() << "slotUser1: " << conn << " " << mSelected << endl;
   if ( mSelected == conn )
     emit( applyClicked() );
 }
 
 void KU_SelectConn::slotApply()
 {
-  kdDebug() << "slotApply()" << endl;
+  kDebug() << "slotApply()" << endl;
   if ( connSelected() != mSelected ) {
     mSelected = connSelected();
     emit( applyClicked() );
@@ -146,7 +146,7 @@ void KU_SelectConn::slotApply()
 
 void KU_SelectConn::slotApplySettings()
 {
-  kdDebug() << "slotApplySettings()" << endl;
+  kDebug() << "slotApplySettings()" << endl;
   if ( connSelected() == mSelected )
     emit( applyClicked() );
 }

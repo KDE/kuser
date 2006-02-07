@@ -175,7 +175,7 @@ bool KU_GroupFiles::reload()
 
 bool KU_GroupFiles::save()
 {
-  kdDebug() << "KU_GroupFiles::save() " << endl;
+  kDebug() << "KU_GroupFiles::save() " << endl;
   FILE *group_fd = NULL;
   FILE *gshadow_fd = NULL;
   FILE *nisgroup_fd = NULL;
@@ -371,7 +371,7 @@ bool KU_GroupFiles::dbcommit()
   bool ret;
   mode_t mode;
 
-  kdDebug() << "KU_GroupFiles dbcommit" << endl;
+  kDebug() << "KU_GroupFiles dbcommit" << endl;
   mAddSucc.clear();
   mDelSucc.clear();
   mModSucc.clear();

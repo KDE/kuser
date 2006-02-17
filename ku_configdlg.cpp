@@ -46,7 +46,7 @@ KU_ConfigDlg::KU_ConfigDlg( KConfigSkeleton *config, QWidget *parent, const char
   page1->setMargin( KDialog::marginHint() );
 
   {
-    QDialog *page1a = new QDialog ( 0 );
+    QFrame *page1a = new QFrame ( 0 );
     Ui::KU_GeneralSettings *ui = new Ui::KU_GeneralSettings();
     ui->setupUi( page1a );
     ui->kcfg_shell->insertItem( i18n("<Empty>" ) );
@@ -54,7 +54,7 @@ KU_ConfigDlg::KU_ConfigDlg( KConfigSkeleton *config, QWidget *parent, const char
     page1->addTab( page1a, i18n("Connection") );
   }
   {
-    QDialog *page1b = new QDialog( 0 );
+    QFrame *page1b = new QFrame( 0 );
     Ui::KU_PasswordPolicy *ui = new Ui::KU_PasswordPolicy();
     ui->setupUi( page1b );
     page1->addTab( page1b, i18n("Password Policy") );
@@ -62,7 +62,7 @@ KU_ConfigDlg::KU_ConfigDlg( KConfigSkeleton *config, QWidget *parent, const char
   addPage( page1, i18n("General"), "", i18n("General Settings") );
 
   {
-    QDialog *page2 = new QDialog( this );
+    QFrame *page2 = new QFrame( this );
     Ui::KU_FilesSettings *ui = new Ui::KU_FilesSettings();
     ui->setupUi( page2 );
     addPage( page2, i18n("Files"), "", i18n("File Source Settings") );
@@ -91,13 +91,13 @@ KU_ConfigDlg::KU_ConfigDlg( KConfigSkeleton *config, QWidget *parent, const char
   page3->addTab( ldconf, i18n("Connection") );
 
   {
-    QDialog *page3b = new QDialog( 0 );
+    QFrame *page3b = new QFrame( 0 );
     Ui::KU_LdapSettings *ui = new Ui::KU_LdapSettings();
     ui->setupUi( page3b );
     page3->addTab( page3b, i18n("Settings") );
   }
   {
-    QDialog *page3c = new QDialog( 0 );
+    QFrame *page3c = new QFrame( 0 );
     sambaui = new Ui::KU_LdapSamba();
     sambaui->setupUi( page3c );
     connect( sambaui->domQuery, SIGNAL(clicked()), SLOT(slotQueryClicked()) );

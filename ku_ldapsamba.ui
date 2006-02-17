@@ -3,7 +3,7 @@
  <comment></comment>
  <exportmacro></exportmacro>
  <class>KU_LdapSamba</class>
- <widget class="QDialog" name="KU_LdapSamba" >
+ <widget class="QWidget" name="KU_LdapSamba" >
   <property name="geometry" >
    <rect>
     <x>0</x>

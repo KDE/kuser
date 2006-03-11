@@ -38,7 +38,7 @@ set(kuser_SRCS
 
 kde4_add_ui_files(kuser_SRCS ku_filessettings.ui ku_generalsettings.ui ku_ldapsettings.ui ku_ldapsamba.ui ku_passwordpolicy.ui)
 
-kde4_add_dcop_skels(kuser_SRCS ku_prefs.h)
+kde4_add_kcfg_files(kuser_SRCS ku_prefs.kcfgc)
 
 kde4_automoc(${kuser_SRCS})
 

@@ -24,8 +24,8 @@
 #include "kgroupvw.h"
 
 
-KGroupViewItem::KGroupViewItem(KListView *parent, int index)
- : KListViewItem(parent), mIndex(index)
+KGroupViewItem::KGroupViewItem(K3ListView *parent, int index)
+ : K3ListViewItem(parent), mIndex(index)
 {
 }
 
@@ -85,7 +85,7 @@ QString KGroupViewItem::text(int num) const
 
 
 KGroupView::KGroupView(QWidget *parent, const char *name) 
-  : KListView( parent ) 
+  : K3ListView( parent ) 
 {
   setSelectionMode( Q3ListView::Extended );
 }
@@ -97,7 +97,7 @@ KGroupView::~KGroupView()
 void KGroupView::insertItem(int index) 
 {
   KGroupViewItem *groupItem = new KGroupViewItem(this, index);
-  KListView::insertItem(groupItem);
+  K3ListView::insertItem(groupItem);
 }
 
 void KGroupView::removeItem(int index) 

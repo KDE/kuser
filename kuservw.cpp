@@ -24,8 +24,8 @@
 #include "kuservw.h"
 
 
-KUserViewItem::KUserViewItem(KListView *parent, int index)
- : KListViewItem(parent), mIndex(index)
+KUserViewItem::KUserViewItem(K3ListView *parent, int index)
+ : K3ListViewItem(parent), mIndex(index)
 {
 }
 
@@ -53,7 +53,7 @@ void KUserViewItem::paintCell( QPainter *p, const QColorGroup &cg,
     if ( kug->getUsers()->at(mIndex).getDisabled() )
         _cg.setColor( QColorGroup::Text, KGlobalSettings::visitedLinkColor() );
 
-    KListViewItem::paintCell( p, _cg, column, width, alignment );
+    K3ListViewItem::paintCell( p, _cg, column, width, alignment );
 
     _cg.setColor( QColorGroup::Text, c );
 }
@@ -83,7 +83,7 @@ QString KUserViewItem::text(int num) const
 }
 
 KUserView::KUserView(QWidget *parent, const char *name)
-  : KListView( parent )
+  : K3ListView( parent )
 {
   setSelectionMode( Q3ListView::Extended );
 }
@@ -94,7 +94,7 @@ KUserView::~KUserView()
 
 void KUserView::insertItem(int index) {
   KUserViewItem *userItem = new KUserViewItem(this, index);
-  KListView::insertItem(userItem);
+  K3ListView::insertItem(userItem);
 }
 
 void KUserView::removeItem(int index) {

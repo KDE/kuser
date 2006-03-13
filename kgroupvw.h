@@ -23,14 +23,14 @@
 
 #include <qwidget.h>
 
-#include <klistview.h>
+#include <k3listview.h>
 
 #include "ku_group.h"
 
-class KGroupViewItem : public KListViewItem
+class KGroupViewItem : public K3ListViewItem
 {
 public:
-  KGroupViewItem(KListView *parent, int index);
+  KGroupViewItem(K3ListView *parent, int index);
   int index() { return mIndex; }
 private:
   virtual QString text ( int ) const;
@@ -39,7 +39,7 @@ private:
   int mIndex;
 };
 
-class KGroupView : public KListView
+class KGroupView : public K3ListView
 {
     Q_OBJECT
 

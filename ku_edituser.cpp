@@ -231,7 +231,7 @@ void KU_EditUser::initDlg()
     row++;
 
     if ( kug->getUsers()->getCaps() & KU_Users::Cap_Shadow ) {
-      layout->addWidget( new QLabel( "POSIX parameters:", frame ), row++, 0 );
+      layout->addWidget( new QLabel( i18n("POSIX parameters:"), frame ), row++, 0 );
       lesmin = addDaysGroup(frame, layout, row++, i18n("Time before password may &not be changed after last password change:"), false);
       lesmax = addDaysGroup(frame, layout, row++, i18n("Time when password &expires after last password change:") );
       leswarn = addDaysGroup(frame, layout, row++, i18n("Time before password expires to &issue an expire warning:"));

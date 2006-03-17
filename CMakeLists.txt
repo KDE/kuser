@@ -1,5 +1,7 @@
 kde4_header()
 
+project(kuser)
+
 add_subdirectory( pic ) 
 add_subdirectory( toolbar ) 
 add_subdirectory( icon ) 

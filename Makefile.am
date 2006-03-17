@@ -10,7 +10,8 @@ kuser_LDADD	=	$(LIB_KDEUI) $(LIBCRYPT) $(LIBSHADOW) $(LIBGEN) $(LIB_KABC) -lkntl
 
 kuser_SOURCES	=	\
 	ku_mainwidget.cpp ku_mainview.cpp ku_edituser.cpp ku_editgroup.cpp \
-	kuservw.cpp kgroupvw.cpp ku_deluser.cpp \
+	ku_usermodel.cpp ku_groupmodel.cpp\
+	ku_deluser.cpp \
 	ku_user.cpp ku_group.cpp ku_main.cpp \
 	ku_misc.cpp ku_pwdlg.cpp \
 	ku_adduser.cpp ku_configdlg.cpp \
@@ -25,11 +26,12 @@ kuser_METASOURCES = AUTO
 # the following are only useful, if you want to use "make dist"
 noinst_HEADERS	=	\
 	globals.h       ku_edituser.h     ku_mainview.h    ku_userfiles.h \
-	kgroupvw.h      ku_global.h       ku_mainwidget.h  ku_user.h \
+	ku_usermodel.h ku_groupmodel.h\
+	ku_global.h       ku_mainwidget.h  ku_user.h \
 	ku_adduser.h    ku_groupfiles.h   ku_misc.h        ku_userldap.h \
 	ku_configdlg.h  ku_group.h        ku_pwdlg.h       ku_usersystem.h \
 	ku_deluser.h    ku_groupldap.h    ku_selectconn.h  sha1.h \
-	ku_editgroup.h  ku_groupsystem.h  kuservw.h        sid.h \
+	ku_editgroup.h  ku_groupsystem.h  sid.h \
 
 kde_kcfg_DATA = kuser.kcfg
 

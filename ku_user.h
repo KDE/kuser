@@ -208,6 +208,7 @@ public:
   void del( int index );
   void mod( int index, const KU_User &newuser );
   void commit();
+
   void cancelMods();
 
   enum {

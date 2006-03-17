@@ -23,12 +23,14 @@
 
 #include <stdlib.h>
 
-#include <QTabWidget>
+#include <QTreeView>
 
-#include "kuservw.h"
-#include "kgroupvw.h"
+#include <ktabwidget.h>
 
-class KU_MainView : public QTabWidget {
+#include "ku_usermodel.h"
+#include "ku_groupmodel.h"
+
+class KU_MainView : public KTabWidget {
 Q_OBJECT
 public:
   KU_MainView(QWidget *parent = 0);
@@ -68,8 +70,15 @@ protected:
   bool updateUsers();
   bool updateGroups();
 
-  KUserView *lbusers;
-  KGroupView *lbgroups;
+  QTreeView *userview;
+  QTreeView *groupview;
+  
+  KU_UserModel *usermodel;
+  KU_UserSortingProxyModel userproxymodel;
+  
+  KU_GroupModel *groupmodel;
+  KU_GroupSortingProxyModel groupproxymodel;
+
   bool mShowSys;
 
   KU_Groups *groups;

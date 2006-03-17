@@ -16,8 +16,8 @@ set(kuser_SRCS
 	ku_mainview.cpp 
 	ku_edituser.cpp 
 	ku_editgroup.cpp 
-	kuservw.cpp 
-	kgroupvw.cpp 
+	ku_usermodel.cpp 
+	ku_groupmodel.cpp 
 	ku_deluser.cpp 
 	ku_user.cpp 
 	ku_group.cpp 

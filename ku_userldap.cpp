@@ -83,6 +83,7 @@ KU_UserLDAP::~KU_UserLDAP()
 
 void KU_UserLDAP::result( KIO::Job *job )
 {
+  kDebug() << "LDAP result: " << job->error() << endl;
   mProg->hide();
   if ( job->error() ) {
     QString errstr = job->errorString();
@@ -106,7 +107,7 @@ void KU_UserLDAP::data( KIO::Job *, const QByteArray& data )
     mParser.endLDIF();
   }
 
-  KABC::LDIF::ParseVal ret;
+  KABC::LDIF::ParseValue ret;
   QString name, val;
   QByteArray value;
   do {
@@ -114,7 +115,7 @@ void KU_UserLDAP::data( KIO::Job *, const QByteArray& data )
     switch ( ret ) {
       case KABC::LDIF::Item:
         name = mParser.attr().toLower();
-        value = mParser.val();
+        value = mParser.value();
         val = QString::fromUtf8( value, value.size() );
         if ( name == "objectclass" ) {
           if ( val.toLower() == "posixaccount" )
@@ -594,7 +595,7 @@ QByteArray KU_UserLDAP::getLDIF( const KU_User &user, int oldindex ) const
     }
   }
   ldif += "\n";
-//  kDebug() << "ldif: " << ldif << endl;
+  kDebug() << "ldif: " << QString::fromUtf8(ldif) << endl;
   return ldif;
 }
 

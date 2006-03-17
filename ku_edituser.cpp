@@ -723,7 +723,7 @@ void KU_EditUser::mergeUser( const KU_User &user, KU_User &newuser )
   posix = newuser.getCaps() & KU_User::Cap_POSIX;
   kDebug() << "posix: " << posix << endl;
   if ( one ) {
-//    newuser->setName( leuser->text() );
+    newuser.setName( lbuser->text() );
     newuser.setUID( posix ? leid->text().toInt() : 0 );
   }
   if ( !newpass.isNull() ) {
@@ -795,6 +795,7 @@ void KU_EditUser::mergeUser( const KU_User &user, KU_User &newuser )
   if ( kug->getUsers()->getCaps() & KU_Users::Cap_InetOrg ) {
     newuser.setSurname( mergeLE( lesurname, user.getSurname(), one ) );
     newuser.setEmail( mergeLE( lemail, user.getEmail(), one ) );
+    kDebug() << "surname: " << newuser.getSurname() << " mail: " << newuser.getEmail() << endl;
   }
 
   if ( kug->getUsers()->getCaps() & KU_Users::Cap_Shadow ) {

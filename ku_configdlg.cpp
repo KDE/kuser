@@ -166,7 +166,7 @@ void KU_ConfigDlg::slotQueryClicked()
 
 void KU_ConfigDlg::loadData( KIO::Job*, const QByteArray& d )
 {
-  KABC::LDIF::ParseVal ret;
+  KABC::LDIF::ParseValue ret;
 
   if ( d.size() ) {
     mLdif.setLDIF( d );
@@ -178,11 +178,11 @@ void KU_ConfigDlg::loadData( KIO::Job*, const QByteArray& d )
     switch ( ret ) {
       case KABC::LDIF::Item:
         if ( mLdif.attr() == "sambaDomainName" ) 
-          mDomain.name = QString::fromUtf8( mLdif.val(), mLdif.val().size() );
+          mDomain.name = QString::fromUtf8( mLdif.value(), mLdif.value().size() );
         else if ( mLdif.attr() == "sambaSID" ) 
-          mDomain.sid = QString::fromUtf8( mLdif.val(), mLdif.val().size() );
+          mDomain.sid = QString::fromUtf8( mLdif.value(), mLdif.value().size() );
         else if ( mLdif.attr() == "sambaAlgorithmicRidBase" )
-          mDomain.ridbase = QString::fromUtf8( mLdif.val(), mLdif.val().size() ).toUInt();
+          mDomain.ridbase = QString::fromUtf8( mLdif.value(), mLdif.value().size() ).toUInt();
         break;
       case KABC::LDIF::EndEntry:
         mProg->setValue( 1 );

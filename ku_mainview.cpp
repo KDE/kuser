@@ -21,6 +21,8 @@
 
 #include <stdio.h>
 
+#include <QHeaderView>
+
 #include <kinputdialog.h>
 #include <ktoolbar.h>
 #include <kiconloader.h>
@@ -38,26 +40,32 @@
 
 #include "ku_mainview.h"
 
-KU_MainView::KU_MainView(QWidget *parent) : QTabWidget(parent)
+KU_MainView::KU_MainView(QWidget *parent) : KTabWidget(parent)
 {
   init();
 }
 
 void KU_MainView::init() {
 
+  users = 0;
   groups = 0;
+  usermodel = 0;
+  groupmodel = 0;
 
-  lbusers = new KUserView( this, "lbusers" );
-  addTab( lbusers, i18n("Users") );
+  userview = new QTreeView( 0 );
+  userview->setSelectionMode( QAbstractItemView::ExtendedSelection );
+  userview->header()->setClickable( true );
+  userview->header()->setSortIndicatorShown( true );
+  addTab( userview, i18n("Users") );
 
-  lbgroups = new KGroupView( this, "lbgroups" );
-  addTab( lbgroups, i18n("Groups"));
+  groupview = new QTreeView( 0 );
+  groupview->setSelectionMode( QAbstractItemView::ExtendedSelection );
+  groupview->header()->setClickable( true );
+  groupview->header()->setSortIndicatorShown( true );
+  addTab( groupview, i18n("Groups") );
 
-  connect(lbusers, SIGNAL(doubleClicked(Q3ListViewItem *)), this, SLOT(userSelected()));
-  connect(lbusers, SIGNAL(returnPressed(Q3ListViewItem *)), this, SLOT(userSelected()));
-
-  connect(lbgroups, SIGNAL(doubleClicked(Q3ListViewItem *)), this, SLOT(groupSelected()));
-  connect(lbgroups, SIGNAL(returnPressed(Q3ListViewItem *)), this, SLOT(groupSelected()));
+  connect(userview, SIGNAL(activated(const QModelIndex&)), this, SLOT(userSelected()));
+  connect(groupview, SIGNAL(activated(const QModelIndex&)), this, SLOT(groupSelected()));
 
   connect(this, SIGNAL(currentChanged(QWidget *)), this, SLOT(slotTabChanged()));
 }
@@ -68,7 +76,7 @@ KU_MainView::~KU_MainView()
 
 void KU_MainView::slotTabChanged()
 {
-  if (currentPage() == lbusers)
+  if (currentPage() == userview)
   {
      emit userSelected(true);
      emit groupSelected(false);
@@ -82,40 +90,38 @@ void KU_MainView::slotTabChanged()
 
 void KU_MainView::clearUsers()
 {
-  lbusers->clear();
+//  lbusers->clear();
 }
 
 void KU_MainView::clearGroups()
 {
-  lbgroups->clear();
+//  lbgroups->clear();
 }
 
 void KU_MainView::reloadUsers()
 {
   users = kug->getUsers();
-
-  lbusers->clear();
-  lbusers->init();
-  uid_t uid = kug->kcfg()->firstUID();
-
-  for (int i = 0; i<users->count(); i++) {
-    if ( users->at(i).getUID() >= uid || mShowSys ) lbusers->insertItem(i);
+  if ( usermodel == 0 ) {
+    usermodel = new KU_UserModel;
+    userproxymodel.setSourceModel( usermodel );
+    userview->setModel( &userproxymodel );
   }
-  if (lbusers->firstChild())
-    lbusers->setSelected(lbusers->firstChild(), true);
+  usermodel->init();
+  userview->sortByColumn( 0 );
+  userview->sortByColumn( 0 );
 }
 
 void KU_MainView::reloadGroups()
 {
   groups = kug->getGroups();
-
-  lbgroups->clear();
-  lbgroups->init();
-  gid_t gid = kug->kcfg()->firstGID();
-
-  for (int i = 0; i<groups->count(); i++) {
-    if ( groups->at(i).getGID() >= gid || mShowSys ) lbgroups->insertItem(i);
+  if ( groupmodel == 0 ) {
+    groupmodel = new KU_GroupModel;
+    groupproxymodel.setSourceModel( groupmodel );
+    groupview->setModel( &groupproxymodel );
   }
+  groupmodel->init();
+  groupview->sortByColumn( 0 );
+  groupview->sortByColumn( 0 );
 }
 
 bool KU_MainView::queryClose()
@@ -125,7 +131,9 @@ bool KU_MainView::queryClose()
 
 void KU_MainView::setpwd()
 {
-  int count = lbusers->selectedItems().count();
+  QModelIndexList selectedindexes = userview->selectionModel()->selectedIndexes();
+  int count = selectedindexes.count();
+
   if ( count == 0 ) return;
   if ( count > 1 ) {
     if ( KMessageBox::questionYesNo( 0,
@@ -136,20 +144,15 @@ void KU_MainView::setpwd()
   if ( d.exec() != QDialog::Accepted ) return;
 
   KU_User user;
-  Q3ListViewItem *item;
   int index;
 
-  item = lbusers->firstChild();
-  while ( item ) {
-    if ( item->isSelected() ) {
-      index = ((KUserViewItem*) item)->index();
-      user = users->at( index );
-      users->createPassword( user, d.getPassword() );
-      user.setLastChange( now() );
-      user.setDisabled( false );
-      users->mod( index, user );
-    }
-    item = item->nextSibling();
+  foreach( QModelIndex selectedindex, selectedindexes ) {
+    index = userproxymodel.mapToSource(selectedindex).row();
+    user = users->at( index );
+    users->createPassword( user, d.getPassword() );
+    user.setLastChange( now() );
+    user.setDisabled( false );
+    users->mod( index, user );
   }
   updateUsers();
 }
@@ -168,7 +171,7 @@ void KU_MainView::useradd()
 {
   KU_User user;
 
-  showPage(lbusers);
+  showPage(userview);
 
   uid_t uid, rid = 0;
   bool samba = users->getCaps() & KU_Users::Cap_Samba;
@@ -237,6 +240,8 @@ void KU_MainView::useradd()
   if ( au.exec() == QDialog::Rejected ) {
     return;
   }
+  user = au.getNewUser();
+  kDebug() << " surname: " << user.getSurname() << endl;
   if ( privgroup ) {
     KU_Group group;
     int index;
@@ -285,15 +290,11 @@ void KU_MainView::useradd()
 
 void KU_MainView::useredit()
 {
-  Q3ListViewItem *item;
   QList<int> selected;
+  QModelIndexList selectedindexes = userview->selectionModel()->selectedIndexes();
 
-  item = lbusers->firstChild();
-  while ( item ) {
-    if ( item->isSelected() ) {
-      selected.append( ((KUserViewItem*) item)->index() );
-    }
-    item = item->nextSibling();
+  foreach( QModelIndex selectedindex, selectedindexes ) {
+    selected.append( userproxymodel.mapToSource(selectedindex).row() );
   }
   if ( selected.isEmpty() ) return;
 
@@ -311,9 +312,11 @@ void KU_MainView::useredit()
 
 void KU_MainView::userdel()
 {
-  int index = lbusers->getCurrentIndex();
-  if ( index == -1 )
-    return;
+  QModelIndex currentindex = userview->selectionModel()->currentIndex();
+  if ( !currentindex.isValid() ) return;
+
+  int index = userproxymodel.mapToSource(currentindex).row();
+  kDebug() << "selected index: " << index << endl;
 
   KU_User user = users->at(index);
   QString username = user.getName();
@@ -359,7 +362,7 @@ void KU_MainView::userdel()
 
 void KU_MainView::grpadd()
 {
-  showPage(lbgroups);
+  showPage(groupview);
 
   gid_t gid;
 
@@ -395,8 +398,12 @@ void KU_MainView::grpadd()
 
 void KU_MainView::grpedit()
 {
-  int index = lbgroups->getCurrentIndex();
-  if ( index == -1 ) return;
+  QModelIndex currentindex = groupview->selectionModel()->currentIndex();
+  if ( !currentindex.isValid() ) return;
+
+  int index = groupproxymodel.mapToSource(currentindex).row();
+  kDebug() << "selected index: " << index << endl;
+
   KU_Group group = groups->at(index);
 
   kDebug() << "The SID for group " << group.getName() << " is: '" << group.getSID().getSID() << "'" << endl;
@@ -420,6 +427,7 @@ void KU_MainView::grpedit()
 
 void KU_MainView::grpdel()
 {
+/*
   Q3ListViewItem *item;
   KU_Group group;
   int selected = 0, index;
@@ -465,6 +473,7 @@ void KU_MainView::grpdel()
     item = item->nextSibling();
   }
   updateGroups();
+*/
 }
 
 bool KU_MainView::updateUsers()
@@ -473,16 +482,10 @@ bool KU_MainView::updateUsers()
   kDebug() << "updateUsers() " << endl;
   ret = users->dbcommit();
 
-  for ( KU_Users::DelList::Iterator it = users->mDelSucc.begin() ;
-      it != users->mDelSucc.end(); ++it ) {
-    lbusers->removeItem(*it);
-  }
-  kDebug() << "commit users" << endl;
-  users->commit();
-  for ( KU_Users::AddList::Iterator it = users->mAddSucc.begin() ;
-      it != users->mAddSucc.end(); ++it ) {
-    lbusers->insertItem(users->indexOf(*it));
-  }
+  usermodel->commitMod();
+  usermodel->commitDel();
+  usermodel->commitAdd();
+  users->cancelMods();
 
   return ret;
 }
@@ -493,16 +496,10 @@ bool KU_MainView::updateGroups()
   kDebug() << "updateGroups() " << endl;
   ret = groups->dbcommit();
 
-  for ( KU_Groups::DelList::Iterator it = groups->mDelSucc.begin() ;
-      it != groups->mDelSucc.end(); ++it ) {
-    lbgroups->removeItem(*it);
-  }
-  kDebug() << "commit groups" << endl;
-  groups->commit();
-  for ( KU_Groups::AddList::Iterator it = groups->mAddSucc.begin() ;
-      it != groups->mAddSucc.end(); ++it ) {
-    lbgroups->insertItem(groups->indexOf(*it));
-  }
+  groupmodel->commitMod();
+  groupmodel->commitDel();
+  groupmodel->commitAdd();
+  groups->cancelMods();
 
   return ret;
 }

@@ -106,7 +106,7 @@ void KU_GroupLDAP::data( KIO::Job*, const QByteArray& data )
     mParser.endLDIF();
   }
 
-  KABC::LDIF::ParseVal ret;
+  KABC::LDIF::ParseValue ret;
   QString name, val;
   QByteArray value;
   do {
@@ -114,7 +114,7 @@ void KU_GroupLDAP::data( KIO::Job*, const QByteArray& data )
     switch ( ret ) {
       case KABC::LDIF::Item:
         name = mParser.attr().toLower();
-        value = mParser.val();
+        value = mParser.value();
         val = QString::fromUtf8( value, value.size() );
         if ( name == "objectclass" ) {
           if ( val.toLower() == "sambagroupmapping" ) 

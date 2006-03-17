@@ -64,7 +64,6 @@ void KU_AddUser::slotOk()
   if ( !check() ) return;
 
   mergeUser( mNewUser, mNewUser );
-
   if ( ( mNewUser.getCaps() & KU_User::Cap_POSIX ) &&
     kug->getUsers()->lookup( mNewUser.getUID() ) != -1 ) {
     KMessageBox::sorry( 0, i18n("User with UID %1 already exists.").arg( mNewUser.getUID() ) );
@@ -97,6 +96,7 @@ void KU_AddUser::slotOk()
 
   saveg();
   accept();
+  kDebug() << "slotOk name: " << mNewUser.getName() << endl;
 }
 
 bool KU_AddUser::checkHome()

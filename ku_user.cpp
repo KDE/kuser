@@ -527,15 +527,15 @@ void KU_Users::mod(int index, const KU_User &newuser)
 void KU_Users::commit()
 {
   kDebug() << "KU_Users::commit()" << endl;
-
+  
   for ( ModList::Iterator it = mModSucc.begin(); it != mModSucc.end(); ++it ) {
-    replace(it.key(),*it);
+      replace(it.key(),*it);
   }
   for ( AddList::Iterator it = mAddSucc.begin(); it != mAddSucc.end(); ++it ) {
-    append(*it);
+      append(*it);
   }
   for ( DelList::Iterator it = mDelSucc.begin(); it != mDelSucc.end(); ++it ) {
-    removeAt(*it);
+      removeAt(*it);
   }
   cancelMods();
 }
@@ -545,4 +545,7 @@ void KU_Users::cancelMods()
   mAdd.clear();
   mDel.clear();
   mMod.clear();
+  mAddSucc.clear();
+  mDelSucc.clear();
+  mModSucc.clear();
 }

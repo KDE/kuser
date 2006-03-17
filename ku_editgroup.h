@@ -27,7 +27,6 @@
 #include <QTreeWidget>
 
 #include <kdialog.h>
-#include <k3listview.h>
 #include <kcombobox.h>
 #include <klineedit.h>
 

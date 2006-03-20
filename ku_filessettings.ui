@@ -102,73 +102,6 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox_2" >
-     <property name="title" >
-      <string>GroupBox</string>
-     </property>
-     <layout class="QGridLayout" >
-      <property name="margin" >
-       <number>9</number>
-      </property>
-      <property name="spacing" >
-       <number>6</number>
-      </property>
-      <item row="3" column="1" >
-       <widget class="KLineEdit" name="kcfg_nismingid" />
-      </item>
-      <item row="3" column="0" >
-       <widget class="QLabel" name="textLabel6_4" >
-        <property name="text" >
-         <string>NIS minimum GID:</string>
-        </property>
-        <property name="buddy" >
-         <cstring>kcfg_nismingid</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1" >
-       <widget class="KLineEdit" name="kcfg_nisminuid" />
-      </item>
-      <item row="2" column="0" >
-       <widget class="QLabel" name="textLabel5_4" >
-        <property name="text" >
-         <string>NIS minimum UID:</string>
-        </property>
-        <property name="buddy" >
-         <cstring>kcfg_nisminuid</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0" >
-       <widget class="QLabel" name="textLabel4_4" >
-        <property name="text" >
-         <string>NIS group source:</string>
-        </property>
-        <property name="buddy" >
-         <cstring>kcfg_nisgroupsrc</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1" >
-       <widget class="KLineEdit" name="kcfg_nisgroupsrc" />
-      </item>
-      <item row="0" column="1" >
-       <widget class="KLineEdit" name="kcfg_nispasswdsrc" />
-      </item>
-      <item row="0" column="0" >
-       <widget class="QLabel" name="textLabel3_4" >
-        <property name="text" >
-         <string>NIS password source:</string>
-        </property>
-        <property name="buddy" >
-         <cstring>kcfg_nispasswdsrc</cstring>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
     <spacer>
      <property name="orientation" >
       <enum>Qt::Vertical</enum>
@@ -200,10 +133,6 @@
   <tabstop>kcfg_shadowsrc</tabstop>
   <tabstop>kcfg_gshadowsrc</tabstop>
   <tabstop>kcfg_md5shadow</tabstop>
-  <tabstop>kcfg_nispasswdsrc</tabstop>
-  <tabstop>kcfg_nisgroupsrc</tabstop>
-  <tabstop>kcfg_nisminuid</tabstop>
-  <tabstop>kcfg_nismingid</tabstop>
  </tabstops>
  <resources/>
  <connections/>

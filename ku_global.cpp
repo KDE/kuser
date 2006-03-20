@@ -19,6 +19,7 @@
  **/
 
 #include <kglobal.h>
+#include <kmessagebox.h>
 
 #include "ku_global.h"
 #include "ku_userfiles.h"
@@ -47,6 +48,22 @@ void KU_Global::initCfg( const QString &connection )
   cfg->readConfig();
 }
 
+void KU_Global::displayUsersError()
+{
+  if ( users->errorDetails().isEmpty() )
+    KMessageBox::error( 0, users->errorString() );
+  else
+    KMessageBox::detailedError( 0, users->errorString(), users->errorDetails() );
+}
+
+void KU_Global::displayGroupsError()
+{
+  if ( groups->errorDetails().isEmpty() )
+    KMessageBox::error( 0, groups->errorString() );
+  else
+    KMessageBox::detailedError( 0, groups->errorString(), groups->errorDetails() );
+}
+
 void KU_Global::init()
 {
   if ( users ) delete users;
@@ -67,6 +84,8 @@ void KU_Global::init()
       groups = new KU_GroupSystem( cfg );
       break;
   }
+  if ( !users->reload() ) displayUsersError();
+  if ( !groups->reload() ) displayGroupsError();
 }
 
 KU_Global::~KU_Global()

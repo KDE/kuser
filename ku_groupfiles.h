@@ -38,7 +38,6 @@ public:
 
 private:
   int gr_backuped;
-  int gn_backuped;
   int gs_backuped;
 
   int mode, smode;

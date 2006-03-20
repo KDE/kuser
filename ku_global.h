@@ -30,6 +30,8 @@ public:
   ~KU_Global();
   void init();
   void initCfg( const QString &connection );
+  void displayUsersError();
+  void displayGroupsError();
 
   KU_PrefsBase *kcfg() { return cfg; }
   KU_Users *getUsers();

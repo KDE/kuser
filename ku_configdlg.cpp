@@ -43,14 +43,12 @@ KU_ConfigDlg::KU_ConfigDlg( KConfigSkeleton *config, QWidget *parent, const char
   Default|Ok|Apply|Cancel|Help, Ok, true )
 {
   KTabWidget *page1 = new KTabWidget( this );
-  page1->setMargin( KDialog::marginHint() );
-
   {
     QFrame *page1a = new QFrame ( 0 );
     Ui::KU_GeneralSettings *ui = new Ui::KU_GeneralSettings();
     ui->setupUi( page1a );
-    ui->kcfg_shell->insertItem( i18n("<Empty>" ) );
-    ui->kcfg_shell->insertStringList( readShells() );
+    ui->kcfg_shell->addItem( i18n("<Empty>" ) );
+    ui->kcfg_shell->addItems( readShells() );
     page1->addTab( page1a, i18n("Connection") );
   }
   {
@@ -69,7 +67,6 @@ KU_ConfigDlg::KU_ConfigDlg( KConfigSkeleton *config, QWidget *parent, const char
   }
 
   KTabWidget *page3 = new KTabWidget( this );
-  page3->setMargin( KDialog::marginHint() );
 
   ldconf =
     new KABC::LdapConfigWidget(

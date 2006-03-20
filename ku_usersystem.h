@@ -38,4 +38,3 @@ private:
   bool loadsdw();
 };
 #endif // _KU_USERSYSTEM_H_
-

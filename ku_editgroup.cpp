@@ -1,4 +1,4 @@
-/*OB
+/*
  *  Copyright (c) 1998 Denis Perchine <dyp@perchine.com>
  *  Copyright (c) 2004 Szombathelyi György <gyurco@freemail.hu>
  *  Former maintainer: Adriaan de Groot <groot@kde.org>
@@ -47,7 +47,10 @@ KU_EditGroup::KU_EditGroup(const KU_Group &group, bool add,
   rid.rid = 514; rid.name = i18n("Domain Guests"); rid.desc = i18n("Guests"); mRids.append( rid );
 
   QFrame *page = new QFrame( this );
-  QGridLayout *layout = new QGridLayout( page, 10, 3, marginHint(), spacingHint() );
+  QGridLayout *layout = new QGridLayout( page );
+  layout->setSpacing( spacingHint() );
+  layout->setMargin( marginHint() );
+  
   QLabel *lb;
   setMainWidget( page );
 
@@ -63,7 +66,7 @@ KU_EditGroup::KU_EditGroup(const KU_Group &group, bool add,
   legid->setReadOnly( ro );
   lb->setBuddy( legid );
   layout->addWidget( lb, 0, 0 );
-  layout->addMultiCellWidget( legid, 0, 0, 1, 2 );
+  layout->addWidget( legid, 0, 1, 1, 2 );
 
   if ( mSamba ) {
     lb = new QLabel( page );
@@ -72,16 +75,16 @@ KU_EditGroup::KU_EditGroup(const KU_Group &group, bool add,
     lerid->setEditable( !ro );
     QList<RID>::Iterator it;
     for ( it = mRids.begin(); it != mRids.end(); ++it ) {
-      lerid->insertItem( QString::number( (*it).rid ) + " - " + (*it).name );
+      lerid->addItem( QString::number( (*it).rid ) + " - " + (*it).name );
     }
 
-    lerid->setCurrentText( QString::number( sid.getRID() ) );
+    lerid->lineEdit()->setText( QString::number( sid.getRID() ) );
     lerid->setValidator (new QIntValidator(this) );
     lerid->setEnabled( mAdd );
     connect( lerid, SIGNAL(activated(int)), SLOT(ridSelected(int)) );
     lb->setBuddy( lerid );
     layout->addWidget( lb, 1, 0 );
-    layout->addMultiCellWidget( lerid, 1, 1, 1, 2 );
+    layout->addWidget( lerid, 1, 1, 1, 2 );
   }
 
   lb = new QLabel( page );
@@ -95,7 +98,7 @@ KU_EditGroup::KU_EditGroup(const KU_Group &group, bool add,
   legrpname->setFocus();
   lb->setBuddy( legrpname );
   layout->addWidget( lb, 2, 0 );
-  layout->addMultiCellWidget( legrpname, 2, 2, 1, 2 );
+  layout->addWidget( legrpname, 2, 1, 1, 2 );
 
   if ( mSamba ) {
     lb = new QLabel( page );
@@ -105,7 +108,7 @@ KU_EditGroup::KU_EditGroup(const KU_Group &group, bool add,
     ledesc->setReadOnly( ro );
     lb->setBuddy( ledesc );
     layout->addWidget( lb, 3, 0 );
-    layout->addMultiCellWidget( ledesc, 3, 3, 1, 2 );
+    layout->addWidget( ledesc, 3, 1, 1, 2 );
 
     lb = new QLabel( page );
     lb->setText(i18n("Display name:"));
@@ -114,28 +117,28 @@ KU_EditGroup::KU_EditGroup(const KU_Group &group, bool add,
     ledispname->setReadOnly( ro );
     lb->setBuddy( ledispname );
     layout->addWidget( lb, 4, 0 );
-    layout->addMultiCellWidget( ledispname, 4, 4, 1, 2 );
+    layout->addWidget( ledispname, 4, 1, 1, 2 );
 
     lb = new QLabel( page );
     lb->setText(i18n("Type:"));
     letype = new KComboBox( page );
-    letype->insertItem( i18n("Domain") );
-    letype->insertItem( i18n("Local") );
-    letype->insertItem( i18n("Builtin") );
+    letype->addItem( i18n("Domain") );
+    letype->addItem( i18n("Local") );
+    letype->addItem( i18n("Builtin") );
     switch ( group.getType() ) {
       case 2:
-        letype->setCurrentItem( 0 );
+        letype->setCurrentIndex( 0 );
         break;
       case 4:
-        letype->setCurrentItem( 1 );
+        letype->setCurrentIndex( 1 );
         break;
       case 5:
-        letype->setCurrentItem( 2 );
+        letype->setCurrentIndex( 2 );
         break;
     }
     lb->setBuddy( letype );
     layout->addWidget( lb, 5, 0 );
-    layout->addMultiCellWidget( letype, 5, 5, 1, 2 );
+    layout->addWidget( letype, 5, 1, 1, 2 );
 
     lb = new QLabel( page );
     lb->setText(i18n("Domain SID:"));
@@ -144,10 +147,10 @@ KU_EditGroup::KU_EditGroup(const KU_Group &group, bool add,
     ledomsid->setReadOnly( ro );
     lb->setBuddy( ledomsid );
     layout->addWidget( lb, 6, 0 );
-    layout->addMultiCellWidget( ledomsid, 6, 6, 1, 2 );
+    layout->addWidget( ledomsid, 6, 1, 1, 2 );
 
     cbsamba = new QCheckBox( i18n("Disable Samba group information"), page );
-    layout->addMultiCellWidget( cbsamba, 7, 7, 0, 2 );
+    layout->addWidget( cbsamba, 7, 0, 1, 3 );
     connect( cbsamba, SIGNAL(toggled(bool)), ledesc, SLOT(setDisabled(bool)) );
     connect( cbsamba, SIGNAL(toggled(bool)), ledispname, SLOT(setDisabled(bool)) );
     connect( cbsamba, SIGNAL(toggled(bool)), letype, SLOT(setDisabled(bool)) );
@@ -219,7 +222,7 @@ KU_EditGroup::~KU_EditGroup()
 
 void KU_EditGroup::ridSelected( int index )
 {
-  lerid->setCurrentText( QString::number( mRids[ index ].rid ) );
+  lerid->lineEdit()->setText( QString::number( mRids[ index ].rid ) );
   legrpname->setText( mRids[ index ].name );
   ledesc->setText( mRids[ index ].desc );
   ledispname->setText( mRids[ index ].name );
@@ -300,7 +303,7 @@ void KU_EditGroup::accept()
   if ( mSamba && !cbsamba->isChecked() ) {
     mGroup.setCaps ( KU_Group::Cap_Samba );
     mGroup.setSID( sid );
-    switch ( letype->currentItem() ) {
+    switch ( letype->currentIndex() ) {
       case 0:
         mGroup.setType( 2 );
         break;

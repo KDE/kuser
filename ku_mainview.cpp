@@ -76,7 +76,7 @@ KU_MainView::~KU_MainView()
 
 void KU_MainView::slotTabChanged()
 {
-  if (currentPage() == userview)
+  if (currentWidget() == userview)
   {
      emit userSelected(true);
      emit groupSelected(false);
@@ -132,8 +132,8 @@ bool KU_MainView::queryClose()
 void KU_MainView::setpwd()
 {
   QModelIndexList selectedindexes = userview->selectionModel()->selectedIndexes();
-  int count = selectedindexes.count();
-
+  int count = selectedindexes.count() / usermodel->columnCount();
+  
   if ( count == 0 ) return;
   if ( count > 1 ) {
     if ( KMessageBox::questionYesNo( 0,
@@ -147,6 +147,7 @@ void KU_MainView::setpwd()
   int index;
 
   foreach( QModelIndex selectedindex, selectedindexes ) {
+    if ( selectedindex.row() != 0 ) continue;
     index = userproxymodel.mapToSource(selectedindex).row();
     user = users->at( index );
     users->createPassword( user, d.getPassword() );
@@ -171,7 +172,7 @@ void KU_MainView::useradd()
 {
   KU_User user;
 
-  showPage(userview);
+  setCurrentIndex(0);
 
   uid_t uid, rid = 0;
   bool samba = users->getCaps() & KU_Users::Cap_Samba;
@@ -294,7 +295,8 @@ void KU_MainView::useredit()
   QModelIndexList selectedindexes = userview->selectionModel()->selectedIndexes();
 
   foreach( QModelIndex selectedindex, selectedindexes ) {
-    selected.append( userproxymodel.mapToSource(selectedindex).row() );
+    if ( selectedindex.column() == 0 ) 
+      selected.append( userproxymodel.mapToSource(selectedindex).row() );
   }
   if ( selected.isEmpty() ) return;
 
@@ -362,7 +364,7 @@ void KU_MainView::userdel()
 
 void KU_MainView::grpadd()
 {
-  showPage(groupview);
+  setCurrentIndex(1);
 
   gid_t gid;
 
@@ -427,53 +429,45 @@ void KU_MainView::grpedit()
 
 void KU_MainView::grpdel()
 {
-/*
-  Q3ListViewItem *item;
+  QList<int> selected;
+  QModelIndexList selectedindexes = groupview->selectionModel()->selectedIndexes();
+
+  foreach( QModelIndex selectedindex, selectedindexes ) {
+    if ( selectedindex.column() == 0 ) 
+      selected.append( groupproxymodel.mapToSource(selectedindex).row() );
+  }
+  if ( selected.isEmpty() ) return;
+
   KU_Group group;
-  int selected = 0, index;
+  int index;
 
-  item = lbgroups->firstChild();
-  while ( item ) {
-    if ( item->isSelected() ) {
+  for ( index = 0; index < selected.count(); index++ ) {
+    group = groups->at( selected.at( index ) );
 
-      selected++;
-      group = groups->at(((KGroupViewItem*) item)->index());
-
-      KU_Users::const_iterator it = users->constBegin();
-      while ( it != users->constEnd() ) {
-        if ( it->getGID() == group.getGID() ) {
-          KMessageBox::error( 0, i18n( "The group '%1' is the primary group of one or more users (such as '%2'); it cannot be deleted." ).arg( group.getName() ).arg( it->getName() ) );
-          return;
-        }
-        ++it;
+    KU_Users::const_iterator it = users->constBegin();
+    while ( it != users->constEnd() ) {
+      if ( it->getGID() == group.getGID() ) {
+        KMessageBox::error( 0, i18n( "The group '%1' is the primary group of one or more users (such as '%2'); it cannot be deleted." ).arg( group.getName() ).arg( it->getName() ) );
+        return;
       }
+      ++it;
     }
-    item = item->nextSibling();
   }
 
-  switch ( selected ) {
-    case 0: return;
-    case 1:
+  if ( selected.count() == 1 ) {
       if (KMessageBox::warningContinueCancel( 0,
         i18n("Do you really want to delete the group '%1'?").arg(group.getName()),
         QString::null, KStdGuiItem::del()) != KMessageBox::Continue) return;
-      break;
-    default:
+  } else {
       if (KMessageBox::warningContinueCancel( 0,
-        i18n("Do you really want to delete the %1 selected groups?").arg(selected),
+        i18n("Do you really want to delete the %1 selected groups?").arg(selected.count()),
         QString::null, KStdGuiItem::del()) != KMessageBox::Continue) return;
   }
 
-  item = lbgroups->firstChild();
-  while ( item ) {
-    if ( item->isSelected() ) {
-      index = ((KGroupViewItem*) item)->index();
-      groups->del( index );
-    }
-    item = item->nextSibling();
+  for ( index = 0; index < selected.count(); index++ ) {
+    groups->del( selected.at( index ) );
   }
   updateGroups();
-*/
 }
 
 bool KU_MainView::updateUsers()
@@ -481,6 +475,10 @@ bool KU_MainView::updateUsers()
   bool ret;
   kDebug() << "updateUsers() " << endl;
   ret = users->dbcommit();
+
+  if ( !ret ) {
+    kug->displayUsersError();
+  }
 
   usermodel->commitMod();
   usermodel->commitDel();
@@ -495,6 +493,10 @@ bool KU_MainView::updateGroups()
   bool ret;
   kDebug() << "updateGroups() " << endl;
   ret = groups->dbcommit();
+
+  if ( !ret ) {
+    kug->displayGroupsError();
+  }
 
   groupmodel->commitMod();
   groupmodel->commitDel();

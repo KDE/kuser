@@ -20,7 +20,6 @@
 
 #include <kdebug.h>
 #include <klocale.h>
-#include <kmessagebox.h>
 
 #include "ku_groupldap.h"
 
@@ -61,8 +60,6 @@ KU_GroupLDAP::KU_GroupLDAP( KU_PrefsBase *cfg ) : KU_Groups( cfg )
     caps |= Cap_Samba;
     domsid = mCfg->samdomsid();
   }
-
-  reload();
 }
 
 KU_GroupLDAP::~KU_GroupLDAP()
@@ -87,10 +84,10 @@ void KU_GroupLDAP::result( KIO::Job *job )
   if ( job->error() ) {
     QString errstr = job->errorString();
     if ( !errstr.isEmpty() ) {
-//      if ( ldif.isEmpty() )
-        KMessageBox::error( 0, errstr );
-//      else
-//        KMessageBox::detailedError( 0, errstr, QString::fromUtf8( ldif, ldif.size()-1 ) );
+      mErrorString =  errstr;
+//      mErrorDetails = ldif;
+    } else {
+      mErrorString = i18n("Unknown error");
     }
     mOk = false;
   } else {
@@ -155,6 +152,8 @@ void KU_GroupLDAP::data( KIO::Job*, const QByteArray& data )
 bool KU_GroupLDAP::reload()
 {
   kDebug() << "KU_GroupLDAP::reload()" << endl;
+  mErrorString = mErrorDetails = QString();
+  
   mGroup = KU_Group();
   mParser.startParsing();
 
@@ -184,6 +183,7 @@ bool KU_GroupLDAP::dbcommit()
   mDelIndex = 0;
   mModIt = mMod.begin();
   mLastOperation = None;
+  mErrorString = mErrorDetails = QString();
 
   mProg = new QProgressDialog( 0 );
   mProg->setLabel( new QLabel(i18n("LDAP Operation")) );
@@ -211,11 +211,10 @@ void KU_GroupLDAP::putData( KIO::Job*, QByteArray& data )
       mAddSucc.append( mAdd.at( mAddIndex ) );
       mAddIndex++;
       break;
-    case Del: {
+    case Del:
       mDelSucc.append( mDel.at( mDelIndex ) );
       mDelIndex++;
       break;
-    }
     default:
       break;
   }
@@ -236,8 +235,8 @@ void KU_GroupLDAP::putData( KIO::Job*, QByteArray& data )
 
 QByteArray KU_GroupLDAP::addData( const KU_Group &group ) const
 {
-  QByteArray ldif = "dn: " + getRDN( group ).utf8() + "," +
-    mUrl.dn().utf8() + "\n" + "objectclass: posixGroup\n";
+  QByteArray ldif = "dn: " + getRDN( group ).toUtf8() + "," +
+    mUrl.dn().toUtf8() + "\n" + "objectclass: posixGroup\n";
 
   ldif +=
     KABC::LDIF::assembleLine( "cn", group.getName() ) + "\n" +
@@ -260,8 +259,8 @@ QByteArray KU_GroupLDAP::addData( const KU_Group &group ) const
 
 QByteArray KU_GroupLDAP::delData( const KU_Group &group ) const
 {
-  QByteArray ldif = "dn: " + getRDN( group ).utf8() + "," +
-    mUrl.dn().utf8() + "\n" + "changetype: delete\n\n";
+  QByteArray ldif = "dn: " + getRDN( group ).toUtf8() + "," +
+    mUrl.dn().toUtf8() + "\n" + "changetype: delete\n\n";
   kDebug() << "ldif: " << ldif << endl;
   return ldif;
 }
@@ -273,13 +272,13 @@ QByteArray KU_GroupLDAP::modData( const KU_Group &group, int oldindex ) const
   QString newrdn = getRDN( group );
 
   if ( oldrdn != newrdn ) {
-    ldif = "dn: " + oldrdn.utf8() + "," + mUrl.dn().utf8() + "\n" +
+    ldif = "dn: " + oldrdn.toUtf8() + "," + mUrl.dn().toUtf8() + "\n" +
       "changetype: modrdn\n" +
-      "newrdn: " + newrdn.utf8() + "\n" +
+      "newrdn: " + newrdn.toUtf8() + "\n" +
       "deleteoldrdn: 1\n\n";      
   }
 
-  ldif += "dn: " + newrdn.utf8() + "," + mUrl.dn().utf8() + "\n" +
+  ldif += "dn: " + newrdn.toUtf8() + "," + mUrl.dn().toUtf8() + "\n" +
     "changetype: modify\n" +
     "replace: objectclass\n" +
     "objectclass: posixgroup\n";

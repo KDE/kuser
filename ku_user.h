@@ -240,6 +240,8 @@ public:
   */
   virtual bool dbcommit() = 0;
 
+  const QString &errorString() const { return mErrorString; };
+  const QString &errorDetails() const { return mErrorDetails; };
 protected:
   int caps;
   KU_PrefsBase *mCfg;
@@ -249,6 +251,7 @@ protected:
   ModList mMod;
 
   QString domsid;
+  QString mErrorString, mErrorDetails;
 
   bool doCreate( KU_User *user );
   bool doDelete( KU_User *user );

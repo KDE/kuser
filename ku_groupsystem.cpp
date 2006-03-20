@@ -22,7 +22,6 @@
 #include <grp.h>
 
 #include <kdebug.h>
-#include <kmessagebox.h>
 
 #include "ku_groupsystem.h"
 #include "ku_misc.h"
@@ -30,8 +29,6 @@
 KU_GroupSystem::KU_GroupSystem( KU_PrefsBase *cfg ) : KU_Groups( cfg )
 {
   caps = Cap_ReadOnly | Cap_Passwd;
-
-  reload();
 }
 
 KU_GroupSystem::~KU_GroupSystem()

@@ -8,6 +8,17 @@ add_subdirectory( icon )
 
 include_directories( ${CMAKE_SOURCE_DIR}/kuser ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
 
+set(KU_HOMEDIR_PERM 0700 CACHE STRING "Default home directory permissions")
+set(KU_MAILBOX_GID 0 CACHE STRING "Default GID of the created mbox file")
+set(KU_MAILBOX_PERM 0660 CACHE STRING "Default mbox file permissions")
+set(KU_HOMETEMPLATE "/home/%u" CACHE STRING "Default home directory template")
+set(KU_FIRSTUID 500 CACHE STRING "First UID of normal users")
+set(KU_FIRSTGID 500 CACHE STRING "First GID of normal users")
+set(KU_USERPRIVATEGROUP true CACHE STRING "User private groups by default")
+
+add_definitions(-DHAVE_KU_CONFIG_H=1)
+
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/ku_config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/ku_config.h )
 
 ########### next target ###############
 
@@ -46,7 +57,7 @@ kde4_automoc(${kuser_SRCS})
 
 kde4_add_executable(kuser ${kuser_SRCS})
 
-target_link_libraries(kuser  ${QT_AND_KDECORE_LIBS} )
+target_link_libraries(kuser  ${QT_AND_KDECORE_LIBS} crypt kdeui kabc kntlm)
 
 install_targets(/bin kuser )
 
@@ -55,6 +66,7 @@ install_targets(/bin kuser )
 
 install_files( ${XDG_APPS_DIR} FILES kuser.desktop )
 install_files( ${DATA_INSTALL_DIR}/kuser FILES kuserui.rc )
+install_files( ${KCFG_INSTALL_DIR} FILES kuser.kcfg )
 
 kde4_footer()
 

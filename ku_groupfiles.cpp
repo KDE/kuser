@@ -38,7 +38,6 @@
 
 #include <kdebug.h>
 #include <kstandarddirs.h>
-#include <kmessagebox.h>
 #include <klocale.h>
 
 #include "ku_groupfiles.h"
@@ -46,9 +45,8 @@
 
 KU_GroupFiles::KU_GroupFiles( KU_PrefsBase *cfg ) : KU_Groups( cfg )
 {
-  gs_backuped = FALSE;
-  gr_backuped = FALSE;
-  gn_backuped = FALSE;
+  gs_backuped = false;
+  gr_backuped = false;
 
   smode = 0400;
   mode = 0644;
@@ -56,8 +54,6 @@ KU_GroupFiles::KU_GroupFiles( KU_PrefsBase *cfg ) : KU_Groups( cfg )
   gid = 0;
 
   caps = Cap_Passwd;
-
-  reload();
 }
 
 KU_GroupFiles::~KU_GroupFiles()
@@ -69,66 +65,43 @@ bool KU_GroupFiles::reload()
   struct group *p;
   KU_Group group;
   struct stat st;
-  QString filename;
   QString group_filename;
-  QString nisgroup_filename;
   int rc = 0;
-  int group_errno = 0;
-  int nisgroup_errno = 0;
-  char processing_file = '\0';
-  #define GROUP    0x01
-  #define NISGROUP 0x02
-  #define MAXFILES 2
 
-  // Prepare to read KUser configuration
+  mErrorString = mErrorDetails = QString();
 
   group_filename = mCfg->groupsrc();
-  nisgroup_filename = mCfg->nisgroupsrc();
-  if(!group_filename.isEmpty()) {
-    processing_file = processing_file | GROUP;
-    filename.append(group_filename);
+  if(group_filename.isEmpty()) {
+    mErrorString = i18n("Groups file name not set, please check 'Settings/Files'");
+    return false;
   }
 
   // Start reading group file(s)
 
-  for(int k = 0; k < MAXFILES; k++) {
-    rc = stat(QFile::encodeName(filename), &st);
-    if(rc != 0) {
-      KMessageBox::error( 0, i18n("stat call on file %1 failed: %2\nCheck KUser settings.").
-        arg(filename).arg(QString::fromLatin1(strerror(errno))) );
-      if( (processing_file & GROUP) != 0 ) {
-        group_errno = errno;
-        if(!nisgroup_filename.isEmpty()) {
-          processing_file = processing_file & ~GROUP;
-          processing_file = processing_file | NISGROUP;
-          filename.truncate(0);
-          filename.append(nisgroup_filename);
-        }
-        continue;
-      }
-      else{
-        nisgroup_errno = errno;
-        break;
-      }
-    }
+  rc = stat(QFile::encodeName(group_filename), &st);
+  if(rc != 0) {
+    mErrorString = i18n("stat() call on file %1 failed: %2\nCheck KUser settings.").
+        arg(group_filename).arg(QString::fromLocal8Bit(strerror(errno)));
+    return false;
+  }
 
-    mode = st.st_mode;
-    uid = st.st_uid;
-    gid = st.st_gid;
+  mode = st.st_mode;
+  uid = st.st_uid;
+  gid = st.st_gid;
 
   // We are reading our configuration specified group file
 #ifdef HAVE_FGETGRENT
-    FILE *fgrp = fopen(QFile::encodeName(filename), "r");
-    QString tmp;
-    if (fgrp == NULL) {
-      KMessageBox::error( 0, i18n("Error opening %1 for reading.").arg(filename) );
-      return FALSE;
-    }
+  FILE *fgrp = fopen(QFile::encodeName(filename), "r");
+  QString tmp;
+  if (fgrp == NULL) {
+    mErrorString = i18n("Error opening %1 for reading.").arg(group_filename);
+    return false;
+  }
 
-    while ((p = fgetgrent(fgrp)) != NULL) {
+  while ((p = fgetgrent(fgrp)) != NULL) {
 #else
-    setgrent();
-    while ((p = getgrent()) != NULL) {
+  setgrent();
+  while ((p = getgrent()) != NULL) {
 #endif
       group = KU_Group();
       group.setGID(p->gr_gid);
@@ -143,34 +116,17 @@ bool KU_GroupFiles::reload()
       }
 
       append(group);
-    }
+  }
 
-    // End reading filename
+  // End reading filename
 
 #ifdef HAVE_FGETGRENT
-    fclose(fgrp);
+  fclose(fgrp);
 #else
-    endgrent();
+  endgrent();
 #endif
-    if(!nisgroup_filename.isEmpty()) {
-      if(nisgroup_filename == group_filename)
-        break;
-      processing_file = processing_file & ~GROUP;
-      processing_file = processing_file | NISGROUP;
-      filename.truncate(0);
-      filename.append(nisgroup_filename);
-    }
-    else
-      break;
 
-  }	// end of processing files, for loop
-
-  if( (group_errno == 0) && (nisgroup_errno == 0) )
-    return(TRUE);
-  if( (group_errno != 0) && (nisgroup_errno != 0) )
-    return(FALSE);
-  else
-    return(TRUE);
+  return true;
 }
 
 bool KU_GroupFiles::save()
@@ -178,18 +134,10 @@ bool KU_GroupFiles::save()
   kDebug() << "KU_GroupFiles::save() " << endl;
   FILE *group_fd = NULL;
   FILE *gshadow_fd = NULL;
-  FILE *nisgroup_fd = NULL;
-  gid_t mingid = 0;
-  int nis_groups_written = 0;
   gid_t tmp_gid = 0;
   QString tmpGe, tmpSe, tmp2;
   QString group_filename, new_group_filename;
   QString gshadow_filename, new_gshadow_filename;
-  QString nisgroup_filename, new_nisgroup_filename;
-
-  char errors_found = '\0';
-    #define NOMINGID    0x01
-    #define NONISGROUP  0x02
 
   // read KUser configuration info
 
@@ -202,58 +150,39 @@ bool KU_GroupFiles::save()
   else
       new_gshadow_filename = gshadow_filename + QString::fromLatin1(KU_CREATE_EXT);
 #endif
-  nisgroup_filename = mCfg->nisgroupsrc();
-  new_nisgroup_filename = nisgroup_filename + QString::fromLatin1(KU_CREATE_EXT);
-  if( nisgroup_filename != group_filename ) {
-    mingid = mCfg->nismingid();
-  }
 
   // Backup file(s)
 
   if(!group_filename.isEmpty()) {
     if (!gr_backuped) {
       if ( !backup(group_filename) ) return false;
-      gr_backuped = TRUE;
+      gr_backuped = true;
     }
   }
   if(!gshadow_filename.isEmpty()) {
     if (!gs_backuped) {
       if ( !backup(gshadow_filename) ) return false;
-      gs_backuped = TRUE;
-    }
-  }
-  if(!nisgroup_filename.isEmpty() && (nisgroup_filename != group_filename)) {
-    if (!gn_backuped) {
-      if ( !backup(nisgroup_filename) ) return false;
-      gn_backuped = TRUE;
+      gs_backuped = true;
     }
   }
 
   // Open file(s)
 
-  if(!group_filename.isEmpty()) {
+  if( !group_filename.isEmpty() ) {
     if((group_fd = fopen(QFile::encodeName(new_group_filename), "w")) == NULL) {
-      KMessageBox::error( 0, i18n("Error opening %1 for writing.").arg(new_group_filename) );
+      mErrorString = i18n("Error opening %1 for writing.").arg(new_group_filename);
       return false;
     }
   }
 
-  if(!gshadow_filename.isEmpty()) {
+  if( !gshadow_filename.isEmpty() ) {
     if((gshadow_fd = fopen(QFile::encodeName(new_gshadow_filename), "w")) == NULL) {
-      KMessageBox::error( 0, i18n("Error opening %1 for writing.").arg(new_gshadow_filename) );
+      mErrorString = i18n("Error opening %1 for writing.").arg(new_gshadow_filename);
       if ( group_fd ) fclose ( group_fd );
       return false;
     }
   }
 
-  if(!nisgroup_filename.isEmpty() && (nisgroup_filename != group_filename)) {
-    if((nisgroup_fd = fopen(QFile::encodeName(new_nisgroup_filename), "w")) == NULL) {
-      KMessageBox::error( 0, i18n("Error opening %1 for writing.").arg(new_nisgroup_filename) );
-      if ( group_fd ) fclose ( group_fd );
-      if ( gshadow_fd ) fclose ( gshadow_fd );
-      return false;
-    }
-  }
 /******************/
   KU_Group group;
   int groupsindex = 0, addindex = 0;
@@ -302,24 +231,8 @@ bool KU_GroupFiles::save()
     }
     tmpGe += '\n'; tmpSe += '\n';
 
-    if( (nisgroup_fd != 0) && (mingid != 0) ) {
-      if(mingid <= tmp_gid) {
-        fputs(tmpGe.local8Bit(), nisgroup_fd);
-        nis_groups_written++;
-        continue;
-      }
-    }
-
-    if( (nisgroup_fd != 0) && (mingid == 0) ) {
-      errors_found = errors_found | NOMINGID;
-    }
-
-    if( (nisgroup_fd == 0) && (mingid != 0) ) {
-      errors_found = errors_found | NONISGROUP;
-    }
-
-    fputs( tmpGe.local8Bit(), group_fd );
-    if ( gshadow_fd ) fputs( tmpSe.local8Bit(), gshadow_fd );
+    fputs( tmpGe.toLocal8Bit(), group_fd );
+    if ( gshadow_fd ) fputs( tmpSe.toLocal8Bit(), gshadow_fd );
   }
 /***********************/
   if(group_fd) {
@@ -338,32 +251,7 @@ bool KU_GroupFiles::save()
       QFile::encodeName(gshadow_filename));
   }
 
-  if(nisgroup_fd) {
-    fclose(nisgroup_fd);
-    chmod(QFile::encodeName(nisgroup_filename), mode);
-    chown(QFile::encodeName(nisgroup_filename), uid, gid);
-    rename(QFile::encodeName(new_nisgroup_filename),
-      QFile::encodeName(nisgroup_filename));
-  }
-
-  if( (errors_found & NOMINGID) != 0 ) {
-    KMessageBox::error( 0, i18n("Unable to process NIS group file without a minimum GID specified.\nPlease update KUser settings (File Source Settings).") );
-  }
-
-  if( (errors_found & NONISGROUP) != 0 ) {
-    KMessageBox::error( 0, i18n("Specifying NIS minimum GID requires NIS file(s).\nPlease update KUser settings (File Source Settings).") );
-  }
-
-#ifdef GRMKDB
-  if( (nis_groups_written > 0) || (nisgroup_filename == group_filename) ) {
-    if (system(GRMKDB) != 0) {
-      KMessageBox::error( 0, i18n("Unable to build NIS group databases.") );
-      return FALSE;
-    }
-  }
-#endif
-
-  return TRUE;
+  return true;
 }
 
 bool KU_GroupFiles::dbcommit()
@@ -392,4 +280,3 @@ bool KU_GroupFiles::dbcommit()
 
   return true;
 }
-

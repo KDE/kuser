@@ -42,19 +42,24 @@
 #include "ku_adduser.h"
 
 KU_AddUser::KU_AddUser( KU_User &user, bool useprivategroup,
-  QWidget *parent, const char *name ) :
+  QWidget *parent ) :
   KU_EditUser( user, useprivategroup, parent )
 {
   QGroupBox *group = new QGroupBox(frontpage);
   group->setTitle(i18n("New Account Options"));
-  QVBoxLayout *groupLayout = new QVBoxLayout(group, marginHint(), spacingHint());
-  groupLayout->addSpacing(group->fontMetrics().lineSpacing());
-  groupLayout->setAutoAdd(true);
-  createhome = new QCheckBox(i18n("Create home folder"), group);
+  QVBoxLayout *grouplayout = new QVBoxLayout( group );
+  grouplayout->setMargin( marginHint() );
+  grouplayout->setSpacing( spacingHint() );
+//  grouplayout->addSpacing( group->fontMetrics().lineSpacing() );
+
+  createhome = new QCheckBox(i18n("Create home folder"), 0);
   createhome->setChecked(true);
-  copyskel = new QCheckBox(i18n("Copy skeleton"), group);
+  grouplayout->addWidget( createhome );
+  copyskel = new QCheckBox(i18n("Copy skeleton"), 0);
+  grouplayout->addWidget( copyskel );
+
   connect(createhome, SIGNAL(toggled(bool)), copyskel, SLOT(setEnabled(bool)));
-  frontlayout->addMultiCellWidget(group, frontrow, frontrow, 0, 2);
+  frontlayout->addWidget(group, frontrow, 0, 1, 3);
 
   if ( useprivategroup ) pbprigr->setEnabled( false );
 }

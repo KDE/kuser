@@ -22,7 +22,6 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kcodecs.h>
-#include <kmessagebox.h>
 #include <kio/kntlm.h>
 
 #include "ku_userldap.h"
@@ -73,8 +72,6 @@ KU_UserLDAP::KU_UserLDAP(KU_PrefsBase *cfg) : KU_Users( cfg )
     caps |= Cap_Samba;
     domsid = mCfg->samdomsid();
   }
-
-  reload();
 }
 
 KU_UserLDAP::~KU_UserLDAP()
@@ -88,10 +85,10 @@ void KU_UserLDAP::result( KIO::Job *job )
   if ( job->error() ) {
     QString errstr = job->errorString();
     if ( !errstr.isEmpty() ) {
-//      if ( ldif.isEmpty() )
-        KMessageBox::error( 0, errstr );
-//      else
-//        KMessageBox::detailedError( 0, errstr, QString::fromUtf8( ldif, ldif.size()-1 ) );
+      mErrorString = errstr;
+//      mErrorDetails = ldif;
+    } else {
+      mErrorString = i18n("Unknown error"); //this is better than nothing (?)
     }
     mOk = false;
   } else {
@@ -236,6 +233,7 @@ void KU_UserLDAP::data( KIO::Job *, const QByteArray& data )
 bool KU_UserLDAP::reload()
 {
   kDebug() << "kuserldap::reload()" << endl;
+  mErrorString = mErrorDetails = QString();
   mObjectClasses.clear();
   mOc.clear();
   mUser = KU_User();
@@ -287,15 +285,15 @@ void KU_UserLDAP::createPassword( KU_User &user, const QString &password )
       user.setPwd( "{CRYPT}" + encryptPass( password, false ) );
       break;
     case KU_PrefsBase::EnumLdappasswordhash::MD5: {
-      KMD5 md5( password.utf8() );
+      KMD5 md5( password.toUtf8() );
       user.setPwd( "{MD5}" + md5.base64Digest() );
       break;
     }
     case KU_PrefsBase::EnumLdappasswordhash::SMD5: {
       QByteArray salt = genSalt( 4 );
-      QByteArray pwd = password.utf8() + salt;
+      QByteArray pwd = password.toUtf8() + salt;
       KMD5::Digest digest;
-      QByteArray hash(20);
+      QByteArray hash(20, 0);
 
       KMD5 md5( pwd );
       md5.rawDigest( digest );
@@ -306,20 +304,20 @@ void KU_UserLDAP::createPassword( KU_User &user, const QString &password )
     }
     case KU_PrefsBase::EnumLdappasswordhash::SHA: {
       struct sha1_ctx ctx;
-      QByteArray hash(20);
+      QByteArray hash(20, 0);
 
       sha1_init( &ctx );
-      sha1_update( &ctx, (const quint8*) password.utf8().data(),
-        password.utf8().length() );
+      sha1_update( &ctx, (const quint8*) password.toUtf8().data(),
+        password.toUtf8().length() );
       sha1_final( &ctx, (quint8*) hash.data() );
       user.setPwd( "{SHA}" + KCodecs::base64Encode( ( hash ) ) );
       break;
     }
     case KU_PrefsBase::EnumLdappasswordhash::SSHA: {
       struct sha1_ctx ctx;
-      QByteArray hash(24);
+      QByteArray hash(24, 0);
       QByteArray salt = genSalt( 4 );
-      QByteArray pwd = password.utf8() + salt;
+      QByteArray pwd = password.toUtf8() + salt;
 
       sha1_init( &ctx );
       sha1_update( &ctx, (const quint8*) pwd.data(), pwd.length() );
@@ -393,14 +391,14 @@ QByteArray KU_UserLDAP::getLDIF( const KU_User &user, int oldindex ) const
     QString newrdn = getRDN( user );
 
     if ( oldrdn != newrdn ) {
-      ldif = "dn: " + oldrdn.utf8() + "," + mUrl.dn().utf8() + "\n" +
+      ldif = "dn: " + oldrdn.toUtf8() + "," + mUrl.dn().toUtf8() + "\n" +
         "changetype: modrdn\n" +
-        "newrdn: " + newrdn.utf8() + "\n" +
+        "newrdn: " + newrdn.toUtf8() + "\n" +
         "deleteoldrdn: 1\n\n";
     }
   }
 
-  ldif += "dn: " + getRDN( user ).utf8() + "," + mUrl.dn().utf8() + "\n";
+  ldif += "dn: " + getRDN( user ).toUtf8() + "," + mUrl.dn().toUtf8() + "\n";
   if ( oldindex != -1 ) {
     ldif += "changetype: modify\n";
     ldif += "replace: objectClass\n";
@@ -427,7 +425,7 @@ QByteArray KU_UserLDAP::getLDIF( const KU_User &user, int oldindex ) const
     QStringList::iterator it;
     for ( it = ocs.begin(); it != ocs.end(); ++it ) {
       ldif += "objectClass: ";
-      ldif += (*it).utf8();
+      ldif += (*it).toUtf8();
       ldif += "\n";
     }
   }
@@ -458,7 +456,7 @@ QByteArray KU_UserLDAP::getLDIF( const KU_User &user, int oldindex ) const
       QString::number( user.getGID() ) )+"\n";
     if ( mod ) ldif += "-\nreplace: gecos\n";
     ldif += KABC::LDIF::assembleLine( "gecos", !mCfg->ldapgecos() ? QByteArray() :
-      QByteArray( gecos.latin1() ) )+"\n";
+      QByteArray( gecos.toLatin1() ) )+"\n";
     if ( mod ) ldif += "-\nreplace: homedirectory\n";
     ldif += KABC::LDIF::assembleLine( "homedirectory",
       user.getHomeDir() )+"\n";
@@ -601,7 +599,7 @@ QByteArray KU_UserLDAP::getLDIF( const KU_User &user, int oldindex ) const
 
 QByteArray KU_UserLDAP::delData( const KU_User &user ) const
 {
-  QByteArray ldif = "dn: " + getRDN( user ).utf8() + "," + mUrl.dn().utf8() + "\n" +
+  QByteArray ldif = "dn: " + getRDN( user ).toUtf8() + "," + mUrl.dn().toUtf8() + "\n" +
     "changetype: delete\n\n";
   return ldif;
 }
@@ -615,6 +613,7 @@ bool KU_UserLDAP::dbcommit()
   mDelIndex = 0;
   mModIt = mMod.begin();
   mLastOperation = None;
+  mErrorString = mErrorDetails = QString();
 
   mProg = new QProgressDialog( 0 );
   mProg->setLabel( new QLabel(i18n("LDAP Operation") ) );

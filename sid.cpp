@@ -83,7 +83,7 @@ void SID::setSID( const QString &sid )
   QString rid;
   
   mSid = sid;
-  pos = sid.findRev( '-' );
+  pos = sid.lastIndexOf( '-' );
   mDom = sid.left( pos );
   rid = sid.right( sid.length() - pos - 1 );
   mRid = rid.toUInt();

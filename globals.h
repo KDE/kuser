@@ -24,6 +24,10 @@
 #define _KU_VERSION "2.2"
 
 #include <config.h>
+#ifdef HAVE_KU_CONFIG_H
+#include "ku_config.h"
+#endif
+
 #ifdef HAVE_PATHS_H
 #include <paths.h>
 #endif

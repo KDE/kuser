@@ -91,7 +91,7 @@ bool KU_Group::addUser(const QString &name)
 
 bool KU_Group::removeUser(const QString &name)
 {
-  return ( d->users.remove(name) > 0 );
+  return ( d->users.removeAll(name) > 0 );
 }
 
 uint KU_Group::count() const

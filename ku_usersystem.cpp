@@ -27,7 +27,6 @@
 
 #include <qstring.h>
 
-#include <kmessagebox.h>
 #include <kdebug.h>
 
 #include "ku_misc.h"
@@ -43,7 +42,6 @@ KU_UserSystem::KU_UserSystem(KU_PrefsBase *cfg) : KU_Users( cfg )
   caps |= Cap_BSD;
 #endif
 
-  reload();
 }
 
 KU_UserSystem::~KU_UserSystem()
@@ -52,13 +50,14 @@ KU_UserSystem::~KU_UserSystem()
 
 bool KU_UserSystem::reload() 
 {
+  mErrorString = mErrorDetails = QString();
   if (!loadpwd())
-    return FALSE;
+    return false;
 
   if (!loadsdw())
-    return FALSE;
+    return false;
 
-  return TRUE;
+  return true;
 }
 
 // Load passwd file
@@ -97,7 +96,7 @@ bool KU_UserSystem::loadpwd()
   }
 
   endpwent();
-  return(TRUE);
+  return true;
 }
 
 // Load shadow passwords

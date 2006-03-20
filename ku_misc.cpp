@@ -87,15 +87,15 @@ void copyDir(const QString &srcPath, const QString &dstPath, uid_t uid, gid_t gi
 
     QFileInfo info(filename);
     mode = 0;
-    if ( info.permission(QFileInfo::ReadOwner) ) mode |=  S_IRUSR;
-    if ( info.permission(QFileInfo::WriteOwner) ) mode |=  S_IWUSR;
-    if ( info.permission(QFileInfo::ExeOwner) ) mode |=  S_IXUSR;
-    if ( info.permission(QFileInfo::ReadGroup) ) mode |=  S_IRGRP;
-    if ( info.permission(QFileInfo::WriteGroup) ) mode |=  S_IWGRP;
-    if ( info.permission(QFileInfo::ExeGroup) ) mode |=  S_IXGRP;
-    if ( info.permission(QFileInfo::ReadOther) ) mode |=  S_IROTH;
-    if ( info.permission(QFileInfo::WriteOther) ) mode |=  S_IWOTH;
-    if ( info.permission(QFileInfo::ExeOther) ) mode |=  S_IXOTH;
+    if ( info.permission(QFile::ReadOwner) ) mode |=  S_IRUSR;
+    if ( info.permission(QFile::WriteOwner) ) mode |=  S_IWUSR;
+    if ( info.permission(QFile::ExeOwner) ) mode |=  S_IXUSR;
+    if ( info.permission(QFile::ReadGroup) ) mode |=  S_IRGRP;
+    if ( info.permission(QFile::WriteGroup) ) mode |=  S_IWGRP;
+    if ( info.permission(QFile::ExeGroup) ) mode |=  S_IXGRP;
+    if ( info.permission(QFile::ReadOther) ) mode |=  S_IROTH;
+    if ( info.permission(QFile::WriteOther) ) mode |=  S_IWOTH;
+    if ( info.permission(QFile::ExeOther) ) mode |=  S_IXOTH;
 
     if ( info.isSymLink() ) {
       QString link = info.readLink();
@@ -107,7 +107,7 @@ void copyDir(const QString &srcPath, const QString &dstPath, uid_t uid, gid_t gi
     } else if ( info.isDir() ) {
       QDir dir(filename);
 
-      d.mkdir(name, FALSE);
+      d.mkdir(name);
       copyDir(s.filePath(name), d.filePath(name), uid, gid);
 
       if (chown(QFile::encodeName(d.filePath(name)), uid, gid) != 0) {
@@ -146,8 +146,8 @@ int copyFile(const QString & from, const QString & to)
   QFile fo;
   char buf[BLOCK_SIZE];
 
-  fi.setName(from);
-  fo.setName(to);
+  fi.setFileName(from);
+  fo.setFileName(to);
   
   if (!fi.exists()) {
     KMessageBox::error( 0, i18n("File %1 does not exist.").arg(from) );
@@ -165,10 +165,10 @@ int copyFile(const QString & from, const QString & to)
   }
   
   while (!fi.atEnd()) {
-    int len = fi.readBlock(buf, BLOCK_SIZE);
+    int len = fi.read(buf, BLOCK_SIZE);
     if (len <= 0)
       break;
-    fo.writeBlock(buf, len);
+    fo.write(buf, len);
   }
   
   fi.close();
@@ -216,7 +216,7 @@ void addShell(const QString &shell)
 
 QByteArray genSalt( int len )
 {
-  QByteArray salt( len + 1 );
+  QByteArray salt( len + 1, 0 );
   const char * set = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./";
     
   salt[0] = set[getpid() % strlen(set)];

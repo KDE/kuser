@@ -31,7 +31,7 @@ KU_PwDlg::KU_PwDlg( QWidget* parent )
 {
   QFrame *page = new QFrame( this );
   setMainWidget( page );
-  QLabel* lb1 = new QLabel(page, "lb1");
+  QLabel* lb1 = new QLabel(page);
   lb1->setText(i18n("Password:"));
   lb1->setMinimumSize(lb1->sizeHint());
   lb1->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
@@ -47,7 +47,7 @@ KU_PwDlg::KU_PwDlg( QWidget* parent )
   lepw1->setFocus();
   lepw1->setEchoMode(KLineEdit::Password);
 
-  QLabel* lb2 = new QLabel(page, "lb2");
+  QLabel* lb2 = new QLabel(page);
   lb2->setText(i18n("Verify:"));
   lb2->setMinimumSize(lb2->sizeHint());
   lb2->setAlignment(Qt::AlignRight|Qt::AlignVCenter);

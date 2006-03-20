@@ -36,7 +36,6 @@ public:
 
 private:
   bool pw_backuped;
-  bool pn_backuped;
   bool s_backuped;
 
   mode_t pwd_mode;

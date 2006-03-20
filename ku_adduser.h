@@ -28,7 +28,7 @@ class KU_AddUser: public KU_EditUser {
   Q_OBJECT
 public:
   KU_AddUser(KU_User &user, bool useprivategroup,
-    QWidget *parent = 0, const char *name = 0 );
+    QWidget *parent = 0 );
 
   void setCreateHomeDir(bool b)
      { createhome->setChecked(b); }

@@ -5,7 +5,7 @@
       http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
   <include>qfile.h</include>
   <include>kapplication.h</include>
-  <include>config.h</include>
+  <include>globals.h</include>
 
   <kcfgfile arg="true">
     <parameter name="connection"/>
@@ -122,18 +122,6 @@
       <label>Group shadow file</label>
       <whatsthis>Specifies the shadow group file (usually /etc/gshadow). Leave this empty if your system does not use a shadow group file.</whatsthis>
       <default>/etc/gshadow</default>
-    </entry>
-    <entry name="nispasswdsrc" type="String">
-      <label>NIS password source</label>
-    </entry>
-    <entry name="nisminuid" type="Int">
-      <label>NIS minimum UID</label>
-    </entry>
-    <entry name="nisgroupsrc" type="String">
-      <label>NIS group source</label>
-    </entry>
-    <entry name="nismingid" type="Int">
-      <label>NIS minimum GID</label>
     </entry>
 
     <entry name="ldapuser" type="String">

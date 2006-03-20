@@ -42,7 +42,8 @@ KU_SelectConn::KU_SelectConn(const QString &selected, QWidget *parent) :
 
   QFrame *page = new QFrame();
   setMainWidget( page );
-  QVBoxLayout *topLayout = new QVBoxLayout( page, 0, KDialog::spacingHint() );
+  QVBoxLayout *topLayout = new QVBoxLayout( page );
+  topLayout->setSpacing( KDialog::spacingHint() );
   QLabel *label = new QLabel( i18n("Defined connections:"), page );
   mCombo = new KComboBox( page );
   mSelected = selected;
@@ -58,11 +59,11 @@ KU_SelectConn::KU_SelectConn(const QString &selected, QWidget *parent) :
       i++;
       it++;
     } else
-      it = conns.remove( it );
+      it = conns.erase( it );
   }
-  mCombo->insertStringList( conns );
-  if ( mCombo->count() == 0 ) mCombo->insertItem( "default" );
-  mCombo->setCurrentItem( sel );
+  mCombo->insertItems( 0, conns );
+  if ( mCombo->count() == 0 ) mCombo->addItem( "default" );
+  mCombo->setCurrentIndex( sel );
   mSelected = connSelected();
   topLayout->addWidget( label );
   topLayout->addWidget( mCombo );
@@ -101,8 +102,8 @@ void KU_SelectConn::slotUser3()
 void KU_SelectConn::slotNewApplySettings()
 {
   if ( !newconn.isEmpty() ) {
-    mCombo->insertItem( newconn );
-    mCombo->setCurrentItem( mCombo->count()-1 );
+    mCombo->addItem( newconn );
+    mCombo->setCurrentIndex( mCombo->count()-1 );
     mSelected = newconn;
   }
 }
@@ -128,10 +129,10 @@ void KU_SelectConn::slotUser1()
 
   KGlobal::sharedConfig()->deleteGroup( "connection-" + conn );
   KGlobal::sharedConfig()->sync();
-  mCombo->removeItem( mCombo->currentItem() );
+  mCombo->removeItem( mCombo->currentIndex() );
   if ( mCombo->count() == 0 ) {
-    mCombo->insertItem( "default" );
-    mCombo->setCurrentItem( 0 );
+    mCombo->addItem( "default" );
+    mCombo->setCurrentIndex( 0 );
   }
   kDebug() << "slotUser1: " << conn << " " << mSelected << endl;
   if ( mSelected == conn )

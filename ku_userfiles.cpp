@@ -120,9 +120,9 @@ bool KU_UserFiles::loadpwd()
   QString tmp;
 
 #ifdef HAVE_FGETPWENT
-  FILE *fpwd = fopen(QFile::encodeName(filename), "r");
+  FILE *fpwd = fopen(QFile::encodeName(passwd_filename), "r");
   if(fpwd == NULL) {
-    mErrorString += i18n("Error opening %1 for reading.\n").arg(filename);
+    mErrorString += i18n("Error opening %1 for reading.\n").arg(passwd_filename);
     return false;
   }
 

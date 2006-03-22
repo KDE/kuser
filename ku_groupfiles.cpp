@@ -91,7 +91,7 @@ bool KU_GroupFiles::reload()
 
   // We are reading our configuration specified group file
 #ifdef HAVE_FGETGRENT
-  FILE *fgrp = fopen(QFile::encodeName(filename), "r");
+  FILE *fgrp = fopen(QFile::encodeName(group_filename), "r");
   QString tmp;
   if (fgrp == NULL) {
     mErrorString = i18n("Error opening %1 for reading.").arg(group_filename);

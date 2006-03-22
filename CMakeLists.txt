@@ -57,7 +57,7 @@ kde4_automoc(${kuser_SRCS})
 
 kde4_add_executable(kuser ${kuser_SRCS})
 
-target_link_libraries(kuser  ${QT_AND_KDECORE_LIBS} crypt kdeui kabc kntlm)
+target_link_libraries(kuser  ${KDE4_KDECORE_LIBS} crypt kdeui kabc kntlm)
 
 install_targets(/bin kuser )
 

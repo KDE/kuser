@@ -16,6 +16,16 @@ set(KU_FIRSTUID 500 CACHE STRING "First UID of normal users")
 set(KU_FIRSTGID 500 CACHE STRING "First GID of normal users")
 set(KU_USERPRIVATEGROUP true CACHE STRING "User private groups by default")
 
+check_include_files(shadow.h HAVE_SHADOW_H)
+check_include_files(crypt.h HAVE_CRYPT_H)
+
+set(CMAKE_REQUIRED_INCLUDES pwd.h)
+check_function_exists(fgetpwent HAVE_FGETPWENT)
+set(CMAKE_REQUIRED_INCLUDES grp.h)
+check_function_exists(fgetpwent HAVE_FGETGRENT)
+set(CMAKE_REQUIRED_INCLUDES shadow.h)
+check_function_exists(fgetspent HAVE_FGETSPENT)
+
 add_definitions(-DHAVE_KU_CONFIG_H=1)
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/ku_config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/ku_config.h )

@@ -10,10 +10,9 @@ KUSER_CRYPT_TESTS
 dnl Checks for header files.
 AC_HEADER_DIRENT
 AC_HEADER_STDC
-AC_CHECK_HEADERS(crypt.h fcntl.h mntent.h linux/quota.h linux/unistd.h \
-                 paths.h sys/fs/ufs_quota.h sys/mntent.h sys/mnttab.h \
-                 sys/quota.h sys/time.h unistd.h sys/params.h sys/param.h \
-                 signal.h sys/mount.h sys/fcntl.h)
+AC_CHECK_HEADERS(crypt.h fcntl.h linux/unistd.h \
+                 paths.h sys/time.h unistd.h sys/params.h sys/param.h \
+                 signal.h sys/fcntl.h)
 
 case "$host" in 
 *irix*) AC_DEFINE(HAVE_IRIX, 1, [Irix])

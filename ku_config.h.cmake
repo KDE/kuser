@@ -6,3 +6,9 @@
 #define KU_FIRSTUID ${KU_FIRSTUID}
 #define KU_FIRSTGID ${KU_FIRSTGID}
 #define KU_USERPRIVATEGROUP ${KU_USERPRIVATEGROUP}
+
+#cmakedefine HAVE_SHADOW_H
+#cmakedefine HAVE_CRYPT_H
+#cmakedefine HAVE_FGETSPENT
+#cmakedefine HAVE_FGETPWENT
+#cmakedefine HAVE_FGETGRENT

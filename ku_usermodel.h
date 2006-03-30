@@ -43,8 +43,13 @@ public:
 
 class KU_UserSortingProxyModel : public QSortFilterProxyModel
 {
+public:
+  void setFirstUser( int first ) { mFirstUser = first; };
 protected:
   virtual bool lessThan( const QModelIndex & left, const QModelIndex & right ) const;
+  virtual bool filterAcceptsRow( int source_row, const QModelIndex & source_parent ) const;
+private:
+  int mFirstUser;
 };
 
 #endif // _KU_USERMODEL_H_

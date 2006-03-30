@@ -150,3 +150,11 @@ bool KU_GroupSortingProxyModel::lessThan( const QModelIndex & left, const QModel
     return QSortFilterProxyModel::lessThan( left, right );
 }
 
+bool KU_GroupSortingProxyModel::filterAcceptsRow( int source_row, const QModelIndex & source_parent ) const
+{
+    gid_t gid;
+    gid = kug->getGroups()->at( source_row ).getGID();
+    if ( gid >= mFirstGroup )
+        return true;
+    return false;
+}

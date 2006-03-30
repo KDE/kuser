@@ -106,6 +106,7 @@ void KU_MainView::reloadUsers()
     userproxymodel.setSourceModel( usermodel );
     userview->setModel( &userproxymodel );
   }
+  userproxymodel.setFirstUser( mShowSys ? 0 : kug->kcfg()->firstUID() );
   usermodel->init();
   userview->sortByColumn( 0 );
   userview->sortByColumn( 0 );
@@ -119,6 +120,7 @@ void KU_MainView::reloadGroups()
     groupproxymodel.setSourceModel( groupmodel );
     groupview->setModel( &groupproxymodel );
   }
+  groupproxymodel.setFirstGroup( mShowSys ? 0 : kug->kcfg()->firstGID() );
   groupmodel->init();
   groupview->sortByColumn( 0 );
   groupview->sortByColumn( 0 );

@@ -150,3 +150,12 @@ bool KU_UserSortingProxyModel::lessThan( const QModelIndex & left, const QModelI
   } else
     return QSortFilterProxyModel::lessThan( left, right );
 }
+
+bool KU_UserSortingProxyModel::filterAcceptsRow( int source_row, const QModelIndex & source_parent ) const
+{
+    uid_t uid;
+    uid = kug->getUsers()->at( source_row ).getUID();
+    if ( uid >= mFirstUser ) 
+      return true;
+    return false;
+}

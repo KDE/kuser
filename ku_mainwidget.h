@@ -39,7 +39,7 @@ protected:
   void setupActions();
 
 protected slots:
-  void showSys();
+  void showSys( bool show );
   void properties();
   void slotApplySettings();
   void slotApplyConnection();

@@ -71,14 +71,14 @@ void KU_AddUser::slotOk()
   mergeUser( mNewUser, mNewUser );
   if ( ( mNewUser.getCaps() & KU_User::Cap_POSIX ) &&
     kug->getUsers()->lookup( mNewUser.getUID() ) != -1 ) {
-    KMessageBox::sorry( 0, i18n("User with UID %1 already exists.").arg( mNewUser.getUID() ) );
+    KMessageBox::sorry( 0, i18n("User with UID %1 already exists.", mNewUser.getUID() ) );
     return;
   }
 
   if ( ( kug->getUsers()->getCaps() & KU_Users::Cap_Samba ) &&
      ( mNewUser.getCaps() & KU_User::Cap_Samba ) ) {
     if ( kug->getUsers()->lookup_sam( mNewUser.getSID().getRID() ) != -1 ) {
-      KMessageBox::sorry( 0, i18n("User with RID %1 already exists.").arg( mNewUser.getSID().getRID() ) );
+      KMessageBox::sorry( 0, i18n("User with RID %1 already exists.", mNewUser.getSID().getRID() ) );
       return;
     }
   }
@@ -119,16 +119,16 @@ bool KU_AddUser::checkHome()
     if (S_ISDIR(s.st_mode)) {
        if ( KMessageBox::
          warningContinueCancel ( 0,
-           i18n("Folder %1 already exists!\n%2 may become owner and permissions may change.\nDo you really want to use %3?").
-           arg(h_dir).arg(mNewUser.getName()).arg(h_dir), QString::null, KStdGuiItem::cont() ) == KMessageBox::Cancel )
+           i18n("Folder %1 already exists!\n%2 may become owner and permissions may change.\nDo you really want to use %3?", 
+           h_dir, mNewUser.getName(), h_dir), QString::null, KStdGuiItem::cont() ) == KMessageBox::Cancel )
 
          return false;
        else
          return true;
     } else
-      KMessageBox::error( 0, i18n("%1 is not a folder.").arg(h_dir) );
+      KMessageBox::error( 0, i18n("%1 is not a folder.", h_dir) );
   } else
-    KMessageBox::error( 0, i18n("stat() failed on %1.").arg(h_dir) );
+    KMessageBox::error( 0, i18n("stat() failed on %1.", h_dir) );
 
   return false;
 }
@@ -148,14 +148,14 @@ bool KU_AddUser::checkMailBox()
 
   if (r == 0)
     if (S_ISREG(s.st_mode))
-      KMessageBox::error( 0, i18n("Mailbox %1 already exists (uid=%2).")
-                 .arg(mailboxpath)
-                 .arg(s.st_uid) );
+      KMessageBox::error( 0, i18n("Mailbox %1 already exists (uid=%2).",
+                  mailboxpath,
+                  s.st_uid) );
     else
-      KMessageBox::error( 0, i18n("%1 exists but is not a regular file.")
-                 .arg(mailboxpath) );
+      KMessageBox::error( 0, i18n("%1 exists but is not a regular file.",
+                  mailboxpath) );
   else
-    KMessageBox::error( 0, i18n("stat() failed on %1.").arg(mailboxpath) );
+    KMessageBox::error( 0, i18n("stat() failed on %1.", mailboxpath) );
 
   return false;
 }

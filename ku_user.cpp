@@ -162,24 +162,24 @@ int KU_User::createHome()
 {
 
   if(d->HomeDir.isNull() || d->HomeDir.isEmpty()) {
-    KMessageBox::sorry( 0, i18n("Cannot create home folder for %1: it is null or empty.").arg(d->Name) );
+    KMessageBox::sorry( 0, i18n("Cannot create home folder for %1: it is null or empty.", d->Name) );
     return(0);
   }
   if (mkdir(QFile::encodeName(d->HomeDir), 0700) != 0) {
     if (errno != EEXIST)
     {
-      KMessageBox::error( 0, i18n("Cannot create home folder %1.\nError: %2").arg(d->HomeDir).arg(QString::fromLocal8Bit(strerror(errno))) );
+      KMessageBox::error( 0, i18n("Cannot create home folder %1.\nError: %2", d->HomeDir, QString::fromLocal8Bit(strerror(errno))) );
       return(0);
     }
   }
 
   if (chown(QFile::encodeName(d->HomeDir), d->UID, d->GID) != 0) {
-    KMessageBox::error( 0, i18n("Cannot change owner of home folder %1.\nError: %2").arg(d->HomeDir).arg(QString::fromLocal8Bit(strerror(errno))) );
+    KMessageBox::error( 0, i18n("Cannot change owner of home folder %1.\nError: %2", d->HomeDir, QString::fromLocal8Bit(strerror(errno))) );
     return(1);
   }
 
   if (chmod(QFile::encodeName(d->HomeDir), KU_HOMEDIR_PERM) != 0) {
-    KMessageBox::error( 0, i18n("Cannot change permissions on home folder %1.\nError: %2").arg(d->HomeDir).arg(QString::fromLocal8Bit(strerror(errno))) );
+    KMessageBox::error( 0, i18n("Cannot change permissions on home folder %1.\nError: %2", d->HomeDir, QString::fromLocal8Bit(strerror(errno))) );
     return(1);
   }
   return(1);
@@ -194,33 +194,33 @@ int KU_User::tryCreate(const QString &dir)
   if (rc == 0) {
     if (S_ISDIR(sb.st_mode)) {
       if (KMessageBox::warningContinueCancel( 0,
-        i18n("Folder %1 already exists!\nWill make %2 owner and change permissions.\nDo you want to continue?").arg(dir).arg(d->Name),
+        i18n("Folder %1 already exists!\nWill make %2 owner and change permissions.\nDo you want to continue?", dir, d->Name),
         QString::null, KStdGuiItem::cont() ) == KMessageBox::Continue) {
 
         if (chown(QFile::encodeName(dir), d->UID, d->GID) != 0) {
-          KMessageBox::error( 0, i18n("Cannot change owner of %1 folder.\nError: %2") .arg(dir).arg(QString::fromLocal8Bit(strerror(errno))) );
+          KMessageBox::error( 0, i18n("Cannot change owner of %1 folder.\nError: %2" , dir, QString::fromLocal8Bit(strerror(errno))) );
         }
         return(0);
       } else {
-        KMessageBox::information( 0, i18n("Folder %1 left 'as is'.\nVerify ownership and permissions for user %2 who may not be able to log in!").arg(dir).arg(d->Name) );
+        KMessageBox::information( 0, i18n("Folder %1 left 'as is'.\nVerify ownership and permissions for user %2 who may not be able to log in!", dir, d->Name) );
         return(-1);
       }
     } else {
-      KMessageBox::information( 0, i18n("%1 exists and is not a folder. User %2 will not be able to log in!").arg(dir).arg(d->Name) );
+      KMessageBox::information( 0, i18n("%1 exists and is not a folder. User %2 will not be able to log in!", dir, d->Name) );
       return(-1);
     }
   } else {
     if (errno == ENOENT) {
       if (mkdir(QFile::encodeName(dir), 0700) != 0) {
-        KMessageBox::error( 0, i18n("Cannot create %1 folder.\nError: %2").arg(dir).arg(QString::fromLocal8Bit(strerror(errno))));
+        KMessageBox::error( 0, i18n("Cannot create %1 folder.\nError: %2", dir, QString::fromLocal8Bit(strerror(errno))));
         return(-1);
       }
       if (chown(QFile::encodeName(dir), d->UID, d->GID) != 0) {
-        KMessageBox::error( 0, i18n("Cannot change owner of %1 folder.\nError: %2").arg(dir).arg(QString::fromLocal8Bit(strerror(errno))) );
+        KMessageBox::error( 0, i18n("Cannot change owner of %1 folder.\nError: %2", dir, QString::fromLocal8Bit(strerror(errno))) );
       }
       return(0);
     } else {
-      KMessageBox::error( 0, i18n("stat call on %1 failed.\nError: %2").arg(dir).arg(QString::fromLocal8Bit(strerror(errno))) );
+      KMessageBox::error( 0, i18n("stat call on %1 failed.\nError: %2", dir, QString::fromLocal8Bit(strerror(errno))) );
       return(-1);
     }
   }
@@ -235,9 +235,9 @@ int KU_User::createMailBox()
                 S_IRUSR|S_IWUSR)) < 0) {
     if (errno != EEXIST)
     {
-      KMessageBox::error( 0, i18n("Cannot create %1: %2")
-                .arg(mailboxpath)
-                .arg(QString::fromLocal8Bit(strerror(errno))) );
+      KMessageBox::error( 0, i18n("Cannot create %1: %2",
+                 mailboxpath,
+                 QString::fromLocal8Bit(strerror(errno))) );
       return -1;
     }
   }
@@ -245,14 +245,14 @@ int KU_User::createMailBox()
   close(fd);
 
   if (chown(QFile::encodeName(mailboxpath), d->UID, KU_MAILBOX_GID) != 0) {
-    KMessageBox::error( 0, i18n("Cannot change owner on mailbox: %1\nError: %2")
-                .arg(mailboxpath).arg(QString::fromLocal8Bit(strerror(errno))) );
+    KMessageBox::error( 0, i18n("Cannot change owner on mailbox: %1\nError: %2",
+                 mailboxpath, QString::fromLocal8Bit(strerror(errno))) );
     return -1;
   }
 
   if (chmod(QFile::encodeName(mailboxpath), KU_MAILBOX_PERM) != 0) {
-    KMessageBox::error( 0, i18n("Cannot change permissions on mailbox: %1\nError: %2")
-                .arg(mailboxpath).arg(QString::fromLocal8Bit(strerror(errno))) );
+    KMessageBox::error( 0, i18n("Cannot change permissions on mailbox: %1\nError: %2",
+                 mailboxpath, QString::fromLocal8Bit(strerror(errno))) );
     return -1;
   }
 
@@ -266,12 +266,12 @@ int KU_User::copySkel()
   mode_t mode;
 
   if (!source.exists()) {
-    KMessageBox::error( 0, i18n("Folder %1 does not exist, cannot copy skeleton for %2.").arg(source.absolutePath()).arg(d->Name) );
+    KMessageBox::error( 0, i18n("Folder %1 does not exist, cannot copy skeleton for %2.", source.absolutePath(), d->Name) );
     return (-1);
   }
 
   if (!dest.exists()) {
-    KMessageBox::error( 0, i18n("Folder %1 does not exist, cannot copy skeleton.").arg(dest.absolutePath()) );
+    KMessageBox::error( 0, i18n("Folder %1 does not exist, cannot copy skeleton.", dest.absolutePath()) );
     return (-1);
   }
 
@@ -289,15 +289,15 @@ int KU_User::removeHome()
   if (!stat(QFile::encodeName(d->HomeDir), &sb))
     if (S_ISDIR(sb.st_mode) && sb.st_uid == d->UID) {
       if (!KIO::NetAccess::del(KUrl::fromPathOrURL(d->HomeDir),0L)) {
-             KMessageBox::error( 0, i18n("Cannot remove home folder %1.\nError: %2")
-                       .arg(d->HomeDir).arg(KIO::NetAccess::lastErrorString()) );
+             KMessageBox::error( 0, i18n("Cannot remove home folder %1.\nError: %2",
+                        d->HomeDir, KIO::NetAccess::lastErrorString()) );
       }
     } else {
-      KMessageBox::error( 0, i18n("Removal of home folder %1 failed (uid = %2, gid = %3).").arg(d->HomeDir).arg(sb.st_uid).arg(sb.st_gid) );
+      KMessageBox::error( 0, i18n("Removal of home folder %1 failed (uid = %2, gid = %3).", d->HomeDir, sb.st_uid, sb.st_gid) );
     }
   else {
-    KMessageBox::error( 0, i18n("stat call on file %1 failed.\nError: %2")
-                 .arg(d->HomeDir).arg(QString::fromLocal8Bit(strerror(errno))) );
+    KMessageBox::error( 0, i18n("stat call on file %1 failed.\nError: %2",
+                  d->HomeDir, QString::fromLocal8Bit(strerror(errno))) );
   }
 
   return 0;
@@ -314,8 +314,8 @@ int KU_User::removeCrontabs()
   if ( access(QFile::encodeName(file), F_OK) == 0 ) {
     command = QString::fromLatin1("crontab -u %1 -r").arg(KProcess::quote(d->Name));
     if ( system(QFile::encodeName(command)) != 0 ) {
-      KMessageBox::error( 0, i18n("Cannot remove crontab %1.\nError: %2")
-                  .arg(command).arg(QString::fromLocal8Bit(strerror(errno))) );
+      KMessageBox::error( 0, i18n("Cannot remove crontab %1.\nError: %2",
+                   command, QString::fromLocal8Bit(strerror(errno))) );
      }
   }
 
@@ -328,8 +328,8 @@ int KU_User::removeMailBox()
 
   file = QFile::decodeName(MAIL_SPOOL_DIR) + "/" + d->Name;
   if (remove(QFile::encodeName(file)) != 0) {
-    KMessageBox::error( 0, i18n("Cannot remove mailbox %1.\nError: %2")
-                .arg(file).arg(QString::fromLocal8Bit(strerror(errno))) );
+    KMessageBox::error( 0, i18n("Cannot remove mailbox %1.\nError: %2",
+                 file, QString::fromLocal8Bit(strerror(errno))) );
   }
 
   return 0;
@@ -348,7 +348,7 @@ int KU_User::removeProcesses()
         break;
       case -1:
         KMessageBox::error( 0,
-          i18n("Cannot fork while trying to kill processes for uid %1.").arg(d->UID) );
+          i18n("Cannot fork while trying to kill processes for uid %1.", d->UID) );
         break;
     }
 

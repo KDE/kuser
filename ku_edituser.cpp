@@ -344,7 +344,7 @@ KU_EditUser::KU_EditUser( const QList<int> &selected,
 {
   mSelected = selected;
   if ( mSelected.count() > 1 )
-    setCaption( i18n("User Properties - %1 Selected Users").arg( mSelected.count() ) );
+    setCaption( i18n("User Properties - %1 Selected Users", mSelected.count() ) );
   else {
     mUser = kug->getUsers()->at( selected[0] );
     mSelected.clear();
@@ -951,7 +951,7 @@ void KU_EditUser::slotOk()
   {
     if ( kug->getUsers()->lookup(newuid) != -1 ) {
       KMessageBox::sorry( 0,
-        i18n("User with UID %1 already exists").arg(newuid) );
+        i18n("User with UID %1 already exists", newuid) );
       return;
     }
   }
@@ -961,7 +961,7 @@ void KU_EditUser::slotOk()
     if ( oldrid != newrid ) {
       if ( kug->getUsers()->lookup_sam(newrid) != -1 ) {
         KMessageBox::sorry( 0,
-          i18n("User with RID %1 already exists").arg(newrid) );
+          i18n("User with RID %1 already exists", newrid) );
         return;
       }
     }
@@ -978,7 +978,7 @@ void KU_EditUser::slotOk()
       		i18n("<p>The shell %1 is not yet listed in the file %2. "
       		     "In order to use this shell you must add it to "
       		     "this file first."
-      		     "<p>Do you want to add it now?").arg(newshell).arg(QFile::decodeName(SHELL_FILE)),
+      		     "<p>Do you want to add it now?", newshell, QFile::decodeName(SHELL_FILE)),
       		i18n("Unlisted Shell"),
       		i18n("&Add Shell"),
       		i18n("Do &Not Add"));

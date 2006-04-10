@@ -139,8 +139,8 @@ void KU_MainView::setpwd()
   if ( count == 0 ) return;
   if ( count > 1 ) {
     if ( KMessageBox::questionYesNo( 0,
-      i18n("You have selected %1 users. Do you really want to change the password for all the selected users?")
-		.arg( count ), QString::null, i18n("Change"), i18n("Do Not Change") ) == KMessageBox::No ) return;
+      i18n("You have selected %1 users. Do you really want to change the password for all the selected users?",
+		  count ), QString::null, i18n("Change"), i18n("Do Not Change") ) == KMessageBox::No ) return;
   }
   KU_PwDlg d( this );
   if ( d.exec() != QDialog::Accepted ) return;
@@ -198,7 +198,7 @@ void KU_MainView::useradd()
   if ( !ok ) return;
 
   if ( users->lookup( name ) != -1 ) {
-    KMessageBox::sorry( 0, i18n("User with name %1 already exists.").arg( name ) );
+    KMessageBox::sorry( 0, i18n("User with name %1 already exists.", name ) );
     return;
   }
 
@@ -352,8 +352,8 @@ void KU_MainView::userdel()
     int i = groups->lookup( gid );
     if ( i != -1 &&
       KMessageBox::questionYesNo( 0, i18n("You are using private groups.\n"
-        "Do you want to delete the user's private group '%1'?")
-        .arg(groups->at(i).getName()), QString::null,
+        "Do you want to delete the user's private group '%1'?",
+         groups->at(i).getName()), QString::null,
         KStdGuiItem::del(), i18n("Do Not Delete")) == KMessageBox::Yes) {
       kDebug() << "del private group" << endl;
       groups->del( i );
@@ -449,7 +449,7 @@ void KU_MainView::grpdel()
     KU_Users::const_iterator it = users->constBegin();
     while ( it != users->constEnd() ) {
       if ( it->getGID() == group.getGID() ) {
-        KMessageBox::error( 0, i18n( "The group '%1' is the primary group of one or more users (such as '%2'); it cannot be deleted." ).arg( group.getName() ).arg( it->getName() ) );
+        KMessageBox::error( 0, i18n( "The group '%1' is the primary group of one or more users (such as '%2'); it cannot be deleted.", group.getName(), it->getName() ) );
         return;
       }
       ++it;
@@ -458,11 +458,11 @@ void KU_MainView::grpdel()
 
   if ( selected.count() == 1 ) {
       if (KMessageBox::warningContinueCancel( 0,
-        i18n("Do you really want to delete the group '%1'?").arg(group.getName()),
+        i18n("Do you really want to delete the group '%1'?", group.getName()),
         QString::null, KStdGuiItem::del()) != KMessageBox::Continue) return;
   } else {
       if (KMessageBox::warningContinueCancel( 0,
-        i18n("Do you really want to delete the %1 selected groups?").arg(selected.count()),
+        i18n("Do you really want to delete the %1 selected groups?", selected.count()),
         QString::null, KStdGuiItem::del()) != KMessageBox::Continue) return;
   }
 

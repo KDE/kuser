@@ -124,8 +124,8 @@ void KU_SelectConn::slotUser2()
 void KU_SelectConn::slotUser1()
 {
   QString conn = connSelected();
-  if ( KMessageBox::warningContinueCancel( 0, i18n("Do you really want to delete the connection '%1'?").
-    arg( conn ),i18n("Delete Connection"),KStdGuiItem::del() ) == KMessageBox::Cancel ) return;
+  if ( KMessageBox::warningContinueCancel( 0, i18n("Do you really want to delete the connection '%1'?", 
+     conn ),i18n("Delete Connection"),KStdGuiItem::del() ) == KMessageBox::Cancel ) return;
 
   KGlobal::sharedConfig()->deleteGroup( "connection-" + conn );
   KGlobal::sharedConfig()->sync();

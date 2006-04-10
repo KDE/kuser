@@ -51,7 +51,7 @@ bool backup(const QString & name)
   if (copyFile(QFile::encodeName(name), QFile::encodeName(tmp)) == -1)
   {
     QString str;
-    KMessageBox::error( 0, i18n("Can't create backup file for %1").arg(name) );
+    KMessageBox::error( 0, i18n("Can't create backup file for %1", name) );
     return false;
   }
   return true;
@@ -101,8 +101,8 @@ void copyDir(const QString &srcPath, const QString &dstPath, uid_t uid, gid_t gi
       QString link = info.readLink();
 
       if (symlink(QFile::encodeName(link),QFile::encodeName(d.filePath(name))) != 0) {
-        KMessageBox::error( 0, i18n("Error creating symlink %1.\nError: %2")
-                  .arg(d.filePath(s[i])).arg(QString::fromLocal8Bit(strerror(errno))) );
+        KMessageBox::error( 0, i18n("Error creating symlink %1.\nError: %2",
+                   d.filePath(s[i]), QString::fromLocal8Bit(strerror(errno))) );
       }
     } else if ( info.isDir() ) {
       QDir dir(filename);
@@ -111,13 +111,13 @@ void copyDir(const QString &srcPath, const QString &dstPath, uid_t uid, gid_t gi
       copyDir(s.filePath(name), d.filePath(name), uid, gid);
 
       if (chown(QFile::encodeName(d.filePath(name)), uid, gid) != 0) {
-        KMessageBox::error( 0, i18n("Cannot change owner of folder %1.\nError: %2")
-                  .arg(d.filePath(s[i])).arg(QString::fromLocal8Bit(strerror(errno))) );
+        KMessageBox::error( 0, i18n("Cannot change owner of folder %1.\nError: %2",
+                   d.filePath(s[i]), QString::fromLocal8Bit(strerror(errno))) );
       }
 
       if (chmod(QFile::encodeName(d.filePath(name)), mode) != 0) {
-        KMessageBox::error( 0, i18n("Cannot change permissions on folder %1.\nError: %2")
-                  .arg(d.filePath(s[i])).arg(QString::fromLocal8Bit(strerror(errno))) );
+        KMessageBox::error( 0, i18n("Cannot change permissions on folder %1.\nError: %2",
+                   d.filePath(s[i]), QString::fromLocal8Bit(strerror(errno))) );
       }
 
     } else {
@@ -126,13 +126,13 @@ void copyDir(const QString &srcPath, const QString &dstPath, uid_t uid, gid_t gi
       }
 
       if (chown(QFile::encodeName(d.filePath(name)), uid, gid) != 0) {
-        KMessageBox::error( 0, i18n("Cannot change owner of file %1.\nError: %2")
-                  .arg(d.filePath(s[i])).arg(QString::fromLocal8Bit(strerror(errno))) );
+        KMessageBox::error( 0, i18n("Cannot change owner of file %1.\nError: %2",
+                   d.filePath(s[i]), QString::fromLocal8Bit(strerror(errno))) );
       }
 
       if (chmod(QFile::encodeName(d.filePath(name)), mode) != 0) {
-        KMessageBox::error( 0, i18n("Cannot change permissions on file %1.\nError: %2")
-                  .arg(d.filePath(s[i])).arg(QString::fromLocal8Bit(strerror(errno))) );
+        KMessageBox::error( 0, i18n("Cannot change permissions on file %1.\nError: %2",
+                   d.filePath(s[i]), QString::fromLocal8Bit(strerror(errno))) );
       }
     }
   }
@@ -150,17 +150,17 @@ int copyFile(const QString & from, const QString & to)
   fo.setFileName(to);
   
   if (!fi.exists()) {
-    KMessageBox::error( 0, i18n("File %1 does not exist.").arg(from) );
+    KMessageBox::error( 0, i18n("File %1 does not exist.", from) );
     return (-1);
   }
 
   if (!fi.open(QIODevice::ReadOnly)) {
-    KMessageBox::error( 0, i18n("Cannot open file %1 for reading.").arg(from) );
+    KMessageBox::error( 0, i18n("Cannot open file %1 for reading.", from) );
     return (-1);
   }
 
   if (!fo.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
-    KMessageBox::error( 0, i18n("Cannot open file %1 for writing.").arg(to) );
+    KMessageBox::error( 0, i18n("Cannot open file %1 for writing.", to) );
     return (-1);
   }
   

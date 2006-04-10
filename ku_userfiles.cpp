@@ -108,7 +108,7 @@ bool KU_UserFiles::loadpwd()
 
   rc = stat(QFile::encodeName(passwd_filename), &st);
   if(rc != 0) {
-    mErrorString += i18n("Stat call on file %1 failed: %2\nCheck KUser settings.").arg(passwd_filename).arg(QString::fromLocal8Bit(strerror(errno)));
+    mErrorString += i18n("Stat call on file %1 failed: %2\nCheck KUser settings.", passwd_filename, QString::fromLocal8Bit(strerror(errno)));
     return false;
   }
   
@@ -122,7 +122,7 @@ bool KU_UserFiles::loadpwd()
 #ifdef HAVE_FGETPWENT
   FILE *fpwd = fopen(QFile::encodeName(passwd_filename), "r");
   if(fpwd == NULL) {
-    mErrorString += i18n("Error opening %1 for reading.\n").arg(passwd_filename);
+    mErrorString += i18n("Error opening %1 for reading.\n", passwd_filename);
     return false;
   }
 
@@ -192,7 +192,7 @@ bool KU_UserFiles::loadsdw()
   FILE *f;
   kDebug() << "open shadow file: " << shadow_file << endl;
   if ((f = fopen( QFile::encodeName(shadow_file), "r")) == NULL) {
-    KMessageBox::error( 0, i18n("Error opening %1 for reading.").arg(shadow_file) );
+    KMessageBox::error( 0, i18n("Error opening %1 for reading.", shadow_file) );
     caps &= ~Cap_Shadow;
     return true;
   }
@@ -204,7 +204,7 @@ bool KU_UserFiles::loadsdw()
 
     kDebug() << "shadow entry: " << spw->sp_namp << endl;
     if ((index = lookup(QString::fromLocal8Bit(spw->sp_namp))) == -1) {
-      KMessageBox::error( 0, i18n("No /etc/passwd entry for %1.\nEntry will be removed at the next `Save'-operation.").arg(QString::fromLocal8Bit(spw->sp_namp)) );
+      KMessageBox::error( 0, i18n("No /etc/passwd entry for %1.\nEntry will be removed at the next `Save'-operation.", QString::fromLocal8Bit(spw->sp_namp)) );
       continue;
     }
     user = at(index);
@@ -291,14 +291,14 @@ bool KU_UserFiles::savepwd()
 
   // Open file(s)
   if ((shadow_fd = fopen(QFile::encodeName(new_shadow_filename), "w")) == NULL) {
-    mErrorString = i18n("Error opening %1 for writing.").arg(new_shadow_filename);
+    mErrorString = i18n("Error opening %1 for writing.", new_shadow_filename);
     return false;
   }
 
   if(!passwd_filename.isEmpty()) {
     if ((passwd_fd =
       fopen(QFile::encodeName(new_passwd_filename),"w")) == NULL) {
-        mErrorString = i18n("Error opening %1 for writing.").arg(passwd_filename);
+        mErrorString = i18n("Error opening %1 for writing.", passwd_filename);
 	return false;
     }
   }

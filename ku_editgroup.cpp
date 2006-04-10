@@ -281,19 +281,19 @@ void KU_EditGroup::accept()
     kug->getGroups()->lookup( legrpname->text() ) != -1 ) {
 
     KMessageBox::sorry( 0,
-      i18n("Group with name %1 already exists.").arg(legrpname->text()) );
+      i18n("Group with name %1 already exists.", legrpname->text()) );
     return;
   }
 
   if ( mAdd ) {
     if ( mSamba && !cbsamba->isChecked() && kug->getGroups()->lookup_sam( sid ) != -1 ) {
       KMessageBox::sorry( 0,
-        i18n("Group with SID %1 already exists.").arg( sid.getSID() ) );
+        i18n("Group with SID %1 already exists.", sid.getSID() ) );
       return;
     }
     if (kug->getGroups()->lookup(gid) != -1) {
       KMessageBox::sorry( 0,
-        i18n("Group with gid %1 already exists.").arg(gid) );
+        i18n("Group with gid %1 already exists.", gid) );
       return;
     }
   }

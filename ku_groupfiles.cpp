@@ -80,8 +80,8 @@ bool KU_GroupFiles::reload()
 
   rc = stat(QFile::encodeName(group_filename), &st);
   if(rc != 0) {
-    mErrorString = i18n("stat() call on file %1 failed: %2\nCheck KUser settings.").
-        arg(group_filename).arg(QString::fromLocal8Bit(strerror(errno)));
+    mErrorString = i18n("stat() call on file %1 failed: %2\nCheck KUser settings.", 
+        group_filename, QString::fromLocal8Bit(strerror(errno)));
     return false;
   }
 
@@ -94,7 +94,7 @@ bool KU_GroupFiles::reload()
   FILE *fgrp = fopen(QFile::encodeName(group_filename), "r");
   QString tmp;
   if (fgrp == NULL) {
-    mErrorString = i18n("Error opening %1 for reading.").arg(group_filename);
+    mErrorString = i18n("Error opening %1 for reading.", group_filename);
     return false;
   }
 
@@ -170,14 +170,14 @@ bool KU_GroupFiles::save()
 
   if( !group_filename.isEmpty() ) {
     if((group_fd = fopen(QFile::encodeName(new_group_filename), "w")) == NULL) {
-      mErrorString = i18n("Error opening %1 for writing.").arg(new_group_filename);
+      mErrorString = i18n("Error opening %1 for writing.", new_group_filename);
       return false;
     }
   }
 
   if( !gshadow_filename.isEmpty() ) {
     if((gshadow_fd = fopen(QFile::encodeName(new_gshadow_filename), "w")) == NULL) {
-      mErrorString = i18n("Error opening %1 for writing.").arg(new_gshadow_filename);
+      mErrorString = i18n("Error opening %1 for writing.", new_gshadow_filename);
       if ( group_fd ) fclose ( group_fd );
       return false;
     }

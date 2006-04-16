@@ -31,12 +31,13 @@
 #include <klocale.h>
 
 #include "ku_configdlg.h"
-#include "ku_generalsettings.h"
-#include "ku_filessettings.h"
-#include "ku_ldapsettings.h"
-#include "ku_ldapsamba.h"
-#include "ku_passwordpolicy.h"
 #include "ku_misc.h"
+
+#include "ui_ku_generalsettings.h"
+#include "ui_ku_filessettings.h"
+#include "ui_ku_ldapsettings.h"
+#include "ui_ku_ldapsamba.h"
+#include "ui_ku_passwordpolicy.h"
 
 KU_ConfigDlg::KU_ConfigDlg( KConfigSkeleton *config, QWidget *parent, const char *name ) :
   KConfigDialog( parent, name, config, IconList,

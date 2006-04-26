@@ -78,7 +78,7 @@ KU_UserLDAP::~KU_UserLDAP()
 {
 }
 
-void KU_UserLDAP::result( KIO::Job *job )
+void KU_UserLDAP::result( KJob *job )
 {
   kDebug() << "LDAP result: " << job->error() << endl;
   mProg->hide();
@@ -250,8 +250,8 @@ bool KU_UserLDAP::reload()
   KIO::Job *job = KIO::get( mUrl, true, false );
   connect( job, SIGNAL( data( KIO::Job*, const QByteArray& ) ),
     this, SLOT( data( KIO::Job*, const QByteArray& ) ) );
-  connect( job, SIGNAL( result( KIO::Job* ) ),
-    this, SLOT( result( KIO::Job* ) ) );
+  connect( job, SIGNAL( result( KJob* ) ),
+    this, SLOT( result( KJob* ) ) );
 //  job->addMetaData( "SERVER_CTRL0", "1.2.840.113556.1.4.473 true: uidNumber");
   mProg->exec();
   if ( mProg->wasCanceled() ) job->kill();
@@ -623,8 +623,8 @@ bool KU_UserLDAP::dbcommit()
   KIO::Job *job = KIO::put( mUrl, -1, false, false, false );
   connect( job, SIGNAL( dataReq( KIO::Job*, QByteArray& ) ),
     this, SLOT( putData( KIO::Job*, QByteArray& ) ) );
-  connect( job, SIGNAL( result( KIO::Job* ) ),
-    this, SLOT( result( KIO::Job* ) ) );
+  connect( job, SIGNAL( result( KJob* ) ),
+    this, SLOT( result( KJob* ) ) );
   mProg->exec();
   delete mProg;
   return( mOk );

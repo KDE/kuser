@@ -43,7 +43,7 @@ public:
 private slots:
   void data( KIO::Job*, const QByteArray& );
   void putData( KIO::Job *job, QByteArray& data );
-  void result( KIO::Job* );
+  void result( KJob* );
 private:
   enum LastOperation{ None, Mod, Add, Del };
   LastOperation mLastOperation;

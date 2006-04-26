@@ -78,7 +78,7 @@ QString KU_GroupLDAP::getRDN( const KU_Group &group ) const
   }
 }
 
-void KU_GroupLDAP::result( KIO::Job *job )
+void KU_GroupLDAP::result( KJob *job )
 {
   mProg->close();
   if ( job->error() ) {
@@ -166,8 +166,8 @@ bool KU_GroupLDAP::reload()
   KIO::Job *job = KIO::get( mUrl, true, false );
   connect( job, SIGNAL( data( KIO::Job*, const QByteArray& ) ),
     this, SLOT( data( KIO::Job*, const QByteArray& ) ) );
-  connect( job, SIGNAL( result( KIO::Job* ) ),
-    this, SLOT( result( KIO::Job* ) ) );
+  connect( job, SIGNAL( result( KJob* ) ),
+    this, SLOT( result( KJob* ) ) );
   mProg->exec();
   if ( mProg->wasCanceled() ) job->kill();
 
@@ -193,8 +193,8 @@ bool KU_GroupLDAP::dbcommit()
   KIO::Job *job = KIO::put( mUrl, -1, false, false, false );
   connect( job, SIGNAL( dataReq( KIO::Job*, QByteArray& ) ),
     this, SLOT( putData( KIO::Job*, QByteArray& ) ) );
-  connect( job, SIGNAL( result( KIO::Job* ) ),
-    this, SLOT( result( KIO::Job* ) ) );
+  connect( job, SIGNAL( result( KJob* ) ),
+    this, SLOT( result( KJob* ) ) );
   mProg->exec();
   delete mProg;
   return( mOk );

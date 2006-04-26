@@ -132,8 +132,8 @@ void KU_ConfigDlg::slotQueryClicked()
 //  job->addMetaData("no-auth-prompt","true");
   connect( job, SIGNAL( data( KIO::Job*, const QByteArray& ) ),
     this, SLOT( loadData( KIO::Job*, const QByteArray& ) ) );
-  connect( job, SIGNAL( result( KIO::Job* ) ),
-    this, SLOT( loadResult( KIO::Job* ) ) );
+  connect( job, SIGNAL( result( KJob* ) ),
+    this, SLOT( loadResult( KJob* ) ) );
 
   mProg = new QProgressDialog( 0 );
   mProg->setLabel( new QLabel(_url.prettyURL()) );
@@ -195,7 +195,7 @@ void KU_ConfigDlg::loadData( KIO::Job*, const QByteArray& d )
   } while ( ret != KABC::LDIF::MoreData );
 }
 
-void KU_ConfigDlg::loadResult( KIO::Job* job)
+void KU_ConfigDlg::loadResult( KJob* job)
 {
   int error = job->error();
   if ( error && error != KIO::ERR_USER_CANCELED )

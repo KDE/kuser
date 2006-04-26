@@ -27,11 +27,11 @@
 #include <kconfigdialog.h>
 #include <kabc/ldif.h>
 #include <kprogressdialog.h>
+#include <kio/job.h>
 
 class Ui_KU_LdapSamba;
 namespace KABC { class LdapConfigWidget; }
 namespace KIO { class Job; }
-
 typedef struct KU_SambaDomain {
   QString name;
   QString sid;
@@ -53,7 +53,7 @@ private:
 private slots:
   void slotQueryClicked();
   void loadData( KIO::Job*, const QByteArray& d );
-  void loadResult( KIO::Job* job);
+  void loadResult( KJob* job);
 };
 
 #endif // _KU_CONFIGDLG_H_

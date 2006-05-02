@@ -63,17 +63,17 @@ bool KU_Group::operator ==(const KU_Group &other) const
     return false;
 }
 
-KU_PROPERTY_IMPL(KU_Group,int, Caps);
+KU_PROPERTY_IMPL(KU_Group,int, Caps)
 
-KU_PROPERTY_IMPL(KU_Group,QString, Name);
-KU_PROPERTY_IMPL(KU_Group,QString, Pwd);
-KU_PROPERTY_IMPL(KU_Group,gid_t, GID );
+KU_PROPERTY_IMPL(KU_Group,QString, Name)
+KU_PROPERTY_IMPL(KU_Group,QString, Pwd)
+KU_PROPERTY_IMPL(KU_Group,gid_t, GID )
 
   //Samba
-KU_PROPERTY_IMPL(KU_Group,SID, SID);
-KU_PROPERTY_IMPL(KU_Group,int, Type);
-KU_PROPERTY_IMPL(KU_Group,QString, DisplayName);
-KU_PROPERTY_IMPL(KU_Group,QString, Desc);
+KU_PROPERTY_IMPL(KU_Group,SID, SID)
+KU_PROPERTY_IMPL(KU_Group,int, Type)
+KU_PROPERTY_IMPL(KU_Group,QString, DisplayName)
+KU_PROPERTY_IMPL(KU_Group,QString, Desc)
 
 bool KU_Group::lookup_user(const QString &name) const
 {

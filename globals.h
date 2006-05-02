@@ -34,11 +34,11 @@
 
 #define KU_PROPERTY(Type,Name) \
     const Type &get##Name() const ; \
-    void set##Name(Type data);
+    void set##Name(Type data)
 
 #define KU_PROPERTY_IMPL(Class,Type,Name) \
-    const Type &Class::get##Name() const { return d->Name; }; \
-    void Class::set##Name(Type data) { d->Name = data; };
+    const Type &Class::get##Name() const { return d->Name; } \
+    void Class::set##Name(Type data) { d->Name = data; }
 
 
 #define KU_BACKUP_EXT ".bak"

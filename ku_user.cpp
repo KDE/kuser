@@ -106,57 +106,57 @@ KU_User::~KU_User()
 {
 }
 
-KU_PROPERTY_IMPL(KU_User,int,Caps);
-KU_PROPERTY_IMPL(KU_User,QString,Name);
-KU_PROPERTY_IMPL(KU_User,QString,Surname);
-KU_PROPERTY_IMPL(KU_User,QString,Email);
-KU_PROPERTY_IMPL(KU_User,QString,Pwd);
-KU_PROPERTY_IMPL(KU_User,QString,HomeDir);
-KU_PROPERTY_IMPL(KU_User,QString,Shell);
-KU_PROPERTY_IMPL(KU_User,QString,FullName);
-KU_PROPERTY_IMPL(KU_User,uid_t,UID);
-KU_PROPERTY_IMPL(KU_User,uid_t,GID);
-KU_PROPERTY_IMPL(KU_User,bool,Disabled);
+KU_PROPERTY_IMPL(KU_User,int,Caps)
+KU_PROPERTY_IMPL(KU_User,QString,Name)
+KU_PROPERTY_IMPL(KU_User,QString,Surname)
+KU_PROPERTY_IMPL(KU_User,QString,Email)
+KU_PROPERTY_IMPL(KU_User,QString,Pwd)
+KU_PROPERTY_IMPL(KU_User,QString,HomeDir)
+KU_PROPERTY_IMPL(KU_User,QString,Shell)
+KU_PROPERTY_IMPL(KU_User,QString,FullName)
+KU_PROPERTY_IMPL(KU_User,uid_t,UID)
+KU_PROPERTY_IMPL(KU_User,uid_t,GID)
+KU_PROPERTY_IMPL(KU_User,bool,Disabled)
 
 //gecos
 //--BSD gecos
-KU_PROPERTY_IMPL(KU_User,QString,Office);
-KU_PROPERTY_IMPL(KU_User,QString,WorkPhone);
-KU_PROPERTY_IMPL(KU_User,QString,HomePhone);
-KU_PROPERTY_IMPL(KU_User,QString,Class);
+KU_PROPERTY_IMPL(KU_User,QString,Office)
+KU_PROPERTY_IMPL(KU_User,QString,WorkPhone)
+KU_PROPERTY_IMPL(KU_User,QString,HomePhone)
+KU_PROPERTY_IMPL(KU_User,QString,Class)
 //--BSD end
-KU_PROPERTY_IMPL(KU_User,QString,Office1);
-KU_PROPERTY_IMPL(KU_User,QString,Office2);
-KU_PROPERTY_IMPL(KU_User,QString,Address);
+KU_PROPERTY_IMPL(KU_User,QString,Office1)
+KU_PROPERTY_IMPL(KU_User,QString,Office2)
+KU_PROPERTY_IMPL(KU_User,QString,Address)
 
 //shadow
-KU_PROPERTY_IMPL(KU_User,QString,SPwd);
-KU_PROPERTY_IMPL(KU_User,time_t,Expire);
-KU_PROPERTY_IMPL(KU_User,time_t,LastChange);
-KU_PROPERTY_IMPL(KU_User,int,Min);
-KU_PROPERTY_IMPL(KU_User,int,Max);
-KU_PROPERTY_IMPL(KU_User,int,Warn);
-KU_PROPERTY_IMPL(KU_User,int,Inactive);
-KU_PROPERTY_IMPL(KU_User,int,Flag);
+KU_PROPERTY_IMPL(KU_User,QString,SPwd)
+KU_PROPERTY_IMPL(KU_User,time_t,Expire)
+KU_PROPERTY_IMPL(KU_User,time_t,LastChange)
+KU_PROPERTY_IMPL(KU_User,int,Min)
+KU_PROPERTY_IMPL(KU_User,int,Max)
+KU_PROPERTY_IMPL(KU_User,int,Warn)
+KU_PROPERTY_IMPL(KU_User,int,Inactive)
+KU_PROPERTY_IMPL(KU_User,int,Flag)
 
 //samba
-KU_PROPERTY_IMPL(KU_User,QString, LMPwd);
-KU_PROPERTY_IMPL(KU_User,QString, NTPwd);
-KU_PROPERTY_IMPL(KU_User,QString, LoginScript);
-KU_PROPERTY_IMPL(KU_User,QString, ProfilePath);
-KU_PROPERTY_IMPL(KU_User,QString, HomeDrive);
-KU_PROPERTY_IMPL(KU_User,QString, HomePath);
-KU_PROPERTY_IMPL(KU_User,QString, Workstations);
-KU_PROPERTY_IMPL(KU_User,QString, Domain);
-KU_PROPERTY_IMPL(KU_User,SID, SID);
-KU_PROPERTY_IMPL(KU_User,SID, PGSID);
+KU_PROPERTY_IMPL(KU_User,QString, LMPwd)
+KU_PROPERTY_IMPL(KU_User,QString, NTPwd)
+KU_PROPERTY_IMPL(KU_User,QString, LoginScript)
+KU_PROPERTY_IMPL(KU_User,QString, ProfilePath)
+KU_PROPERTY_IMPL(KU_User,QString, HomeDrive)
+KU_PROPERTY_IMPL(KU_User,QString, HomePath)
+KU_PROPERTY_IMPL(KU_User,QString, Workstations)
+KU_PROPERTY_IMPL(KU_User,QString, Domain)
+KU_PROPERTY_IMPL(KU_User,SID, SID)
+KU_PROPERTY_IMPL(KU_User,SID, PGSID)
 
 //Administrative
-KU_PROPERTY_IMPL(KU_User,bool, CreateHome);
-KU_PROPERTY_IMPL(KU_User,bool, CreateMailBox);
-KU_PROPERTY_IMPL(KU_User,bool, CopySkel);
-KU_PROPERTY_IMPL(KU_User,bool, DeleteHome);
-KU_PROPERTY_IMPL(KU_User,bool, DeleteMailBox);
+KU_PROPERTY_IMPL(KU_User,bool, CreateHome)
+KU_PROPERTY_IMPL(KU_User,bool, CreateMailBox)
+KU_PROPERTY_IMPL(KU_User,bool, CopySkel)
+KU_PROPERTY_IMPL(KU_User,bool, DeleteHome)
+KU_PROPERTY_IMPL(KU_User,bool, DeleteMailBox)
 
 int KU_User::createHome()
 {

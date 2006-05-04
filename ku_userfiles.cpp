@@ -299,6 +299,7 @@ bool KU_UserFiles::savepwd()
     if ((passwd_fd =
       fopen(QFile::encodeName(new_passwd_filename),"w")) == NULL) {
         mErrorString = i18n("Error opening %1 for writing.", passwd_filename);
+	fclose(shadow_fd);
 	return false;
     }
   }

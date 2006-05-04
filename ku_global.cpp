@@ -66,8 +66,9 @@ void KU_Global::displayGroupsError()
 
 void KU_Global::init()
 {
-  if ( users ) delete users;
-  if ( groups ) delete groups;
+  delete users;
+  delete groups;
+
   SID::setAlgRidBase( cfg->samridbase() );
   kDebug() << "Algorithmic RID base: " << SID::getAlgRidBase() << endl;
   switch ( cfg->source() ) {
@@ -83,6 +84,8 @@ void KU_Global::init()
       users = new KU_UserSystem( cfg );
       groups = new KU_GroupSystem( cfg );
       break;
+    default:
+      Q_ASSERT(0);
   }
   if ( !users->reload() ) displayUsersError();
   if ( !groups->reload() ) displayGroupsError();

@@ -26,7 +26,8 @@
 #include <kaction.h>
 #include <klocale.h>
 #include <kstdaction.h>
-
+#include <kactioncollection.h>
+#include <ktoggleaction.h>
 #include <kdebug.h>
 #include <kaction.h>
 #include <kstatusbar.h>

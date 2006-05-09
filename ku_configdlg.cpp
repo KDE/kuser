@@ -45,18 +45,16 @@ KU_ConfigDlg::KU_ConfigDlg( KConfigSkeleton *config, QWidget *parent, const char
 {
   KTabWidget *page1 = new KTabWidget( this );
   {
-    QFrame *page1a = new QFrame ( 0 );
-    Ui::KU_GeneralSettings *ui = new Ui::KU_GeneralSettings();
-    ui->setupUi( page1a );
-    ui->kcfg_shell->addItem( i18n("<Empty>" ) );
-    ui->kcfg_shell->addItems( readShells() );
-    page1->addTab( page1a, i18n("Connection") );
+    Ui::KU_GeneralSettings ui;
+    ui.setupUi( new QFrame ( page1 ) );
+    ui.kcfg_shell->addItem( i18n("<Empty>" ) );
+    ui.kcfg_shell->addItems( readShells() );
+    page1->addTab( ui.KU_GeneralSettings, i18n("Connection") );
   }
   {
-    QFrame *page1b = new QFrame( 0 );
-    Ui::KU_PasswordPolicy *ui = new Ui::KU_PasswordPolicy();
-    ui->setupUi( page1b );
-    page1->addTab( page1b, i18n("Password Policy") );
+    Ui::KU_PasswordPolicy ui;
+    ui.setupUi( new QFrame(page1) );
+    page1->addTab( ui.KU_PasswordPolicy, i18n("Password Policy") );
   }
   addPage( page1, i18n("General"), "", i18n("General Settings") );
 

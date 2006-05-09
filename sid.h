@@ -19,7 +19,7 @@
 #ifndef _SID_H_
 #define _SID_H_
 
-#include <qstring.h>
+#include <QString>
 
 class SID {
     

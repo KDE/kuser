@@ -18,7 +18,7 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-#include <qtooltip.h>
+#include <QToolTip>
 #include <qtimer.h>
 #include <kxmlguifactory.h>
 #include <ktoolbar.h>

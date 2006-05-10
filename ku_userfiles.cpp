@@ -32,7 +32,7 @@
 #include <pwd.h>
 #include <stdio.h>
 #include <stdlib.h>
-#ifdef HAVE_SHADOW
+#ifdef HAVE_SHADOW_H
 #include <shadow.h>
 #endif
 
@@ -59,7 +59,7 @@ KU_UserFiles::KU_UserFiles(KU_PrefsBase *cfg) : KU_Users( cfg )
   sdw_gid = 0;
 
   caps = Cap_Passwd;
-#ifdef HAVE_SHADOW
+#ifdef HAVE_SHADOW_H
   if ( !mCfg->shadowsrc().isEmpty() ) caps |= Cap_Shadow;
 #endif
 #if defined(__FreeBSD__) || defined(__bsdi__)
@@ -172,7 +172,7 @@ bool KU_UserFiles::loadpwd()
 
 bool KU_UserFiles::loadsdw()
 {
-#ifdef HAVE_SHADOW
+#ifdef HAVE_SHADOW_H
   QString shadow_file,tmp;
   KU_User user;
   int index;
@@ -235,7 +235,7 @@ bool KU_UserFiles::loadsdw()
   endspent();
 #endif
 
-#endif // HAVE_SHADOW
+#endif // HAVE_SHADOW_H
 
   return true;
 }
@@ -259,7 +259,7 @@ bool KU_UserFiles::savepwd()
   QString passwd_filename;
   QString shadow_filename;
   bool write_shadow = false;
-#ifdef HAVE_SHADOW
+#ifdef HAVE_SHADOW_H
   struct spwd spwd;
   shadow_filename = mCfg->shadowsrc();
   if ( !shadow_filename.isEmpty() && (caps & Cap_Shadow) ) write_shadow = true;
@@ -306,7 +306,7 @@ bool KU_UserFiles::savepwd()
 
   KU_User user;
   int usersindex = 0, addindex = 0;
-#ifdef HAVE_SHADOW
+#ifdef HAVE_SHADOW_H
   spwd.sp_namp = (char *)malloc(200);
   spwd.sp_pwdp = (char *)malloc(200);
 #endif
@@ -389,7 +389,7 @@ bool KU_UserFiles::savepwd()
       user.getHomeDir() + ":" +
       user.getShell() + "\n";
 
-#ifdef HAVE_SHADOW
+#ifdef HAVE_SHADOW_H
     if ( write_shadow ) {
       strncpy( spwd.sp_namp, user.getName().toLocal8Bit(), 200 );
       if ( user.getDisabled() )
@@ -429,7 +429,7 @@ bool KU_UserFiles::savepwd()
       QFile::encodeName(shadow_filename));
   }
 
-#ifdef HAVE_SHADOW
+#ifdef HAVE_SHADOW_H
   ::free(spwd.sp_namp);
   ::free(spwd.sp_pwdp);
 #endif

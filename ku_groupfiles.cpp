@@ -143,7 +143,7 @@ bool KU_GroupFiles::save()
 
   group_filename = mCfg->groupsrc();
   new_group_filename = group_filename + QString::fromLatin1(KU_CREATE_EXT);
-#ifdef HAVE_SHADOW
+#ifdef HAVE_SHADOW_H
   gshadow_filename = mCfg->gshadowsrc();
   if ( !KStandardDirs::exists( gshadow_filename ) )
       gshadow_filename = QString::null;
@@ -204,7 +204,7 @@ bool KU_GroupFiles::save()
         groupsindex++;
     }
 
-#ifdef HAVE_SHADOW
+#ifdef HAVE_SHADOW_H
     if ( addindex && !mCfg->gshadowsrc().isEmpty() )
       group.setPwd("x");
 #endif

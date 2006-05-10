@@ -21,7 +21,7 @@
 #include "globals.h"
 #include <errno.h>
 #include <pwd.h>
-#ifdef HAVE_SHADOW
+#ifdef HAVE_SHADOW_H
 #include <shadow.h>
 #endif
 
@@ -35,7 +35,7 @@
 KU_UserSystem::KU_UserSystem(KU_PrefsBase *cfg) : KU_Users( cfg )
 {
   caps = Cap_ReadOnly | Cap_Passwd;
-#ifdef HAVE_SHADOW
+#ifdef HAVE_SHADOW_H
   if ( !mCfg->shadowsrc().isEmpty() ) caps |= Cap_Shadow;
 #endif
 #if defined(__FreeBSD__) || defined(__bsdi__)
@@ -103,7 +103,7 @@ bool KU_UserSystem::loadpwd()
 
 bool KU_UserSystem::loadsdw()
 {
-#ifdef HAVE_SHADOW
+#ifdef HAVE_SHADOW_H
   struct spwd *spw;
   KU_User user;
   QString tmp;
@@ -139,6 +139,6 @@ bool KU_UserSystem::loadsdw()
   }
 
   endspent();
-#endif //HAVE_SHADOW  
+#endif //HAVE_SHADOW_H  
   return true;
 }

@@ -53,7 +53,6 @@
 #endif
 
 #if defined(__FreeBSD__) || defined(__bsdi__)
-  #undef HAVE_SHADOW
   #include <pwd.h>
   #define PASSWORD_FILE _PATH_MASTERPASSWD
   #define PASSWORD_FILE_MASK S_IRUSR | S_IWUSR

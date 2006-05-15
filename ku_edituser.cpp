@@ -152,7 +152,7 @@ void KU_EditUser::initDlg()
     shells.sort();
     leshell->insertStringList(shells);
     connect(leshell, SIGNAL(activated(const QString &)), this, SLOT(changed()));
-    connect(leshell, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
+    connect(leshell, SIGNAL(editTextChanged(const QString &)), this, SLOT(changed()));
 //    whatstr = i18n("WHAT IS THIS: Login Shell");
     addRow(frame, layout, row++, leshell, i18n("&Login shell:"), whatstr);
 

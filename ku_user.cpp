@@ -194,7 +194,7 @@ int KU_User::tryCreate(const QString &dir)
   if (rc == 0) {
     if (S_ISDIR(sb.st_mode)) {
       if (KMessageBox::warningContinueCancel( 0,
-        i18n("Folder %1 already exists!\nWill make %2 owner and change permissions.\nDo you want to continue?", dir, d->Name),
+        i18n("Folder %1 already exists.\nWill make %2 owner and change permissions.\nDo you want to continue?", dir, d->Name),
         QString::null, KStdGuiItem::cont() ) == KMessageBox::Continue) {
 
         if (chown(QFile::encodeName(dir), d->UID, d->GID) != 0) {
@@ -202,11 +202,11 @@ int KU_User::tryCreate(const QString &dir)
         }
         return(0);
       } else {
-        KMessageBox::information( 0, i18n("Folder %1 left 'as is'.\nVerify ownership and permissions for user %2 who may not be able to log in!", dir, d->Name) );
+        KMessageBox::information( 0, i18n("Folder %1 left 'as is'.\nVerify ownership and permissions for user %2 who may not be able to log in.", dir, d->Name) );
         return(-1);
       }
     } else {
-      KMessageBox::information( 0, i18n("%1 exists and is not a folder. User %2 will not be able to log in!", dir, d->Name) );
+      KMessageBox::information( 0, i18n("%1 exists and is not a folder. User %2 will not be able to log in.", dir, d->Name) );
       return(-1);
     }
   } else {

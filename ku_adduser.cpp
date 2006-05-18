@@ -119,7 +119,7 @@ bool KU_AddUser::checkHome()
     if (S_ISDIR(s.st_mode)) {
        if ( KMessageBox::
          warningContinueCancel ( 0,
-           i18n("Folder %1 already exists!\n%2 may become owner and permissions may change.\nDo you really want to use %3?", 
+           i18n("Folder %1 already exists.\n%2 may become owner and permissions may change.\nDo you really want to use %3?", 
            h_dir, mNewUser.getName(), h_dir), QString::null, KStdGuiItem::cont() ) == KMessageBox::Cancel )
 
          return false;

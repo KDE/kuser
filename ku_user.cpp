@@ -288,7 +288,7 @@ int KU_User::removeHome()
 
   if (!stat(QFile::encodeName(d->HomeDir), &sb))
     if (S_ISDIR(sb.st_mode) && sb.st_uid == d->UID) {
-      if (!KIO::NetAccess::del(KUrl::fromPathOrURL(d->HomeDir),0L)) {
+      if (!KIO::NetAccess::del(KUrl::fromPathOrUrl(d->HomeDir),0L)) {
              KMessageBox::error( 0, i18n("Cannot remove home folder %1.\nError: %2",
                         d->HomeDir, KIO::NetAccess::lastErrorString()) );
       }

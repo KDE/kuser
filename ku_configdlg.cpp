@@ -126,7 +126,7 @@ void KU_ConfigDlg::slotQueryClicked()
   _url.setExtension( "x-dir", "base" );
   _url.setFilter( filter );
 
-  kDebug() << "sendQuery url: " << _url.prettyURL() << endl;
+  kDebug() << "sendQuery url: " << _url.prettyUrl() << endl;
   mLdif.startParsing();
   KIO::Job *job = KIO::get( _url, true, false );
 //  job->addMetaData("no-auth-prompt","true");
@@ -136,7 +136,7 @@ void KU_ConfigDlg::slotQueryClicked()
     this, SLOT( loadResult( KJob* ) ) );
 
   mProg = new QProgressDialog( 0 );
-  mProg->setLabel( new QLabel(_url.prettyURL()) );
+  mProg->setLabel( new QLabel(_url.prettyUrl()) );
   mProg->setValue( 0 );
   mProg->setMaximum( 1 );
   mProg->setAutoClose( false );

@@ -19,7 +19,7 @@
  **/
 
 #include "globals.h"
-
+#include <ku_config.h>
 #include <config.h>
 
 #ifdef HAVE_SYS_STAT_H

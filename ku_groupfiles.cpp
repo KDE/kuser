@@ -21,7 +21,7 @@
 #include "globals.h"
 
 #include <config.h>
-
+#include <ku_config.h>
 #include <errno.h>
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>

@@ -19,7 +19,7 @@
 #ifndef _KU_SELECTCONN_H_
 #define _KU_SELECTCONN_H_
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 #include <kcombobox.h>
 
 class KU_SelectConn : public KDialog {

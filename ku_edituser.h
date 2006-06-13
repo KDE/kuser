@@ -32,12 +32,11 @@
 #include <klineedit.h>
 #include <kdatetimewidget.h>
 #include <knuminput.h>
-#include <kdialogbase.h>
 #include <kcombobox.h>
-
+#include <kpagedialog.h>
 #include "ku_user.h"
 
-class KU_EditUser : public KDialogBase
+class KU_EditUser : public KPageDialog
 {
   Q_OBJECT
 

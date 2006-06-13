@@ -31,11 +31,11 @@
 #include "ku_configdlg.h"
 
 KU_SelectConn::KU_SelectConn(const QString &selected, QWidget *parent) :
-  KDialog( parent, i18n("Connection Selection"), 
-  Ok | Apply | Cancel | User1 | User2 | User3 )
+  KDialog( parent)
 {
   QStringList conns;
-
+  setButtons(Ok | Apply | Cancel | User1 | User2 | User3);
+  setCaption(i18n("Connection Selection"));
   setButtonText( User3, i18n("&New...") );
   setButtonText( User2, i18n("&Edit") );
   setButtonText( User1, i18n("&Delete") );

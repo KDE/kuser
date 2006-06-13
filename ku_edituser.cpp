@@ -339,9 +339,13 @@ void KU_EditUser::initDlg()
 
 KU_EditUser::KU_EditUser( const QList<int> &selected,
   QWidget *parent ) :
-  KDialogBase(Tabbed, 0, parent, 0, true, i18n("User Properties"), Ok | Cancel, Ok )
+  KPageDialog( parent)
 
 {
+  setCaption(i18n("User Properties"));
+  setButtons( Ok | Cancel);
+  setDefaultButton(Ok);
+  setFaceType(KPageDialog::Tabbed);
   mSelected = selected;
   if ( mSelected.count() > 1 )
     setCaption( i18n("User Properties - %1 Selected Users", mSelected.count() ) );
@@ -358,9 +362,15 @@ KU_EditUser::KU_EditUser( const QList<int> &selected,
 
 KU_EditUser::KU_EditUser( KU_User &user, bool fixedprivgroup,
   QWidget *parent ) :
-  KDialogBase(Tabbed, 0, parent, 0, true, i18n("User Properties"), Ok | Cancel, Ok )
+  KPageDialog(parent)
 
 {
+  setCaption(i18n("User Properties"));
+  setButtons(Ok | Cancel);
+  setDefaultButton( Ok);
+  setModal(true);
+  setFaceType(KPageDialog::Tabbed);
+
   mUser = user;
   initDlg();
   loadgroups( fixedprivgroup );

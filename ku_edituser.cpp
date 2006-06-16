@@ -102,7 +102,8 @@ void KU_EditUser::initDlg()
 
   // Tab 1: User Info
   {
-    QFrame *frame = addPage(i18n("User Info"));
+      QFrame *frame = new QFrame();
+      addPage(frame, i18n("User Info"));
     QGridLayout *layout = new QGridLayout(frame, 20, 4, marginHint(), spacingHint());
     int row = 0;
 
@@ -219,7 +220,8 @@ void KU_EditUser::initDlg()
        kug->getUsers()->getCaps() & KU_Users::Cap_BSD ) {
 
   // Tab 2 : Password Management
-    QFrame *frame = addPage(i18n("Password Management"));
+      QFrame *frame = new QFrame();
+      addPage(frame, i18n("Password Management"));
     QGridLayout *layout = new QGridLayout(frame, 20, 4, marginHint(), spacingHint());
     int row = 0;
 
@@ -262,7 +264,8 @@ void KU_EditUser::initDlg()
 
   // Tab 3: Samba
   if ( kug->getUsers()->getCaps() & KU_Users::Cap_Samba ) {
-    QFrame *frame = addPage(i18n("Samba"));
+    QFrame *frame = new QFrame();
+    addPage(frame, i18n("Samba"));
     QGridLayout *layout = new QGridLayout(frame, 10, 4, marginHint(), spacingHint());
     int row = 0;
 
@@ -315,7 +318,8 @@ void KU_EditUser::initDlg()
 
   // Tab 4: Groups
   {
-    QFrame *frame = addPage(i18n("Groups"));
+      QFrame *frame = new QFrame();
+      addPage(frame, i18n("Groups"));
     QGridLayout *layout = new QGridLayout(frame, 2, 2, marginHint(), spacingHint());
 
     lstgrp = new QListWidget(frame);
@@ -866,7 +870,7 @@ bool KU_EditUser::saveg()
         mUser : kug->getUsers()->at(mSelected[0]);
 
       while ( true ) {
-        if ( item->checkState() == Qt::Checked && 
+        if ( item->checkState() == Qt::Checked &&
 	           (( !primaryGroup.isEmpty() && primaryGroup != group.getName() ) ||
                     ( primaryGroup.isEmpty() && user.getGID() != group.getGID() )) ) {
           if ( group.addUser( user.getName() ) ) mod = true;
@@ -875,7 +879,7 @@ bool KU_EditUser::saveg()
         }
         if ( index == mSelected.count() ) break;
         user = kug->getUsers()->at(mSelected[index++]);
-	
+
       }
 
       if ( mod ) kug->getGroups()->mod( grpindex, group );

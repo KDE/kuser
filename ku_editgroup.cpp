@@ -33,8 +33,12 @@
 
 KU_EditGroup::KU_EditGroup(const KU_Group &group, bool add,
    QWidget* parent)
-  : KDialog(parent, i18n("Group Properties"), Ok | Cancel)
+  : KDialog(parent)
 {
+    setCaption( i18n("Group Properties") );
+    setButtons( Ok|Cancel );
+    setDefaultButton( Ok );
+
   mAdd = add;
   mOldName = group.getName();
   SID sid = group.getSID();
@@ -50,7 +54,7 @@ KU_EditGroup::KU_EditGroup(const KU_Group &group, bool add,
   QGridLayout *layout = new QGridLayout( page );
   layout->setSpacing( spacingHint() );
   layout->setMargin( marginHint() );
-  
+
   QLabel *lb;
   setMainWidget( page );
 
@@ -197,7 +201,7 @@ KU_EditGroup::KU_EditGroup(const KU_Group &group, bool add,
     sl.append( userName );
     if ( group.lookup_user(userName) || user.getGID() == group.getGID() ) {
       QTreeWidgetItem *item = new QTreeWidgetItem(m_list_in, sl);
-      if ( user.getGID() == group.getGID() ) 
+      if ( user.getGID() == group.getGID() )
         item->setFlags( Qt::ItemIsEnabled );
       else
         item->setFlags( Qt::ItemIsEnabled | Qt::ItemIsSelectable );
@@ -230,7 +234,7 @@ void KU_EditGroup::ridSelected( int index )
 
 void KU_EditGroup::addClicked()
 {
-  int i = 0;  
+  int i = 0;
   while ( i < m_list_notin->topLevelItemCount() ) {
     QTreeWidgetItem *item = m_list_notin->topLevelItem( i );
     if ( m_list_notin->isItemSelected( item ) ) {
@@ -244,7 +248,7 @@ void KU_EditGroup::addClicked()
 
 void KU_EditGroup::delClicked()
 {
-  int i = 0;  
+  int i = 0;
   while ( i < m_list_in->topLevelItemCount() ) {
     QTreeWidgetItem *item = m_list_in->topLevelItem( i );
     if ( m_list_in->isItemSelected( item ) ) {

@@ -27,8 +27,11 @@
 #include "ku_pwdlg.h"
 
 KU_PwDlg::KU_PwDlg( QWidget* parent )
-  : KDialog(parent, i18n("Enter Password"), Ok | Cancel)
+  : KDialog(parent) 
 {
+  setCaption(i18n("Enter Password"));
+  setButtons(Ok | Cancel);
+  setDefaultButton(Ok);
   QFrame *page = new QFrame( this );
   setMainWidget( page );
   QLabel* lb1 = new QLabel(page);

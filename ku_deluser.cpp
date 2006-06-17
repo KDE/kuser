@@ -27,9 +27,11 @@
 #include "ku_deluser.h"
 
 KU_DelUser::KU_DelUser(KU_User *AUser, QWidget *parent) 
- : KDialog( parent, i18n("Delete User"),
-                KDialog::Ok|KDialog::Cancel )
-{                   
+ : KDialog( parent)
+{ 
+  setCaption(i18n("Delete User"));
+  setButtons(KDialog::Ok|KDialog::Cancel );
+  setDefaultButton(KDialog::Ok);  
   KVBox *page = new KVBox( this );
   setMainWidget( page );
   new QLabel( i18n("<p>Deleting user <b>%1</b>"

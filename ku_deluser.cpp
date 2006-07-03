@@ -23,6 +23,7 @@
 
 #include <kvbox.h>
 #include <klocale.h>
+#include <kstdguiitem.h>
 
 #include "ku_deluser.h"
 

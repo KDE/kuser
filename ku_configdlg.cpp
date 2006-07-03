@@ -144,7 +144,7 @@ void KU_ConfigDlg::slotQueryClicked()
   mProg->exec();
   if ( mProg->wasCanceled() ) {
     kDebug() << "query cancelled!" << endl;
-    job->kill( true );
+    job->kill( KJob::Quietly );
   } else {
     if ( !mErrorMsg.isEmpty() ) 
       KMessageBox::error( this, mErrorMsg );

@@ -4,7 +4,7 @@
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/kuser/pics/ FILES group.png user.png  )
+install( FILES group.png user.png   DESTINATION  ${DATA_INSTALL_DIR}/kuser/pics/ )
 
 
 

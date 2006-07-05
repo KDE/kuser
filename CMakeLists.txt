@@ -68,7 +68,7 @@ kde4_add_executable(kuser ${kuser_SRCS})
 
 target_link_libraries(kuser  ${KDE4_KDECORE_LIBS} crypt kdeui kabc kntlm)
 
-install_targets(/bin kuser )
+install(TARGETS  kuser  DESTINATION ${BIN_INSTALL_DIR} )
 
 
 ########### install files ###############

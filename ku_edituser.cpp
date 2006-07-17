@@ -72,15 +72,15 @@ KIntSpinBox *KU_EditUser::addDaysGroup(QWidget *parent, QGridLayout *layout, int
     days = new KIntSpinBox( parent );
     label->setBuddy( days );
     days->setSuffix( i18n(" days") );
-    days->setMaxValue( 99999 );
+    days->setMaximum( 99999 );
     if (never)
     {
-      days->setMinValue( -1 );
+      days->setMinimum( -1 );
       days->setSpecialValueText(i18n("Never"));
     }
     else
     {
-      days->setMinValue( 0 );
+      days->setMinimum( 0 );
     }
     layout->addWidget( days, row, 2 );
 

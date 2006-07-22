@@ -513,12 +513,12 @@ void KU_EditUser::selectuser()
         for ( int i=0; i<leshell->count(); i++ )
           if ( leshell->text(i) == shell ) {
             tested = true;
-            leshell->setCurrentItem(i);
+            leshell->setCurrentIndex(i);
             break;
           }
           if ( !tested ) {
             leshell->insertItem( shell );
-            leshell->setCurrentItem( leshell->count()-1 );
+            leshell->setCurrentIndex( leshell->count()-1 );
           }
       } else
         leshell->setCurrentItem(0);

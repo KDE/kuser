@@ -32,6 +32,7 @@
 #include <kaction.h>
 #include <kstatusbar.h>
 #include <kedittoolbar.h>
+#include <kicon.h>
 
 #include "ku_global.h"
 #include "ku_configdlg.h"

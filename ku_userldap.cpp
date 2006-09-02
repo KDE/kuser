@@ -52,7 +52,7 @@ KU_UserLDAP::KU_UserLDAP(KU_PrefsBase *cfg) : KU_Users( cfg )
     mUrl.setExtension( "x-mech", mCfg->ldapsaslmech() );
   }
 
-  mUrl.setScope(KABC::LDAPUrl::One);
+  mUrl.setScope(KLDAP::LdapUrl::One);
   mUrl.setExtension("x-dir","base");
 
   if ( mCfg->ldaptimelimit() )
@@ -99,18 +99,18 @@ void KU_UserLDAP::result( KJob *job )
 void KU_UserLDAP::data( KIO::Job *, const QByteArray& data )
 {
   if ( data.size() ) {
-    mParser.setLDIF( data );
+    mParser.setLdif( data );
   } else {
-    mParser.endLDIF();
+    mParser.endLdif();
   }
 
-  KABC::LDIF::ParseValue ret;
+  KLDAP::Ldif::ParseValue ret;
   QString name, val;
   QByteArray value;
   do {
     ret = mParser.nextItem();
     switch ( ret ) {
-      case KABC::LDIF::Item:
+      case KLDAP::Ldif::Item:
         name = mParser.attr().toLower();
         value = mParser.value();
         val = QString::fromUtf8( value, value.size() );
@@ -205,7 +205,7 @@ void KU_UserLDAP::data( KIO::Job *, const QByteArray& data )
 	else if ( name == "sambapasswordhistory" || name == "sambalogonhours" )
           schemaversion = 1;
         break;
-      case KABC::LDIF::EndEntry: {
+      case KLDAP::Ldif::EndEntry: {
         kDebug() << "new user: " << mUser.getName() << endl;
         if ( !mOc.isEmpty() ) {
           mObjectClasses.insert( count(), mOc );
@@ -227,7 +227,7 @@ void KU_UserLDAP::data( KIO::Job *, const QByteArray& data )
       default:
         break;
     }
-  } while ( ret != KABC::LDIF::MoreData );
+  } while ( ret != KLDAP::Ldif::MoreData );
 }
 
 bool KU_UserLDAP::reload()
@@ -431,37 +431,37 @@ QByteArray KU_UserLDAP::getLDIF( const KU_User &user, int oldindex ) const
   }
 
   if ( mod ) ldif += "-\nreplace: cn\n";
-  ldif += KABC::LDIF::assembleLine( "cn", cn )+"\n";
+  ldif += KLDAP::Ldif::assembleLine( "cn", cn )+"\n";
   if ( caps & Cap_InetOrg ) {
     if ( mod ) ldif += "-\nreplace: uid\n";
-    ldif += KABC::LDIF::assembleLine( "uid", user.getName() ) + "\n";
+    ldif += KLDAP::Ldif::assembleLine( "uid", user.getName() ) + "\n";
   } else {
     if ( mod ) ldif += "-\nreplace: userid\n";
-    ldif += KABC::LDIF::assembleLine( "userid", user.getName() ) + "\n";
+    ldif += KLDAP::Ldif::assembleLine( "userid", user.getName() ) + "\n";
   }
   if ( mod ) ldif += "-\n";
 
   if ( ( user.getCaps() & KU_User::Cap_POSIX ) || ( caps & Cap_InetOrg ) ) {
     if ( mod ) ldif += "replace: userpassword\n";
-    ldif += KABC::LDIF::assembleLine( "userpassword", pwd )+"\n";
+    ldif += KLDAP::Ldif::assembleLine( "userpassword", pwd )+"\n";
     if ( mod ) ldif += "-\n";
   }
 
   if ( user.getCaps() & KU_User::Cap_POSIX ) {
     if ( mod ) ldif += "replace: uidnumber\n";
-    ldif += KABC::LDIF::assembleLine( "uidnumber",
+    ldif += KLDAP::Ldif::assembleLine( "uidnumber",
       QString::number( user.getUID() ) )+"\n";
     if ( mod ) ldif += "-\nreplace: gidnumber\n";
-    ldif += KABC::LDIF::assembleLine( "gidnumber",
+    ldif += KLDAP::Ldif::assembleLine( "gidnumber",
       QString::number( user.getGID() ) )+"\n";
     if ( mod ) ldif += "-\nreplace: gecos\n";
-    ldif += KABC::LDIF::assembleLine( "gecos", !mCfg->ldapgecos() ? QByteArray() :
+    ldif += KLDAP::Ldif::assembleLine( "gecos", !mCfg->ldapgecos() ? QByteArray() :
       QByteArray( gecos.toLatin1() ) )+"\n";
     if ( mod ) ldif += "-\nreplace: homedirectory\n";
-    ldif += KABC::LDIF::assembleLine( "homedirectory",
+    ldif += KLDAP::Ldif::assembleLine( "homedirectory",
       user.getHomeDir() )+"\n";
     if ( mod ) ldif += "-\nreplace: loginshell\n";
-    ldif += KABC::LDIF::assembleLine( "loginshell",
+    ldif += KLDAP::Ldif::assembleLine( "loginshell",
       user.getShell() )+"\n";
     if ( mod ) ldif += "-\n";
   } else {
@@ -477,50 +477,50 @@ QByteArray KU_UserLDAP::getLDIF( const KU_User &user, int oldindex ) const
 
   if ( caps & Cap_InetOrg ) {
     if ( mod ) ldif += "replace: sn\n";
-    ldif += KABC::LDIF::assembleLine( "sn", user.getSurname() ) + "\n";
+    ldif += KLDAP::Ldif::assembleLine( "sn", user.getSurname() ) + "\n";
     if ( mod ) ldif += "-\nreplace: mail\n";
-    ldif += KABC::LDIF::assembleLine( "mail", user.getEmail() ) + "\n";
+    ldif += KLDAP::Ldif::assembleLine( "mail", user.getEmail() ) + "\n";
     if ( mod ) ldif += "-\nreplace: displayName\n";
-    ldif += KABC::LDIF::assembleLine( "displayname", user.getFullName() ) + "\n";
+    ldif += KLDAP::Ldif::assembleLine( "displayname", user.getFullName() ) + "\n";
     if ( mod ) ldif += "-\nreplace: postaladdress\n";
-    ldif += KABC::LDIF::assembleLine( "postaladdress", user.getAddress() ) + "\n";
+    ldif += KLDAP::Ldif::assembleLine( "postaladdress", user.getAddress() ) + "\n";
     if ( mod ) ldif += "-\nreplace: telephoneNumber\n";
-    ldif += KABC::LDIF::assembleLine( "telephoneNumber", user.getOffice1() ) + "\n";
-    ldif += KABC::LDIF::assembleLine( "telephoneNumber", user.getOffice2() ) + "\n";
+    ldif += KLDAP::Ldif::assembleLine( "telephoneNumber", user.getOffice1() ) + "\n";
+    ldif += KLDAP::Ldif::assembleLine( "telephoneNumber", user.getOffice2() ) + "\n";
     if ( mod ) ldif += "-\n";
   }
 
   if ( caps & Cap_Samba ) {
     if ( user.getCaps() & KU_User::Cap_Samba ) {
       if ( mod ) ldif += "replace: sambadomainname\n";
-      ldif += KABC::LDIF::assembleLine( "sambadomainname", user.getDomain() ) + "\n";
+      ldif += KLDAP::Ldif::assembleLine( "sambadomainname", user.getDomain() ) + "\n";
       if ( mod ) ldif += "-\nreplace: sambauserworkstations\n";
-      ldif += KABC::LDIF::assembleLine( "sambauserworkstations", user.getWorkstations() ) + "\n";
+      ldif += KLDAP::Ldif::assembleLine( "sambauserworkstations", user.getWorkstations() ) + "\n";
       if ( mod ) ldif += "-\nreplace: sambahomepath\n";
-      ldif += KABC::LDIF::assembleLine( "sambahomepath", user.getHomePath() ) + "\n";
+      ldif += KLDAP::Ldif::assembleLine( "sambahomepath", user.getHomePath() ) + "\n";
       if ( mod ) ldif += "-\nreplace: sambahomedrive\n";
-      ldif += KABC::LDIF::assembleLine( "sambahomedrive", user.getHomeDrive() ) + "\n";
+      ldif += KLDAP::Ldif::assembleLine( "sambahomedrive", user.getHomeDrive() ) + "\n";
       if ( mod ) ldif += "-\nreplace: sambalogonscript\n";
-      ldif += KABC::LDIF::assembleLine( "sambalogonscript", user.getLoginScript() ) + "\n";
+      ldif += KLDAP::Ldif::assembleLine( "sambalogonscript", user.getLoginScript() ) + "\n";
       if ( mod ) ldif += "-\nreplace: sambaprofilepath\n";
-      ldif += KABC::LDIF::assembleLine( "sambaprofilepath", user.getProfilePath() ) + "\n";
+      ldif += KLDAP::Ldif::assembleLine( "sambaprofilepath", user.getProfilePath() ) + "\n";
       if ( mod ) ldif += "-\nreplace: sambalmpassword\n";
-      ldif += KABC::LDIF::assembleLine( "sambalmpassword", user.getLMPwd() ) + "\n";
+      ldif += KLDAP::Ldif::assembleLine( "sambalmpassword", user.getLMPwd() ) + "\n";
       if ( mod ) ldif += "-\nreplace: sambantpassword\n";
-      ldif += KABC::LDIF::assembleLine( "sambantpassword", user.getNTPwd() ) + "\n";
+      ldif += KLDAP::Ldif::assembleLine( "sambantpassword", user.getNTPwd() ) + "\n";
       if ( mod ) ldif += "-\nreplace: sambasid\n";
-      ldif += KABC::LDIF::assembleLine( "sambasid", user.getSID().getSID() ) + "\n";
+      ldif += KLDAP::Ldif::assembleLine( "sambasid", user.getSID().getSID() ) + "\n";
       if ( mod ) ldif += "-\nreplace: sambaacctflags\n";
-      ldif += KABC::LDIF::assembleLine( "sambaacctflags", samflags ) + "\n";
+      ldif += KLDAP::Ldif::assembleLine( "sambaacctflags", samflags ) + "\n";
       if ( mod ) ldif += "-\nreplace: sambaprimarygroupsid\n";
-      ldif += KABC::LDIF::assembleLine( "sambaprimarygroupsid",
+      ldif += KLDAP::Ldif::assembleLine( "sambaprimarygroupsid",
         user.getPGSID().getSID() ) + "\n";
       if ( mod ) ldif += "-\nreplace: sambapwdlastset\n";
-      ldif += KABC::LDIF::assembleLine( "sambapwdlastset",
+      ldif += KLDAP::Ldif::assembleLine( "sambapwdlastset",
         QString::number( user.getLastChange() ) ) + "\n";
       if ( mod ) ldif += "-\nreplace: sambakickofftime\n";
       if ( user.getExpire() != -1 ) ldif +=
-        KABC::LDIF::assembleLine( "sambakickofftime",
+        KLDAP::Ldif::assembleLine( "sambakickofftime",
         QString::number( user.getExpire() ) ) + "\n";
       if ( mod ) ldif += "-\n";
     } else {
@@ -558,25 +558,25 @@ QByteArray KU_UserLDAP::getLDIF( const KU_User &user, int oldindex ) const
   if ( caps & Cap_Shadow ) {
     if ( user.getCaps() & KU_User::Cap_POSIX ) {
       if ( mod ) ldif += "replace: shadowlastchange\n"; //sambapwdlastset
-      ldif += KABC::LDIF::assembleLine( "shadowlastchange",
+      ldif += KLDAP::Ldif::assembleLine( "shadowlastchange",
         QString::number( timeToDays( user.getLastChange() ) ) ) + "\n";
       if ( mod ) ldif += "-\nreplace: shadowmin\n"; //sambaPwdCanChange
-      ldif += KABC::LDIF::assembleLine( "shadowmin",
+      ldif += KLDAP::Ldif::assembleLine( "shadowmin",
         QString::number( user.getMin() ) ) + "\n";
       if ( mod ) ldif += "-\nreplace: shadowmax\n"; //sambaPwdMustChange
-      ldif += KABC::LDIF::assembleLine( "shadowmax",
+      ldif += KLDAP::Ldif::assembleLine( "shadowmax",
         QString::number( user.getMax() ) ) + "\n";
       if ( mod ) ldif += "-\nreplace: shadowwarning\n";
-      ldif += KABC::LDIF::assembleLine( "shadowwarning",
+      ldif += KLDAP::Ldif::assembleLine( "shadowwarning",
         QString::number( user.getWarn() ) ) + "\n";
       if ( mod ) ldif += "-\nreplace: shadowinactive\n";
-      ldif += KABC::LDIF::assembleLine( "shadowinactive",
+      ldif += KLDAP::Ldif::assembleLine( "shadowinactive",
         QString::number( user.getInactive() ) ) + "\n";
       if ( mod ) ldif += "-\nreplace: shadowexpire\n"; //sambaKickoffTime
-      ldif += KABC::LDIF::assembleLine( "shadowexpire",
+      ldif += KLDAP::Ldif::assembleLine( "shadowexpire",
         QString::number( timeToDays( user.getExpire() ) ) ) + "\n";
       if ( mod ) ldif += "-\nreplace: shadowflag\n";
-      ldif += KABC::LDIF::assembleLine( "shadowflag",
+      ldif += KLDAP::Ldif::assembleLine( "shadowflag",
         QString::number( user.getFlag() ) ) + "\n";
       if ( mod ) ldif += "-\n";
     } else {

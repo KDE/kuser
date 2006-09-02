@@ -26,8 +26,8 @@
 #include <knuminput.h>
 #include <kpushbutton.h>
 #include <ktabwidget.h>
-#include <kabc/ldapconfigwidget.h>
-#include <kabc/ldapurl.h>
+#include <kldap/ldapconfigwidget.h>
+#include <kldap/ldapurl.h>
 #include <klocale.h>
 
 #include "ku_configdlg.h"
@@ -70,20 +70,20 @@ KU_ConfigDlg::KU_ConfigDlg( KConfigSkeleton *config, QWidget *parent, const char
   KTabWidget *page3 = new KTabWidget( this );
 
   ldconf =
-    new KABC::LdapConfigWidget(
-       KABC::LdapConfigWidget::W_USER |
-       KABC::LdapConfigWidget::W_PASS |
-       KABC::LdapConfigWidget::W_BINDDN |
-       KABC::LdapConfigWidget::W_REALM |
-       KABC::LdapConfigWidget::W_HOST |
-       KABC::LdapConfigWidget::W_PORT |
-       KABC::LdapConfigWidget::W_VER |
-       KABC::LdapConfigWidget::W_DN |
-       KABC::LdapConfigWidget::W_SECBOX |
-       KABC::LdapConfigWidget::W_AUTHBOX |
-       KABC::LdapConfigWidget::W_TIMELIMIT | 
-       KABC::LdapConfigWidget::W_SIZELIMIT | 
-       KABC::LdapConfigWidget::W_PAGESIZE,
+    new KLDAP::LdapConfigWidget(
+       KLDAP::LdapConfigWidget::W_USER |
+       KLDAP::LdapConfigWidget::W_PASS |
+       KLDAP::LdapConfigWidget::W_BINDDN |
+       KLDAP::LdapConfigWidget::W_REALM |
+       KLDAP::LdapConfigWidget::W_HOST |
+       KLDAP::LdapConfigWidget::W_PORT |
+       KLDAP::LdapConfigWidget::W_VER |
+       KLDAP::LdapConfigWidget::W_DN |
+       KLDAP::LdapConfigWidget::W_SECBOX |
+       KLDAP::LdapConfigWidget::W_AUTHBOX |
+       KLDAP::LdapConfigWidget::W_TIMELIMIT | 
+       KLDAP::LdapConfigWidget::W_SIZELIMIT | 
+       KLDAP::LdapConfigWidget::W_PAGESIZE,
         0 );
 
   page3->addTab( ldconf, i18n("Connection") );
@@ -107,7 +107,7 @@ KU_ConfigDlg::KU_ConfigDlg( KConfigSkeleton *config, QWidget *parent, const char
 void KU_ConfigDlg::slotQueryClicked()
 {
 
-  KABC::LDAPUrl _url = ldconf->url();
+  KLDAP::LdapUrl _url = ldconf->url();
 
   mResult.clear();
   mDomain.name = "";
@@ -122,7 +122,7 @@ void KU_ConfigDlg::slotQueryClicked()
   attrs.append("sambaSID");
   attrs.append("sambaAlgorithmicRidBase");
   _url.setAttributes( attrs );
-  _url.setScope( KABC::LDAPUrl::One );
+  _url.setScope( KLDAP::LdapUrl::One );
   _url.setExtension( "x-dir", "base" );
   _url.setFilter( filter );
 
@@ -149,11 +149,13 @@ void KU_ConfigDlg::slotQueryClicked()
     if ( !mErrorMsg.isEmpty() ) 
       KMessageBox::error( this, mErrorMsg );
     else {
-      mDomain = mResult.first();
-      if ( !mDomain.name.isEmpty() && !mDomain.sid.isEmpty() ) {
-        sambaui->kcfg_samdomain->setText( mDomain.name );
-        sambaui->kcfg_samdomsid->setText( mDomain.sid );
-        sambaui->kcfg_samridbase->setValue( mDomain.ridbase );
+      if ( !mResult.isEmpty() ) {
+        mDomain = mResult.first();
+        if ( !mDomain.name.isEmpty() && !mDomain.sid.isEmpty() ) {
+          sambaui->kcfg_samdomain->setText( mDomain.name );
+          sambaui->kcfg_samdomsid->setText( mDomain.sid );
+          sambaui->kcfg_samridbase->setValue( mDomain.ridbase );
+        }
       }
     }
   }
@@ -164,17 +166,17 @@ void KU_ConfigDlg::slotQueryClicked()
 
 void KU_ConfigDlg::loadData( KIO::Job*, const QByteArray& d )
 {
-  KABC::LDIF::ParseValue ret;
+  KLDAP::Ldif::ParseValue ret;
 
   if ( d.size() ) {
-    mLdif.setLDIF( d );
+    mLdif.setLdif( d );
   } else {
-    mLdif.endLDIF();
+    mLdif.endLdif();
   }
   do {
     ret = mLdif.nextItem();
     switch ( ret ) {
-      case KABC::LDIF::Item:
+      case KLDAP::Ldif::Item:
         if ( mLdif.attr() == "sambaDomainName" ) 
           mDomain.name = QString::fromUtf8( mLdif.value(), mLdif.value().size() );
         else if ( mLdif.attr() == "sambaSID" ) 
@@ -182,7 +184,7 @@ void KU_ConfigDlg::loadData( KIO::Job*, const QByteArray& d )
         else if ( mLdif.attr() == "sambaAlgorithmicRidBase" )
           mDomain.ridbase = QString::fromUtf8( mLdif.value(), mLdif.value().size() ).toUInt();
         break;
-      case KABC::LDIF::EndEntry:
+      case KLDAP::Ldif::EndEntry:
         mProg->setValue( 1 );
         if ( !mDomain.name.isEmpty() && !mDomain.sid.isEmpty() )
           mResult.push_back( mDomain );
@@ -192,7 +194,7 @@ void KU_ConfigDlg::loadData( KIO::Job*, const QByteArray& d )
         break;
       
     }
-  } while ( ret != KABC::LDIF::MoreData );
+  } while ( ret != KLDAP::Ldif::MoreData );
 }
 
 void KU_ConfigDlg::loadResult( KJob* job)

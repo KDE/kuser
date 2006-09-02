@@ -25,8 +25,8 @@
 #include <QString>
 #include <QProgressDialog>
 
-#include <kabc/ldapurl.h>
-#include <kabc/ldif.h>
+#include <kldap/ldapurl.h>
+#include <kldap/ldif.h>
 #include <kio/job.h>
 
 #include "ku_user.h"
@@ -47,8 +47,8 @@ private slots:
 private:
   enum LastOperation{ None, Mod, Add, Del };
   LastOperation mLastOperation;
-  KABC::LDIF mParser;
-  KABC::LDAPUrl mUrl;
+  KLDAP::Ldif mParser;
+  KLDAP::LdapUrl mUrl;
   QProgressDialog *mProg;
   bool mOk;
   KU_User mUser;

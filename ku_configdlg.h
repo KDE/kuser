@@ -25,12 +25,12 @@
 #include <QProgressDialog>
 
 #include <kconfigdialog.h>
-#include <kabc/ldif.h>
+#include <kldap/ldif.h>
 #include <kprogressdialog.h>
 #include <kio/job.h>
 
 class Ui_KU_LdapSamba;
-namespace KABC { class LdapConfigWidget; }
+namespace KLDAP { class LdapConfigWidget; }
 namespace KIO { class Job; }
 typedef struct KU_SambaDomain {
   QString name;
@@ -45,8 +45,8 @@ public:
 private:
   QProgressDialog *mProg;
   Ui_KU_LdapSamba *sambaui;
-  KABC::LdapConfigWidget *ldconf;
-  KABC::LDIF mLdif;
+  KLDAP::LdapConfigWidget *ldconf;
+  KLDAP::Ldif mLdif;
   QString mErrorMsg;
   QList<KU_SambaDomain> mResult;
   KU_SambaDomain mDomain;

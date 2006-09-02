@@ -45,7 +45,7 @@ KU_GroupLDAP::KU_GroupLDAP( KU_PrefsBase *cfg ) : KU_Groups( cfg )
     mUrl.setExtension( "x-mech", mCfg->ldapsaslmech() );
   }
 
-  mUrl.setScope(KABC::LDAPUrl::One);
+  mUrl.setScope(KLDAP::LdapUrl::One);
   mUrl.setExtension("x-dir","base");
 
   if ( mCfg->ldaptimelimit() )
@@ -98,18 +98,18 @@ void KU_GroupLDAP::result( KJob *job )
 void KU_GroupLDAP::data( KIO::Job*, const QByteArray& data )
 {
   if ( data.size() ) {
-    mParser.setLDIF( data );
+    mParser.setLdif( data );
   } else {
-    mParser.endLDIF();
+    mParser.endLdif();
   }
 
-  KABC::LDIF::ParseValue ret;
+  KLDAP::Ldif::ParseValue ret;
   QString name, val;
   QByteArray value;
   do {
     ret = mParser.nextItem();
     switch ( ret ) {
-      case KABC::LDIF::Item:
+      case KLDAP::Ldif::Item:
         name = mParser.attr().toLower();
         value = mParser.value();
         val = QString::fromUtf8( value, value.size() );
@@ -133,7 +133,7 @@ void KU_GroupLDAP::data( KIO::Job*, const QByteArray& data )
         else if ( name == "description" )
           mGroup.setDesc( val );
         break;
-      case KABC::LDIF::EndEntry: {
+      case KLDAP::Ldif::EndEntry: {
         append( mGroup );
         mGroup = KU_Group();
         if ( ( count() & 7 ) == 7 ) {
@@ -146,7 +146,7 @@ void KU_GroupLDAP::data( KIO::Job*, const QByteArray& data )
       default:
         break;
     }
-  } while ( ret != KABC::LDIF::MoreData );
+  } while ( ret != KLDAP::Ldif::MoreData );
 }
 
 bool KU_GroupLDAP::reload()
@@ -239,18 +239,18 @@ QByteArray KU_GroupLDAP::addData( const KU_Group &group ) const
     mUrl.dn().toUtf8() + "\n" + "objectclass: posixGroup\n";
 
   ldif +=
-    KABC::LDIF::assembleLine( "cn", group.getName() ) + "\n" +
-    KABC::LDIF::assembleLine( "gidnumber", QString::number(group.getGID()) ) + "\n" +
-    KABC::LDIF::assembleLine( "userpassword", group.getPwd() ) + "\n";
+    KLDAP::Ldif::assembleLine( "cn", group.getName() ) + "\n" +
+    KLDAP::Ldif::assembleLine( "gidnumber", QString::number(group.getGID()) ) + "\n" +
+    KLDAP::Ldif::assembleLine( "userpassword", group.getPwd() ) + "\n";
   for ( uint i=0; i < group.count(); i++ ) {
-    ldif += KABC::LDIF::assembleLine( "memberuid", group.user(i) ) + "\n";
+    ldif += KLDAP::Ldif::assembleLine( "memberuid", group.user(i) ) + "\n";
   }
   if ( ( getCaps() & Cap_Samba ) && ( group.getCaps() & KU_Group::Cap_Samba ) ) {
     ldif += "objectclass: sambagroupmapping\n" +
-      KABC::LDIF::assembleLine( "sambasid", group.getSID().getSID() ) + "\n" +
-      KABC::LDIF::assembleLine( "displayname", group.getDisplayName() ) + "\n" +
-      KABC::LDIF::assembleLine( "description", group.getDesc() ) + "\n" +
-      KABC::LDIF::assembleLine( "sambagrouptype", QString::number( group.getType() ) ) + "\n";
+      KLDAP::Ldif::assembleLine( "sambasid", group.getSID().getSID() ) + "\n" +
+      KLDAP::Ldif::assembleLine( "displayname", group.getDisplayName() ) + "\n" +
+      KLDAP::Ldif::assembleLine( "description", group.getDesc() ) + "\n" +
+      KLDAP::Ldif::assembleLine( "sambagrouptype", QString::number( group.getType() ) ) + "\n";
   }
   ldif += "\n\n";
   kDebug() << "ldif: " << ldif << endl;
@@ -287,26 +287,26 @@ QByteArray KU_GroupLDAP::modData( const KU_Group &group, int oldindex ) const
   }
   ldif +=
     "-\nreplace: cn\n" +
-    KABC::LDIF::assembleLine( "cn", group.getName() ) +
+    KLDAP::Ldif::assembleLine( "cn", group.getName() ) +
     "\n-\nreplace: gidnumber\n" +
-    KABC::LDIF::assembleLine( "gidnumber", QString::number(group.getGID()) ) +
+    KLDAP::Ldif::assembleLine( "gidnumber", QString::number(group.getGID()) ) +
     "\n-\nreplace: userpassword\n" +
-    KABC::LDIF::assembleLine( "userpassword", group.getPwd() ) +
+    KLDAP::Ldif::assembleLine( "userpassword", group.getPwd() ) +
     "\n-\nreplace: memberuid\n";
   for ( uint i=0; i < group.count(); i++ ) {
-    ldif += KABC::LDIF::assembleLine( "memberuid", group.user(i)) + "\n";
+    ldif += KLDAP::Ldif::assembleLine( "memberuid", group.user(i)) + "\n";
   }
   if ( getCaps() & Cap_Samba ) {
     if ( group.getCaps() & KU_Group::Cap_Samba ) {
       ldif +=
         "-\nreplace: sambasid\n" +
-        KABC::LDIF::assembleLine( "sambasid", group.getSID().getSID() ) +
+        KLDAP::Ldif::assembleLine( "sambasid", group.getSID().getSID() ) +
         "\n-\nreplace: displayname\n" +
-        KABC::LDIF::assembleLine( "displayname", group.getDisplayName() ) +
+        KLDAP::Ldif::assembleLine( "displayname", group.getDisplayName() ) +
         "\n-\nreplace: description\n" +
-        KABC::LDIF::assembleLine( "description", group.getDesc() ) +
+        KLDAP::Ldif::assembleLine( "description", group.getDesc() ) +
         "\n-\nreplace: sambagrouptype\n" +
-        KABC::LDIF::assembleLine( "sambagrouptype", QString::number( group.getType() ) ) + "\n";
+        KLDAP::Ldif::assembleLine( "sambagrouptype", QString::number( group.getType() ) ) + "\n";
     } else {
       ldif += "-\nreplace: sambasid\n";
       ldif += "-\nreplace: displayname\n";

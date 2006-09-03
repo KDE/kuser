@@ -25,8 +25,6 @@ check_function_exists(fgetpwent HAVE_FGETGRENT)
 set(CMAKE_REQUIRED_INCLUDES shadow.h)
 check_function_exists(fgetspent HAVE_FGETSPENT)
 
-add_definitions(-DHAVE_KU_CONFIG_H=1)
-
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/ku_config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/ku_config.h )
 
 ########### next target ###############

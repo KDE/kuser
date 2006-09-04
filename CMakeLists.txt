@@ -1,7 +1,7 @@
 
 project(kuser)
 
-add_subdirectory( pic ) 
+add_subdirectory( pics ) 
 add_subdirectory( toolbar ) 
 add_subdirectory( icon ) 
 

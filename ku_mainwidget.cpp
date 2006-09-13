@@ -106,7 +106,7 @@ void KU_MainWidget::setupActions()
   mShowSys = new KToggleAction( i18n("Show System Users/Groups"), actionCollection(), "show_sys" );
   connect( mShowSys, SIGNAL(triggered(bool)), this, SLOT(showSys(bool)) );
 
-  mShowSys->setCheckedState(i18n("Hide System Users/Groups"));
+  mShowSys->setCheckedState(KGuiItem(i18n("Hide System Users/Groups")));
   mShowSys->setChecked( kug->kcfg()->showsys() );
 }
 

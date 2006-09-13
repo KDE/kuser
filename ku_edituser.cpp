@@ -994,8 +994,8 @@ void KU_EditUser::slotOk()
       		     "this file first."
       		     "<p>Do you want to add it now?", newshell, QFile::decodeName(SHELL_FILE)),
       		i18n("Unlisted Shell"),
-      		i18n("&Add Shell"),
-      		i18n("Do &Not Add"));
+      		KGuiItem(i18n("&Add Shell")),
+      		KGuiItem(i18n("Do &Not Add")));
       	if (result == KMessageBox::Cancel)
       	  return;
 

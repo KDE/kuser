@@ -30,7 +30,7 @@
    <item>
     <widget class="QGroupBox" name="groupBox" >
      <property name="title" >
-      <string>GroupBox</string>
+      <string>User/group database locations</string>
      </property>
      <layout class="QGridLayout" >
       <property name="margin" >

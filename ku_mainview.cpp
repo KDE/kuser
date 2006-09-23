@@ -54,14 +54,18 @@ void KU_MainView::init() {
 
   userview = new QTreeView( 0 );
   userview->setSelectionMode( QAbstractItemView::ExtendedSelection );
-  userview->header()->setClickable( true );
-  userview->header()->setSortIndicatorShown( true );
+  userview->setItemsExpandable( false );
+  userview->setRootIsDecorated( false );
+  userview->setSortingEnabled( true );
+  userview->setUniformRowHeights( true );
   addTab( userview, i18n("Users") );
 
   groupview = new QTreeView( 0 );
   groupview->setSelectionMode( QAbstractItemView::ExtendedSelection );
-  groupview->header()->setClickable( true );
-  groupview->header()->setSortIndicatorShown( true );
+  groupview->setItemsExpandable( false );
+  groupview->setRootIsDecorated( false );
+  groupview->setSortingEnabled( true );
+  groupview->setUniformRowHeights( true );
   addTab( groupview, i18n("Groups") );
 
   connect(userview, SIGNAL(activated(const QModelIndex&)), this, SLOT(userSelected()));
@@ -108,8 +112,7 @@ void KU_MainView::reloadUsers()
   }
   userproxymodel.setFirstUser( mShowSys ? 0 : kug->kcfg()->firstUID() );
   usermodel->init();
-  userview->sortByColumn( 0 );
-  userview->sortByColumn( 0 );
+  userview->sortByColumn( 0, Qt::AscendingOrder );
 }
 
 void KU_MainView::reloadGroups()
@@ -122,8 +125,7 @@ void KU_MainView::reloadGroups()
   }
   groupproxymodel.setFirstGroup( mShowSys ? 0 : kug->kcfg()->firstGID() );
   groupmodel->init();
-  groupview->sortByColumn( 0 );
-  groupview->sortByColumn( 0 );
+  groupview->sortByColumn( 0, Qt::AscendingOrder );
 }
 
 bool KU_MainView::queryClose()

@@ -30,7 +30,7 @@ class KToggleAction;
 class KU_MainWidget : public KMainWindow {
 Q_OBJECT
 public:
-  KU_MainWidget(const char *name = 0);
+  KU_MainWidget();
   ~KU_MainWidget();
   bool queryClose();
 

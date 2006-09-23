@@ -82,7 +82,7 @@ void KU_UserLDAP::result( KJob *job )
 {
   kDebug() << "LDAP result: " << job->error() << endl;
   mProg->hide();
-  if ( job->error() ) {
+  if ( job->error() && job->error() != KIO::ERR_USER_CANCELED ) {
     QString errstr = job->errorString();
     if ( !errstr.isEmpty() ) {
       mErrorString = errstr;

@@ -40,7 +40,7 @@
 #include "ku_selectconn.h"
 #include "ku_mainview.h"
 
-KU_MainWidget::KU_MainWidget(const char *name) : KMainWindow(0,name)
+KU_MainWidget::KU_MainWidget() : KMainWindow(0)
 {
   mv = new KU_MainView(this);
 

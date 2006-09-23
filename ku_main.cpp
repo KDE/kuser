@@ -56,8 +56,7 @@ int main(int argc, char **argv)
   kug = new KU_Global();
   kug->initCfg( KGlobal::sharedConfig()->readEntry( "connection", "default" ) );
   
-  mw = new KU_MainWidget("kuser");
-  a.setMainWidget(mw);
+  mw = new KU_MainWidget();
   mw->setCaption(i18n("KDE User Manager"));
   mw->show();
 

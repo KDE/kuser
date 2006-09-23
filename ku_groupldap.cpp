@@ -81,7 +81,7 @@ QString KU_GroupLDAP::getRDN( const KU_Group &group ) const
 void KU_GroupLDAP::result( KJob *job )
 {
   mProg->close();
-  if ( job->error() ) {
+  if ( job->error() && job->error() != KIO::ERR_USER_CANCELED ) {
     QString errstr = job->errorString();
     if ( !errstr.isEmpty() ) {
       mErrorString =  errstr;

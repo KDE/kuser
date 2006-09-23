@@ -40,7 +40,8 @@ void KU_EditUser::addRow(QWidget *parent, QGridLayout *layout, int row,
   QWidget *widget, const QString &label, const QString &what,
   bool two_column, bool nochange)
 {
-   QLabel *lab = new QLabel(widget, label, parent);
+   QLabel *lab = new QLabel( label, parent );
+   lab->setBuddy( widget );
    lab->setMinimumSize(lab->sizeHint());
    widget->setMinimumSize(widget->sizeHint());
    layout->addWidget(lab, row, 0);
@@ -50,7 +51,7 @@ void KU_EditUser::addRow(QWidget *parent, QGridLayout *layout, int row,
       widget->setWhatsThis( what);
    }
    if (two_column)
-      layout->addMultiCellWidget(widget, row, row, 1, 2);
+      layout->addWidget( widget, row, 1, 1, 2 );
    else
       layout->addWidget(widget, row, 1);
 
@@ -67,7 +68,7 @@ KIntSpinBox *KU_EditUser::addDaysGroup(QWidget *parent, QGridLayout *layout, int
     KIntSpinBox *days;
 
     QLabel *label = new QLabel( title, parent );
-    layout->addMultiCellWidget( label, row, row, 0, 1, Qt::AlignRight );
+    layout->addWidget( label, row, 0, 1, 2, Qt::AlignRight );
 
     days = new KIntSpinBox( parent );
     label->setBuddy( days );
@@ -102,9 +103,9 @@ void KU_EditUser::initDlg()
 
   // Tab 1: User Info
   {
-      QFrame *frame = new QFrame();
-      addPage(frame, i18n("User Info"));
-    QGridLayout *layout = new QGridLayout(frame, 20, 4, marginHint(), spacingHint());
+    QFrame *frame = new QFrame();
+    addPage(frame, i18n("User Info"));
+    QGridLayout *layout = new QGridLayout( frame );
     int row = 0;
 
     frontpage = frame;
@@ -147,11 +148,11 @@ void KU_EditUser::initDlg()
 
     leshell = new KComboBox(true, frame);
     leshell->clear();
-    leshell->insertItem(i18n("<Empty>"));
+    leshell->insertItem( 0, i18n("<Empty>") );
 
     QStringList shells = readShells();
     shells.sort();
-    leshell->insertStringList(shells);
+    leshell->insertItems( 1, shells );
     connect(leshell, SIGNAL(activated(const QString &)), this, SLOT(changed()));
     connect(leshell, SIGNAL(editTextChanged(const QString &)), this, SLOT(changed()));
 //    whatstr = i18n("WHAT IS THIS: Login Shell");
@@ -220,16 +221,16 @@ void KU_EditUser::initDlg()
        kug->getUsers()->getCaps() & KU_Users::Cap_BSD ) {
 
   // Tab 2 : Password Management
-      QFrame *frame = new QFrame();
-      addPage(frame, i18n("Password Management"));
-    QGridLayout *layout = new QGridLayout(frame, 20, 4, marginHint(), spacingHint());
+    QFrame *frame = new QFrame();
+    addPage(frame, i18n("Password Management"));
+    QGridLayout *layout = new QGridLayout( frame );
     int row = 0;
 
     QDateTime time;
     leslstchg = new QLabel(frame);
     addRow(frame, layout, row++, leslstchg, i18n("Last password change:"), QString::null, true);
 
-    layout->addMultiCellWidget(new KSeparator(Qt::Horizontal, frame), row, row, 0, 3);
+    layout->addWidget(new KSeparator(Qt::Horizontal, frame), row, 0, 1, 4);
     row++;
 
     if ( kug->getUsers()->getCaps() & KU_Users::Cap_Shadow ) {
@@ -238,7 +239,7 @@ void KU_EditUser::initDlg()
       lesmax = addDaysGroup(frame, layout, row++, i18n("Time when password &expires after last password change:") );
       leswarn = addDaysGroup(frame, layout, row++, i18n("Time before password expires to &issue an expire warning:"));
       lesinact = addDaysGroup(frame, layout, row++, i18n("Time when account will be &disabled after expiration of password:"));
-      layout->addMultiCellWidget(new KSeparator(Qt::Horizontal, frame), row, row, 0, 3);
+      layout->addWidget(new KSeparator(Qt::Horizontal, frame), row, 0, 1, 4);
       row++;
     }
     /*
@@ -252,7 +253,7 @@ void KU_EditUser::initDlg()
     layout->addWidget( label, row, 0 );
     lesexpire = new KDateTimeWidget( frame );
     label->setBuddy( lesexpire );
-    layout->addMultiCellWidget( lesexpire, row, row, 1, 2);
+    layout->addWidget( lesexpire, row, 1, 1, 2 );
 
     cbexpire = new QCheckBox( i18n("Never"), frame );
     layout->addWidget( cbexpire, row++, 3 );
@@ -266,7 +267,7 @@ void KU_EditUser::initDlg()
   if ( kug->getUsers()->getCaps() & KU_Users::Cap_Samba ) {
     QFrame *frame = new QFrame();
     addPage(frame, i18n("Samba"));
-    QGridLayout *layout = new QGridLayout(frame, 10, 4, marginHint(), spacingHint());
+    QGridLayout *layout = new QGridLayout( frame );
     int row = 0;
 
     lerid = new KLineEdit(frame);
@@ -318,9 +319,9 @@ void KU_EditUser::initDlg()
 
   // Tab 4: Groups
   {
-      QFrame *frame = new QFrame();
-      addPage(frame, i18n("Groups"));
-    QGridLayout *layout = new QGridLayout(frame, 2, 2, marginHint(), spacingHint());
+    QFrame *frame = new QFrame();
+    addPage(frame, i18n("Groups"));
+    QGridLayout *layout = new QGridLayout( frame );
 
     lstgrp = new QListWidget(frame);
 //    lstgrp->setFullWidth(true); // Single column, full widget width.
@@ -328,7 +329,7 @@ void KU_EditUser::initDlg()
     if ( ro ) lstgrp->setSelectionMode( QListWidget::NoSelection );
 //    QString whatstr = i18n("Select the groups that this user belongs to.");
     lstgrp->setWhatsThis( whatstr);
-    layout->addMultiCellWidget(lstgrp, 0, 0, 0, 1);
+    layout->addWidget( lstgrp, 0, 0, 1, 2 );
     leprigr = new QLabel( i18n("Primary group: "), frame );
     layout->addWidget( leprigr, 1, 0 );
     if ( !ro ) {
@@ -440,7 +441,7 @@ void KU_EditUser::setCB( QCheckBox *cb, bool val, bool first )
   }
   if ( cb->isChecked() != val ) {
     cb->setTristate();
-    cb->setNoChange();
+    cb->setCheckState( Qt::PartiallyChecked );
   }
 }
 
@@ -511,24 +512,24 @@ void KU_EditUser::selectuser()
       if ( !shell.isEmpty() ) {
         bool tested = false;
         for ( int i=0; i<leshell->count(); i++ )
-          if ( leshell->text(i) == shell ) {
+          if ( leshell->itemText(i) == shell ) {
             tested = true;
             leshell->setCurrentIndex(i);
             break;
           }
           if ( !tested ) {
-            leshell->insertItem( shell );
+            leshell->insertItem( leshell->count(), shell );
             leshell->setCurrentIndex( leshell->count()-1 );
           }
       } else
-        leshell->setCurrentItem(0);
+        leshell->setCurrentIndex( 0 );
     } else {
       if ( leshell->currentText() != shell ) {
         if ( !ismoreshells ) {
-          leshell->insertItem( i18n("Do Not Change"), 0 );
+          leshell->insertItem( 0, i18n("Do Not Change") );
           ismoreshells = true;
         }
-        leshell->setCurrentItem( 0 );
+        leshell->setCurrentIndex( 0 );
       }
     }
 
@@ -728,7 +729,7 @@ void KU_EditUser::mergeUser( const KU_User &user, KU_User &newuser )
 
   newuser = user;
 
-  if ( kug->getUsers()->getCaps() & KU_Users::Cap_Disable_POSIX && cbposix->state() != QCheckBox::NoChange ) {
+  if ( kug->getUsers()->getCaps() & KU_Users::Cap_Disable_POSIX && cbposix->checkState() != Qt::PartiallyChecked ) {
     if ( cbposix->isChecked() )
       newuser.setCaps( newuser.getCaps() & ~KU_User::Cap_POSIX );
     else
@@ -746,7 +747,7 @@ void KU_EditUser::mergeUser( const KU_User &user, KU_User &newuser )
   }
   newuser.setFullName( mergeLE( lefname, user.getFullName(), one ) );
   if ( kug->getUsers()->getCaps() & KU_Users::Cap_Samba ) {
-    if ( cbsamba->state() != QCheckBox::NoChange ) {
+    if ( cbsamba->checkState() != Qt::PartiallyChecked ) {
       if ( cbsamba->isChecked() )
         newuser.setCaps( newuser.getCaps() & ~KU_User::Cap_Samba );
       else
@@ -790,11 +791,11 @@ void KU_EditUser::mergeUser( const KU_User &user, KU_User &newuser )
     mergeLE( lehome, user.getHomeDir(), one ).replace( "%U", newuser.getName() ) :
     QString::null );
   if ( posix ) {
-    if ( leshell->currentItem() == 0 && ismoreshells ) {
+    if ( leshell->currentIndex() == 0 && ismoreshells ) {
       newuser.setShell( user.getShell() );
     } else if  (
-      ( leshell->currentItem() == 0 && !ismoreshells ) ||
-      ( leshell->currentItem() == 1 && ismoreshells ) ) {
+      ( leshell->currentIndex() == 0 && !ismoreshells ) ||
+      ( leshell->currentIndex() == 1 && ismoreshells ) ) {
 
       newuser.setShell( QString::null );
     } else {
@@ -804,7 +805,7 @@ void KU_EditUser::mergeUser( const KU_User &user, KU_User &newuser )
   } else
     newuser.setShell( QString::null );
 
-  newuser.setDisabled( (cbdisabled->state() == QCheckBox::NoChange) ? user.getDisabled() : cbdisabled->isChecked() );
+  newuser.setDisabled( (cbdisabled->checkState() == Qt::PartiallyChecked) ? user.getDisabled() : cbdisabled->isChecked() );
 
   if ( kug->getUsers()->getCaps() & KU_Users::Cap_InetOrg ) {
     newuser.setSurname( mergeLE( lesurname, user.getSurname(), one ) );
@@ -982,7 +983,7 @@ void KU_EditUser::slotOk()
   }
 
   QString newshell;
-  if (leshell->currentItem() != 0)
+  if (leshell->currentIndex() != 0)
     newshell = leshell->currentText();
 
   if (oldshell != newshell)

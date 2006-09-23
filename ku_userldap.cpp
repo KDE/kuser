@@ -393,7 +393,8 @@ QByteArray KU_UserLDAP::getLDIF( const KU_User &user, int oldindex ) const
     if ( oldrdn != newrdn ) {
       ldif = "dn: " + oldrdn.toUtf8() + "," + mUrl.dn().toUtf8() + "\n" +
         "changetype: modrdn\n" +
-        "newrdn: " + newrdn.toUtf8() + "\n" +
+        KLDAP::Ldif::assembleLine( "newrdn", newrdn ) + "\n" +
+        KLDAP::Ldif::assembleLine( "newSuperior", mUrl.dn() ) + "\n" +
         "deleteoldrdn: 1\n\n";
     }
   }

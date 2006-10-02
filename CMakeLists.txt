@@ -64,7 +64,10 @@ kde4_automoc(${kuser_SRCS})
 
 kde4_add_executable(kuser ${kuser_SRCS})
 
-target_link_libraries(kuser  crypt ${KDE4_KDEUI_LIBS} ${KDE4_KLDAP_LIBS} kntlm)
+target_link_libraries(kuser  ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBS} ${KDE4_KLDAP_LIBS} kntlm)
+if(HAVE_CRYPT_H)
+	target_link_libraries(kuser crypt)
+endif(HAVE_CRYPT_H)
 
 install(TARGETS  kuser  DESTINATION ${BIN_INSTALL_DIR} )
 

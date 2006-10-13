@@ -60,7 +60,7 @@ kde4_add_ui_files(kuser_SRCS ku_filessettings.ui ku_generalsettings.ui ku_ldapse
 
 kde4_add_kcfg_files(kuser_SRCS ku_prefs.kcfgc)
 
-kde4_automoc(${kuser_SRCS})
+kde4_automoc(kuser ${kuser_SRCS})
 
 kde4_add_executable(kuser ${kuser_SRCS})
 

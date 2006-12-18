@@ -30,6 +30,7 @@
 #include <kmessagebox.h>
 #include <kdebug.h>
 #include <klocale.h>
+#include <kglobal.h>
 
 #include "ku_edituser.h"
 #include "ku_pwdlg.h"

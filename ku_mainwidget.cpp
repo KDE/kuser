@@ -25,7 +25,7 @@
 #include <kiconloader.h>
 #include <kaction.h>
 #include <klocale.h>
-#include <kstdaction.h>
+#include <kstandardaction.h>
 #include <kactioncollection.h>
 #include <ktoggleaction.h>
 #include <kdebug.h>
@@ -70,10 +70,10 @@ bool KU_MainWidget::queryClose()
 
 void KU_MainWidget::setupActions()
 {
-  KStdAction::quit(this, SLOT(close()), actionCollection());
-  KStdAction::keyBindings(guiFactory(), SLOT(configureShortcuts()), actionCollection());
+  KStandardAction::quit(this, SLOT(close()), actionCollection());
+  KStandardAction::keyBindings(guiFactory(), SLOT(configureShortcuts()), actionCollection());
 
-  KStdAction::preferences(this, SLOT(properties()), actionCollection());
+  KStandardAction::preferences(this, SLOT(properties()), actionCollection());
   KAction *action;
 
   action =  new KAction(KIcon("add_user"), i18n("&Add..."), actionCollection(), "add_user");

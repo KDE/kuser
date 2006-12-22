@@ -1,9 +1,9 @@
 
 project(kuser)
 
-add_subdirectory( pics ) 
-add_subdirectory( toolbar ) 
-add_subdirectory( icon ) 
+add_subdirectory( pics )
+add_subdirectory( toolbar )
+add_subdirectory( icon )
 
 include_directories( ${CMAKE_SOURCE_DIR}/kuser  )
 
@@ -21,7 +21,7 @@ check_include_files(crypt.h HAVE_CRYPT_H)
 set(CMAKE_REQUIRED_INCLUDES pwd.h)
 check_function_exists(fgetpwent HAVE_FGETPWENT)
 set(CMAKE_REQUIRED_INCLUDES grp.h)
-check_function_exists(fgetpwent HAVE_FGETGRENT)
+check_function_exists(fgetgrent HAVE_FGETGRENT)
 set(CMAKE_REQUIRED_INCLUDES shadow.h)
 check_function_exists(fgetspent HAVE_FGETSPENT)
 
@@ -29,29 +29,29 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/ku_config.h.cmake ${CMAKE_CURRENT_BIN
 
 ########### next target ###############
 
-set(kuser_SRCS 
-	ku_mainwidget.cpp 
-	ku_mainview.cpp 
-	ku_edituser.cpp 
-	ku_editgroup.cpp 
-	ku_usermodel.cpp 
-	ku_groupmodel.cpp 
-	ku_deluser.cpp 
-	ku_user.cpp 
-	ku_group.cpp 
+set(kuser_SRCS
+	ku_mainwidget.cpp
+	ku_mainview.cpp
+	ku_edituser.cpp
+	ku_editgroup.cpp
+	ku_usermodel.cpp
+	ku_groupmodel.cpp
+	ku_deluser.cpp
+	ku_user.cpp
+	ku_group.cpp
 	ku_main.cpp
-	ku_misc.cpp 
-	ku_pwdlg.cpp 
-	ku_adduser.cpp 
-	ku_configdlg.cpp 
-	ku_global.cpp 
+	ku_misc.cpp
+	ku_pwdlg.cpp
+	ku_adduser.cpp
+	ku_configdlg.cpp
+	ku_global.cpp
 	sid.cpp
-	ku_userfiles.cpp 
-	ku_groupfiles.cpp 
-	ku_userldap.cpp 
-	ku_groupldap.cpp 
-	ku_usersystem.cpp 
-	ku_groupsystem.cpp 
+	ku_userfiles.cpp
+	ku_groupfiles.cpp
+	ku_userldap.cpp
+	ku_groupldap.cpp
+	ku_usersystem.cpp
+	ku_groupsystem.cpp
 	ku_selectconn.cpp
 	sha1.cpp
 )

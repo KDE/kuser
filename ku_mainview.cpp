@@ -356,7 +356,7 @@ void KU_MainView::userdel()
       KMessageBox::questionYesNo( 0, i18n("You are using private groups.\n"
         "Do you want to delete the user's private group '%1'?",
          groups->at(i).getName()), QString::null,
-        KStdGuiItem::del(), KGuiItem(i18n("Do Not Delete"))) == KMessageBox::Yes) {
+        KStandardGuiItem::del(), KGuiItem(i18n("Do Not Delete"))) == KMessageBox::Yes) {
       kDebug() << "del private group" << endl;
       groups->del( i );
     }
@@ -461,11 +461,11 @@ void KU_MainView::grpdel()
   if ( selected.count() == 1 ) {
       if (KMessageBox::warningContinueCancel( 0,
         i18n("Do you really want to delete the group '%1'?", group.getName()),
-        QString::null, KStdGuiItem::del()) != KMessageBox::Continue) return;
+        QString::null, KStandardGuiItem::del()) != KMessageBox::Continue) return;
   } else {
       if (KMessageBox::warningContinueCancel( 0,
         i18n("Do you really want to delete the %1 selected groups?", selected.count()),
-        QString::null, KStdGuiItem::del()) != KMessageBox::Continue) return;
+        QString::null, KStandardGuiItem::del()) != KMessageBox::Continue) return;
   }
 
   for ( index = 0; index < selected.count(); index++ ) {

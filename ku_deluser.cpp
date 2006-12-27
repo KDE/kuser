@@ -23,7 +23,7 @@
 
 #include <kvbox.h>
 #include <klocale.h>
-#include <kstdguiitem.h>
+#include <KStandardGuiItem>
 
 #include "ku_deluser.h"
 
@@ -41,7 +41,7 @@ KU_DelUser::KU_DelUser(KU_User *AUser, QWidget *parent)
   m_deleteHomeDir = new QCheckBox(i18n("Delete &home folder: %1", AUser->getHomeDir()), page);
   QString mailboxpath = QFile::decodeName(MAIL_SPOOL_DIR) + "/" + AUser->getName();
   m_deleteMailBox = new QCheckBox(i18n("Delete &mailbox: %1", mailboxpath), page);
-  setButtonGuiItem(KDialog::Ok, KStdGuiItem::del());
+  setButtonGuiItem(KDialog::Ok, KStandardGuiItem::del());
 }
 
 #include "ku_deluser.moc"

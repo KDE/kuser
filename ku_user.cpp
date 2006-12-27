@@ -195,7 +195,7 @@ int KU_User::tryCreate(const QString &dir)
     if (S_ISDIR(sb.st_mode)) {
       if (KMessageBox::warningContinueCancel( 0,
         i18n("Folder %1 already exists.\nWill make %2 owner and change permissions.\nDo you want to continue?", dir, d->Name),
-        QString::null, KStdGuiItem::cont() ) == KMessageBox::Continue) {
+        QString::null, KStandardGuiItem::cont() ) == KMessageBox::Continue) {
 
         if (chown(QFile::encodeName(dir), d->UID, d->GID) != 0) {
           KMessageBox::error( 0, i18n("Cannot change owner of %1 folder.\nError: %2" , dir, QString::fromLocal8Bit(strerror(errno))) );

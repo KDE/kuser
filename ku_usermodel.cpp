@@ -17,7 +17,7 @@
  **/
 
 #include <klocale.h>
-
+#include <kglobalsettings.h>
 #include "ku_global.h"
 #include "ku_usermodel.h"
 

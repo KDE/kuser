@@ -179,8 +179,8 @@ Period)</guilabel></para></listitem>
 Period)</guilabel></para></listitem>
 </itemizedlist>
 
-<para> All these parameters can be changed for each filesystem that has user
-quota enabled. Filesystems can be changed using the <guilabel>Quota
+<para> All these parameters can be changed for each file system that has user
+quota enabled. File systems can be changed using the <guilabel>Quota
 Filesystem</guilabel> box.</para>
 
 </sect2>

@@ -22,7 +22,6 @@
 #include <QVBoxLayout>
 #include <QGridLayout>
 
-#include <kapplication.h>
 #include <klocale.h>
 #include <kpushbutton.h>
 #include <kdebug.h>

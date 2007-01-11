@@ -25,6 +25,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kinputdialog.h>
+#include <kapplication.h>
 
 #include "ku_global.h"
 #include "ku_selectconn.h"

@@ -72,6 +72,7 @@ KU_SelectConn::KU_SelectConn(const QString &selected, QWidget *parent) :
   connect( this, SIGNAL(user1Clicked()), SLOT(slotUser1()) );
   connect( this, SIGNAL(user2Clicked()), SLOT(slotUser2()) );
   connect( this, SIGNAL(user3Clicked()), SLOT(slotUser3()) );
+  connect( this, SIGNAL(applyClicked()), SLOT(slotApply()));
 }
 
 QString KU_SelectConn::connSelected()

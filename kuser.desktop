@@ -3,6 +3,7 @@ Encoding=UTF-8
 Name=KUser
 Name[x-test]=xxKUserxx
 GenericName=User Manager
+GenericName[el]=Διαχειριστής Χρηστών
 GenericName[fr]=Gestionnaire d'utilisateurs
 GenericName[x-test]=xxUser Managerxx
 Exec=kuser %i -caption "%c"

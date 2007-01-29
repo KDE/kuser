@@ -50,7 +50,7 @@ KU_SelectConn::KU_SelectConn(const QString &selected, QWidget *parent) :
   mSelected = selected;
   kDebug() << "selected item: " << mSelected << endl;
 
-  conns = KGlobal::sharedConfig()->groupList();
+  conns = KGlobal::config()->groupList();
   QStringList::iterator it = conns.begin();
   int i = 0, sel = 0;
   while ( it != conns.end() ) {
@@ -85,12 +85,12 @@ void KU_SelectConn::slotUser3()
   newconn = KInputDialog::getText( QString::null,
     i18n("Please type the name of the new connection:") );
   if ( newconn.isEmpty() ) return;
-  if ( kapp->sharedConfig()->groupList().contains( "connection-" + newconn ) ) {
+  if ( KGlobal::config()->groupList().contains( "connection-" + newconn ) ) {
     KMessageBox::sorry( 0, i18n("A connection with this name already exists.") );
     return;
   }
 
-  KSharedConfig::Ptr config( KGlobal::sharedConfig() );
+  KSharedConfig::Ptr config( KGlobal::config() );
   KU_PrefsBase kcfg( config, newconn );
 
   KU_ConfigDlg cfgdlg( &kcfg, this );
@@ -114,7 +114,7 @@ void KU_SelectConn::slotUser2()
 {
   kDebug() << "slotUser2: " << connSelected() << endl;
 
-  KSharedConfig::Ptr config( KGlobal::sharedConfig() );
+  KSharedConfig::Ptr config( KGlobal::config() );
   KU_PrefsBase kcfg( config, newconn );
   kcfg.readConfig();
 
@@ -129,8 +129,8 @@ void KU_SelectConn::slotUser1()
   if ( KMessageBox::warningContinueCancel( 0, i18n("Do you really want to delete the connection '%1'?", 
      conn ),i18n("Delete Connection"),KStandardGuiItem::del() ) == KMessageBox::Cancel ) return;
 
-  KGlobal::sharedConfig()->deleteGroup( "connection-" + conn );
-  KGlobal::sharedConfig()->sync();
+  KGlobal::config()->deleteGroup( "connection-" + conn );
+  KGlobal::config()->sync();
   mCombo->removeItem( mCombo->currentIndex() );
   if ( mCombo->count() == 0 ) {
     mCombo->addItem( "default" );

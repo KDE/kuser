@@ -52,9 +52,9 @@ int main(int argc, char **argv)
 
   KApplication a;
 
-  KGlobal::sharedConfig()->setGroup( "general" );
+  KGlobal::config()->setGroup( "general" );
   kug = new KU_Global();
-  kug->initCfg( KGlobal::sharedConfig()->readEntry( "connection", "default" ) );
+  kug->initCfg( KGlobal::config()->readEntry( "connection", "default" ) );
   
   mw = new KU_MainWidget();
   mw->setCaption(i18n("KDE User Manager"));

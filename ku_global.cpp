@@ -43,7 +43,7 @@ void KU_Global::initCfg( const QString &connection )
     cfg->writeConfig();
     delete cfg;
   }
-  KSharedConfig::Ptr config( KGlobal::sharedConfig() );
+  KSharedConfig::Ptr config( KGlobal::config() );
   cfg = new KU_PrefsBase( config, connection );
   cfg->readConfig();
 }

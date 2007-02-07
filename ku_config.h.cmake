@@ -21,3 +21,6 @@
 
 /* Define to 1 if you have the <sys/stat.h> header file. */
 #cmakedefine HAVE_SYS_STAT_H 1
+
+#cmakedefine WORDS_BIGENDIAN
+

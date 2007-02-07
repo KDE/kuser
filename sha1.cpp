@@ -18,7 +18,7 @@
  *
  */
 
-#include <config.h>
+#include <ku_config.h>
 
 #include <string.h>
 

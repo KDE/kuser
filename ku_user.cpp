@@ -20,7 +20,7 @@
 
 #include "globals.h"
 
-#include <config.h>
+#include <ku_config.h>
 
 #include <errno.h>
 #include <sys/types.h>

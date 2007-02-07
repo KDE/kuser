@@ -23,7 +23,6 @@
 
 #define _KU_VERSION "3.9"
 
-#include <config.h>
 #include "ku_config.h"
 
 #ifdef HAVE_PATHS_H

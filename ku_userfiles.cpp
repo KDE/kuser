@@ -20,7 +20,6 @@
 
 #include "globals.h"
 #include <ku_config.h>
-#include <config.h>
 
 #include <errno.h>
 #ifdef HAVE_UNISTD_H

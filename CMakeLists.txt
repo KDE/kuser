@@ -19,6 +19,9 @@ set(KU_USERPRIVATEGROUP true CACHE STRING "User private groups by default")
 
 check_include_files(shadow.h HAVE_SHADOW_H)
 check_include_files(crypt.h HAVE_CRYPT_H)
+check_include_files(sys/stat.h HAVE_SYS_STAT_H)
+check_include_files(unistd.h HAVE_UNISTD_H)
+check_include_files(paths.h HAVE_PATHS_H)
 
 set(CMAKE_REQUIRED_INCLUDES pwd.h)
 check_function_exists(fgetpwent HAVE_FGETPWENT)

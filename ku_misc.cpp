@@ -72,7 +72,7 @@ void copyDir(const QString &srcPath, const QString &dstPath, uid_t uid, gid_t gi
   QString dot = QString::fromLatin1(".");
   QString dotdot = QString::fromLatin1("..");
   
-  s.setFilter( QDir::All | QDir::Hidden | QDir::System );
+  s.setFilter( QDir::AllEntries | QDir::Hidden | QDir::System );
 
   for (uint i=0; i<s.count(); i++) {
     QString name(s[i]);

@@ -1,5 +1,6 @@
 
 project(kuser)
+include(CheckFunctionExists)
 
 include(TestBigEndian)
 

@@ -23,11 +23,15 @@
 
 int KU_UserModel::rowCount( const QModelIndex & parent ) const
 {
+  Q_UNUSED(parent)
+
   return kug->getUsers()->count();
 }
 
 int KU_UserModel::columnCount( const QModelIndex & parent ) const
 {
+  Q_UNUSED(parent)
+
   if ( kug->getUsers()->getCaps() & KU_Users::Cap_Samba ) 
     return 11;
   else
@@ -36,6 +40,8 @@ int KU_UserModel::columnCount( const QModelIndex & parent ) const
 
 QVariant KU_UserModel::headerData( int section, Qt::Orientation orientation, int role ) const
 {
+  Q_UNUSED(orientation)
+
   if ( role != Qt::DisplayRole ) return QVariant();
   switch ( section ) {
     case 0: return(i18n("UID"));
@@ -115,6 +121,9 @@ void KU_UserModel::commitMod()
 
 bool KU_UserModel::setData( const QModelIndex & index, const QVariant & value, int role )
 {
+  Q_UNUSED(value)
+  Q_UNUSED(role)
+
   emit dataChanged( index, index );
   return true;
 }
@@ -153,9 +162,11 @@ bool KU_UserSortingProxyModel::lessThan( const QModelIndex & left, const QModelI
 
 bool KU_UserSortingProxyModel::filterAcceptsRow( int source_row, const QModelIndex & source_parent ) const
 {
+    Q_UNUSED(source_parent)
+
     uid_t uid;
     uid = kug->getUsers()->at( source_row ).getUID();
-    if ( uid >= mFirstUser ) 
+    if ( uid >= mFirstUser )
       return true;
     return false;
 }

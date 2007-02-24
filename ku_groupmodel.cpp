@@ -23,11 +23,15 @@
 
 int KU_GroupModel::rowCount( const QModelIndex & parent ) const
 {
+  Q_UNUSED(parent)
+
   return kug->getGroups()->count();
 }
 
 int KU_GroupModel::columnCount( const QModelIndex & parent ) const
 {
+  Q_UNUSED(parent)
+
   if ( kug->getUsers()->getCaps() & KU_Users::Cap_Samba ) 
     return 7;
   else
@@ -36,6 +40,8 @@ int KU_GroupModel::columnCount( const QModelIndex & parent ) const
 
 QVariant KU_GroupModel::headerData( int section, Qt::Orientation orientation, int role ) const
 {
+  Q_UNUSED(orientation)
+
   if ( role != Qt::DisplayRole ) return QVariant();
   switch ( section ) {
     case 0: return(i18n("GID"));
@@ -114,6 +120,9 @@ void KU_GroupModel::commitMod()
 
 bool KU_GroupModel::setData( const QModelIndex & index, const QVariant & value, int role )
 {
+  Q_UNUSED(value)
+  Q_UNUSED(role)
+
   emit dataChanged( index, index );
   return true;
 }
@@ -152,6 +161,8 @@ bool KU_GroupSortingProxyModel::lessThan( const QModelIndex & left, const QModel
 
 bool KU_GroupSortingProxyModel::filterAcceptsRow( int source_row, const QModelIndex & source_parent ) const
 {
+    Q_UNUSED(source_parent)
+
     gid_t gid;
     gid = kug->getGroups()->at( source_row ).getGID();
     if ( gid >= mFirstGroup )

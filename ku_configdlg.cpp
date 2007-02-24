@@ -191,8 +191,8 @@ void KU_ConfigDlg::loadData( KIO::Job*, const QByteArray& d )
         mDomain.sid = "";
         mDomain.name = "";
         mDomain.ridbase = 1000;
+      default:
         break;
-      
     }
   } while ( ret != KLDAP::Ldif::MoreData );
 }

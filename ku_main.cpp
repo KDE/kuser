@@ -52,10 +52,13 @@ int main(int argc, char **argv)
 
   KApplication a;
 
-  KGlobal::config()->setGroup( "general" );
   kug = new KU_Global();
-  kug->initCfg( KGlobal::config()->readEntry( "connection", "default" ) );
-  
+
+  {
+      KConfigGroup group( KGlobal::config(), "general" );
+      kug->initCfg( group.readEntry( "connection", "default" ) );
+  }
+
   mw = new KU_MainWidget();
   mw->setCaption(i18n("KDE User Manager"));
   mw->show();

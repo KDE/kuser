@@ -104,7 +104,7 @@ void KU_MainWidget::setupActions()
     actionCollection()->addAction("delete_group", action );
   connect( action, SIGNAL(triggered(bool)), mv, SLOT(grpdel()) );
 
-    action  = new KAction(KIcon("reload"), i18n("&Reload..."), this);
+    action  = new KAction(KIcon("view-refresh"), i18n("&Reload..."), this);
     actionCollection()->addAction("reload", action );
   connect( action, SIGNAL(triggered(bool)), this, SLOT(reload()) );
 

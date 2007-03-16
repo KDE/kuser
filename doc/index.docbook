@@ -15,7 +15,7 @@
 <firstname>Matt</firstname>
 <surname>Johnston</surname>
 <affiliation>
-<address><email>mattj@flashmail.com</email></address>
+<address>&Matt.Johnston.mail;</address>
 </affiliation>
 </author>
 
@@ -23,7 +23,7 @@
 <firstname>Lauri</firstname>
 <surname>Watts</surname>
 <affiliation>
-<address><email>lauri@kde.org</email></address>
+<address>&Lauri.Watts.mail;</address>
 </affiliation>
 <contrib>Reviewer</contrib>
 </othercredit>
@@ -31,7 +31,7 @@
 <firstname>Jonathan</firstname>
 <surname>Singer</surname>
 <affiliation>
-<address><email>jsinger@leeta.net</email></address>
+<address>&Jonathan.Singer.mail;</address>
 </affiliation>
 <contrib>Reviewer</contrib>
 </othercredit>
@@ -40,7 +40,7 @@
 
 <copyright>
 <year>2000</year>
-<holder>Matt Johnston</holder>
+<holder>&Matt.Johnston;</holder>
 </copyright>
 <legalnotice>&FDLNotice;</legalnotice>
 
@@ -252,8 +252,8 @@ group when the user is removed.</para>
 
 <para>Documentation copyright 1997-2000 Denis Pershin
 <email>dyp@inetlab.com</email></para>
-<para>Documentation copyright 2000 Matt Johnston
-<email>mattj@flashmail.com</email></para>
+<para>Documentation copyright 2000 &Matt.Johnston;
+&Matt.Johnston.mail;</para>
 <!-- TRANS:CREDIT_FOR_TRANSLATORS -->
 
 &underFDL;

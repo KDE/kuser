@@ -480,7 +480,7 @@ void KU_EditUser::selectuser()
        kug->getUsers()->getCaps() & KU_Users::Cap_Samba ||
        kug->getUsers()->getCaps() & KU_Users::Cap_BSD ) {
 
-    leslstchg->setText( KGlobal::locale()->formatDateTime( datetime, false ) );
+    leslstchg->setText( KGlobal::locale()->formatDateTime( datetime, KLocale::LongDate ) );
   }
 
   if ( one ) {
@@ -945,7 +945,7 @@ void KU_EditUser::setpwd()
         kug->getUsers()->getCaps() & KU_Users::Cap_Samba ||
         kug->getUsers()->getCaps() & KU_Users::Cap_BSD ) {
 
-        leslstchg->setText( KGlobal::locale()->formatDateTime( datetime, false ) );
+        leslstchg->setText( KGlobal::locale()->formatDateTime( datetime, KLocale::LongDate ) );
     }
     cbdisabled->setChecked( false );
   }

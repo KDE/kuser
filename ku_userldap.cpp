@@ -23,6 +23,7 @@
 #include <klocale.h>
 #include <kcodecs.h>
 #include <kio/kntlm.h>
+#include <kldap/ldapdn.h>
 
 #include "ku_userldap.h"
 #include "ku_misc.h"
@@ -39,7 +40,7 @@ KU_UserLDAP::KU_UserLDAP(KU_PrefsBase *cfg) : KU_Users( cfg )
 
   mUrl.setHost( mCfg->ldaphost() );
   mUrl.setPort( mCfg->ldapport() );
-  mUrl.setDn( mCfg->ldapuserbase() + "," + mCfg->ldapdn() );
+  mUrl.setDn( KLDAP::LdapDN( mCfg->ldapuserbase() + "," + mCfg->ldapdn() ) );
   if ( !mCfg->ldapanon() ) {
     mUrl.setUser( mCfg->ldapuser() );
     mUrl.setPass( mCfg->ldappassword() );
@@ -391,15 +392,15 @@ QByteArray KU_UserLDAP::getLDIF( const KU_User &user, int oldindex ) const
     QString newrdn = getRDN( user );
 
     if ( oldrdn != newrdn ) {
-      ldif = "dn: " + oldrdn.toUtf8() + "," + mUrl.dn().toUtf8() + "\n" +
+      ldif = "dn: " + oldrdn.toUtf8() + "," + mUrl.dn().toString().toUtf8() + "\n" +
         "changetype: modrdn\n" +
         KLDAP::Ldif::assembleLine( "newrdn", newrdn ) + "\n" +
-        KLDAP::Ldif::assembleLine( "newSuperior", mUrl.dn() ) + "\n" +
+        KLDAP::Ldif::assembleLine( "newSuperior", mUrl.dn().toString().toUtf8() )+ "\n" +
         "deleteoldrdn: 1\n\n";
     }
   }
 
-  ldif += "dn: " + getRDN( user ).toUtf8() + "," + mUrl.dn().toUtf8() + "\n";
+  ldif += "dn: " + getRDN( user ).toUtf8() + "," + mUrl.dn().toString().toUtf8() + "\n";
   if ( oldindex != -1 ) {
     ldif += "changetype: modify\n";
     ldif += "replace: objectClass\n";
@@ -600,7 +601,7 @@ QByteArray KU_UserLDAP::getLDIF( const KU_User &user, int oldindex ) const
 
 QByteArray KU_UserLDAP::delData( const KU_User &user ) const
 {
-  QByteArray ldif = "dn: " + getRDN( user ).toUtf8() + "," + mUrl.dn().toUtf8() + "\n" +
+  QByteArray ldif = "dn: " + getRDN( user ).toUtf8() + "," + mUrl.dn().toString().toUtf8() + "\n" +
     "changetype: delete\n\n";
   return ldif;
 }

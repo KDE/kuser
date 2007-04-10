@@ -32,7 +32,7 @@ KU_GroupLDAP::KU_GroupLDAP( KU_PrefsBase *cfg ) : KU_Groups( cfg )
 
   mUrl.setHost( mCfg->ldaphost() );
   mUrl.setPort( mCfg->ldapport() );
-  mUrl.setDn( mCfg->ldapgroupbase() + "," + mCfg->ldapdn() );
+  mUrl.setDn( KLDAP::LdapDN( mCfg->ldapgroupbase() + "," + mCfg->ldapdn() ) );
   if ( !mCfg->ldapanon() ) {
     mUrl.setUser( mCfg->ldapuser() );
     mUrl.setPass( mCfg->ldappassword() );
@@ -236,7 +236,7 @@ void KU_GroupLDAP::putData( KIO::Job*, QByteArray& data )
 QByteArray KU_GroupLDAP::addData( const KU_Group &group ) const
 {
   QByteArray ldif = "dn: " + getRDN( group ).toUtf8() + "," +
-    mUrl.dn().toUtf8() + "\n" + "objectclass: posixGroup\n";
+    mUrl.dn().toString().toUtf8() + "\n" + "objectclass: posixGroup\n";
 
   ldif +=
     KLDAP::Ldif::assembleLine( "cn", group.getName() ) + "\n" +
@@ -260,7 +260,7 @@ QByteArray KU_GroupLDAP::addData( const KU_Group &group ) const
 QByteArray KU_GroupLDAP::delData( const KU_Group &group ) const
 {
   QByteArray ldif = "dn: " + getRDN( group ).toUtf8() + "," +
-    mUrl.dn().toUtf8() + "\n" + "changetype: delete\n\n";
+    mUrl.dn().toString().toUtf8() + "\n" + "changetype: delete\n\n";
   kDebug() << "ldif: " << ldif << endl;
   return ldif;
 }
@@ -272,14 +272,14 @@ QByteArray KU_GroupLDAP::modData( const KU_Group &group, int oldindex ) const
   QString newrdn = getRDN( group );
 
   if ( oldrdn != newrdn ) {
-    ldif = "dn: " + oldrdn.toUtf8() + "," + mUrl.dn().toUtf8() + "\n" +
+    ldif = "dn: " + oldrdn.toUtf8() + "," + mUrl.dn().toString().toUtf8() + "\n" +
       "changetype: modrdn\n" +
       KLDAP::Ldif::assembleLine( "newrdn", newrdn ) + "\n" +
-      KLDAP::Ldif::assembleLine( "newSuperior", mUrl.dn() ) + "\n" +
+      KLDAP::Ldif::assembleLine( "newSuperior", mUrl.dn().toString() ) + "\n" +
       "deleteoldrdn: 1\n\n";      
   }
 
-  ldif += "dn: " + newrdn.toUtf8() + "," + mUrl.dn().toUtf8() + "\n" +
+  ldif += "dn: " + newrdn.toUtf8() + "," + mUrl.dn().toString().toUtf8() + "\n" +
     "changetype: modify\n" +
     "replace: objectclass\n" +
     "objectclass: posixgroup\n";

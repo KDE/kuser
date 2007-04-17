@@ -21,13 +21,13 @@
 #ifndef _KU_MAINWIDGET_H_
 #define _KU_MAINWIDGET_H_
 
-#include <kmainwindow.h>
+#include <kxmlguiwindow.h>
 
 class KU_SelectConn;
 class KU_MainView;
 class KToggleAction;
 
-class KU_MainWidget : public KMainWindow {
+class KU_MainWidget : public KXmlGuiWindow {
 Q_OBJECT
 public:
   KU_MainWidget();

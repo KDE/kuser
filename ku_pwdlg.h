@@ -21,7 +21,7 @@
 #ifndef _KU_PWDLG_H_
 #define _KU_PWDLG_H_
 
-#include <QString>
+
 #include <klineedit.h>
 #include <kdialog.h>
 

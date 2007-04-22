@@ -34,7 +34,7 @@
 #endif
 #include <fcntl.h>
 
-#include <QString>
+
 #include <QDir>
 #include <QSharedData>
 

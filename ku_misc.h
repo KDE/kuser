@@ -24,7 +24,7 @@
 #include <sys/time.h>
 #include <sys/types.h>
 
-#include <QString>
+
 #include <QByteArray>
 
 bool backup(const QString & name);

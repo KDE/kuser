@@ -23,7 +23,7 @@
 
 #include <sys/types.h>
 
-#include <QString>
+
 #include <QStringList>
 #include <QList>
 #include <QSharedDataPointer>

@@ -22,7 +22,7 @@
 #include <sys/types.h>
 
 #include <QObject>
-#include <QString>
+
 #include <QProgressDialog>
 
 #include <kldap/ldapurl.h>

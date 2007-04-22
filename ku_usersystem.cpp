@@ -25,7 +25,7 @@
 #include <shadow.h>
 #endif
 
-#include <QString>
+
 
 #include <kdebug.h>
 

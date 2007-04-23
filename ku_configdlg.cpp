@@ -40,9 +40,12 @@
 #include "ui_ku_passwordpolicy.h"
 
 KU_ConfigDlg::KU_ConfigDlg( KConfigSkeleton *config, QWidget *parent, const char *name ) :
-  KConfigDialog( parent, name, config, List,
-  Default|Ok|Apply|Cancel|Help, Ok, true )
+  KConfigDialog( parent, name, config)
 {
+  setFaceType(List);
+  setButtons(Default|Ok|Apply|Cancel|Help);
+  setDefaultButton(Ok);
+  setModal(true);
   KTabWidget *page1 = new KTabWidget( this );
   {
     Ui::KU_GeneralSettings ui;

@@ -130,8 +130,8 @@ public:
   virtual bool reload() = 0;
   virtual bool dbcommit() = 0;
 
-  const QString &errorString() const { return mErrorString; };
-  const QString &errorDetails() const { return mErrorDetails; };
+  const QString &errorString() const { return mErrorString; }
+  const QString &errorDetails() const { return mErrorDetails; }
 
 protected:
   KU_PrefsBase *mCfg;

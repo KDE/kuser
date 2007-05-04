@@ -42,8 +42,8 @@ public:
 
   static uint uid2rid( uint uid );
   static uint gid2rid( uint gid );
-  static void setAlgRidBase( uint base ) { mAlgRidBase = base; };
-  static uint getAlgRidBase() { return mAlgRidBase; };
+  static void setAlgRidBase( uint base ) { mAlgRidBase = base; }
+  static uint getAlgRidBase() { return mAlgRidBase; }
 private:
   void updateSID();
   QString mSid, mDom;

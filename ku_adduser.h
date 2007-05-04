@@ -36,7 +36,7 @@ public:
   void setCopySkel(bool b)
      { copyskel->setChecked(b); }
 
-  const KU_User &getNewUser() const { return mNewUser; };
+  const KU_User &getNewUser() const { return mNewUser; }
 
 protected slots:
   virtual void slotOk();

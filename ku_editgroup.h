@@ -42,7 +42,7 @@ public:
 
   virtual ~KU_EditGroup();
 
-  const KU_Group &getGroup() const { return mGroup; };
+  const KU_Group &getGroup() const { return mGroup; }
 
 public slots:
   virtual void accept();

@@ -35,7 +35,7 @@ public:
   virtual bool removeRows( int row, int count, const QModelIndex & parent = QModelIndex() );
   virtual bool setData( const QModelIndex & index, const QVariant & value, int role = Qt::EditRole );
 
-  void init() { reset(); };
+  void init() { reset(); }
   void commitMod();
   void commitDel();
   void commitAdd();
@@ -44,7 +44,7 @@ public:
 class KU_GroupSortingProxyModel : public QSortFilterProxyModel
 {
 public:
-  void setFirstGroup( uint first ) { mFirstGroup = first; };
+  void setFirstGroup( uint first ) { mFirstGroup = first; }
 protected:
   virtual bool lessThan( const QModelIndex & left, const QModelIndex & right ) const;
   virtual bool filterAcceptsRow( int source_row, const QModelIndex & source_parent ) const;

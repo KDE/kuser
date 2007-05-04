@@ -240,8 +240,8 @@ public:
   */
   virtual bool dbcommit() = 0;
 
-  const QString &errorString() const { return mErrorString; };
-  const QString &errorDetails() const { return mErrorDetails; };
+  const QString &errorString() const { return mErrorString; }
+  const QString &errorDetails() const { return mErrorDetails; }
 protected:
   int caps;
   KU_PrefsBase *mCfg;

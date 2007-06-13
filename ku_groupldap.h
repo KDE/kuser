@@ -20,7 +20,6 @@
 #define _KU_GROUPLDAP_H_
 
 
-#include <QStringList>
 #include <QProgressDialog>
 #include <QByteArray>
 

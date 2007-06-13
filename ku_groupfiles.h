@@ -24,7 +24,6 @@
 #include <sys/types.h>
 
 
-#include <QStringList>
 
 #include "ku_group.h"
 

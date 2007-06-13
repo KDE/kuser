@@ -24,7 +24,6 @@
 #include <sys/types.h>
 
 
-#include <QStringList>
 #include <QList>
 #include <QSharedDataPointer>
 

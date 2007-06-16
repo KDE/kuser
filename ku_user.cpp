@@ -21,7 +21,7 @@
 #include "globals.h"
 
 #include <ku_config.h>
-
+#include <k3process.h>
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/file.h>
@@ -40,7 +40,7 @@
 
 #include <kstandarddirs.h>
 #include <kmessagebox.h>
-#include <k3process.h>
+#include <kshell.h>
 #include <kdebug.h>
 #include <kio/netaccess.h>
 #include <kurl.h>
@@ -312,7 +312,7 @@ int KU_User::removeCrontabs()
 
   file = QFile::decodeName(CRONTAB_DIR) + "/" + d->Name;
   if ( access(QFile::encodeName(file), F_OK) == 0 ) {
-    command = QString::fromLatin1("crontab -u %1 -r").arg(K3Process::quote(d->Name));
+    command = QString::fromLatin1("crontab -u %1 -r").arg(KShell::quoteArg(d->Name));
     if ( system(QFile::encodeName(command)) != 0 ) {
       KMessageBox::error( 0, i18n("Cannot remove crontab %1.\nError: %2",
                    command, QString::fromLocal8Bit(strerror(errno))) );

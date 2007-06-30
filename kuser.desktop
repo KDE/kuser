@@ -2,7 +2,6 @@
 Encoding=UTF-8
 Name=KUser
 Name[af]=Kuser
-Name[ar]=برنامج KUser
 Name[eo]=Uzantoadministrilo
 Name[is]=KNotandi
 Name[ko]=KDE 사용자
@@ -19,7 +18,6 @@ Name[uz]=Фойдаланувчилар
 Name[x-test]=xxKUserxx
 GenericName=User Manager
 GenericName[af]=Gebruiker Bestuurder
-GenericName[ar]=مسيير المستخدمين
 GenericName[be]=Кіраванне карыстальнікамі
 GenericName[br]=Merour an arveriaded
 GenericName[ca]=Gestor d'usuaris

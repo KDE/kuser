@@ -40,12 +40,12 @@ KU_Global *kug = 0;
 int main(int argc, char **argv) 
 {
   
-  KAboutData aboutData("kuser", I18N_NOOP("KUser"),
-    _KU_VERSION, description, KAboutData::License_GPL, 
-    "(c) 1997-2000, Denis Perchine\n(c) 2004, Szombathelyi György");
-  aboutData.addAuthor("Denis Perchine", I18N_NOOP("kuser author"),
+  KAboutData aboutData("kuser", 0, ki18n("KUser"),
+    _KU_VERSION, ki18n(description), KAboutData::License_GPL, 
+    ki18n("(c) 1997-2000, Denis Perchine\n(c) 2004, Szombathelyi György"));
+  aboutData.addAuthor(ki18n("Denis Perchine"), ki18n("kuser author"),
     "dyp@perchine.com", "http://www.perchine.com/dyp/");
-  aboutData.addAuthor("Szombathelyi György", I18N_NOOP("kuser author"),
+  aboutData.addAuthor(ki18n("Szombathelyi György"), ki18n("kuser author"),
     "gyurco@freemail.hu");
   KCmdLineArgs::init(argc, argv, &aboutData);
   KU_MainWidget *mw = 0;

@@ -251,3 +251,24 @@ time_t daysToTime(int days)
 {
   return days*24*60*60;
 }
+
+void ku_add2ops( KLDAP::LdapOperation::ModOps &ops, const QString &attr, const QList<QByteArray> &vals, bool allownull )
+{
+  KLDAP::LdapOperation::ModOp op;
+  op.type = KLDAP::LdapOperation::Mod_Replace;
+  op.attr = attr;
+  for ( int i = 0; i < vals.count(); ++i ) {
+    if ( !vals[i].isEmpty() || allownull ) {
+      op.values.append( vals[i] );
+    }
+  }    
+  ops.append( op );
+}
+                          
+void ku_add2ops( KLDAP::LdapOperation::ModOps &ops, const QString &attr, const QByteArray &val, bool allownull )
+{
+  QList<QByteArray> vals;
+  kDebug() << "add2ops attr: " << attr << " value: '" << val << "'" << endl;
+  vals.append( val );
+  ku_add2ops( ops, attr, vals, allownull );
+}

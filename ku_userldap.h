@@ -19,14 +19,16 @@
 #ifndef _KU_USERLDAP_H_
 #define _KU_USERLDAP_H_
 
-#include <sys/types.h>
-
 #include <QObject>
 
 #include <QProgressDialog>
 
 #include <kldap/ldapurl.h>
 #include <kldap/ldif.h>
+#include <kldap/ldapsearch.h>
+#include <kldap/ldapobject.h>
+#include <kldap/ldapoperation.h>
+
 #include <kio/job.h>
 
 #include "ku_user.h"
@@ -41,27 +43,19 @@ public:
   virtual bool dbcommit();
 
 private slots:
-  void data( KIO::Job*, const QByteArray& );
-  void putData( KIO::Job *job, QByteArray& data );
-  void result( KJob* );
+  void result( KLDAP::LdapSearch *search );
+  void data( KLDAP::LdapSearch *search, const KLDAP::LdapObject& data );
 private:
-  enum LastOperation{ None, Mod, Add, Del };
-  LastOperation mLastOperation;
-  KLDAP::Ldif mParser;
   KLDAP::LdapUrl mUrl;
   QProgressDialog *mProg;
   bool mOk;
-  KU_User mUser;
-  int mAdv, mAddIndex, mDelIndex;
-  ModList::Iterator mModIt;
+  int mAdv;
   int schemaversion;
-  QStringList mOc;
   QMap<int, QStringList> mObjectClasses;
 
   QString getRDN( const KU_User &user ) const;
-  QByteArray getLDIF( const KU_User &user, int oldindex = -1 ) const;
-  QByteArray delData( const KU_User &user ) const;
-
+  void createModStruct( const KU_User &user, int oldindex, KLDAP::LdapOperation::ModOps &ops);
+  
   virtual void createPassword( KU_User &user, const QString &password );
 };
 

@@ -23,7 +23,10 @@
 #include <klocale.h>
 #include <kcodecs.h>
 #include <kio/kntlm.h>
+#include <kldap/ldapdefs.h>
 #include <kldap/ldapdn.h>
+#include <kldap/ldapconnection.h>
+#include <kldap/ldapoperation.h>
 
 #include "ku_userldap.h"
 #include "ku_misc.h"
@@ -44,6 +47,9 @@ KU_UserLDAP::KU_UserLDAP(KU_PrefsBase *cfg) : KU_Users( cfg )
   if ( !mCfg->ldapanon() ) {
     mUrl.setUser( mCfg->ldapuser() );
     mUrl.setPass( mCfg->ldappassword() );
+    QString binddn = mCfg->ldapbinddn();
+    if ( !binddn.isEmpty() ) 
+      mUrl.setExtension( "bindname",binddn );
   }
   mUrl.setFilter( mCfg->ldapuserfilter() );
 
@@ -65,8 +71,7 @@ KU_UserLDAP::KU_UserLDAP(KU_PrefsBase *cfg) : KU_Users( cfg )
 
   caps = Cap_Passwd | Cap_Disable_POSIX;
   if ( mCfg->ldapshadow() ) caps |= Cap_Shadow;
-  if ( mCfg->ldapstructural() ==
-    KU_PrefsBase::EnumLdapstructural::inetOrgPerson )
+  if ( mCfg->ldapstructural() == KU_PrefsBase::EnumLdapstructural::inetOrgPerson )
     caps |= Cap_InetOrg;
 
   if ( mCfg->ldapsam() ) {
@@ -79,168 +84,145 @@ KU_UserLDAP::~KU_UserLDAP()
 {
 }
 
-void KU_UserLDAP::result( KJob *job )
+void KU_UserLDAP::result( KLDAP::LdapSearch *search )
 {
-  kDebug() << "LDAP result: " << job->error() << endl;
+  kDebug() << "LDAP result: " << search->error() << endl;
   mProg->hide();
-  if ( job->error() && job->error() != KIO::ERR_USER_CANCELED ) {
-    QString errstr = job->errorString();
-    if ( !errstr.isEmpty() ) {
-      mErrorString = errstr;
-//      mErrorDetails = ldif;
-    } else {
-      mErrorString = i18n("Unknown error"); //this is better than nothing (?)
-    }
+
+  if ( search->error() ) {
+    mErrorString = KLDAP::LdapConnection::errorString(search->error());
     mOk = false;
   } else {
     mOk = true;
   }
 }
 
-void KU_UserLDAP::data( KIO::Job *, const QByteArray& data )
+void KU_UserLDAP::data( KLDAP::LdapSearch *, const KLDAP::LdapObject& data )
 {
-  if ( data.size() ) {
-    mParser.setLdif( data );
-  } else {
-    mParser.endLdif();
+  KU_User user;
+  QStringList objectclasses;
+
+  KLDAP::LdapAttrMap attrs = data.attributes();
+  for ( KLDAP::LdapAttrMap::ConstIterator it = attrs.begin(); it != attrs.end(); ++it ) {
+    QString name = it.key().toLower();
+    if ( name == "objectclass" ) {
+      for ( KLDAP::LdapAttrValue::ConstIterator it2 = (*it).begin(); it2 != (*it).end(); ++it2 ) {
+        if ( (*it2).toLower() == "posixaccount" )
+            user.setCaps( user.getCaps() | KU_User::Cap_POSIX );
+        else if ( (*it2).toLower() == "sambasamaccount" )
+            user.setCaps( user.getCaps() | KU_User::Cap_Samba );
+	else if ( (*it2).toLower() != "inetorgperson" &&
+	          (*it2).toLower() != "shadowaccount" &&
+                  (*it2).toLower() != "account" )
+            objectclasses.append( (*it2) );
+      }
+      continue;
+    }
+                      
+    KLDAP::LdapAttrValue values = (*it);
+    if ( values.isEmpty() ) continue;
+    QString val = QString::fromUtf8( values.first(), values.first().size() );
+    if ( name == "uidnumber" )
+      user.setUID( val.toLong() );
+    else if ( name == "gidnumber" )
+      user.setGID( val.toLong() );
+    else if ( name == "uid" || name == "userid" )
+      user.setName( val );
+    else if ( name == "sn" )
+      user.setSurname( val );
+    else if ( name == "mail" )
+      user.setEmail( val );
+    else if ( name == "homedirectory" )
+      user.setHomeDir( val );
+    else if ( name == "loginshell" )
+      user.setShell( val );
+    else if ( name == "postaladdress" )
+      user.setAddress( val );
+    else if ( name == "telephonenumber" ) {
+      user.setOffice1( val );
+      if ( values.size() > 1 )
+        user.setOffice2( QString::fromUtf8( values[1], values[1].size() ) );
+    } else if ( name == "gecos" ) {
+      QString name, f1, f2, f3;
+      parseGecos( values.first(), name, f1, f2, f3 );
+      if ( user.getFullName().isEmpty() ) user.setFullName( val );
+      if ( user.getOffice1().isEmpty() ) user.setOffice1( f1 );
+      if ( user.getOffice2().isEmpty() ) user.setOffice2( f1 );
+      if ( user.getAddress().isEmpty() ) user.setAddress( f1 );
+    } else if ( name == "cn" ) {
+      if ( user.getFullName().isEmpty() || mCfg->ldapcnfullname() )
+        user.setFullName( val );
+      if ( user.getName().isEmpty() )
+        user.setName( val );
+    } else if ( name == "displayname" ) {
+      user.setFullName( val );
+    } else if ( name == "userpassword" ) {
+      if ( !val.isEmpty() ) user.setDisabled( false );
+      user.setPwd( val );
+    } else if ( name == "shadowlastchange" ) {
+      if ( user.getLastChange() == 0 ) //sambapwdlastset is more precise
+        user.setLastChange( daysToTime( val.toLong() ) );
+    } else if ( name == "shadowmin" )
+      user.setMin( val.toInt() );
+    else if ( name == "shadowmax" )
+      user.setMax( val.toLong() );
+    else if ( name == "shadowwarning" )
+      user.setWarn( val.toLong() );
+    else if ( name == "shadowinactive" )
+      user.setInactive( val.toLong() );
+    else if ( name == "shadowexpire" )
+      user.setExpire( val.toLong() );
+    else if ( name == "shadowflag" )
+      user.setFlag( val.toLong() );
+    else if ( name == "sambaacctflags" ) {
+      if ( !val.contains( 'D' ) ) user.setDisabled( false );
+    } else if ( name == "sambasid" )
+      user.setSID( val );
+    else if ( name == "sambaprimarygroupsid" )
+      user.setPGSID( val );
+    else if ( name == "sambalmpassword" )
+      user.setLMPwd( val );
+    else if ( name == "sambantpassword" )
+      user.setNTPwd( val );
+    else if ( name == "sambahomepath" )
+      user.setHomePath( val );
+    else if ( name == "sambahomedrive" )
+      user.setHomeDrive( val );
+    else if ( name == "sambalogonscript" )
+      user.setLoginScript( val );
+    else if ( name == "sambaprofilepath" )
+      user.setProfilePath( val );
+    else if ( name == "sambauserworkstations" )
+      user.setWorkstations( val );
+    else if ( name == "sambadomainname" )
+      user.setDomain( val );
+    else if ( name == "sambapwdlastset" )
+      user.setLastChange( val.toLong() );
+//these new attributes introduced around samba 3.0.6
+    else if ( name == "sambapasswordhistory" || name == "sambalogonhours" )
+      schemaversion = 1;
+
   }
 
-  KLDAP::Ldif::ParseValue ret;
-  QString name, val;
-  QByteArray value;
-  do {
-    ret = mParser.nextItem();
-    switch ( ret ) {
-      case KLDAP::Ldif::Item:
-        name = mParser.attr().toLower();
-        value = mParser.value();
-        val = QString::fromUtf8( value, value.size() );
-        if ( name == "objectclass" ) {
-          if ( val.toLower() == "posixaccount" )
-            mUser.setCaps( mUser.getCaps() | KU_User::Cap_POSIX );
-          else if ( val.toLower() == "sambasamaccount" )
-            mUser.setCaps( mUser.getCaps() | KU_User::Cap_Samba );
-	  else if ( val.toLower() != "inetorgperson" &&
-	            val.toLower() != "shadowaccount" &&
-                    val.toLower() != "account" )
-            mOc.append( val );
+  kDebug() << "new user: " << user.getName() << endl;
+  if ( !objectclasses.isEmpty() ) {
+    mObjectClasses.insert( count(), objectclasses );
+    kDebug() << "user: " << user.getName() << " other objectclasses: " << objectclasses.join(",") << endl;
+  }
+  append( user );
 
-        } else if ( name == "uidnumber" )
-          mUser.setUID( val.toLong() );
-        else if ( name == "gidnumber" )
-          mUser.setGID( val.toLong() );
-        else if ( name == "uid" || name == "userid" )
-          mUser.setName( val );
-        else if ( name == "sn" )
-          mUser.setSurname( val );
-        else if ( name == "mail" )
-          mUser.setEmail( val );
-        else if ( name == "homedirectory" )
-          mUser.setHomeDir( val );
-        else if ( name == "loginshell" )
-          mUser.setShell( val );
-        else if ( name == "postaladdress" )
-          mUser.setAddress( val );
-        else if ( name == "telephonenumber" ) {
-          if ( mUser.getOffice1().isEmpty() )
-            mUser.setOffice1( val );
-          else
-            mUser.setOffice2( val );
-        } else if ( name == "gecos" ) {
-          QString name, f1, f2, f3;
-          parseGecos( QByteArray( value.data(), value.size()+1 ), name, f1, f2, f3 );
-          if ( mUser.getFullName().isEmpty() ) mUser.setFullName( val );
-          if ( mUser.getOffice1().isEmpty() ) mUser.setOffice1( f1 );
-          if ( mUser.getOffice2().isEmpty() ) mUser.setOffice2( f1 );
-          if ( mUser.getAddress().isEmpty() ) mUser.setAddress( f1 );
-        } else if ( name == "cn" ) {
-          if ( mUser.getFullName().isEmpty() || mCfg->ldapcnfullname() )
-            mUser.setFullName( val );
-          if ( mUser.getName().isEmpty() )
-            mUser.setName( val );
-        } else if ( name == "displayname" ) {
-          mUser.setFullName( val );
-        } else if ( name == "userpassword" ) {
-          if ( !val.isEmpty() ) mUser.setDisabled( false );
-          mUser.setPwd( val );
-        } else if ( name == "shadowlastchange" ) {
-          if ( mUser.getLastChange() == 0 ) //sambapwdlastset is more precise
-            mUser.setLastChange( daysToTime( val.toLong() ) );
-        } else if ( name == "shadowmin" )
-          mUser.setMin( val.toInt() );
-        else if ( name == "shadowmax" )
-          mUser.setMax( val.toLong() );
-        else if ( name == "shadowwarning" )
-          mUser.setWarn( val.toLong() );
-        else if ( name == "shadowinactive" )
-          mUser.setInactive( val.toLong() );
-        else if ( name == "shadowexpire" )
-          mUser.setExpire( val.toLong() );
-        else if ( name == "shadowflag" )
-          mUser.setFlag( val.toLong() );
-        else if ( name == "sambaacctflags" ) {
-          if ( !val.contains( 'D' ) ) mUser.setDisabled( false );
-        } else if ( name == "sambasid" )
-          mUser.setSID( val );
-        else if ( name == "sambaprimarygroupsid" )
-          mUser.setPGSID( val );
-        else if ( name == "sambalmpassword" )
-          mUser.setLMPwd( val );
-        else if ( name == "sambantpassword" )
-          mUser.setNTPwd( val );
-        else if ( name == "sambahomepath" )
-          mUser.setHomePath( val );
-        else if ( name == "sambahomedrive" )
-          mUser.setHomeDrive( val );
-        else if ( name == "sambalogonscript" )
-          mUser.setLoginScript( val );
-        else if ( name == "sambaprofilepath" )
-          mUser.setProfilePath( val );
-        else if ( name == "sambauserworkstations" )
-          mUser.setWorkstations( val );
-        else if ( name == "sambadomainname" )
-          mUser.setDomain( val );
-        else if ( name == "sambapwdlastset" )
-          mUser.setLastChange( val.toLong() );
-	//these new attributes introduced around samba 3.0.6
-	else if ( name == "sambapasswordhistory" || name == "sambalogonhours" )
-          schemaversion = 1;
-        break;
-      case KLDAP::Ldif::EndEntry: {
-        kDebug() << "new user: " << mUser.getName() << endl;
-        if ( !mOc.isEmpty() ) {
-          mObjectClasses.insert( count(), mOc );
-          kDebug() << "user: " << mUser.getName() << " other objectclasses: " << mOc.join(",") << endl;
-        }
-        mOc.clear();
-        append( mUser );
-        mUser = KU_User();
-        mUser.setDisabled( true );
-
-        if ( ( count() & 7 ) == 7 ) {
-          mProg->setValue( mProg->value() + mAdv );
-          if ( mProg->value() == 0 ) mAdv = 1;
-          if ( mProg->value() == mProg->maximum()-1 ) mAdv = -1;
-        }
-
-        break;
-      }
-      default:
-        break;
-    }
-  } while ( ret != KLDAP::Ldif::MoreData );
+  if ( ( count() & 7 ) == 7 ) {
+    mProg->setValue( mProg->value() + mAdv );
+    if ( mProg->value() == 0 ) mAdv = 1;
+    if ( mProg->value() == mProg->maximum()-1 ) mAdv = -1;
+  }
 }
 
 bool KU_UserLDAP::reload()
 {
-  kDebug() << "kuserldap::reload()" << endl;
+  kDebug() << "KU_UserLDAP::reload()" << endl;
   mErrorString = mErrorDetails = QString();
   mObjectClasses.clear();
-  mOc.clear();
-  mUser = KU_User();
-  mUser.setPwd( "" );
-  mUser.setSPwd( "" );
-  mParser.startParsing();
   mProg = new QProgressDialog( 0 );
   mProg->setLabel( new QLabel( i18n("Loading Users From LDAP") ) );
   mProg->setAutoClose( false );
@@ -248,14 +230,23 @@ bool KU_UserLDAP::reload()
   mProg->setMaximum( 100 );
   mAdv = 1;
 
-  KIO::Job *job = KIO::get( mUrl, true, false );
-  connect( job, SIGNAL( data( KIO::Job*, const QByteArray& ) ),
-    this, SLOT( data( KIO::Job*, const QByteArray& ) ) );
-  connect( job, SIGNAL( result( KJob* ) ),
-    this, SLOT( result( KJob* ) ) );
-//  job->addMetaData( "SERVER_CTRL0", "1.2.840.113556.1.4.473 true: uidNumber");
-  mProg->exec();
-  if ( mProg->wasCanceled() ) job->kill();
+  KLDAP::LdapSearch search;
+
+  connect( &search, 
+    SIGNAL( data( KLDAP::LdapSearch*, const KLDAP::LdapObject& ) ), 
+    this, SLOT ( data ( KLDAP::LdapSearch*, const KLDAP::LdapObject&) ) );
+  connect( &search, 
+    SIGNAL( result( KLDAP::LdapSearch* ) ), 
+    this, SLOT ( result ( KLDAP::LdapSearch* ) ) );
+
+  if (search.search( mUrl )) {
+    mProg->exec();
+    if ( mProg->wasCanceled() ) search.abandon();
+  } else {
+    kDebug() << "search failed" << endl;
+    mOk = false;
+    mErrorString = KLDAP::LdapConnection::errorString(search.error());
+  }
   delete mProg;
   return( mOk );
 }
@@ -362,10 +353,10 @@ void KU_UserLDAP::createPassword( KU_User &user, const QString &password )
   }
 }
 
-QByteArray KU_UserLDAP::getLDIF( const KU_User &user, int oldindex ) const
+void KU_UserLDAP::createModStruct( const KU_User &user, int oldindex, KLDAP::LdapOperation::ModOps &ops)
 {
   QString gecos, cn, pwd, samflags;
-  QByteArray ldif;
+  QList<QByteArray> vals;
   
   bool mod = ( oldindex != -1 );
 
@@ -385,40 +376,15 @@ QByteArray KU_UserLDAP::getLDIF( const KU_User &user, int oldindex ) const
   samflags += user.getDisabled() ? 'D' : ' ';
   samflags += "         ]";
 
-  ldif = "";
-
-  if ( mod ) {
-    QString oldrdn = getRDN( at( oldindex ) );
-    QString newrdn = getRDN( user );
-
-    if ( oldrdn != newrdn ) {
-      ldif = "dn: " + oldrdn.toUtf8() + "," + mUrl.dn().toString().toUtf8() + "\n" +
-        "changetype: modrdn\n" +
-        KLDAP::Ldif::assembleLine( "newrdn", newrdn ) + "\n" +
-        KLDAP::Ldif::assembleLine( "newSuperior", mUrl.dn().toString().toUtf8() )+ "\n" +
-        "deleteoldrdn: 1\n\n";
-    }
-  }
-
-  ldif += "dn: " + getRDN( user ).toUtf8() + "," + mUrl.dn().toString().toUtf8() + "\n";
-  if ( oldindex != -1 ) {
-    ldif += "changetype: modify\n";
-    ldif += "replace: objectClass\n";
-  }
-
-  if ( caps & Cap_InetOrg )
-    ldif += "objectClass: inetOrgPerson\n";
-  else
-    ldif += "objectClass: account\n";
-
+  vals.append( caps & Cap_InetOrg ? "inetOrgPerson" : "account" );
   if ( user.getCaps() & KU_User::Cap_POSIX ) {
-    ldif += "objectClass: posixAccount\n";
+    vals.append( "posixAccount" );
   }
   if ( ( caps & Cap_Shadow ) && ( user.getCaps() & KU_User::Cap_POSIX ) ) {
-    ldif += "objectClass: shadowAccount\n";
+    vals.append( "shadowAccount" );
   }
   if ( ( caps & Cap_Samba ) && ( user.getCaps() & KU_User::Cap_Samba ) ) {
-    ldif += "objectClass: sambaSamAccount\n";
+    vals.append( "sambaSamAccount" );
   }
 
   if ( mod && mObjectClasses.contains( oldindex ) ) {
@@ -426,184 +392,102 @@ QByteArray KU_UserLDAP::getLDIF( const KU_User &user, int oldindex ) const
     kDebug() << user.getName() << " has additional objectclasses: " << ocs.join(",") << endl;
     QStringList::iterator it;
     for ( it = ocs.begin(); it != ocs.end(); ++it ) {
-      ldif += "objectClass: ";
-      ldif += (*it).toUtf8();
-      ldif += "\n";
+      vals.append( (*it).toUtf8() );
     }
   }
-
-  if ( mod ) ldif += "-\nreplace: cn\n";
-  ldif += KLDAP::Ldif::assembleLine( "cn", cn )+"\n";
-  if ( caps & Cap_InetOrg ) {
-    if ( mod ) ldif += "-\nreplace: uid\n";
-    ldif += KLDAP::Ldif::assembleLine( "uid", user.getName() ) + "\n";
-  } else {
-    if ( mod ) ldif += "-\nreplace: userid\n";
-    ldif += KLDAP::Ldif::assembleLine( "userid", user.getName() ) + "\n";
-  }
-  if ( mod ) ldif += "-\n";
-
+  ku_add2ops( ops, "objectClass", vals );
+  vals.clear();
+  
+  ku_add2ops( ops, "cn", cn.toUtf8() );
+  ku_add2ops( ops, caps & Cap_InetOrg ? "uid" : "userid", user.getName().toUtf8() );
+  
   if ( ( user.getCaps() & KU_User::Cap_POSIX ) || ( caps & Cap_InetOrg ) ) {
-    if ( mod ) ldif += "replace: userpassword\n";
-    ldif += KLDAP::Ldif::assembleLine( "userpassword", pwd )+"\n";
-    if ( mod ) ldif += "-\n";
+    ku_add2ops( ops, "userpassword", pwd.toUtf8(), true );
   }
 
   if ( user.getCaps() & KU_User::Cap_POSIX ) {
-    if ( mod ) ldif += "replace: uidnumber\n";
-    ldif += KLDAP::Ldif::assembleLine( "uidnumber",
-      QString::number( user.getUID() ) )+"\n";
-    if ( mod ) ldif += "-\nreplace: gidnumber\n";
-    ldif += KLDAP::Ldif::assembleLine( "gidnumber",
-      QString::number( user.getGID() ) )+"\n";
-    if ( mod ) ldif += "-\nreplace: gecos\n";
-    ldif += KLDAP::Ldif::assembleLine( "gecos", !mCfg->ldapgecos() ? QByteArray() :
-      QByteArray( gecos.toLatin1() ) )+"\n";
-    if ( mod ) ldif += "-\nreplace: homedirectory\n";
-    ldif += KLDAP::Ldif::assembleLine( "homedirectory",
-      user.getHomeDir() )+"\n";
-    if ( mod ) ldif += "-\nreplace: loginshell\n";
-    ldif += KLDAP::Ldif::assembleLine( "loginshell",
-      user.getShell() )+"\n";
-    if ( mod ) ldif += "-\n";
-  } else {
-    if ( mod ) {
-      ldif += "replace: uidnumber\n";
-      ldif += "-\nreplace: gidnumber\n";
-      ldif += "-\nreplace: homedirectory\n";
-      ldif += "-\nreplace: loginshell\n";
-      ldif += "-\nreplace: gecos\n";
-      ldif += "-\n";
-    }
+    ku_add2ops( ops, "uidnumber", QString::number(user.getUID()).toUtf8() );
+    ku_add2ops( ops, "gidnumber", QString::number(user.getGID()).toUtf8() );
+    ku_add2ops( ops, "gecos", !mCfg->ldapgecos() ? QByteArray() : QByteArray( gecos.toLatin1() ) );
+    ku_add2ops( ops, "homedirectory", user.getHomeDir().toUtf8() );
+    ku_add2ops( ops, "loginshell", user.getShell().toUtf8() );
+  } else if (mod) {
+    ku_add2ops( ops, "uidnumber" );
+    ku_add2ops( ops, "gidnumber" );
+    ku_add2ops( ops, "gecos" );
+    ku_add2ops( ops, "homedirectory" );
+    ku_add2ops( ops, "loginshell" );
   }
 
   if ( caps & Cap_InetOrg ) {
-    if ( mod ) ldif += "replace: sn\n";
-    ldif += KLDAP::Ldif::assembleLine( "sn", user.getSurname() ) + "\n";
-    if ( mod ) ldif += "-\nreplace: mail\n";
-    ldif += KLDAP::Ldif::assembleLine( "mail", user.getEmail() ) + "\n";
-    if ( mod ) ldif += "-\nreplace: displayName\n";
-    ldif += KLDAP::Ldif::assembleLine( "displayname", user.getFullName() ) + "\n";
-    if ( mod ) ldif += "-\nreplace: postaladdress\n";
-    ldif += KLDAP::Ldif::assembleLine( "postaladdress", user.getAddress() ) + "\n";
-    if ( mod ) ldif += "-\nreplace: telephoneNumber\n";
-    ldif += KLDAP::Ldif::assembleLine( "telephoneNumber", user.getOffice1() ) + "\n";
-    ldif += KLDAP::Ldif::assembleLine( "telephoneNumber", user.getOffice2() ) + "\n";
-    if ( mod ) ldif += "-\n";
+    ku_add2ops( ops, "sn", user.getSurname().toUtf8() );
+    ku_add2ops( ops, "mail", user.getEmail().toUtf8() );
+    ku_add2ops( ops, "displayName", user.getFullName().toUtf8() );
+    ku_add2ops( ops, "postaladdress", user.getAddress().toUtf8() );
+    vals.append( user.getOffice1().toUtf8() );
+    vals.append( user.getOffice2().toUtf8() );
+    ku_add2ops( ops, "telephoneNumber", vals );
+    vals.clear();
   }
 
   if ( caps & Cap_Samba ) {
     if ( user.getCaps() & KU_User::Cap_Samba ) {
-      if ( mod ) ldif += "replace: sambadomainname\n";
-      ldif += KLDAP::Ldif::assembleLine( "sambadomainname", user.getDomain() ) + "\n";
-      if ( mod ) ldif += "-\nreplace: sambauserworkstations\n";
-      ldif += KLDAP::Ldif::assembleLine( "sambauserworkstations", user.getWorkstations() ) + "\n";
-      if ( mod ) ldif += "-\nreplace: sambahomepath\n";
-      ldif += KLDAP::Ldif::assembleLine( "sambahomepath", user.getHomePath() ) + "\n";
-      if ( mod ) ldif += "-\nreplace: sambahomedrive\n";
-      ldif += KLDAP::Ldif::assembleLine( "sambahomedrive", user.getHomeDrive() ) + "\n";
-      if ( mod ) ldif += "-\nreplace: sambalogonscript\n";
-      ldif += KLDAP::Ldif::assembleLine( "sambalogonscript", user.getLoginScript() ) + "\n";
-      if ( mod ) ldif += "-\nreplace: sambaprofilepath\n";
-      ldif += KLDAP::Ldif::assembleLine( "sambaprofilepath", user.getProfilePath() ) + "\n";
-      if ( mod ) ldif += "-\nreplace: sambalmpassword\n";
-      ldif += KLDAP::Ldif::assembleLine( "sambalmpassword", user.getLMPwd() ) + "\n";
-      if ( mod ) ldif += "-\nreplace: sambantpassword\n";
-      ldif += KLDAP::Ldif::assembleLine( "sambantpassword", user.getNTPwd() ) + "\n";
-      if ( mod ) ldif += "-\nreplace: sambasid\n";
-      ldif += KLDAP::Ldif::assembleLine( "sambasid", user.getSID().getSID() ) + "\n";
-      if ( mod ) ldif += "-\nreplace: sambaacctflags\n";
-      ldif += KLDAP::Ldif::assembleLine( "sambaacctflags", samflags ) + "\n";
-      if ( mod ) ldif += "-\nreplace: sambaprimarygroupsid\n";
-      ldif += KLDAP::Ldif::assembleLine( "sambaprimarygroupsid",
-        user.getPGSID().getSID() ) + "\n";
-      if ( mod ) ldif += "-\nreplace: sambapwdlastset\n";
-      ldif += KLDAP::Ldif::assembleLine( "sambapwdlastset",
-        QString::number( user.getLastChange() ) ) + "\n";
-      if ( mod ) ldif += "-\nreplace: sambakickofftime\n";
-      if ( user.getExpire() != -1 ) ldif +=
-        KLDAP::Ldif::assembleLine( "sambakickofftime",
-        QString::number( user.getExpire() ) ) + "\n";
-      if ( mod ) ldif += "-\n";
-    } else {
-      if ( mod ) {
-        ldif += "replace: sambahomepath\n";
-        ldif += "-\nreplace: sambahomedrive\n";
-        ldif += "-\nreplace: sambalogonscript\n";
-        ldif += "-\nreplace: sambaprofilepath\n";
-        ldif += "-\nreplace: sambalmpassword\n";
-        ldif += "-\nreplace: sambantpassword\n";
-        ldif += "-\nreplace: sambasid\n";
-        ldif += "-\nreplace: sambaacctflags\n";
-        ldif += "-\nreplace: sambaprimarygroupsid\n";
-        ldif += "-\nreplace: sambapwdlastset\n";
-        ldif += "-\nreplace: sambakickofftime\n";
-        ldif += "-\nreplace: sambalogontime\n";
-        ldif += "-\nreplace: sambalogofftime\n";
-        ldif += "-\nreplace: sambapwdcanchange\n";
-        ldif += "-\nreplace: sambapwdmustchange\n";
-        ldif += "-\nreplace: sambauserworkstations\n";
-        ldif += "-\nreplace: sambadomainname\n";
-        ldif += "-\nreplace: sambamungeddial\n";
-        ldif += "-\nreplace: sambabadpasswordcount\n";
-        ldif += "-\nreplace: sambabadpasswordtime\n";
-        ldif += "-\nreplace: sambadomainname\n";
-        if ( schemaversion > 0 ) {
-          ldif += "-\nreplace: sambapasswordhistory\n";
-          ldif += "-\nreplace: sambalogonhours\n";
-        }
-        ldif += "-\n";
+      ku_add2ops( ops, "sambadomainname", user.getDomain().toUtf8() );
+      ku_add2ops( ops, "sambauserworkstations", user.getWorkstations().toUtf8() );
+      ku_add2ops( ops, "sambahomepath", user.getHomePath().toUtf8() );
+      ku_add2ops( ops, "sambahomedrive", user.getHomeDrive().toUtf8() );
+      ku_add2ops( ops, "sambalogonscript", user.getLoginScript().toUtf8() );
+      ku_add2ops( ops, "sambaprofilepath", user.getProfilePath().toUtf8() );
+      ku_add2ops( ops, "sambalmpassword", user.getLMPwd().toUtf8() );
+      ku_add2ops( ops, "sambantpassword", user.getNTPwd().toUtf8() );
+      ku_add2ops( ops, "sambasid", user.getSID().getSID().toUtf8() );
+      ku_add2ops( ops, "sambaacctflags", samflags.toUtf8() );
+      ku_add2ops( ops, "sambaprimarygroupsid", user.getPGSID().getSID().toUtf8() );
+      ku_add2ops( ops, "sambapwdlastset", QString::number( user.getLastChange() ).toUtf8() );
+      if ( user.getExpire() != -1 )
+        vals.append( QString::number( user.getExpire() ).toUtf8() );
+      ku_add2ops( ops, "sambakickofftime", vals );
+      vals.clear();
+    } else if (mod) {
+      ku_add2ops( ops, "sambadomainname" );
+      ku_add2ops( ops, "sambauserworkstations" );
+      ku_add2ops( ops, "sambahomepath" );
+      ku_add2ops( ops, "sambahomedrive" );
+      ku_add2ops( ops, "sambalogonscript" );
+      ku_add2ops( ops, "sambaprofilepath" );
+      ku_add2ops( ops, "sambalmpassword" );
+      ku_add2ops( ops, "sambantpassword" );
+      ku_add2ops( ops, "sambasid" );
+      ku_add2ops( ops, "sambaacctflags" );
+      ku_add2ops( ops, "sambaprimarygroupsid" );
+      ku_add2ops( ops, "sambapwdlastset" );
+      ku_add2ops( ops, "sambakickofftime" );
+      if ( schemaversion > 0 ) {
+        ku_add2ops( ops, "sambapasswordhistory" );
+        ku_add2ops( ops, "sambalogonhours" );
       }
     }
   }
 
   if ( caps & Cap_Shadow ) {
     if ( user.getCaps() & KU_User::Cap_POSIX ) {
-      if ( mod ) ldif += "replace: shadowlastchange\n"; //sambapwdlastset
-      ldif += KLDAP::Ldif::assembleLine( "shadowlastchange",
-        QString::number( timeToDays( user.getLastChange() ) ) ) + "\n";
-      if ( mod ) ldif += "-\nreplace: shadowmin\n"; //sambaPwdCanChange
-      ldif += KLDAP::Ldif::assembleLine( "shadowmin",
-        QString::number( user.getMin() ) ) + "\n";
-      if ( mod ) ldif += "-\nreplace: shadowmax\n"; //sambaPwdMustChange
-      ldif += KLDAP::Ldif::assembleLine( "shadowmax",
-        QString::number( user.getMax() ) ) + "\n";
-      if ( mod ) ldif += "-\nreplace: shadowwarning\n";
-      ldif += KLDAP::Ldif::assembleLine( "shadowwarning",
-        QString::number( user.getWarn() ) ) + "\n";
-      if ( mod ) ldif += "-\nreplace: shadowinactive\n";
-      ldif += KLDAP::Ldif::assembleLine( "shadowinactive",
-        QString::number( user.getInactive() ) ) + "\n";
-      if ( mod ) ldif += "-\nreplace: shadowexpire\n"; //sambaKickoffTime
-      ldif += KLDAP::Ldif::assembleLine( "shadowexpire",
-        QString::number( timeToDays( user.getExpire() ) ) ) + "\n";
-      if ( mod ) ldif += "-\nreplace: shadowflag\n";
-      ldif += KLDAP::Ldif::assembleLine( "shadowflag",
-        QString::number( user.getFlag() ) ) + "\n";
-      if ( mod ) ldif += "-\n";
-    } else {
-      if ( mod ) {
-        ldif += "replace: shadowlastchange\n";
-        ldif += "-\nreplace: shadowmin\n";
-        ldif += "-\nreplace: shadowmax\n";
-        ldif += "-\nreplace: shadowwarning\n";
-        ldif += "-\nreplace: shadowinactive\n";
-        ldif += "-\nreplace: shadowexpire\n";
-        ldif += "-\nreplace: shadowflag\n";
-        ldif += "-\n";
-      }
+      ku_add2ops( ops, "shadowlastchange",  QString::number( timeToDays( user.getLastChange() ) ).toUtf8() );
+      ku_add2ops( ops, "shadowmin", QString::number( user.getMin() ).toUtf8() );
+      ku_add2ops( ops, "shadowmax", QString::number( user.getMax() ).toUtf8() );
+      ku_add2ops( ops, "shadowwarning", QString::number( user.getWarn() ).toUtf8() );
+      ku_add2ops( ops, "shadowinactive", QString::number( user.getInactive() ).toUtf8() );
+      ku_add2ops( ops, "shadowexpire", QString::number( timeToDays( user.getExpire() ) ).toUtf8() );
+      ku_add2ops( ops, "shadowflag", QString::number( user.getFlag() ).toUtf8() );
+    } else if (mod) {
+      ku_add2ops( ops, "shadowlastchange" );
+      ku_add2ops( ops, "shadowmin" );
+      ku_add2ops( ops, "shadowmax" );
+      ku_add2ops( ops, "shadowwarning" );
+      ku_add2ops( ops, "shadowinactive" );
+      ku_add2ops( ops, "shadowexpire" );
+      ku_add2ops( ops, "shadowflag" );
     }
   }
-  ldif += "\n";
-  kDebug() << "ldif: " << QString::fromUtf8(ldif) << endl;
-  return ldif;
-}
-
-QByteArray KU_UserLDAP::delData( const KU_User &user ) const
-{
-  QByteArray ldif = "dn: " + getRDN( user ).toUtf8() + "," + mUrl.dn().toString().toUtf8() + "\n" +
-    "changetype: delete\n\n";
-  return ldif;
 }
 
 bool KU_UserLDAP::dbcommit()
@@ -611,66 +495,88 @@ bool KU_UserLDAP::dbcommit()
   mAddSucc.clear();
   mDelSucc.clear();
   mModSucc.clear();
-  mAddIndex = 0;
-  mDelIndex = 0;
-  mModIt = mMod.begin();
-  mLastOperation = None;
   mErrorString = mErrorDetails = QString();
+
+  KLDAP::LdapConnection conn( mUrl );
+
+  if ( conn.connect() != KLDAP_SUCCESS ) {
+    mErrorString = conn.connectionError();
+    return false;
+  }
+  if ( conn.bind() != KLDAP_SUCCESS ) {
+    mErrorString = KLDAP::LdapConnection::errorString(conn.ldapErrorCode());
+    mErrorDetails = conn.ldapErrorString();
+    return false;
+  }
+
+  KLDAP::LdapOperation op( conn );
+  KLDAP::LdapOperation::ModOps ops;
 
   mProg = new QProgressDialog( 0 );
   mProg->setLabel( new QLabel(i18n("LDAP Operation") ) );
   mProg->setAutoClose( false );
   mProg->setAutoReset( false );
   mProg->setMaximum( mAdd.count() + mDel.count() + mMod.count() );
-  KIO::Job *job = KIO::put( mUrl, -1, false, false, false );
-  connect( job, SIGNAL( dataReq( KIO::Job*, QByteArray& ) ),
-    this, SLOT( putData( KIO::Job*, QByteArray& ) ) );
-  connect( job, SIGNAL( result( KJob* ) ),
-    this, SLOT( result( KJob* ) ) );
-  mProg->exec();
-  delete mProg;
-  return( mOk );
-}
 
-void KU_UserLDAP::putData( KIO::Job *, QByteArray& data )
-{
-  switch ( mLastOperation ) {
-    case Mod:
-      mModSucc.insert( mModIt.key(), mModIt.value() );
-      mModIt++;
-      break;
-    case Add:
-      mAddSucc.append( mAdd.at( mAddIndex ) );
-      mAddIndex++;
-      break;
-    case Del: {
-      int deleteindex = mDel.at( mDelIndex );
-      
-      if ( mObjectClasses.contains( deleteindex ) ) {
-        kDebug() << "deleting additonal objectclasses!" << endl;
-        mObjectClasses.remove( deleteindex );
+  //modify
+  for ( KU_Users::ModList::Iterator it = mMod.begin(); it != mMod.end(); ++it ) {
+    QString oldrdn = getRDN( at( it.key() ) );
+    QString newrdn = getRDN( it.value() );
+
+    if ( oldrdn != newrdn ) {
+      int ret = op.rename_s( KLDAP::LdapDN( oldrdn + "," + mUrl.dn().toString() ), 
+        newrdn, 
+        mUrl.dn().toString().toUtf8(),
+        true );
+
+      if ( ret != KLDAP_SUCCESS ) {
+        mErrorString = KLDAP::LdapConnection::errorString(conn.ldapErrorCode());
+        mErrorDetails = conn.ldapErrorString();
+        return false;
       }
-      mDelSucc.append( deleteindex );
-      mDelIndex++;
-      break;
     }
-    default:
-      break;
+
+    ops.clear();
+    createModStruct( it.value(), it.key(), ops );
+    int ret = op.modify_s( KLDAP::LdapDN( getRDN( it.value() ) + "," + mUrl.dn().toString() ), ops );
+    if ( ret != KLDAP_SUCCESS ) {
+      mErrorString = KLDAP::LdapConnection::errorString(conn.ldapErrorCode());
+      mErrorDetails = conn.ldapErrorString();
+      return false;
+    } else {
+      mModSucc.insert( it.key(), it.value() );
+    }
   }
 
-  if ( mModIt != mMod.end() ) {
-    data = getLDIF( mModIt.value(), mModIt.key() );
-    mLastOperation = Mod;
-  } else if ( mDelIndex < mDel.count() ) {
-    data = delData( at(mDel.at( mDelIndex ) ));
-    mLastOperation = Del;
-  } else if ( mAddIndex < mAdd.count() ) {
-    data = getLDIF( mAdd.at( mAddIndex ), -1 );
-    mLastOperation = Add;
-  } else {
-    data.resize( 0 );
+  //add
+  for ( KU_Users::AddList::Iterator it = mAdd.begin(); it != mAdd.end(); ++it ) {
+    ops.clear();
+    createModStruct( (*it), -1, ops );
+    kDebug() << "add name: " << (*it).getName() << endl;
+    int ret = op.add_s( KLDAP::LdapDN( getRDN( (*it) ) + "," + mUrl.dn().toString() ), ops );
+    if ( ret != KLDAP_SUCCESS ) {
+      mErrorString = KLDAP::LdapConnection::errorString(conn.ldapErrorCode());
+      mErrorDetails = conn.ldapErrorString();
+      return false;
+    } else {
+      mAddSucc.append( (*it) );
+    }
   }
-  mProg->setValue( mProg->value() + 1 );
+
+  //del
+  for ( KU_Users::DelList::Iterator it = mDel.begin(); it != mDel.end(); ++it ) {
+    kDebug() << "delete name: " << at((*it)).getName() << endl;
+    int ret = op.del_s( KLDAP::LdapDN( getRDN( at((*it)) ) + "," + mUrl.dn().toString() ) );
+    if ( ret != KLDAP_SUCCESS ) {
+      mErrorString = KLDAP::LdapConnection::errorString(conn.ldapErrorCode());
+      mErrorDetails = conn.ldapErrorString();
+      return false;
+    } else {
+      mDelSucc.append( (*it) );
+    }
+  }
+                               
+  return true;
 }
 
 #include "ku_userldap.moc"

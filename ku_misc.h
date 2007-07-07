@@ -27,6 +27,8 @@
 
 #include <QByteArray>
 
+#include <kldap/ldapoperation.h>
+
 bool backup(const QString & name);
 QByteArray genSalt( int len );
 QString encryptPass( const QString &pass, bool md5 );
@@ -37,5 +39,7 @@ QStringList readShells();
 void addShell(const QString &shell);
 int timeToDays(time_t time);
 time_t daysToTime(int days);
+void ku_add2ops( KLDAP::LdapOperation::ModOps &ops, const QString &attr, const QList<QByteArray> &vals, bool allownull = false );
+void ku_add2ops( KLDAP::LdapOperation::ModOps &ops, const QString &attr, const QByteArray &val=QByteArray(), bool allownull = false );
 
 #endif // _KU_MISC_H_

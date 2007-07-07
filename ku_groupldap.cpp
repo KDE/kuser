@@ -20,8 +20,10 @@
 
 #include <kdebug.h>
 #include <klocale.h>
+#include <kldap/ldapdefs.h>
 
 #include "ku_groupldap.h"
+#include "ku_misc.h"
 
 KU_GroupLDAP::KU_GroupLDAP( KU_PrefsBase *cfg ) : KU_Groups( cfg )
 {
@@ -36,6 +38,9 @@ KU_GroupLDAP::KU_GroupLDAP( KU_PrefsBase *cfg ) : KU_Groups( cfg )
   if ( !mCfg->ldapanon() ) {
     mUrl.setUser( mCfg->ldapuser() );
     mUrl.setPass( mCfg->ldappassword() );
+    QString binddn = mCfg->ldapbinddn();
+    if ( !binddn.isEmpty() )
+      mUrl.setExtension( "bindname",binddn );
   }
   mUrl.setFilter( mCfg->ldapgroupfilter() );
 
@@ -78,99 +83,97 @@ QString KU_GroupLDAP::getRDN( const KU_Group &group ) const
   }
 }
 
-void KU_GroupLDAP::result( KJob *job )
+void KU_GroupLDAP::result( KLDAP::LdapSearch *search )
 {
-  mProg->close();
-  if ( job->error() && job->error() != KIO::ERR_USER_CANCELED ) {
-    QString errstr = job->errorString();
-    if ( !errstr.isEmpty() ) {
-      mErrorString =  errstr;
-//      mErrorDetails = ldif;
-    } else {
-      mErrorString = i18n("Unknown error");
-    }
+  kDebug() << "LDAP result: " << search->error() << endl;
+  mProg->hide();
+    
+  if ( search->error() ) {
+    mErrorString = KLDAP::LdapConnection::errorString(search->error());
     mOk = false;
   } else {
     mOk = true;
   }
 }
 
-void KU_GroupLDAP::data( KIO::Job*, const QByteArray& data )
+void KU_GroupLDAP::data( KLDAP::LdapSearch *, const KLDAP::LdapObject& data )
 {
-  if ( data.size() ) {
-    mParser.setLdif( data );
-  } else {
-    mParser.endLdif();
+  KU_Group group;
+    
+  KLDAP::LdapAttrMap attrs = data.attributes();
+  for ( KLDAP::LdapAttrMap::ConstIterator it = attrs.begin(); it != attrs.end(); ++it ) {
+    QString name = it.key().toLower();
+
+    if ( name == "objectclass" ) {
+      for ( KLDAP::LdapAttrValue::ConstIterator it2 = (*it).begin(); it2 != (*it).end(); ++it2 ) {
+        if ( (*it2).toLower() == "sambagroupmapping" )
+          group.setCaps( KU_Group::Cap_Samba );
+      }
+      continue;
+    }
+
+    if ( name == "memberuid" ) {
+      for ( KLDAP::LdapAttrValue::ConstIterator it2 = (*it).begin(); it2 != (*it).end(); ++it2 ) {
+        group.addUser( (*it2) );
+      }
+      continue;
+    }
+
+    KLDAP::LdapAttrValue values = (*it);
+    if ( values.isEmpty() ) continue;
+    QString val = QString::fromUtf8( values.first(), values.first().size() );
+    if ( name == "gidnumber" )
+      group.setGID( val.toLong() );
+    else if ( name == "cn" )
+      group.setName( val );
+    else if ( name == "userpassword" )
+      group.setPwd( val );
+    else if ( name == "sambasid" )
+      group.setSID( val );
+    else if ( name == "sambagrouptype" )
+      group.setType( val.toInt() );
+    else if ( name == "displayname" )
+      group.setDisplayName( val );
+    else if ( name == "description" )
+      group.setDesc( val );
   }
 
-  KLDAP::Ldif::ParseValue ret;
-  QString name, val;
-  QByteArray value;
-  do {
-    ret = mParser.nextItem();
-    switch ( ret ) {
-      case KLDAP::Ldif::Item:
-        name = mParser.attr().toLower();
-        value = mParser.value();
-        val = QString::fromUtf8( value, value.size() );
-        if ( name == "objectclass" ) {
-          if ( val.toLower() == "sambagroupmapping" ) 
-            mGroup.setCaps( KU_Group::Cap_Samba );
-        } else if ( name == "gidnumber" )
-          mGroup.setGID( val.toLong() );
-        else if ( name == "cn" )
-          mGroup.setName( val );
-        else if ( name == "userpassword" )
-          mGroup.setPwd( val );
-        else if ( name == "memberuid" )
-          mGroup.addUser( val );
-        else if ( name == "sambasid" )
-          mGroup.setSID( val );
-        else if ( name == "sambagrouptype" )
-          mGroup.setType( val.toInt() );
-        else if ( name == "displayname" )
-          mGroup.setDisplayName( val );
-        else if ( name == "description" )
-          mGroup.setDesc( val );
-        break;
-      case KLDAP::Ldif::EndEntry: {
-        append( mGroup );
-        mGroup = KU_Group();
-        if ( ( count() & 7 ) == 7 ) {
-          mProg->setValue( mProg->value() + mAdv );
-          if ( mProg->value() == 0 ) mAdv = 1;
-          if ( mProg->value() == mProg->maximum()-1 ) mAdv = -1;
-        }
-        break;
-      }
-      default:
-        break;
-    }
-  } while ( ret != KLDAP::Ldif::MoreData );
+  append( group );
+
+  if ( ( count() & 7 ) == 7 ) {
+    mProg->setValue( mProg->value() + mAdv );
+    if ( mProg->value() == 0 ) mAdv = 1;
+    if ( mProg->value() == mProg->maximum()-1 ) mAdv = -1;
+  }
 }
 
 bool KU_GroupLDAP::reload()
 {
   kDebug() << "KU_GroupLDAP::reload()" << endl;
   mErrorString = mErrorDetails = QString();
-  
-  mGroup = KU_Group();
-  mParser.startParsing();
-
   mProg = new QProgressDialog( 0 );
   mProg->setLabel( new QLabel (i18n("Loading Groups From LDAP")) );
   mProg->setAutoClose( false );
   mProg->setMaximum( 100 );
   mAdv = 1;
 
-  KIO::Job *job = KIO::get( mUrl, true, false );
-  connect( job, SIGNAL( data( KIO::Job*, const QByteArray& ) ),
-    this, SLOT( data( KIO::Job*, const QByteArray& ) ) );
-  connect( job, SIGNAL( result( KJob* ) ),
-    this, SLOT( result( KJob* ) ) );
-  mProg->exec();
-  if ( mProg->wasCanceled() ) job->kill();
-
+  KLDAP::LdapSearch search;
+  connect( &search,
+    SIGNAL( data( KLDAP::LdapSearch*, const KLDAP::LdapObject& ) ),
+    this, SLOT ( data ( KLDAP::LdapSearch*, const KLDAP::LdapObject&) ) );
+  connect( &search,
+    SIGNAL( result( KLDAP::LdapSearch* ) ),
+    this, SLOT ( result ( KLDAP::LdapSearch* ) ) );
+                   
+  if (search.search( mUrl )) {
+    mProg->exec();
+    if ( mProg->wasCanceled() ) search.abandon();
+  } else {
+    kDebug() << "search failed" << endl;
+    mOk = false;
+    mErrorString = KLDAP::LdapConnection::errorString(search.error());
+  }
+  delete mProg;
   return( mOk );
 }
 
@@ -179,146 +182,119 @@ bool KU_GroupLDAP::dbcommit()
   mAddSucc.clear();
   mDelSucc.clear();
   mModSucc.clear();
-  mAddIndex = 0;
-  mDelIndex = 0;
-  mModIt = mMod.begin();
-  mLastOperation = None;
   mErrorString = mErrorDetails = QString();
+  KLDAP::LdapConnection conn( mUrl );
+  
+  if ( conn.connect() != KLDAP_SUCCESS ) {
+    mErrorString = conn.connectionError();
+    return false;
+  }
+  if ( conn.bind() != KLDAP_SUCCESS ) {
+    mErrorString = KLDAP::LdapConnection::errorString(conn.ldapErrorCode());
+    mErrorDetails = conn.ldapErrorString();
+    return false;
+  }
+  KLDAP::LdapOperation op( conn );
+  KLDAP::LdapOperation::ModOps ops;
 
   mProg = new QProgressDialog( 0 );
   mProg->setLabel( new QLabel(i18n("LDAP Operation")) );
   mProg->setAutoClose( false );
   mProg->setAutoReset( false );
   mProg->setMaximum( mAdd.count() + mMod.count() + mDel.count() );
-  KIO::Job *job = KIO::put( mUrl, -1, false, false, false );
-  connect( job, SIGNAL( dataReq( KIO::Job*, QByteArray& ) ),
-    this, SLOT( putData( KIO::Job*, QByteArray& ) ) );
-  connect( job, SIGNAL( result( KJob* ) ),
-    this, SLOT( result( KJob* ) ) );
-  mProg->exec();
-  delete mProg;
-  return( mOk );
-}
 
-void KU_GroupLDAP::putData( KIO::Job*, QByteArray& data )
-{
-  switch ( mLastOperation ) {
-    case Mod:
-      mModSucc.insert( mModIt.key(), mModIt.value() );
-      mModIt++;
-      break;
-    case Add:
-      mAddSucc.append( mAdd.at( mAddIndex ) );
-      mAddIndex++;
-      break;
-    case Del:
-      mDelSucc.append( mDel.at( mDelIndex ) );
-      mDelIndex++;
-      break;
-    default:
-      break;
-  }
-
-  if ( mModIt != mMod.end() ) {
-    data = modData( mModIt.value(), mModIt.key() );
-    mLastOperation = Mod;
-  } else if ( mDelIndex < mDel.count() ) {
-    data = delData( at(mDel.at( mDelIndex ) ));
-    mLastOperation = Del;
-  } else if ( mAddIndex < mAdd.count() ) {
-    data = addData( mAdd.at( mAddIndex ) );
-    mLastOperation = Add;
-  } else {
-    data.resize( 0 );
-  }
-}
-
-QByteArray KU_GroupLDAP::addData( const KU_Group &group ) const
-{
-  QByteArray ldif = "dn: " + getRDN( group ).toUtf8() + "," +
-    mUrl.dn().toString().toUtf8() + "\n" + "objectclass: posixGroup\n";
-
-  ldif +=
-    KLDAP::Ldif::assembleLine( "cn", group.getName() ) + "\n" +
-    KLDAP::Ldif::assembleLine( "gidnumber", QString::number(group.getGID()) ) + "\n" +
-    KLDAP::Ldif::assembleLine( "userpassword", group.getPwd() ) + "\n";
-  for ( uint i=0; i < group.count(); i++ ) {
-    ldif += KLDAP::Ldif::assembleLine( "memberuid", group.user(i) ) + "\n";
-  }
-  if ( ( getCaps() & Cap_Samba ) && ( group.getCaps() & KU_Group::Cap_Samba ) ) {
-    ldif += "objectclass: sambagroupmapping\n" +
-      KLDAP::Ldif::assembleLine( "sambasid", group.getSID().getSID() ) + "\n" +
-      KLDAP::Ldif::assembleLine( "displayname", group.getDisplayName() ) + "\n" +
-      KLDAP::Ldif::assembleLine( "description", group.getDesc() ) + "\n" +
-      KLDAP::Ldif::assembleLine( "sambagrouptype", QString::number( group.getType() ) ) + "\n";
-  }
-  ldif += "\n\n";
-  kDebug() << "ldif: " << ldif << endl;
-  return ldif;
-}
-
-QByteArray KU_GroupLDAP::delData( const KU_Group &group ) const
-{
-  QByteArray ldif = "dn: " + getRDN( group ).toUtf8() + "," +
-    mUrl.dn().toString().toUtf8() + "\n" + "changetype: delete\n\n";
-  kDebug() << "ldif: " << ldif << endl;
-  return ldif;
-}
-
-QByteArray KU_GroupLDAP::modData( const KU_Group &group, int oldindex ) const
-{
-  QByteArray ldif;
-  QString oldrdn = getRDN( at( oldindex ) );
-  QString newrdn = getRDN( group );
-
-  if ( oldrdn != newrdn ) {
-    ldif = "dn: " + oldrdn.toUtf8() + "," + mUrl.dn().toString().toUtf8() + "\n" +
-      "changetype: modrdn\n" +
-      KLDAP::Ldif::assembleLine( "newrdn", newrdn ) + "\n" +
-      KLDAP::Ldif::assembleLine( "newSuperior", mUrl.dn().toString() ) + "\n" +
-      "deleteoldrdn: 1\n\n";      
-  }
-
-  ldif += "dn: " + newrdn.toUtf8() + "," + mUrl.dn().toString().toUtf8() + "\n" +
-    "changetype: modify\n" +
-    "replace: objectclass\n" +
-    "objectclass: posixgroup\n";
-  if ( ( getCaps() & Cap_Samba ) && ( group.getCaps() & KU_Group::Cap_Samba ) ) {
-    ldif += "objectclass: sambagroupmapping\n";
-  }
-  ldif +=
-    "-\nreplace: cn\n" +
-    KLDAP::Ldif::assembleLine( "cn", group.getName() ) +
-    "\n-\nreplace: gidnumber\n" +
-    KLDAP::Ldif::assembleLine( "gidnumber", QString::number(group.getGID()) ) +
-    "\n-\nreplace: userpassword\n" +
-    KLDAP::Ldif::assembleLine( "userpassword", group.getPwd() ) +
-    "\n-\nreplace: memberuid\n";
-  for ( uint i=0; i < group.count(); i++ ) {
-    ldif += KLDAP::Ldif::assembleLine( "memberuid", group.user(i)) + "\n";
-  }
-  if ( getCaps() & Cap_Samba ) {
-    if ( group.getCaps() & KU_Group::Cap_Samba ) {
-      ldif +=
-        "-\nreplace: sambasid\n" +
-        KLDAP::Ldif::assembleLine( "sambasid", group.getSID().getSID() ) +
-        "\n-\nreplace: displayname\n" +
-        KLDAP::Ldif::assembleLine( "displayname", group.getDisplayName() ) +
-        "\n-\nreplace: description\n" +
-        KLDAP::Ldif::assembleLine( "description", group.getDesc() ) +
-        "\n-\nreplace: sambagrouptype\n" +
-        KLDAP::Ldif::assembleLine( "sambagrouptype", QString::number( group.getType() ) ) + "\n";
+  //modify
+  for ( KU_Groups::ModList::Iterator it = mMod.begin(); it != mMod.end(); ++it ) {
+    QString oldrdn = getRDN( at( it.key() ) );
+    QString newrdn = getRDN( it.value() );
+            
+    if ( oldrdn != newrdn ) {
+      int ret = op.rename_s( KLDAP::LdapDN( oldrdn + "," + mUrl.dn().toString() ),
+        newrdn,
+        mUrl.dn().toString().toUtf8(),
+        true );
+      if ( ret != KLDAP_SUCCESS ) {
+        mErrorString = KLDAP::LdapConnection::errorString(conn.ldapErrorCode());
+        mErrorDetails = conn.ldapErrorString();
+        return false;
+      }
+    }
+                                                                  
+    ops.clear();
+    createModStruct( it.value(), it.key(), ops );
+    int ret = op.modify_s( KLDAP::LdapDN( getRDN( it.value() ) + "," + mUrl.dn().toString() ), ops );
+    if ( ret != KLDAP_SUCCESS ) {
+      mErrorString = KLDAP::LdapConnection::errorString(conn.ldapErrorCode());
+      mErrorDetails = conn.ldapErrorString();
+      return false;
     } else {
-      ldif += "-\nreplace: sambasid\n";
-      ldif += "-\nreplace: displayname\n";
-      ldif += "-\nreplace: description\n";
-      ldif += "-\nreplace: sambagrouptype\n";
-      ldif += "-\nreplace: sambasidlist\n";
+      mModSucc.insert( it.key(), it.value() );
     }
   }
 
-  ldif += "-\n\n";
-  return ldif;
+  //add
+  for ( KU_Groups::AddList::Iterator it = mAdd.begin(); it != mAdd.end(); ++it ) {
+    ops.clear();
+    createModStruct( (*it), -1, ops );
+    kDebug() << "add name: " << (*it).getName() << endl;
+    int ret = op.add_s( KLDAP::LdapDN( getRDN( (*it) ) + "," + mUrl.dn().toString() ), ops );
+    if ( ret != KLDAP_SUCCESS ) {
+      mErrorString = KLDAP::LdapConnection::errorString(conn.ldapErrorCode());
+      mErrorDetails = conn.ldapErrorString();
+      return false;
+    } else {
+      mAddSucc.append( (*it) );
+    }
+  }
+
+  //del
+  for ( KU_Groups::DelList::Iterator it = mDel.begin(); it != mDel.end(); ++it ) {
+    kDebug() << "delete name: " << at((*it)).getName() << endl;
+    int ret = op.del_s( KLDAP::LdapDN( getRDN( at((*it)) ) + "," + mUrl.dn().toString() ) );
+    if ( ret != KLDAP_SUCCESS ) {
+      mErrorString = KLDAP::LdapConnection::errorString(conn.ldapErrorCode());
+      mErrorDetails = conn.ldapErrorString();
+      return false;
+    } else {
+      mDelSucc.append( (*it) );
+    }
+  }
+                                                                                                              
+  return true;
+}
+
+void KU_GroupLDAP::createModStruct( const KU_Group &group, int oldindex, KLDAP::LdapOperation::ModOps &ops)
+{
+  QList<QByteArray> vals;
+  bool mod = ( oldindex != -1 );
+  
+  vals.append("posixgroup");
+  if ( ( getCaps() & Cap_Samba ) && ( group.getCaps() & KU_Group::Cap_Samba ) ) {
+    vals.append("sambagroupmapping");
+  }
+  ku_add2ops( ops, "objectClass", vals );
+  vals.clear();
+  ku_add2ops( ops, "cn", group.getName().toUtf8() );
+  ku_add2ops( ops, "gidnumber", QString::number(group.getGID()).toUtf8() );
+  ku_add2ops( ops, "userpassword", group.getPwd().toUtf8() );
+  for ( uint i=0; i < group.count(); i++ ) {
+    vals.append( group.user(i).toUtf8() );
+  }
+  ku_add2ops( ops, "memberuid", vals );
+  vals.clear();
+  if ( getCaps() & Cap_Samba ) {
+    if ( group.getCaps() & KU_Group::Cap_Samba ) {
+      ku_add2ops( ops, "sambasid", group.getSID().getSID().toUtf8() );
+      ku_add2ops( ops, "displayname", group.getDisplayName().toUtf8() );
+      ku_add2ops( ops, "description", group.getDesc().toUtf8() );
+      ku_add2ops( ops, "sambagrouptype", QString::number( group.getType() ).toUtf8() );
+    } else if (mod) {
+      ku_add2ops( ops, "sambasid" );
+      ku_add2ops( ops, "displayname" );
+      ku_add2ops( ops, "description" );
+      ku_add2ops( ops, "sambagrouptype" );
+    }
+  }
 }
 
 #include "ku_groupldap.moc"

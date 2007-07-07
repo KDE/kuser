@@ -21,10 +21,11 @@
 
 
 #include <QProgressDialog>
-#include <QByteArray>
 
+#include <kldap/ldapsearch.h>
+#include <kldap/ldapobject.h>
+#include <kldap/ldapoperation.h>
 #include <kldap/ldapurl.h>
-#include <kldap/ldif.h>
 #include <kio/job.h>
 
 #include "ku_group.h"
@@ -39,25 +40,17 @@ public:
   virtual bool dbcommit();
 
 private slots:
-  void data( KIO::Job*, const QByteArray& );
-  void putData( KIO::Job *job, QByteArray& data );
-  void result( KJob* );
+  void result( KLDAP::LdapSearch *search );
+  void data( KLDAP::LdapSearch *search, const KLDAP::LdapObject& data );
 private:
-  enum LastOperation{ None, Mod, Add, Del };
-  LastOperation mLastOperation;
-  KLDAP::Ldif mParser;
   KLDAP::LdapUrl mUrl;
   QProgressDialog *mProg;
 
-  KU_Group mGroup;
-  ModList::Iterator mModIt;
   bool mOk;
-  int mAdv, mDelIndex, mAddIndex;
+  int mAdv;
 
   QString getRDN( const KU_Group &group ) const;
-  QByteArray addData( const KU_Group &group ) const;
-  QByteArray delData( const KU_Group &group ) const;
-  QByteArray modData( const KU_Group &group, int oldindex ) const;
+  void createModStruct( const KU_Group &group, int oldindex, KLDAP::LdapOperation::ModOps &ops);
 };
 
 #endif // _KU_GROUPLDAP_H_

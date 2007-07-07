@@ -340,7 +340,7 @@ void KU_EditUser::initDlg()
     }
     connect( lstgrp, SIGNAL(itemClicked(QListWidgetItem *)), this, SLOT(gchanged()) );
   }
-
+//  connect( this, SIGNAL( okClicked() ), SLOT( slotOk() ) );
 }
 
 KU_EditUser::KU_EditUser( const QList<int> &selected,
@@ -901,6 +901,8 @@ bool KU_EditUser::checkShell(const QString &shell)
 
 bool KU_EditUser::check()
 {
+  kDebug() << "KU_EditUser::check()" << endl;
+  
   bool one = mSelected.isEmpty();
   bool posix = !( kug->getUsers()->getCaps() & KU_Users::Cap_Disable_POSIX ) || !( cbposix->isChecked() );
 
@@ -951,8 +953,9 @@ void KU_EditUser::setpwd()
   }
 }
 
-void KU_EditUser::slotOk()
+void KU_EditUser::accept()
 {
+  kDebug() << "KU_EditUser::slotOk() ischanged: " << ischanged << endl;
   if ( ro ) {
     reject();
     return;
@@ -1010,7 +1013,7 @@ void KU_EditUser::slotOk()
     reject();
   } else if ( check() ) {
     saveg();
-    accept();
+    done( Accepted );
   }
 }
 

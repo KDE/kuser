@@ -39,7 +39,7 @@ public:
   const KU_User &getNewUser() const { return mNewUser; }
 
 protected slots:
-  virtual void slotOk();
+  virtual void accept();
 protected:
   bool checkHome();
   bool checkMailBox();

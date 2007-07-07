@@ -62,7 +62,7 @@ KU_AddUser::KU_AddUser( KU_User &user, bool useprivategroup,
   if ( useprivategroup ) pbprigr->setEnabled( false );
 }
 
-void KU_AddUser::slotOk()
+void KU_AddUser::accept()
 {
   if ( !check() ) return;
 
@@ -98,8 +98,9 @@ void KU_AddUser::slotOk()
      mNewUser.setCreateMailBox(false);
 
   saveg();
-  accept();
+  done( Accepted );
   kDebug() << "slotOk name: " << mNewUser.getName() << endl;
+  
 }
 
 bool KU_AddUser::checkHome()

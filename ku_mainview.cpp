@@ -213,15 +213,15 @@ void KU_MainView::useradd()
     sid.setDOM( users->getDOMSID() );
     sid.setRID( rid );
     user.setSID( sid );
-    user.setProfilePath( kug->kcfg()->samprofilepath().replace( "%U",name ) );
-    user.setHomePath( kug->kcfg()->samhomepath().replace( "%U", name ) );
+    user.setProfilePath( kug->kcfg()->samprofilepath().replace( "%U",name,Qt::CaseInsensitive ) );
+    user.setHomePath( kug->kcfg()->samhomepath().replace( "%U", name,Qt::CaseInsensitive ) );
     user.setHomeDrive( kug->kcfg()->samhomedrive() );
     user.setLoginScript( kug->kcfg()->samloginscript() );
     user.setDomain( kug->kcfg()->samdomain() );
   }
 
   user.setShell( kug->kcfg()->shell() );
-  user.setHomeDir( kug->kcfg()->homepath().replace( "%U", name ) );
+  user.setHomeDir( kug->kcfg()->homepath().replace( "%U", name,Qt::CaseInsensitive ) );
   if ( users->getCaps() & KU_Users::Cap_Shadow || samba ) {
     user.setLastChange( now() );
   }

@@ -505,7 +505,7 @@ void KU_EditUser::selectuser()
     setLE( lefname, user.getFullName(), first );
     QString home;
     home = user.getHomeDir();
-    if ( !one ) home.replace( user.getName(), "%U" );
+    if ( !one ) home.replace( user.getName(), "%U", Qt::CaseInsensitive );
     setLE( lehome, home, first );
 
     QString shell = user.getShell();
@@ -543,11 +543,11 @@ void KU_EditUser::selectuser()
       setLE( leliscript, user.getLoginScript(), first );
       QString profile;
       profile = user.getProfilePath();
-      if ( !one ) profile.replace( user.getName(), "%U" );
+      if ( !one ) profile.replace( user.getName(), "%U", Qt::CaseInsensitive );
       setLE( leprofile, profile, first );
       setLE( lehomedrive, user.getHomeDrive(), first );
       home = user.getHomePath();
-      if ( !one ) home.replace( user.getName(), "%U" );
+      if ( !one ) home.replace( user.getName(), "%U", Qt::CaseInsensitive );
       setLE( lehomepath, home, first );
       setLE( leworkstations, user.getWorkstations(), first );
       setLE( ledomain, user.getDomain(), first );
@@ -766,11 +766,11 @@ void KU_EditUser::mergeUser( const KU_User &user, KU_User &newuser )
     newuser.setLoginScript( samba ?
       mergeLE( leliscript, user.getLoginScript(), one ) : QString::null  );
     newuser.setProfilePath( samba ?
-      mergeLE( leprofile, user.getProfilePath(), one ).replace( "%U", newuser.getName() ) : QString::null );
+      mergeLE( leprofile, user.getProfilePath(), one ).replace( "%U", newuser.getName(), Qt::CaseInsensitive ) : QString::null );
     newuser.setHomeDrive( samba ?
       mergeLE( lehomedrive, user.getHomeDrive(), one ) : QString::null );
     newuser.setHomePath( samba ?
-      mergeLE( lehomepath, user.getHomePath(), one ).replace( "%U", newuser.getName() ) : QString::null );
+      mergeLE( lehomepath, user.getHomePath(), one ).replace( "%U", newuser.getName(), Qt::CaseInsensitive ) : QString::null );
     newuser.setWorkstations( samba ?
       mergeLE( leworkstations, user.getWorkstations(), one ) : QString::null );
     newuser.setDomain( samba ?
@@ -789,7 +789,7 @@ void KU_EditUser::mergeUser( const KU_User &user, KU_User &newuser )
   }
 
   newuser.setHomeDir( posix ?
-    mergeLE( lehome, user.getHomeDir(), one ).replace( "%U", newuser.getName() ) :
+    mergeLE( lehome, user.getHomeDir(), one ).replace( "%U", newuser.getName(), Qt::CaseInsensitive ) :
     QString::null );
   if ( posix ) {
     if ( leshell->currentIndex() == 0 && ismoreshells ) {

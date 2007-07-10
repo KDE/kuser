@@ -68,8 +68,6 @@ kde4_add_kcfg_files(kuser_SRCS ku_prefs.kcfgc)
 
 kde4_add_ui_files(kuser_SRCS ku_filessettings.ui ku_generalsettings.ui ku_ldapsettings.ui ku_ldapsamba.ui ku_passwordpolicy.ui)
 
-kde4_automoc(${kuser_SRCS})
-
 kde4_add_executable(kuser ${kuser_SRCS})
 
 target_link_libraries(kuser   ${KDE4_KIO_LIBS} ${KDE4_KLDAP_LIBS} kntlm)

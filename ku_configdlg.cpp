@@ -129,7 +129,7 @@ void KU_ConfigDlg::slotQueryClicked()
   _url.setExtension( "x-dir", "base" );
   _url.setFilter( filter );
 
-  kDebug() << "sendQuery url: " << _url.prettyUrl() << endl;
+  kDebug() << "sendQuery url: " << _url.prettyUrl();
   mLdif.startParsing();
   KIO::Job *job = KIO::get( _url, true, false );
 //  job->addMetaData("no-auth-prompt","true");
@@ -146,7 +146,7 @@ void KU_ConfigDlg::slotQueryClicked()
   mProg->setAutoReset( false );
   mProg->exec();
   if ( mProg->wasCanceled() ) {
-    kDebug() << "query cancelled!" << endl;
+    kDebug() << "query cancelled!";
     job->kill( KJob::Quietly );
   } else {
     if ( !mErrorMsg.isEmpty() ) 
@@ -163,7 +163,7 @@ void KU_ConfigDlg::slotQueryClicked()
     }
   }
   delete mProg;
-  kDebug() << "domQueryx" << endl;
+  kDebug() << "domQueryx";
 
 }
 

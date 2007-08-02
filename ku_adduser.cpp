@@ -99,7 +99,7 @@ void KU_AddUser::accept()
 
   saveg();
   done( Accepted );
-  kDebug() << "slotOk name: " << mNewUser.getName() << endl;
+  kDebug() << "slotOk name: " << mNewUser.getName();
   
 }
 

@@ -86,7 +86,7 @@ KU_UserLDAP::~KU_UserLDAP()
 
 void KU_UserLDAP::result( KLDAP::LdapSearch *search )
 {
-  kDebug() << "LDAP result: " << search->error() << endl;
+  kDebug() << "LDAP result: " << search->error();
   mProg->hide();
 
   if ( search->error() ) {
@@ -204,10 +204,10 @@ void KU_UserLDAP::data( KLDAP::LdapSearch *, const KLDAP::LdapObject& data )
 
   }
 
-  kDebug() << "new user: " << user.getName() << endl;
+  kDebug() << "new user: " << user.getName();
   if ( !objectclasses.isEmpty() ) {
     mObjectClasses.insert( count(), objectclasses );
-    kDebug() << "user: " << user.getName() << " other objectclasses: " << objectclasses.join(",") << endl;
+    kDebug() << "user: " << user.getName() << " other objectclasses: " << objectclasses.join(",");
   }
   append( user );
 
@@ -220,7 +220,7 @@ void KU_UserLDAP::data( KLDAP::LdapSearch *, const KLDAP::LdapObject& data )
 
 bool KU_UserLDAP::reload()
 {
-  kDebug() << "KU_UserLDAP::reload()" << endl;
+  kDebug() << "KU_UserLDAP::reload()";
   mErrorString = mErrorDetails = QString();
   mObjectClasses.clear();
   mProg = new QProgressDialog( 0 );
@@ -243,7 +243,7 @@ bool KU_UserLDAP::reload()
     mProg->exec();
     if ( mProg->wasCanceled() ) search.abandon();
   } else {
-    kDebug() << "search failed" << endl;
+    kDebug() << "search failed";
     mOk = false;
     mErrorString = KLDAP::LdapConnection::errorString(search.error());
   }
@@ -389,7 +389,7 @@ void KU_UserLDAP::createModStruct( const KU_User &user, int oldindex, KLDAP::Lda
 
   if ( mod && mObjectClasses.contains( oldindex ) ) {
     QStringList ocs = mObjectClasses[ oldindex ];
-    kDebug() << user.getName() << " has additional objectclasses: " << ocs.join(",") << endl;
+    kDebug() << user.getName() << " has additional objectclasses: " << ocs.join(",");
     QStringList::iterator it;
     for ( it = ocs.begin(); it != ocs.end(); ++it ) {
       vals.append( (*it).toUtf8() );
@@ -552,7 +552,7 @@ bool KU_UserLDAP::dbcommit()
   for ( KU_Users::AddList::Iterator it = mAdd.begin(); it != mAdd.end(); ++it ) {
     ops.clear();
     createModStruct( (*it), -1, ops );
-    kDebug() << "add name: " << (*it).getName() << endl;
+    kDebug() << "add name: " << (*it).getName();
     int ret = op.add_s( KLDAP::LdapDN( getRDN( (*it) ) + "," + mUrl.dn().toString() ), ops );
     if ( ret != KLDAP_SUCCESS ) {
       mErrorString = KLDAP::LdapConnection::errorString(conn.ldapErrorCode());
@@ -565,7 +565,7 @@ bool KU_UserLDAP::dbcommit()
 
   //del
   for ( KU_Users::DelList::Iterator it = mDel.begin(); it != mDel.end(); ++it ) {
-    kDebug() << "delete name: " << at((*it)).getName() << endl;
+    kDebug() << "delete name: " << at((*it)).getName();
     int ret = op.del_s( KLDAP::LdapDN( getRDN( at((*it)) ) + "," + mUrl.dn().toString() ) );
     if ( ret != KLDAP_SUCCESS ) {
       mErrorString = KLDAP::LdapConnection::errorString(conn.ldapErrorCode());

@@ -85,7 +85,7 @@ QString KU_GroupLDAP::getRDN( const KU_Group &group ) const
 
 void KU_GroupLDAP::result( KLDAP::LdapSearch *search )
 {
-  kDebug() << "LDAP result: " << search->error() << endl;
+  kDebug() << "LDAP result: " << search->error();
   mProg->hide();
     
   if ( search->error() ) {
@@ -149,7 +149,7 @@ void KU_GroupLDAP::data( KLDAP::LdapSearch *, const KLDAP::LdapObject& data )
 
 bool KU_GroupLDAP::reload()
 {
-  kDebug() << "KU_GroupLDAP::reload()" << endl;
+  kDebug() << "KU_GroupLDAP::reload()";
   mErrorString = mErrorDetails = QString();
   mProg = new QProgressDialog( 0 );
   mProg->setLabel( new QLabel (i18n("Loading Groups From LDAP")) );
@@ -169,7 +169,7 @@ bool KU_GroupLDAP::reload()
     mProg->exec();
     if ( mProg->wasCanceled() ) search.abandon();
   } else {
-    kDebug() << "search failed" << endl;
+    kDebug() << "search failed";
     mOk = false;
     mErrorString = KLDAP::LdapConnection::errorString(search.error());
   }
@@ -236,7 +236,7 @@ bool KU_GroupLDAP::dbcommit()
   for ( KU_Groups::AddList::Iterator it = mAdd.begin(); it != mAdd.end(); ++it ) {
     ops.clear();
     createModStruct( (*it), -1, ops );
-    kDebug() << "add name: " << (*it).getName() << endl;
+    kDebug() << "add name: " << (*it).getName();
     int ret = op.add_s( KLDAP::LdapDN( getRDN( (*it) ) + "," + mUrl.dn().toString() ), ops );
     if ( ret != KLDAP_SUCCESS ) {
       mErrorString = KLDAP::LdapConnection::errorString(conn.ldapErrorCode());
@@ -249,7 +249,7 @@ bool KU_GroupLDAP::dbcommit()
 
   //del
   for ( KU_Groups::DelList::Iterator it = mDel.begin(); it != mDel.end(); ++it ) {
-    kDebug() << "delete name: " << at((*it)).getName() << endl;
+    kDebug() << "delete name: " << at((*it)).getName();
     int ret = op.del_s( KLDAP::LdapDN( getRDN( at((*it)) ) + "," + mUrl.dn().toString() ) );
     if ( ret != KLDAP_SUCCESS ) {
       mErrorString = KLDAP::LdapConnection::errorString(conn.ldapErrorCode());

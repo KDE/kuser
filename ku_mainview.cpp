@@ -246,7 +246,7 @@ void KU_MainView::useradd()
     return;
   }
   user = au.getNewUser();
-  kDebug() << " surname: " << user.getSurname() << endl;
+  kDebug() << " surname: " << user.getSurname();
   if ( privgroup ) {
     KU_Group group;
     int index;
@@ -260,7 +260,7 @@ void KU_MainView::useradd()
       } else {
         gid = groups->first_free();
       }
-      kDebug() << "private group GID: " << gid << endl;
+      kDebug() << "private group GID: " << gid;
       uid_t rid = 0;
 //      if ( samba ) rid = kug->getGroups().first_free_sam();
       if ( samba ) rid = SID::gid2rid( gid );
@@ -322,7 +322,7 @@ void KU_MainView::userdel()
   if ( !currentindex.isValid() ) return;
 
   int index = userproxymodel.mapToSource(currentindex).row();
-  kDebug() << "selected index: " << index << endl;
+  kDebug() << "selected index: " << index;
 
   KU_User user = users->at(index);
   QString username = user.getName();
@@ -341,9 +341,9 @@ void KU_MainView::userdel()
 
   for ( int i = 0; i < groups->count(); i++ ) {
     KU_Group group = groups->at(i);
-    kDebug() << "group: " << group.getName() << endl;
+    kDebug() << "group: " << group.getName();
     if ( group.lookup_user( username ) ) {
-      kDebug() << "group: " << group.getName() << " found user: " << username << endl;
+      kDebug() << "group: " << group.getName() << " found user: " << username;
       group.removeUser( username );
       groups->mod( i, group );
     }
@@ -357,11 +357,11 @@ void KU_MainView::userdel()
         "Do you want to delete the user's private group '%1'?",
          groups->at(i).getName()), QString::null,
         KStandardGuiItem::del(), KGuiItem(i18n("Do Not Delete"))) == KMessageBox::Yes) {
-      kDebug() << "del private group" << endl;
+      kDebug() << "del private group";
       groups->del( i );
     }
   }
-  kDebug() << "update groups" << endl;
+  kDebug() << "update groups";
   updateGroups();
 
 }
@@ -408,11 +408,11 @@ void KU_MainView::grpedit()
   if ( !currentindex.isValid() ) return;
 
   int index = groupproxymodel.mapToSource(currentindex).row();
-  kDebug() << "selected index: " << index << endl;
+  kDebug() << "selected index: " << index;
 
   KU_Group group = groups->at(index);
 
-  kDebug() << "The SID for group " << group.getName() << " is: '" << group.getSID().getSID() << "'" << endl;
+  kDebug() << "The SID for group " << group.getName() << " is: '" << group.getSID().getSID() << "'";
   if ( ( groups->getCaps() & KU_Groups::Cap_Samba ) &&
        ( group.getCaps() & KU_Group::Cap_Samba ) &&
          group.getSID().isEmpty() ) {
@@ -421,7 +421,7 @@ void KU_MainView::grpedit()
 //    sid.setRID( kug->getGroups().first_free_sam() );
     sid.setRID( SID::gid2rid( group.getGID() ) );
     group.setSID( sid );
-    kDebug() << "The new SID for group " << group.getName() << " is: " << sid.getSID() << endl;
+    kDebug() << "The new SID for group " << group.getName() << " is: " << sid.getSID();
   }
   KU_EditGroup egdlg( group, false );
 
@@ -477,7 +477,7 @@ void KU_MainView::grpdel()
 bool KU_MainView::updateUsers()
 {
   bool ret;
-  kDebug() << "updateUsers() " << endl;
+  kDebug() << "updateUsers() ";
   ret = users->dbcommit();
 
   if ( !ret ) {
@@ -495,7 +495,7 @@ bool KU_MainView::updateUsers()
 bool KU_MainView::updateGroups()
 {
   bool ret;
-  kDebug() << "updateGroups() " << endl;
+  kDebug() << "updateGroups() ";
   ret = groups->dbcommit();
 
   if ( !ret ) {

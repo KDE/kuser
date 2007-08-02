@@ -268,7 +268,7 @@ void ku_add2ops( KLDAP::LdapOperation::ModOps &ops, const QString &attr, const Q
 void ku_add2ops( KLDAP::LdapOperation::ModOps &ops, const QString &attr, const QByteArray &val, bool allownull )
 {
   QList<QByteArray> vals;
-  kDebug() << "add2ops attr: " << attr << " value: '" << val << "'" << endl;
+  kDebug() << "add2ops attr: " << attr << " value: '" << val << "'";
   vals.append( val );
   ku_add2ops( ops, attr, vals, allownull );
 }

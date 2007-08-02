@@ -434,7 +434,7 @@ bool KU_Users::doCreate(KU_User *user)
 
 bool KU_Users::doDelete( KU_User *user )
 {
-  kDebug() << "delete user: " << user->getName() << " uid: " << user->getUID() << endl;
+  kDebug() << "delete user: " << user->getName() << " uid: " << user->getUID();
   if ( user->getDeleteHome() ) {
     user->removeHome();
     user->removeCrontabs();
@@ -526,7 +526,7 @@ void KU_Users::mod(int index, const KU_User &newuser)
 
 void KU_Users::commit()
 {
-  kDebug() << "KU_Users::commit()" << endl;
+  kDebug() << "KU_Users::commit()";
   
   for ( ModList::Iterator it = mModSucc.begin(); it != mModSucc.end(); ++it ) {
       replace(it.key(),*it);

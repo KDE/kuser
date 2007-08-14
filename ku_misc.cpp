@@ -50,7 +50,7 @@ bool backup(const QString & name)
   if (copyFile(QFile::encodeName(name), QFile::encodeName(tmp)) == -1)
   {
     QString str;
-    KMessageBox::error( 0, i18n("Can't create backup file for %1", name) );
+    KMessageBox::error( 0, i18n("Can not create backup file for %1", name) );
     return false;
   }
   return true;

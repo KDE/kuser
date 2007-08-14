@@ -429,7 +429,7 @@ bool KU_Users::doCreate(KU_User *user)
      }
 
   }
-  return TRUE;
+  return true;
 }
 
 bool KU_Users::doDelete( KU_User *user )
@@ -444,7 +444,7 @@ bool KU_Users::doDelete( KU_User *user )
 /*
   user->removeProcesses();
 */
-  return TRUE;
+  return true;
 }
 
 int KU_Users::lookup(const QString & name) const

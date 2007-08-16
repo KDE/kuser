@@ -229,7 +229,7 @@ void KU_EditUser::initDlg()
 
     QDateTime time;
     leslstchg = new QLabel(frame);
-    addRow(frame, layout, row++, leslstchg, i18n("Last password change:"), QString::null, true);
+    addRow(frame, layout, row++, leslstchg, i18n("Last password change:"), QString::null, true);	//krazy:exclude=nullstrassign for old broken gcc
 
     layout->addWidget(new KSeparator(Qt::Horizontal, frame), row, 0, 1, 4);
     row++;
@@ -764,17 +764,17 @@ void KU_EditUser::mergeUser( const KU_User &user, KU_User &newuser )
     }
     newuser.setSID( sid );
     newuser.setLoginScript( samba ?
-      mergeLE( leliscript, user.getLoginScript(), one ) : QString::null  );
+      mergeLE( leliscript, user.getLoginScript(), one ) : QString::null  );	//krazy:exclude=nullstrassign for old broken gcc
     newuser.setProfilePath( samba ?
-      mergeLE( leprofile, user.getProfilePath(), one ).replace( "%U", newuser.getName(), Qt::CaseInsensitive ) : QString::null );
+      mergeLE( leprofile, user.getProfilePath(), one ).replace( "%U", newuser.getName(), Qt::CaseInsensitive ) : QString::null );	//krazy:exclude=nullstrassign for old broken gcc
     newuser.setHomeDrive( samba ?
-      mergeLE( lehomedrive, user.getHomeDrive(), one ) : QString::null );
+      mergeLE( lehomedrive, user.getHomeDrive(), one ) : QString::null );	//krazy:exclude=nullstrassign for old broken gcc
     newuser.setHomePath( samba ?
-      mergeLE( lehomepath, user.getHomePath(), one ).replace( "%U", newuser.getName(), Qt::CaseInsensitive ) : QString::null );
+      mergeLE( lehomepath, user.getHomePath(), one ).replace( "%U", newuser.getName(), Qt::CaseInsensitive ) : QString::null );	//krazy:exclude=nullstrassign for old broken gcc
     newuser.setWorkstations( samba ?
-      mergeLE( leworkstations, user.getWorkstations(), one ) : QString::null );
+      mergeLE( leworkstations, user.getWorkstations(), one ) : QString::null );	//krazy:exclude=nullstrassign for old broken gcc
     newuser.setDomain( samba ?
-      mergeLE( ledomain, user.getDomain(), one ) : QString::null );
+      mergeLE( ledomain, user.getDomain(), one ) : QString::null );	//krazy:exclude=nullstrassign for old broken gcc
   }
 
   if ( kug->getUsers()->getCaps() & KU_Users::Cap_BSD ) {
@@ -790,7 +790,7 @@ void KU_EditUser::mergeUser( const KU_User &user, KU_User &newuser )
 
   newuser.setHomeDir( posix ?
     mergeLE( lehome, user.getHomeDir(), one ).replace( "%U", newuser.getName(), Qt::CaseInsensitive ) :
-    QString::null );
+    QString::null );	//krazy:exclude=nullstrassign for old broken gcc
   if ( posix ) {
     if ( leshell->currentIndex() == 0 && ismoreshells ) {
       newuser.setShell( user.getShell() );
@@ -798,13 +798,13 @@ void KU_EditUser::mergeUser( const KU_User &user, KU_User &newuser )
       ( leshell->currentIndex() == 0 && !ismoreshells ) ||
       ( leshell->currentIndex() == 1 && ismoreshells ) ) {
 
-      newuser.setShell( QString::null );
+      newuser.setShell( QString::null );	//krazy:exclude=nullstrassign for old broken gcc
     } else {
   // TODO: Check shell.
       newuser.setShell( leshell->currentText() );
     }
   } else
-    newuser.setShell( QString::null );
+    newuser.setShell( QString::null );	//krazy:exclude=nullstrassign for old broken gcc
 
   newuser.setDisabled( (cbdisabled->checkState() == Qt::PartiallyChecked) ? user.getDisabled() : cbdisabled->isChecked() );
 

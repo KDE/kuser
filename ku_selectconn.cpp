@@ -81,7 +81,7 @@ QString KU_SelectConn::connSelected()
 
 void KU_SelectConn::slotUser3()
 {
-  newconn = KInputDialog::getText( QString::null,
+  newconn = KInputDialog::getText( QString::null,	//krazy:exclude=nullstrassign for old broken gcc
     i18n("Please type the name of the new connection:") );
   if ( newconn.isEmpty() ) return;
   if ( KGlobal::config()->groupList().contains( "connection-" + newconn ) ) {

@@ -119,7 +119,7 @@ bool KU_AddUser::checkHome()
        if ( KMessageBox::
          warningContinueCancel ( 0,
            i18n("Folder %1 already exists.\n%2 may become owner and permissions may change.\nDo you really want to use %3?", 
-           h_dir, mNewUser.getName(), h_dir), QString::null, KStandardGuiItem::cont() ) == KMessageBox::Cancel )
+           h_dir, mNewUser.getName(), h_dir), QString::null, KStandardGuiItem::cont() ) == KMessageBox::Cancel )	//krazy:exclude=nullstrassign for old broken gcc
 
          return false;
        else

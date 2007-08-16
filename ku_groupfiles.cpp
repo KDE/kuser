@@ -145,7 +145,7 @@ bool KU_GroupFiles::save()
 #ifdef HAVE_SHADOW_H
   gshadow_filename = mCfg->gshadowsrc();
   if ( !KStandardDirs::exists( gshadow_filename ) )
-      gshadow_filename = QString::null;
+      gshadow_filename = QString();
   else
       new_gshadow_filename = gshadow_filename + QString::fromLatin1(KU_CREATE_EXT);
 #endif

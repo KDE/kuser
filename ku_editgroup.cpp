@@ -321,7 +321,7 @@ void KU_EditGroup::accept()
     mGroup.setDisplayName( ledispname->text() );
   } else {
     mGroup.setCaps( 0 );
-    mGroup.setSID( SID(QString::null) );	//krazy:exclude=nullstrassign for old broken gcc
+    mGroup.setSID( SID( QString::null ) );	//krazy:exclude=nullstrassign for old broken gcc
     mGroup.setDesc( QString::null );		//krazy:exclude=nullstrassign for old broken gcc
     mGroup.setDisplayName( QString::null );	//krazy:exclude=nullstrassign for old broken gcc
     mGroup.setType( 0 );

@@ -65,9 +65,9 @@ QVariant KU_GroupModel::data( const QModelIndex & index, int role ) const
         case 0: return QString::number( group.getGID() );
         case 1: return group.getName();
         case 2: return ( group.getCaps() & KU_Group::Cap_Samba ) ? 
-          group.getSID().getDOM() : QString::null;	//krazy:exclude=nullstrassign for old broken gcc
+          group.getSID().getDOM() : QString();
         case 3: return ( group.getCaps() & KU_Group::Cap_Samba ) ?
-          QString::number( group.getSID().getRID() ) : QString::null;	//krazy:exclude=nullstrassign for old broken gcc
+          QString::number( group.getSID().getRID() ) : QString();
         case 4: 
 	  if ( group.getCaps() & KU_Group::Cap_Samba ) {
             switch ( group.getType() ) {

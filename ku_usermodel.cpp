@@ -67,14 +67,14 @@ QVariant KU_UserModel::data( const QModelIndex & index, int role ) const
     case Qt::DisplayRole:
       switch( index.column() ) {
         case 0: return user.getCaps() & KU_User::Cap_POSIX ?
-          QString::number( user.getUID() ) : QString::null;	//krazy:exclude=nullstrassign for old broken gcc
+          QString::number( user.getUID() ) : QString();
         case 1: return user.getName();
         case 2: return user.getFullName();
         case 3: return user.getHomeDir();
         case 4: return user.getShell();
         case 5: return user.getSID().getDOM();
         case 6: return user.getCaps() & KU_User::Cap_Samba ?
-          QString::number( user.getSID().getRID() ) : QString::null;	//krazy:exclude=nullstrassign for old broken gcc
+          QString::number( user.getSID().getRID() ) : QString();
         case 7: return user.getLoginScript();
         case 8: return user.getProfilePath();
         case 9: return user.getHomeDrive();

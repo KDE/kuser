@@ -142,7 +142,7 @@ void KU_MainView::setpwd()
   if ( count > 1 ) {
     if ( KMessageBox::questionYesNo( 0,
       i18n("You have selected %1 users. Do you really want to change the password for all the selected users?",
-		  count ), QString::null, KGuiItem(i18n("Change")), KGuiItem(i18n("Do Not Change")) ) == KMessageBox::No ) return;	//krazy:exclude=nullstrassign for old broken gcc
+		  count ), QString(), KGuiItem(i18n("Change")), KGuiItem(i18n("Do Not Change")) ) == KMessageBox::No ) return;
   }
   KU_PwDlg d( this );
   if ( d.exec() != QDialog::Accepted ) return;
@@ -195,7 +195,7 @@ void KU_MainView::useradd()
   bool ok;
   QString name = KInputDialog::getText( QString::null,	//krazy:exclude=nullstrassign for old broken gcc
     i18n("Please type the name of the new user:"),
-    QString::null, &ok );	//krazy:exclude=nullstrassign for old broken gcc
+    QString(), &ok );
 
   if ( !ok ) return;
 
@@ -355,7 +355,7 @@ void KU_MainView::userdel()
     if ( i != -1 &&
       KMessageBox::questionYesNo( 0, i18n("You are using private groups.\n"
         "Do you want to delete the user's private group '%1'?",
-         groups->at(i).getName()), QString::null,	//krazy:exclude=nullstrassign for old broken gcc
+         groups->at(i).getName()), QString(),
         KStandardGuiItem::del(), KGuiItem(i18n("Do Not Delete"))) == KMessageBox::Yes) {
       kDebug() << "del private group";
       groups->del( i );
@@ -461,11 +461,11 @@ void KU_MainView::grpdel()
   if ( selected.count() == 1 ) {
       if (KMessageBox::warningContinueCancel( 0,
         i18n("Do you really want to delete the group '%1'?", group.getName()),
-        QString::null, KStandardGuiItem::del()) != KMessageBox::Continue) return;	//krazy:exclude=nullstrassign for old broken gcc
+        QString(), KStandardGuiItem::del()) != KMessageBox::Continue) return;
   } else {
       if (KMessageBox::warningContinueCancel( 0,
         i18n("Do you really want to delete the %1 selected groups?", selected.count()),
-        QString::null, KStandardGuiItem::del()) != KMessageBox::Continue) return;	//krazy:exclude=nullstrassign for old broken gcc
+        QString(), KStandardGuiItem::del()) != KMessageBox::Continue) return;
   }
 
   for ( index = 0; index < selected.count(); index++ ) {

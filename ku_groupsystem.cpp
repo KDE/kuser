@@ -18,12 +18,13 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
+#include "ku_groupsystem.h"
+
 #include <errno.h>
 #include <grp.h>
 
 #include <kdebug.h>
 
-#include "ku_groupsystem.h"
 #include "ku_misc.h"
 
 KU_GroupSystem::KU_GroupSystem( KU_PrefsBase *cfg ) : KU_Groups( cfg )

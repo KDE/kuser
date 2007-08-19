@@ -36,7 +36,6 @@
 #include <klocale.h>
 
 #include "ku_global.h"
-
 #include "ku_adduser.h"
 
 KU_AddUser::KU_AddUser( KU_User &user, bool useprivategroup,
@@ -139,7 +138,7 @@ bool KU_AddUser::checkMailBox()
   struct stat s;
   int r;
 
-  mailboxpath = QFile::decodeName(MAIL_SPOOL_DIR) + "/" + mNewUser.getName();
+  mailboxpath = QFile::decodeName(MAIL_SPOOL_DIR) + '/' + mNewUser.getName();
   r = stat(QFile::encodeName(mailboxpath), &s);
 
   if ((r == -1) && (errno == ENOENT))

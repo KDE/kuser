@@ -34,7 +34,6 @@
 #endif
 #include <fcntl.h>
 
-
 #include <QDir>
 #include <QSharedData>
 
@@ -46,10 +45,8 @@
 #include <kurl.h>
 #include <klocale.h>
 
-
 #include "ku_user.h"
 #include "ku_misc.h"
-
 
 KU_User_Private::KU_User_Private()
 {
@@ -230,7 +227,7 @@ int KU_User::createMailBox()
 {
   QString mailboxpath;
   int fd;
-  mailboxpath = QFile::decodeName(MAIL_SPOOL_DIR) + "/" + d->Name;
+  mailboxpath = QFile::decodeName(MAIL_SPOOL_DIR) + '/' + d->Name;
   if((fd = open(QFile::encodeName(mailboxpath), O_CREAT|O_EXCL|O_WRONLY,
                 S_IRUSR|S_IWUSR)) < 0) {
     if (errno != EEXIST)
@@ -310,7 +307,7 @@ int KU_User::removeCrontabs()
   QString file;
   QString command;
 
-  file = QFile::decodeName(CRONTAB_DIR) + "/" + d->Name;
+  file = QFile::decodeName(CRONTAB_DIR) + '/' + d->Name;
   if ( access(QFile::encodeName(file), F_OK) == 0 ) {
     command = QString::fromLatin1("crontab -u %1 -r").arg(KShell::quoteArg(d->Name));
     if ( system(QFile::encodeName(command)) != 0 ) {
@@ -326,7 +323,7 @@ int KU_User::removeMailBox()
 {
   QString file;
 
-  file = QFile::decodeName(MAIL_SPOOL_DIR) + "/" + d->Name;
+  file = QFile::decodeName(MAIL_SPOOL_DIR) + '/' + d->Name;
   if (remove(QFile::encodeName(file)) != 0) {
     KMessageBox::error( 0, i18n("Cannot remove mailbox %1.\nError: %2",
                  file, QString::fromLocal8Bit(strerror(errno))) );

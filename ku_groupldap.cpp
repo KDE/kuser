@@ -34,7 +34,7 @@ KU_GroupLDAP::KU_GroupLDAP( KU_PrefsBase *cfg ) : KU_Groups( cfg )
 
   mUrl.setHost( mCfg->ldaphost() );
   mUrl.setPort( mCfg->ldapport() );
-  mUrl.setDn( KLDAP::LdapDN( mCfg->ldapgroupbase() + "," + mCfg->ldapdn() ) );
+  mUrl.setDn( KLDAP::LdapDN( mCfg->ldapgroupbase() + ',' + mCfg->ldapdn() ) );
   if ( !mCfg->ldapanon() ) {
     mUrl.setUser( mCfg->ldapuser() );
     mUrl.setPass( mCfg->ldappassword() );
@@ -209,7 +209,7 @@ bool KU_GroupLDAP::dbcommit()
     QString newrdn = getRDN( it.value() );
             
     if ( oldrdn != newrdn ) {
-      int ret = op.rename_s( KLDAP::LdapDN( oldrdn + "," + mUrl.dn().toString() ),
+      int ret = op.rename_s( KLDAP::LdapDN( oldrdn + ',' + mUrl.dn().toString() ),
         newrdn,
         mUrl.dn().toString().toUtf8(),
         true );
@@ -222,7 +222,7 @@ bool KU_GroupLDAP::dbcommit()
                                                                   
     ops.clear();
     createModStruct( it.value(), it.key(), ops );
-    int ret = op.modify_s( KLDAP::LdapDN( getRDN( it.value() ) + "," + mUrl.dn().toString() ), ops );
+    int ret = op.modify_s( KLDAP::LdapDN( getRDN( it.value() ) + ',' + mUrl.dn().toString() ), ops );
     if ( ret != KLDAP_SUCCESS ) {
       mErrorString = KLDAP::LdapConnection::errorString(conn.ldapErrorCode());
       mErrorDetails = conn.ldapErrorString();
@@ -237,7 +237,7 @@ bool KU_GroupLDAP::dbcommit()
     ops.clear();
     createModStruct( (*it), -1, ops );
     kDebug() << "add name: " << (*it).getName();
-    int ret = op.add_s( KLDAP::LdapDN( getRDN( (*it) ) + "," + mUrl.dn().toString() ), ops );
+    int ret = op.add_s( KLDAP::LdapDN( getRDN( (*it) ) + ',' + mUrl.dn().toString() ), ops );
     if ( ret != KLDAP_SUCCESS ) {
       mErrorString = KLDAP::LdapConnection::errorString(conn.ldapErrorCode());
       mErrorDetails = conn.ldapErrorString();
@@ -250,7 +250,7 @@ bool KU_GroupLDAP::dbcommit()
   //del
   for ( KU_Groups::DelList::Iterator it = mDel.begin(); it != mDel.end(); ++it ) {
     kDebug() << "delete name: " << at((*it)).getName();
-    int ret = op.del_s( KLDAP::LdapDN( getRDN( at((*it)) ) + "," + mUrl.dn().toString() ) );
+    int ret = op.del_s( KLDAP::LdapDN( getRDN( at((*it)) ) + ',' + mUrl.dn().toString() ) );
     if ( ret != KLDAP_SUCCESS ) {
       mErrorString = KLDAP::LdapConnection::errorString(conn.ldapErrorCode());
       mErrorDetails = conn.ldapErrorString();

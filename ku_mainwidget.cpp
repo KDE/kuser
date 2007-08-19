@@ -18,7 +18,6 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-
 #include <qtimer.h>
 #include <kxmlguifactory.h>
 #include <ktoolbar.h>
@@ -29,7 +28,6 @@
 #include <kactioncollection.h>
 #include <ktoggleaction.h>
 #include <kdebug.h>
-#include <kaction.h>
 #include <kstatusbar.h>
 #include <kedittoolbar.h>
 #include <kicon.h>

@@ -136,11 +136,11 @@ bool KU_UserFiles::loadpwd()
     user.setGID(p->pw_gid);
     user.setName(QString::fromLocal8Bit(p->pw_name));
     tmp  = QString::fromLocal8Bit( p->pw_passwd );
-    if ( tmp != "x" && tmp != "*" && !tmp.startsWith("!") )
+    if ( tmp != "x" && tmp != "*" && !tmp.startsWith('!') )
       user.setDisabled( false );
     else
       user.setDisabled( true );
-    if ( tmp.startsWith("!") ) tmp.remove(0, 1);
+    if ( tmp.startsWith('!') ) tmp.remove(0, 1);
     user.setPwd( tmp );
     user.setHomeDir(QString::fromLocal8Bit(p->pw_dir));
     user.setShell(QString::fromLocal8Bit(p->pw_shell));
@@ -334,7 +334,7 @@ bool KU_UserFiles::savepwd()
     else {
       tmp = user.getPwd();
       if ( user.getDisabled() && tmp != "x" && tmp != "*" )
-        tmp = "!" + tmp;
+        tmp = '!' + tmp;
     }
 
     escstr( Name );
@@ -348,33 +348,33 @@ bool KU_UserFiles::savepwd()
     escstr( WorkPhone );
     escstr( HomePhone );
     s =
-      user.getName() + ":" +
-      tmp + ":" +
-      QString::number( user.getUID() ) + ":" +
-      QString::number( user.getGID() ) + ":" +
-      user.getClass() + ":" +
-      QString::number( user.getLastChange() ) + ":" +
-      QString::number( user.getExpire() ) + ":";
+      user.getName() + ':' +
+      tmp + ':' +
+      QString::number( user.getUID() ) + ':' +
+      QString::number( user.getGID() ) + ':' +
+      user.getClass() + ':' +
+      QString::number( user.getLastChange() ) + ':' +
+      QString::number( user.getExpire() ) + ':';
 
     s1 =
-      user.getFullName() + "," +
-      user.getOffice() + "," +
-      user.getWorkPhone() + "," +
+      user.getFullName() + ',' +
+      user.getOffice() + ',' +
+      user.getWorkPhone() + ',' +
       user.getHomePhone();
 #else
     escstr( Office1 );
     escstr( Office2 );
     escstr( Address );
     s =
-      user.getName() + ":" +
-      tmp + ":" +
-      QString::number( user.getUID() ) + ":" +
-      QString::number( user.getGID() ) + ":";
+      user.getName() + ':' +
+      tmp + ':' +
+      QString::number( user.getUID() ) + ':' +
+      QString::number( user.getGID() ) + ':';
 
     s1 =
-      user.getFullName() + "," +
-      user.getOffice1() + "," +
-      user.getOffice2() + "," +
+      user.getFullName() + ',' +
+      user.getOffice1() + ',' +
+      user.getOffice2() + ',' +
       user.getAddress();
 
 #endif
@@ -384,9 +384,9 @@ bool KU_UserFiles::savepwd()
       s1.truncate(j);
     }
 
-    s += s1 + ":" +
-      user.getHomeDir() + ":" +
-      user.getShell() + "\n";
+    s += s1 + ':' +
+      user.getHomeDir() + ':' +
+      user.getShell() + '\n';
 
 #ifdef HAVE_SHADOW_H
     if ( write_shadow ) {

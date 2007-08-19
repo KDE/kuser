@@ -25,8 +25,6 @@
 #include <shadow.h>
 #endif
 
-
-
 #include <kdebug.h>
 
 #include "ku_misc.h"
@@ -76,11 +74,11 @@ bool KU_UserSystem::loadpwd()
     user.setGID(p->pw_gid);
     user.setName(QString::fromLocal8Bit(p->pw_name));
     tmp  = QString::fromLocal8Bit( p->pw_passwd );
-    if ( tmp != "x" && tmp != "*" && !tmp.startsWith("!") )
+    if ( tmp != "x" && tmp != "*" && !tmp.startsWith('!') )
       user.setDisabled( false );
     else
       user.setDisabled( true );
-    if ( tmp.startsWith("!") ) tmp.remove(0, 1);
+    if ( tmp.startsWith('!') ) tmp.remove(0, 1);
     user.setPwd( tmp );
     user.setHomeDir(QString::fromLocal8Bit(p->pw_dir));
     user.setShell(QString::fromLocal8Bit(p->pw_shell));

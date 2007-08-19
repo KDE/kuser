@@ -18,11 +18,11 @@
  *
  */
 
+#include "sha1.h"
+
 #include <ku_config.h>
 
 #include <string.h>
-
-#include "sha1.h"
 
 #define SHA1_DIGEST_SIZE	20
 #define SHA1_HMAC_BLOCK_SIZE	64
@@ -176,4 +176,3 @@ void sha1_final(void* ctx, quint8 *out)
 	/* Wipe context */
 	memset(sctx, 0, sizeof *sctx);
 }
-

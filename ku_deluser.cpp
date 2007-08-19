@@ -16,6 +16,8 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
+#include "ku_deluser.h"
+
 #include "globals.h"
 
 #include <QLabel>
@@ -24,8 +26,6 @@
 #include <kvbox.h>
 #include <klocale.h>
 #include <KStandardGuiItem>
-
-#include "ku_deluser.h"
 
 KU_DelUser::KU_DelUser(KU_User *AUser, QWidget *parent) 
  : KDialog( parent)
@@ -36,10 +36,10 @@ KU_DelUser::KU_DelUser(KU_User *AUser, QWidget *parent)
   KVBox *page = new KVBox( this );
   setMainWidget( page );
   new QLabel( i18n("<p>Deleting user <b>%1</b>"
-                   "<p>Also perform the following actions:", AUser->getName()),
+                   "<br />Also perform the following actions:</p>", AUser->getName()),
               page);
   m_deleteHomeDir = new QCheckBox(i18n("Delete &home folder: %1", AUser->getHomeDir()), page);
-  QString mailboxpath = QFile::decodeName(MAIL_SPOOL_DIR) + "/" + AUser->getName();
+  QString mailboxpath = QFile::decodeName(MAIL_SPOOL_DIR) + '/' + AUser->getName();
   m_deleteMailBox = new QCheckBox(i18n("Delete &mailbox: %1", mailboxpath), page);
   setButtonGuiItem(KDialog::Ok, KStandardGuiItem::del());
 }

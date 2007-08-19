@@ -18,6 +18,8 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
+#include "ku_groupfiles.h"
+
 #include "globals.h"
 
 #include <ku_config.h>
@@ -32,14 +34,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
 #include <QDir>
 
 #include <kdebug.h>
 #include <kstandarddirs.h>
 #include <klocale.h>
 
-#include "ku_groupfiles.h"
 #include "ku_misc.h"
 
 KU_GroupFiles::KU_GroupFiles( KU_PrefsBase *cfg ) : KU_Groups( cfg )
@@ -215,9 +215,9 @@ bool KU_GroupFiles::save()
 
     tmp_gid = group.getGID();
     tmpGe += ":" +
-            group.getPwd() + ":" +
-            QString::number( group.getGID() ) + ":";
-    tmpSe = group.getName() + ":!::";
+            group.getPwd() + ':' +
+            QString::number( group.getGID() ) + ':';
+    tmpSe = group.getName() + ":!::";	//krazy:exclude=doublequote_chars
     for (uint j=0; j<group.count(); j++) {
        if (j != 0) {
          tmpGe += ',';

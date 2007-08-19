@@ -23,8 +23,6 @@
 
 #include <sys/types.h>
 
-
-
 #include "ku_group.h"
 
 class KU_GroupFiles : public KU_Groups {

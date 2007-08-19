@@ -18,13 +18,13 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
+#include "ku_pwdlg.h"
+
 #include <QLabel>
 #include <QGridLayout>
 
 #include <kmessagebox.h>
 #include <klocale.h>
-
-#include "ku_pwdlg.h"
 
 KU_PwDlg::KU_PwDlg( QWidget* parent )
   : KDialog(parent) 

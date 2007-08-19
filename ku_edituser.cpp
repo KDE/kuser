@@ -995,8 +995,8 @@ void KU_EditUser::accept()
       int result = KMessageBox::warningYesNoCancel( 0,
       		i18n("<p>The shell %1 is not yet listed in the file %2. "
       		     "In order to use this shell you must add it to "
-      		     "this file first."
-      		     "<p>Do you want to add it now?", newshell, QFile::decodeName(SHELL_FILE)),
+      		     "this file first.<br />"
+      		     "Do you want to add it now?</p>", newshell, QFile::decodeName(SHELL_FILE)),
       		i18n("Unlisted Shell"),
       		KGuiItem(i18n("&Add Shell")),
       		KGuiItem(i18n("Do &Not Add")));

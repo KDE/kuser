@@ -120,7 +120,7 @@ void KU_ConfigDlg::slotQueryClicked()
   QStringList attrs;
   QString filter = "(objectClass=sambaDomain)";
   QString dom = sambaui->kcfg_samdomain->text();
-  if ( !dom.isEmpty() ) filter = "(&(sambaDomainName=" + dom + ")"+filter+")";
+  if ( !dom.isEmpty() ) filter = "(&(sambaDomainName=" + dom + ')' + filter + ')';
   attrs.append("sambaDomainName");
   attrs.append("sambaSID");
   attrs.append("sambaAlgorithmicRidBase");

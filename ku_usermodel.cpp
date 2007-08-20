@@ -16,8 +16,8 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
+#include <KColorScheme>
 #include <klocale.h>
-#include <kglobalsettings.h>
 #include "ku_global.h"
 #include "ku_usermodel.h"
 
@@ -82,7 +82,7 @@ QVariant KU_UserModel::data( const QModelIndex & index, int role ) const
         default: return QVariant();
       }
     case Qt::TextColorRole:
-      if ( user.getDisabled() ) return KGlobalSettings::visitedLinkColor();
+      if ( user.getDisabled() ) return KColorScheme( KColorScheme::View ).foreground( KColorScheme::VisitedText );
   }
   return QVariant();
 }

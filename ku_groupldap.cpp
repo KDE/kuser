@@ -156,7 +156,10 @@ bool KU_GroupLDAP::reload()
   mProg->setAutoClose( false );
   mProg->setMaximum( 100 );
   mAdv = 1;
-
+  mOk = true;
+  mProg->show();
+  qApp->processEvents();
+    
   KLDAP::LdapSearch search;
   connect( &search,
     SIGNAL( data( KLDAP::LdapSearch*, const KLDAP::LdapObject& ) ),
@@ -172,6 +175,7 @@ bool KU_GroupLDAP::reload()
     kDebug() << "search failed";
     mOk = false;
     mErrorString = KLDAP::LdapConnection::errorString(search.error());
+    mErrorDetails = search.errorString();
   }
   delete mProg;
   return( mOk );
@@ -189,12 +193,14 @@ bool KU_GroupLDAP::dbcommit()
     mErrorString = conn.connectionError();
     return false;
   }
-  if ( conn.bind() != KLDAP_SUCCESS ) {
+
+  KLDAP::LdapOperation op( conn );
+
+  if ( op.bind_s() != KLDAP_SUCCESS ) {
     mErrorString = KLDAP::LdapConnection::errorString(conn.ldapErrorCode());
     mErrorDetails = conn.ldapErrorString();
     return false;
   }
-  KLDAP::LdapOperation op( conn );
   KLDAP::LdapOperation::ModOps ops;
 
   mProg = new QProgressDialog( 0 );

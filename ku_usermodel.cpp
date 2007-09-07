@@ -82,7 +82,7 @@ QVariant KU_UserModel::data( const QModelIndex & index, int role ) const
         default: return QVariant();
       }
     case Qt::TextColorRole:
-      if ( user.getDisabled() ) return KColorScheme( KColorScheme::View ).foreground( KColorScheme::VisitedText );
+      if ( user.getDisabled() ) return KColorScheme( QPalette::Active, KColorScheme::View ).foreground( KColorScheme::VisitedText );
   }
   return QVariant();
 }

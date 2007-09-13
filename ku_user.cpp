@@ -21,7 +21,6 @@
 #include "globals.h"
 
 #include <ku_config.h>
-#include <k3process.h>
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/file.h>
@@ -332,26 +331,6 @@ int KU_User::removeMailBox()
   return 0;
 }
 
-int KU_User::removeProcesses()
-{
-  // be paranoid -- kill all processes owned by that user, if not root.
-
-  if (d->UID != 0)
-    switch (fork()) {
-      case 0:
-        setuid(d->UID);
-        kill(-1, 9);
-        _exit(0);
-        break;
-      case -1:
-        KMessageBox::error( 0,
-          i18n("Cannot fork while trying to kill processes for uid %1.", d->UID) );
-        break;
-    }
-
-  return 0;
-}
-
 KU_Users::KU_Users(KU_PrefsBase *cfg)
 {
   mCfg = cfg;
@@ -438,9 +417,7 @@ bool KU_Users::doDelete( KU_User *user )
   }
   if ( user->getDeleteMailBox() )
     user->removeMailBox();
-/*
-  user->removeProcesses();
-*/
+
   return true;
 }
 

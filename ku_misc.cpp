@@ -215,7 +215,7 @@ void addShell(const QString &shell)
 
 QByteArray genSalt( int len )
 {
-  QByteArray salt( len + 1, 0 );
+  QByteArray salt( len, 0 );
   const char * set = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./";
     
   salt[0] = set[getpid() % strlen(set)];

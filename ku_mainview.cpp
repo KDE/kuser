@@ -151,9 +151,10 @@ void KU_MainView::setpwd()
   int index;
 
   foreach( QModelIndex selectedindex, selectedindexes ) {
-    if ( selectedindex.row() != 0 ) continue;
+    if ( selectedindex.column() != 0 ) continue;
     index = userproxymodel.mapToSource(selectedindex).row();
     user = users->at( index );
+    kDebug() << "Changing password for '" << user.getName() << "'";
     users->createPassword( user, d.getPassword() );
     user.setLastChange( now() );
     user.setDisabled( false );

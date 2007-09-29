@@ -286,16 +286,16 @@ void KU_UserLDAP::createPassword( KU_User &user, const QString &password )
       break;
     }
     case KU_PrefsBase::EnumLdappasswordhash::SMD5: {
-      QByteArray salt = genSalt( 4 );
+      QByteArray salt = genSalt( 8 );
       QByteArray pwd = password.toUtf8() + salt;
       KMD5::Digest digest;
-      QByteArray hash(20, 0);
+      QByteArray hash(24, 0);
 
       KMD5 md5( pwd );
       md5.rawDigest( digest );
       memcpy( hash.data(), digest, 16 );
-      memcpy( &(hash.data()[16]), salt.data(), 4 );
-      user.setPwd( "{SMD5}" + KCodecs::base64Encode( hash ) );
+      memcpy( &(hash.data()[16]), salt.data(), 8 );
+      user.setPwd( "{SMD5}" + hash.toBase64() );
       break;
     }
     case KU_PrefsBase::EnumLdappasswordhash::SHA: {
@@ -306,20 +306,20 @@ void KU_UserLDAP::createPassword( KU_User &user, const QString &password )
       sha1_update( &ctx, (const quint8*) password.toUtf8().data(),
         password.toUtf8().length() );
       sha1_final( &ctx, (quint8*) hash.data() );
-      user.setPwd( "{SHA}" + KCodecs::base64Encode( ( hash ) ) );
+      user.setPwd( "{SHA}" + hash.toBase64() );
       break;
     }
     case KU_PrefsBase::EnumLdappasswordhash::SSHA: {
       struct sha1_ctx ctx;
-      QByteArray hash(24, 0);
-      QByteArray salt = genSalt( 4 );
+      QByteArray hash(28, 0);
+      QByteArray salt = genSalt( 8 );
       QByteArray pwd = password.toUtf8() + salt;
 
       sha1_init( &ctx );
       sha1_update( &ctx, (const quint8*) pwd.data(), pwd.length() );
       sha1_final( &ctx, (quint8*) hash.data() );
-      memcpy( &(hash.data()[ 20 ]), salt.data(), 4 );
-      user.setPwd( "{SSHA}" + KCodecs::base64Encode( ( hash ) ) );
+      memcpy( &(hash.data()[ 20 ]), salt.data(), 8 );
+      user.setPwd( "{SSHA}" + hash.toBase64() );
       break;
     }
   }

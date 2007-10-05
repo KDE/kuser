@@ -38,6 +38,7 @@
 
 #include <kmessagebox.h>
 #include <krandom.h>
+#include <kdebug.h>
 #include <klocale.h>
 
 #include "ku_misc.h"

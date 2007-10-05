@@ -131,7 +131,7 @@ void KU_ConfigDlg::slotQueryClicked()
 
   kDebug() << "sendQuery url: " << _url.prettyUrl();
   mLdif.startParsing();
-  KIO::Job *job = KIO::get( _url, true, false );
+  KIO::Job *job = KIO::get( _url, KIO::Reload, KIO::HideProgressInfo );
 //  job->addMetaData("no-auth-prompt","true");
   connect( job, SIGNAL( data( KIO::Job*, const QByteArray& ) ),
     this, SLOT( loadData( KIO::Job*, const QByteArray& ) ) );

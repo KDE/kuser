@@ -18,10 +18,10 @@
 
 #include <QByteArray>
 #include <QLabel>
+#include <QCryptographicHash>
 
 #include <kdebug.h>
 #include <klocale.h>
-#include <kcodecs.h>
 #include <kio/kntlm.h>
 #include <kldap/ldapdefs.h>
 #include <kldap/ldapdn.h>
@@ -30,7 +30,6 @@
 
 #include "ku_userldap.h"
 #include "ku_misc.h"
-#include "sha1.h"
 
 KU_UserLDAP::KU_UserLDAP(KU_PrefsBase *cfg) : KU_Users( cfg )
 {
@@ -281,45 +280,35 @@ void KU_UserLDAP::createPassword( KU_User &user, const QString &password )
       user.setPwd( "{CRYPT}" + encryptPass( password, false ) );
       break;
     case KU_PrefsBase::EnumLdappasswordhash::MD5: {
-      KMD5 md5( password.toUtf8() );
-      user.setPwd( "{MD5}" + md5.base64Digest() );
+      QCryptographicHash md5(QCryptographicHash::Md5);
+      md5.addData( password.toUtf8() );
+      user.setPwd( "{MD5}" + md5.result().toBase64() );
       break;
     }
     case KU_PrefsBase::EnumLdappasswordhash::SMD5: {
+      QCryptographicHash md5(QCryptographicHash::Md5);
       QByteArray salt = genSalt( 8 );
       QByteArray pwd = password.toUtf8() + salt;
-      KMD5::Digest digest;
-      QByteArray hash(24, 0);
 
-      KMD5 md5( pwd );
-      md5.rawDigest( digest );
-      memcpy( hash.data(), digest, 16 );
-      memcpy( &(hash.data()[16]), salt.data(), 8 );
-      user.setPwd( "{SMD5}" + hash.toBase64() );
+      md5.addData( pwd );
+      user.setPwd( "{SMD5}" + (md5.result() + salt).toBase64() );
       break;
     }
     case KU_PrefsBase::EnumLdappasswordhash::SHA: {
-      struct sha1_ctx ctx;
-      QByteArray hash(20, 0);
+      QCryptographicHash sha1(QCryptographicHash::Sha1);
 
-      sha1_init( &ctx );
-      sha1_update( &ctx, (const quint8*) password.toUtf8().data(),
-        password.toUtf8().length() );
-      sha1_final( &ctx, (quint8*) hash.data() );
-      user.setPwd( "{SHA}" + hash.toBase64() );
+      sha1.addData( password.toUtf8() );
+      user.setPwd( "{SHA}" + sha1.result().toBase64() );
       break;
     }
     case KU_PrefsBase::EnumLdappasswordhash::SSHA: {
-      struct sha1_ctx ctx;
-      QByteArray hash(28, 0);
+      QCryptographicHash sha1(QCryptographicHash::Sha1);
+
       QByteArray salt = genSalt( 8 );
       QByteArray pwd = password.toUtf8() + salt;
 
-      sha1_init( &ctx );
-      sha1_update( &ctx, (const quint8*) pwd.data(), pwd.length() );
-      sha1_final( &ctx, (quint8*) hash.data() );
-      memcpy( &(hash.data()[ 20 ]), salt.data(), 8 );
-      user.setPwd( "{SSHA}" + hash.toBase64() );
+      sha1.addData( pwd );
+      user.setPwd( "{SSHA}" + (sha1.result() + salt).toBase64() );
       break;
     }
   }

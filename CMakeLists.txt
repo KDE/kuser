@@ -61,7 +61,6 @@ set(kuser_SRCS
 	ku_usersystem.cpp
 	ku_groupsystem.cpp
 	ku_selectconn.cpp
-	sha1.cpp
 )
 
 kde4_add_kcfg_files(kuser_SRCS ku_prefs.kcfgc)

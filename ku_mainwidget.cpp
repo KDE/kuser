@@ -74,44 +74,44 @@ void KU_MainWidget::setupActions()
   KStandardAction::preferences(this, SLOT(properties()), actionCollection());
   QAction *action;
 
-    action  = new KAction(KIcon("add-user"), i18n("&Add..."), this);
-    actionCollection()->addAction("add_user", action );
+  action  = new KAction(KIcon("add-user"), i18n("&Add..."), this);
+  actionCollection()->addAction("add_user", action );
   connect( action, SIGNAL(triggered(bool)), mv, SLOT(useradd()) );
 
-    action  = new KAction(KIcon("edit-user"), i18n("&Edit..."), this);
-    actionCollection()->addAction("edit_user", action );
+  action  = new KAction(KIcon("edit-user"), i18n("&Edit..."), this);
+  actionCollection()->addAction("edit_user", action );
   connect( action, SIGNAL(triggered(bool)), mv, SLOT(useredit()) );
 
-    action  = new KAction(KIcon("delete-user"), i18n("&Delete..."), this);
-    actionCollection()->addAction("delete_user", action );
+  action  = new KAction(KIcon("delete-user"), i18n("&Delete..."), this);
+  actionCollection()->addAction("delete_user", action );
   connect( action, SIGNAL(triggered(bool)), mv, SLOT(userdel()) );
 
-    action  = new KAction(KIcon("set_password_user"), i18n("&Set Password..."), this);
-    actionCollection()->addAction("set_password_user", action );
+  action  = new KAction(KIcon("set_password_user"), i18n("&Set Password..."), this);
+  actionCollection()->addAction("set_password_user", action );
   connect( action, SIGNAL(triggered(bool)), mv, SLOT(setpwd()) );
 
-    action  = new KAction(KIcon("add_group"), i18n("&Add..."), this);
-    actionCollection()->addAction("add_group", action );
+  action  = new KAction(KIcon("add_group"), i18n("&Add..."), this);
+  actionCollection()->addAction("add_group", action );
   connect( action, SIGNAL(triggered(bool)), mv, SLOT(grpadd()) );
 
-    action  = new KAction(KIcon("edit_group"), i18n("&Edit..."), this);
-    actionCollection()->addAction("edit_group", action );
+  action  = new KAction(KIcon("edit_group"), i18n("&Edit..."), this);
+  actionCollection()->addAction("edit_group", action );
   connect( action, SIGNAL(triggered(bool)), mv, SLOT(grpedit()) );
 
-    action  = new KAction(KIcon("delete_group"), i18n("&Delete..."), this);
-    actionCollection()->addAction("delete_group", action );
+  action  = new KAction(KIcon("delete_group"), i18n("&Delete..."), this);
+  actionCollection()->addAction("delete_group", action );
   connect( action, SIGNAL(triggered(bool)), mv, SLOT(grpdel()) );
 
-    action  = new KAction(KIcon("view-refresh"), i18n("&Reload..."), this);
-    actionCollection()->addAction("reload", action );
+  action  = new KAction(KIcon("view-refresh"), i18n("&Reload..."), this);
+  actionCollection()->addAction("reload", action );
   connect( action, SIGNAL(triggered(bool)), this, SLOT(reload()) );
 
-    action  = new KAction(i18n("&Select Connection..."), this);
-    actionCollection()->addAction("select_conn", action );
+  action  = new KAction(i18n("&Select Connection..."), this);
+  actionCollection()->addAction("select_conn", action );
   connect( action, SIGNAL(triggered(bool)), this, SLOT(selectconn()) );
 
-    mShowSys  = new KToggleAction(i18n("Show System Users/Groups"), this);
-    actionCollection()->addAction("show_sys", mShowSys );
+  mShowSys  = new KToggleAction(i18n("Show System Users/Groups"), this);
+  actionCollection()->addAction("show_sys", mShowSys );
   connect( mShowSys, SIGNAL(triggered(bool)), this, SLOT(showSys(bool)) );
 
   mShowSys->setCheckedState(KGuiItem(i18n("Hide System Users/Groups")));

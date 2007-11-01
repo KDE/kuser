@@ -222,6 +222,7 @@ bool KU_GroupLDAP::dbcommit()
       if ( ret != KLDAP_SUCCESS ) {
         mErrorString = KLDAP::LdapConnection::errorString(conn.ldapErrorCode());
         mErrorDetails = conn.ldapErrorString();
+	delete mProg;
         return false;
       }
     }
@@ -232,6 +233,7 @@ bool KU_GroupLDAP::dbcommit()
     if ( ret != KLDAP_SUCCESS ) {
       mErrorString = KLDAP::LdapConnection::errorString(conn.ldapErrorCode());
       mErrorDetails = conn.ldapErrorString();
+      delete mProg;
       return false;
     } else {
       mModSucc.insert( it.key(), it.value() );
@@ -247,6 +249,7 @@ bool KU_GroupLDAP::dbcommit()
     if ( ret != KLDAP_SUCCESS ) {
       mErrorString = KLDAP::LdapConnection::errorString(conn.ldapErrorCode());
       mErrorDetails = conn.ldapErrorString();
+      delete mProg;
       return false;
     } else {
       mAddSucc.append( (*it) );
@@ -260,12 +263,14 @@ bool KU_GroupLDAP::dbcommit()
     if ( ret != KLDAP_SUCCESS ) {
       mErrorString = KLDAP::LdapConnection::errorString(conn.ldapErrorCode());
       mErrorDetails = conn.ldapErrorString();
+      delete mProg;
       return false;
     } else {
       mDelSucc.append( (*it) );
     }
   }
                                                                                                               
+  delete mProg;
   return true;
 }
 

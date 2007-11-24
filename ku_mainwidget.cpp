@@ -74,7 +74,7 @@ void KU_MainWidget::setupActions()
   KStandardAction::preferences(this, SLOT(properties()), actionCollection());
   QAction *action;
 
-  action  = new KAction(KIcon("add-user"), i18n("&Add..."), this);
+  action  = new KAction(KIcon("list-add-user"), i18n("&Add..."), this);
   actionCollection()->addAction("add_user", action );
   connect( action, SIGNAL(triggered(bool)), mv, SLOT(useradd()) );
 
@@ -82,7 +82,7 @@ void KU_MainWidget::setupActions()
   actionCollection()->addAction("edit_user", action );
   connect( action, SIGNAL(triggered(bool)), mv, SLOT(useredit()) );
 
-  action  = new KAction(KIcon("delete-user"), i18n("&Delete..."), this);
+  action  = new KAction(KIcon("list-remove-user"), i18n("&Delete..."), this);
   actionCollection()->addAction("delete_user", action );
   connect( action, SIGNAL(triggered(bool)), mv, SLOT(userdel()) );
 

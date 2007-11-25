@@ -40,7 +40,7 @@
 #include "ui_ku_passwordpolicy.h"
 
 KU_ConfigDlg::KU_ConfigDlg( KConfigSkeleton *config, QWidget *parent, const char *name ) :
-  KConfigDialog( parent, name, config)
+  KConfigDialog( parent, name, config),sambaui(0)
 {
   setFaceType(List);
   setButtons(Default|Ok|Apply|Cancel|Help);
@@ -105,6 +105,11 @@ KU_ConfigDlg::KU_ConfigDlg( KConfigSkeleton *config, QWidget *parent, const char
     page3->addTab( page3c, i18n("Samba") );
   }
   addPage( page3, i18n("LDAP"), "", i18n("LDAP Source Settings") );
+}
+
+KU_ConfigDlg::~KU_ConfigDlg()
+{
+  delete sambaui;
 }
 
 void KU_ConfigDlg::slotQueryClicked()

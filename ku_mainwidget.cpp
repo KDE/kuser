@@ -78,7 +78,7 @@ void KU_MainWidget::setupActions()
   actionCollection()->addAction("add_user", action );
   connect( action, SIGNAL(triggered(bool)), mv, SLOT(useradd()) );
 
-  action  = new KAction(KIcon("edit-user"), i18n("&Edit..."), this);
+  action  = new KAction(KIcon("user-properties"), i18n("&Edit..."), this);
   actionCollection()->addAction("edit_user", action );
   connect( action, SIGNAL(triggered(bool)), mv, SLOT(useredit()) );
 
@@ -86,19 +86,19 @@ void KU_MainWidget::setupActions()
   actionCollection()->addAction("delete_user", action );
   connect( action, SIGNAL(triggered(bool)), mv, SLOT(userdel()) );
 
-  action  = new KAction(KIcon("set_password_user"), i18n("&Set Password..."), this);
+  action  = new KAction(KIcon("preferences-desktop-user-password"), i18n("&Set Password..."), this);
   actionCollection()->addAction("set_password_user", action );
   connect( action, SIGNAL(triggered(bool)), mv, SLOT(setpwd()) );
 
-  action  = new KAction(KIcon("add_group"), i18n("&Add..."), this);
+  action  = new KAction(KIcon("user-group-new"), i18n("&Add..."), this);
   actionCollection()->addAction("add_group", action );
   connect( action, SIGNAL(triggered(bool)), mv, SLOT(grpadd()) );
 
-  action  = new KAction(KIcon("edit_group"), i18n("&Edit..."), this);
+  action  = new KAction(KIcon("user-group-properties"), i18n("&Edit..."), this);
   actionCollection()->addAction("edit_group", action );
   connect( action, SIGNAL(triggered(bool)), mv, SLOT(grpedit()) );
 
-  action  = new KAction(KIcon("delete_group"), i18n("&Delete..."), this);
+  action  = new KAction(KIcon("user-group-delete"), i18n("&Delete..."), this);
   actionCollection()->addAction("delete_group", action );
   connect( action, SIGNAL(triggered(bool)), mv, SLOT(grpdel()) );
 

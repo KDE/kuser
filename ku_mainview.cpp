@@ -22,7 +22,6 @@
 
 #include <stdio.h>
 
-#include <QHeaderView>
 
 #include <kinputdialog.h>
 #include <ktoolbar.h>

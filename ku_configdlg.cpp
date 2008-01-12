@@ -106,6 +106,7 @@ KU_ConfigDlg::KU_ConfigDlg( KConfigSkeleton *config, QWidget *parent, const char
     page3->addTab( page3c, i18n("Samba") );
   }
   addPage( page3, i18n("LDAP"), "", i18n("LDAP Source Settings") );
+  setHelp(QString(),"kuser");
 }
 
 KU_ConfigDlg::~KU_ConfigDlg()

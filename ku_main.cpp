@@ -53,6 +53,8 @@ int main(int argc, char **argv)
 
   KApplication a;
 
+  KGlobal::locale()->insertCatalog("libkldap");
+
   kug = new KU_Global();
 
   {

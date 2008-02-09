@@ -150,7 +150,7 @@ void KU_MainView::setpwd()
   KU_User user;
   int index;
 
-  foreach( QModelIndex selectedindex, selectedindexes ) {
+  foreach( const QModelIndex &selectedindex, selectedindexes ) {
     if ( selectedindex.column() != 0 ) continue;
     index = userproxymodel.mapToSource(selectedindex).row();
     user = users->at( index );
@@ -299,7 +299,7 @@ void KU_MainView::useredit()
   QList<int> selected;
   QModelIndexList selectedindexes = userview->selectionModel()->selectedIndexes();
 
-  foreach( QModelIndex selectedindex, selectedindexes ) {
+  foreach( const QModelIndex &selectedindex, selectedindexes ) {
     if ( selectedindex.column() == 0 ) 
       selected.append( userproxymodel.mapToSource(selectedindex).row() );
   }
@@ -437,7 +437,7 @@ void KU_MainView::grpdel()
   QList<int> selected;
   QModelIndexList selectedindexes = groupview->selectionModel()->selectedIndexes();
 
-  foreach( QModelIndex selectedindex, selectedindexes ) {
+  foreach( const QModelIndex &selectedindex, selectedindexes ) {
     if ( selectedindex.column() == 0 ) 
       selected.append( groupproxymodel.mapToSource(selectedindex).row() );
   }

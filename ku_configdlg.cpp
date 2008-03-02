@@ -62,13 +62,13 @@ KU_ConfigDlg::KU_ConfigDlg( KConfigSkeleton *config, QWidget *parent, const char
     ui.setupUi( frame );
     page1->addTab( frame, i18n("Password Policy") );
   }
-  addPage( page1, i18n("General"), "", i18n("General Settings") );
+  addPage( page1, i18n("General"), "kuser", i18n("General Settings") );
 
   {
     QFrame *page2 = new QFrame( this );
     Ui::KU_FilesSettings *ui = new Ui::KU_FilesSettings();
     ui->setupUi( page2 );
-    addPage( page2, i18n("Files"), "", i18n("File Source Settings") );
+    addPage( page2, i18n("Files"), "document-properties", i18n("File Source Settings") );
   }
 
   KTabWidget *page3 = new KTabWidget( this );
@@ -105,7 +105,7 @@ KU_ConfigDlg::KU_ConfigDlg( KConfigSkeleton *config, QWidget *parent, const char
     connect( sambaui->domQuery, SIGNAL(clicked()), SLOT(slotQueryClicked()) );
     page3->addTab( page3c, i18n("Samba") );
   }
-  addPage( page3, i18n("LDAP"), "", i18n("LDAP Source Settings") );
+  addPage( page3, i18n("LDAP"), "network-server-database", i18n("LDAP Source Settings") );
   setHelp(QString(),"kuser");
 }
 

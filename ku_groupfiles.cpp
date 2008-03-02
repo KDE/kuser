@@ -214,7 +214,7 @@ bool KU_GroupFiles::save()
     group.setName( tmpGe );
 
     tmp_gid = group.getGID();
-    tmpGe += ":" +
+    tmpGe += ':' +
             group.getPwd() + ':' +
             QString::number( group.getGID() ) + ':';
     tmpSe = group.getName() + ":!::";	//krazy:exclude=doublequote_chars

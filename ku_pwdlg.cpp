@@ -88,7 +88,7 @@ void KU_PwDlg::accept()
     lepw2->clear();
     lepw1->setFocus();
   } else {
-    QDialog::accept();
+    KDialog::accept();
   }
 }
 

@@ -1,14 +1,13 @@
-
 project(kuser)
 include(CheckFunctionExists)
 
 include(TestBigEndian)
 
-add_subdirectory( pics )
-add_subdirectory( toolbar )
-add_subdirectory( icon )
+add_subdirectory(pics)
+add_subdirectory(toolbar)
+add_subdirectory(icon)
 
-include_directories( ${CMAKE_SOURCE_DIR}/kuser  )
+include_directories(${CMAKE_SOURCE_DIR}/kuser)
 
 set(KU_HOMEDIR_PERM 0700 CACHE STRING "Default home directory permissions")
 set(KU_MAILBOX_GID 0 CACHE STRING "Default GID of the created mbox file")
@@ -33,9 +32,8 @@ check_function_exists(fgetspent HAVE_FGETSPENT)
 
 test_big_endian(WORDS_BIGENDIAN)
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/ku_config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/ku_config.h )
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/ku_config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/ku_config.h)
 
-########### next target ###############
 
 set(kuser_SRCS
 	ku_mainwidget.cpp
@@ -69,17 +67,16 @@ kde4_add_ui_files(kuser_SRCS ku_filessettings.ui ku_generalsettings.ui ku_ldapse
 
 kde4_add_executable(kuser ${kuser_SRCS})
 
-target_link_libraries(kuser   ${KDE4_KIO_LIBS} ${KDE4_KLDAP_LIBS} kntlm)
+target_link_libraries(kuser ${KDE4_KIO_LIBS} ${KDE4_KLDAP_LIBS} kntlm)
 if(HAVE_CRYPT_H)
 	target_link_libraries(kuser crypt)
 endif(HAVE_CRYPT_H)
 
-install(TARGETS  kuser  DESTINATION ${BIN_INSTALL_DIR} )
+install(TARGETS kuser DESTINATION ${BIN_INSTALL_DIR})
 
 
 ########### install files ###############
 
-install( FILES kuser.desktop  DESTINATION  ${XDG_APPS_INSTALL_DIR} )
-install( FILES kuserui.rc  DESTINATION  ${DATA_INSTALL_DIR}/kuser )
-install( FILES kuser.kcfg  DESTINATION  ${KCFG_INSTALL_DIR} )
-
+install(FILES kuser.desktop DESTINATION ${XDG_APPS_INSTALL_DIR})
+install(FILES kuserui.rc DESTINATION ${DATA_INSTALL_DIR}/kuser)
+install(FILES kuser.kcfg  DESTINATION ${KCFG_INSTALL_DIR})

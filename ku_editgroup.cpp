@@ -25,6 +25,7 @@
 
 #include <klocale.h>
 #include <kpushbutton.h>
+#include <kicon.h>
 #include <kdebug.h>
 #include <kmessagebox.h>
 
@@ -174,8 +175,8 @@ KU_EditGroup::KU_EditGroup(const KU_Group &group, bool add,
   layout->addWidget( m_list_in, 8, 0 );
 
   QWidget *vbox = new QWidget;
-  QPushButton *btadd = new QPushButton(i18n("Add <-"), vbox);
-  QPushButton *btdel = new QPushButton(i18n("Remove ->"), vbox);
+  QPushButton *btadd = new QPushButton(KIcon("list-add"), i18n("Add"), vbox);
+  QPushButton *btdel = new QPushButton(KIcon("list-remove"), i18n("Remove"), vbox);
 
   QVBoxLayout *vlayout = new QVBoxLayout;
   vlayout->addWidget(btadd);

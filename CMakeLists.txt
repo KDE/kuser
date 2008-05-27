@@ -72,7 +72,7 @@ if(HAVE_CRYPT_H)
 	target_link_libraries(kuser crypt)
 endif(HAVE_CRYPT_H)
 
-install(TARGETS kuser DESTINATION ${BIN_INSTALL_DIR})
+install(TARGETS kuser ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 
 ########### install files ###############

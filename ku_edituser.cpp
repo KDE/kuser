@@ -246,7 +246,7 @@ void KU_EditUser::initDlg()
     }
     /*
     if ( kug->getUsers()->getCaps() & KU_Users::Cap_Samba ) {
-      layout->addWidget( new QLabel( "SAMBA parameters:", frame ), row++, 0 );
+      layout->addWidget( new QLabel( i18n("SAMBA parameters:"), frame ), row++, 0 );
       layout->addMultiCellWidget(new KSeparator(Qt::Horizontal, frame), row, row, 0, 3);
       row++;
     }

@@ -60,6 +60,8 @@ KU_AddUser::KU_AddUser( KU_User &user, bool useprivategroup,
   frontlayout->addWidget(group, frontrow, 0, 1, 3);
 
   if ( useprivategroup ) pbprigr->setEnabled( false );
+
+  mNewUser = user;
 }
 
 void KU_AddUser::accept()

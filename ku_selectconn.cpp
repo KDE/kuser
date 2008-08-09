@@ -115,7 +115,7 @@ void KU_SelectConn::slotUser2()
   kDebug() << "slotUser2: " << connSelected();
 
   KSharedConfig::Ptr config( KGlobal::config() );
-  KU_PrefsBase kcfg( config, newconn );
+  KU_PrefsBase kcfg( config, connSelected() );
   kcfg.readConfig();
 
   KU_ConfigDlg cfgdlg( &kcfg, this );

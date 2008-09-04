@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui name="kuser">
+<kpartgui name="kuser" version="1">
 	<MenuBar>
     <Menu name="file"><text>&amp;File</text>
       <Action name="select_conn"/>

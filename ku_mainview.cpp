@@ -286,6 +286,7 @@ void KU_MainView::useradd()
     user.setGID( group.getGID() );
     user.setPGSID( group.getSID() );
   }
+  users->doCreate(&user);
   users->add( user );
   if ( !updateUsers() ) {
     groups->cancelMods();
@@ -337,6 +338,7 @@ void KU_MainView::userdel()
   user.setDeleteMailBox( dlg.getDeleteMailBox() );
 
 
+  users->doDelete(&user);
   users->del( index );
   if ( !updateUsers() ) return;
 

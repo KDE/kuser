@@ -242,6 +242,8 @@ public:
 
   const QString &errorString() const { return mErrorString; }
   const QString &errorDetails() const { return mErrorDetails; }
+  bool doCreate( KU_User *user );
+  bool doDelete( KU_User *user );
 protected:
   int caps;
   KU_PrefsBase *mCfg;
@@ -253,8 +255,6 @@ protected:
   QString domsid;
   QString mErrorString, mErrorDetails;
 
-  bool doCreate( KU_User *user );
-  bool doDelete( KU_User *user );
   void parseGecos( const char *gecos, QString &name,
     QString &field1, QString &field2, QString &field3 );
   void fillGecos( KU_User &user, const char *gecos );

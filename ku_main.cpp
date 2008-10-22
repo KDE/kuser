@@ -52,7 +52,7 @@ int main(int argc, char **argv)
   KU_MainWidget *mw = 0;
 
   KApplication a;
-
+  KGlobal::locale()->insertCatalog("libkldap");
   kug = new KU_Global();
 
   {

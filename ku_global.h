@@ -27,25 +27,25 @@
 
 class KU_Global {
 public:
-  KU_Global();
-  ~KU_Global();
-  void init();
-  void initCfg( const QString &connection );
-  void displayUsersError();
-  void displayGroupsError();
+  static void init();
+  static void initCfg( const QString &connection );
+  static void displayUsersError();
+  static void displayGroupsError();
 
-  KU_PrefsBase *kcfg() { return cfg; }
-  KU_Users *getUsers();
-  KU_Groups *getGroups();
+  static KU_PrefsBase *kcfg();
+  static KU_Users *users();
+  static KU_Groups *groups();
 
 private:
+  KU_Global();
+  ~KU_Global();
 
-  KU_Users *users;
-  KU_Groups *groups;
+  static KU_Users *mUsers;
+  static KU_Groups *mGroups;
 
-  KU_PrefsBase *cfg;
+  static KU_PrefsBase *mCfg;
 };
 
-extern KU_Global *kug;
+//extern KU_Global *kug;
 
 #endif //_KU_GLOBAL_H_

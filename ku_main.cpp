@@ -36,8 +36,6 @@
 static const char *description =
 	I18N_NOOP("KDE User Editor");
 
-KU_Global *kug = 0;
-
 int main(int argc, char **argv) 
 {
   
@@ -53,12 +51,8 @@ int main(int argc, char **argv)
 
   KApplication a;
   KGlobal::locale()->insertCatalog("libkldap");
-  kug = new KU_Global();
-
-  {
-      KConfigGroup group( KGlobal::config(), "general" );
-      kug->initCfg( group.readEntry( "connection", "default" ) );
-  }
+  KConfigGroup group( KGlobal::config(), "general" );
+  KU_Global::initCfg( group.readEntry( "connection", "default" ) );
 
   mw = new KU_MainWidget();
   mw->setCaption(i18n("KDE User Manager"));
@@ -66,7 +60,5 @@ int main(int argc, char **argv)
 
   a.exec();
 
-  kug->kcfg()->writeConfig();
-  delete kug;
-
+  KU_Global::kcfg()->writeConfig();
 }

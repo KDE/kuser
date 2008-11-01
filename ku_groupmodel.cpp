@@ -26,14 +26,14 @@ int KU_GroupModel::rowCount( const QModelIndex & parent ) const
 {
   Q_UNUSED(parent)
 
-  return kug->getGroups()->count();
+  return KU_Global::groups()->count();
 }
 
 int KU_GroupModel::columnCount( const QModelIndex & parent ) const
 {
   Q_UNUSED(parent)
 
-  if ( kug->getUsers()->getCaps() & KU_Users::Cap_Samba ) 
+  if ( KU_Global::groups()->getCaps() & KU_Users::Cap_Samba ) 
     return 7;
   else
     return 2;
@@ -59,7 +59,7 @@ QVariant KU_GroupModel::headerData( int section, Qt::Orientation orientation, in
 QVariant KU_GroupModel::data( const QModelIndex & index, int role ) const
 {
   if ( !index.isValid() ) return QVariant();
-  KU_Group group = kug->getGroups()->at( index.row() );
+  KU_Group group = KU_Global::groups()->at( index.row() );
   switch( role ) {
     case Qt::DisplayRole:
       switch( index.column() ) {
@@ -90,33 +90,33 @@ QVariant KU_GroupModel::data( const QModelIndex & index, int role ) const
 void KU_GroupModel::commitDel()
 {
 //Must do the deleting from the bigger indexes to the smaller ones
-  qSort( kug->getGroups()->mDelSucc );
-  for ( int i = kug->getGroups()->mDelSucc.count()-1; i >= 0; i-- ) {
-    removeRows(kug->getGroups()->mDelSucc.at(i), 1);
+  qSort( KU_Global::groups()->mDelSucc );
+  for ( int i = KU_Global::groups()->mDelSucc.count()-1; i >= 0; i-- ) {
+    removeRows(KU_Global::groups()->mDelSucc.at(i), 1);
   }
-  kug->getGroups()->mDelSucc.clear();
+  KU_Global::groups()->mDelSucc.clear();
 }
 
 void KU_GroupModel::commitAdd()
 {
-  if ( !kug->getGroups()->mAddSucc.isEmpty() ) {
-    insertRows( rowCount(), kug->getGroups()->mAddSucc.count() );
-    kug->getGroups()->mAddSucc.clear();
+  if ( !KU_Global::groups()->mAddSucc.isEmpty() ) {
+    insertRows( rowCount(), KU_Global::groups()->mAddSucc.count() );
+    KU_Global::groups()->mAddSucc.clear();
   }
 }
 
 void KU_GroupModel::commitMod()
 {
-  for ( KU_Groups::ModList::Iterator it = kug->getGroups()->mModSucc.begin(); 
-    it != kug->getGroups()->mModSucc.end(); ++it ) {
+  for ( KU_Groups::ModList::Iterator it = KU_Global::groups()->mModSucc.begin(); 
+    it != KU_Global::groups()->mModSucc.end(); ++it ) {
     
-    kug->getGroups()->replace(it.key(),*it);
+    KU_Global::groups()->replace(it.key(),*it);
     for( int i = 0; i<columnCount(); i++ ) {
       QModelIndex idx = index( it.key(), i );
       setData( idx, data(idx, Qt::DisplayRole), Qt::DisplayRole );
     }
   }
-  kug->getGroups()->mModSucc.clear();
+  KU_Global::groups()->mModSucc.clear();
 }
 
 bool KU_GroupModel::setData( const QModelIndex & index, const QVariant & value, int role )
@@ -131,10 +131,10 @@ bool KU_GroupModel::setData( const QModelIndex & index, const QVariant & value, 
 bool KU_GroupModel::insertRows( int row, int count, const QModelIndex & parent )
 {
   beginInsertRows( parent, row, row+count-1 );
-  for ( KU_Groups::AddList::Iterator it = kug->getGroups()->mAddSucc.begin(); 
-    it != kug->getGroups()->mAddSucc.end(); ++it ) {
-    
-      kug->getGroups()->append(*it);
+  for ( KU_Groups::AddList::Iterator it = KU_Global::groups()->mAddSucc.begin(); 
+    it != KU_Global::groups()->mAddSucc.end(); ++it ) {
+
+      KU_Global::groups()->append(*it);
   }
   endInsertRows();
   return true;
@@ -143,7 +143,7 @@ bool KU_GroupModel::insertRows( int row, int count, const QModelIndex & parent )
 bool KU_GroupModel::removeRows( int row, int count, const QModelIndex & parent )
 {
   beginRemoveRows( parent, row, row+count-1 );
-  kug->getGroups()->removeAt( row );
+  KU_Global::groups()->removeAt( row );
   endRemoveRows();
   return true;
 }
@@ -153,8 +153,8 @@ bool KU_GroupSortingProxyModel::lessThan( const QModelIndex & left, const QModel
   if ( !left.isValid() || !right.isValid() ) return false;
   if ( left.column() == 0 ) {
     gid_t gid1, gid2;
-    gid1 = kug->getGroups()->at( left.row() ).getGID();
-    gid2 = kug->getGroups()->at( right.row() ).getGID();
+    gid1 = KU_Global::groups()->at( left.row() ).getGID();
+    gid2 = KU_Global::groups()->at( right.row() ).getGID();
     return gid1<gid2;
   } else
     return QSortFilterProxyModel::lessThan( left, right );
@@ -165,7 +165,7 @@ bool KU_GroupSortingProxyModel::filterAcceptsRow( int source_row, const QModelIn
     Q_UNUSED(source_parent)
 
     gid_t gid;
-    gid = kug->getGroups()->at( source_row ).getGID();
+    gid = KU_Global::groups()->at( source_row ).getGID();
     if ( gid >= mFirstGroup )
         return true;
     return false;

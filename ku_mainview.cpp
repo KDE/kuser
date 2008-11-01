@@ -104,26 +104,26 @@ void KU_MainView::clearGroups()
 
 void KU_MainView::reloadUsers()
 {
-  users = kug->getUsers();
+  users = KU_Global::users();
   if ( usermodel == 0 ) {
     usermodel = new KU_UserModel;
     userproxymodel.setSourceModel( usermodel );
     userview->setModel( &userproxymodel );
   }
-  userproxymodel.setFirstUser( mShowSys ? 0 : kug->kcfg()->firstUID() );
+  userproxymodel.setFirstUser( mShowSys ? 0 : KU_Global::kcfg()->firstUID() );
   usermodel->init();
   userview->sortByColumn( 0, Qt::AscendingOrder );
 }
 
 void KU_MainView::reloadGroups()
 {
-  groups = kug->getGroups();
+  groups = KU_Global::groups();
   if ( groupmodel == 0 ) {
     groupmodel = new KU_GroupModel;
     groupproxymodel.setSourceModel( groupmodel );
     groupview->setModel( &groupproxymodel );
   }
-  groupproxymodel.setFirstGroup( mShowSys ? 0 : kug->kcfg()->firstGID() );
+  groupproxymodel.setFirstGroup( mShowSys ? 0 : KU_Global::kcfg()->firstGID() );
   groupmodel->init();
   groupview->sortByColumn( 0, Qt::AscendingOrder );
 }
@@ -214,34 +214,34 @@ void KU_MainView::useradd()
     sid.setDOM( users->getDOMSID() );
     sid.setRID( rid );
     user.setSID( sid );
-    user.setProfilePath( kug->kcfg()->samprofilepath().replace( "%U",name,Qt::CaseInsensitive ) );
-    user.setHomePath( kug->kcfg()->samhomepath().replace( "%U", name,Qt::CaseInsensitive ) );
-    user.setHomeDrive( kug->kcfg()->samhomedrive() );
-    user.setLoginScript( kug->kcfg()->samloginscript() );
-    user.setDomain( kug->kcfg()->samdomain() );
+    user.setProfilePath( KU_Global::kcfg()->samprofilepath().replace( "%U",name,Qt::CaseInsensitive ) );
+    user.setHomePath( KU_Global::kcfg()->samhomepath().replace( "%U", name,Qt::CaseInsensitive ) );
+    user.setHomeDrive( KU_Global::kcfg()->samhomedrive() );
+    user.setLoginScript( KU_Global::kcfg()->samloginscript() );
+    user.setDomain( KU_Global::kcfg()->samdomain() );
   }
 
-  user.setShell( kug->kcfg()->shell() );
-  user.setHomeDir( kug->kcfg()->homepath().replace( "%U", name,Qt::CaseInsensitive ) );
+  user.setShell( KU_Global::kcfg()->shell() );
+  user.setHomeDir( KU_Global::kcfg()->homepath().replace( "%U", name,Qt::CaseInsensitive ) );
   if ( users->getCaps() & KU_Users::Cap_Shadow || samba ) {
     user.setLastChange( now() );
   }
 
-  user.setMin( kug->kcfg()->smin() );
-  user.setMax( kug->kcfg()->smax() );
-  user.setWarn( kug->kcfg()->swarn() );
-  user.setInactive( kug->kcfg()->sinact() );
-  user.setExpire( kug->kcfg()->sneverexpire() ? (uint) -1 :
-    (kug->kcfg()->sexpire()).toTime_t() );
+  user.setMin( KU_Global::kcfg()->smin() );
+  user.setMax( KU_Global::kcfg()->smax() );
+  user.setWarn( KU_Global::kcfg()->swarn() );
+  user.setInactive( KU_Global::kcfg()->sinact() );
+  user.setExpire( KU_Global::kcfg()->sneverexpire() ? (uint) -1 :
+    (KU_Global::kcfg()->sexpire()).toTime_t() );
 
-  bool privgroup = kug->kcfg()->userPrivateGroup();
+  bool privgroup = KU_Global::kcfg()->userPrivateGroup();
 
-  if ( !privgroup ) user.setGID( kug->kcfg()->defaultgroup() );
+  if ( !privgroup ) user.setGID( KU_Global::kcfg()->defaultgroup() );
 
   KU_AddUser au( user, privgroup, this );
 
-  au.setCreateHomeDir( kug->kcfg()->createHomeDir() );
-  au.setCopySkel( kug->kcfg()->copySkel() );
+  au.setCreateHomeDir( KU_Global::kcfg()->createHomeDir() );
+  au.setCopySkel( KU_Global::kcfg()->copySkel() );
 
   if ( au.exec() == QDialog::Rejected ) {
     return;
@@ -263,7 +263,7 @@ void KU_MainView::useradd()
       }
       kDebug() << "private group GID: " << gid;
       uid_t rid = 0;
-//      if ( samba ) rid = kug->getGroups().first_free_sam();
+//      if ( samba ) rid = KU_Global::getGroups().first_free_sam();
       if ( samba ) rid = SID::gid2rid( gid );
       if ( gid == KU_Groups::NO_FREE || ( samba && rid == 0 ) ) {
         groups->cancelMods();
@@ -352,7 +352,7 @@ void KU_MainView::userdel()
     }
   }
 
-  if ( kug->kcfg()->userPrivateGroup() ) {
+  if ( KU_Global::kcfg()->userPrivateGroup() ) {
 
     int i = groups->lookup( gid );
     if ( i != -1 &&
@@ -381,7 +381,7 @@ void KU_MainView::grpadd()
     return;
   }
 /*
-  if ( samba && (rid = kug->getGroups().first_free_sam()) == 0 )
+  if ( samba && (rid = KU_Global::getGroups().first_free_sam()) == 0 )
   {
     KMessageBox::sorry( 0, i18n("You have run out of group RID space.") );
     return;
@@ -421,7 +421,7 @@ void KU_MainView::grpedit()
          group.getSID().isEmpty() ) {
     SID sid;
     sid.setDOM( groups->getDOMSID() );
-//    sid.setRID( kug->getGroups().first_free_sam() );
+//    sid.setRID( KU_Global::getGroups().first_free_sam() );
     sid.setRID( SID::gid2rid( group.getGID() ) );
     group.setSID( sid );
     kDebug() << "The new SID for group " << group.getName() << " is: " << sid.getSID();
@@ -484,7 +484,7 @@ bool KU_MainView::updateUsers()
   ret = users->dbcommit();
 
   if ( !ret ) {
-    kug->displayUsersError();
+    KU_Global::displayUsersError();
   }
 
   usermodel->commitMod();
@@ -502,7 +502,7 @@ bool KU_MainView::updateGroups()
   ret = groups->dbcommit();
 
   if ( !ret ) {
-    kug->displayGroupsError();
+    KU_Global::displayGroupsError();
   }
 
   groupmodel->commitMod();

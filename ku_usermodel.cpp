@@ -26,14 +26,14 @@ int KU_UserModel::rowCount( const QModelIndex & parent ) const
 {
   Q_UNUSED(parent)
 
-  return kug->getUsers()->count();
+  return KU_Global::users()->count();
 }
 
 int KU_UserModel::columnCount( const QModelIndex & parent ) const
 {
   Q_UNUSED(parent)
 
-  if ( kug->getUsers()->getCaps() & KU_Users::Cap_Samba ) 
+  if ( KU_Global::users()->getCaps() & KU_Users::Cap_Samba ) 
     return 11;
   else
     return 5;
@@ -63,7 +63,7 @@ QVariant KU_UserModel::headerData( int section, Qt::Orientation orientation, int
 QVariant KU_UserModel::data( const QModelIndex & index, int role ) const
 {
   if ( !index.isValid() ) return QVariant();
-  KU_User user = kug->getUsers()->at( index.row() );
+  KU_User user = KU_Global::users()->at( index.row() );
   switch( role ) {
     case Qt::DisplayRole:
       switch( index.column() ) {
@@ -91,33 +91,33 @@ QVariant KU_UserModel::data( const QModelIndex & index, int role ) const
 void KU_UserModel::commitDel()
 {
 //Must do the deleting from the bigger indexes to the smaller ones
-  qSort( kug->getUsers()->mDelSucc );
-  for ( int i = kug->getUsers()->mDelSucc.count()-1; i >= 0; i-- ) {
-    removeRows(kug->getUsers()->mDelSucc.at(i), 1);
+  qSort( KU_Global::users()->mDelSucc );
+  for ( int i = KU_Global::users()->mDelSucc.count()-1; i >= 0; i-- ) {
+    removeRows(KU_Global::users()->mDelSucc.at(i), 1);
   }
-  kug->getUsers()->mDelSucc.clear();
+  KU_Global::users()->mDelSucc.clear();
 }
 
 void KU_UserModel::commitAdd()
 {
-  if ( !kug->getUsers()->mAddSucc.isEmpty() ) {
-    insertRows( rowCount(), kug->getUsers()->mAddSucc.count() );
-    kug->getUsers()->mAddSucc.clear();
+  if ( !KU_Global::users()->mAddSucc.isEmpty() ) {
+    insertRows( rowCount(), KU_Global::users()->mAddSucc.count() );
+    KU_Global::users()->mAddSucc.clear();
   }
 }
 
 void KU_UserModel::commitMod()
 {
-  for ( KU_Users::ModList::Iterator it = kug->getUsers()->mModSucc.begin(); 
-    it != kug->getUsers()->mModSucc.end(); ++it ) {
+  for ( KU_Users::ModList::Iterator it = KU_Global::users()->mModSucc.begin(); 
+    it != KU_Global::users()->mModSucc.end(); ++it ) {
     
-    kug->getUsers()->replace(it.key(),*it);
+    KU_Global::users()->replace(it.key(),*it);
     for( int i = 0; i<columnCount(); i++ ) {
       QModelIndex idx = index( it.key(), i );
       setData( idx, data(idx, Qt::DisplayRole), Qt::DisplayRole );
     }
   }
-  kug->getUsers()->mModSucc.clear();
+  KU_Global::users()->mModSucc.clear();
 }
 
 bool KU_UserModel::setData( const QModelIndex & index, const QVariant & value, int role )
@@ -132,10 +132,10 @@ bool KU_UserModel::setData( const QModelIndex & index, const QVariant & value, i
 bool KU_UserModel::insertRows( int row, int count, const QModelIndex & parent )
 {
   beginInsertRows( parent, row, row+count-1 );
-  for ( KU_Users::AddList::Iterator it = kug->getUsers()->mAddSucc.begin(); 
-    it != kug->getUsers()->mAddSucc.end(); ++it ) {
+  for ( KU_Users::AddList::Iterator it = KU_Global::users()->mAddSucc.begin(); 
+    it != KU_Global::users()->mAddSucc.end(); ++it ) {
     
-      kug->getUsers()->append(*it);
+      KU_Global::users()->append(*it);
   }
   endInsertRows();
   return true;
@@ -144,7 +144,7 @@ bool KU_UserModel::insertRows( int row, int count, const QModelIndex & parent )
 bool KU_UserModel::removeRows( int row, int count, const QModelIndex & parent )
 {
   beginRemoveRows( parent, row, row+count-1 );
-  kug->getUsers()->removeAt( row );
+  KU_Global::users()->removeAt( row );
   endRemoveRows();
   return true;
 }
@@ -154,8 +154,8 @@ bool KU_UserSortingProxyModel::lessThan( const QModelIndex & left, const QModelI
   if ( !left.isValid() || !right.isValid() ) return false;
   if ( left.column() == 0 ) {
     uid_t uid1, uid2;
-    uid1 = kug->getUsers()->at( left.row() ).getUID();
-    uid2 = kug->getUsers()->at( right.row() ).getUID();
+    uid1 = KU_Global::users()->at( left.row() ).getUID();
+    uid2 = KU_Global::users()->at( right.row() ).getUID();
     return uid1<uid2;
   } else
     return QSortFilterProxyModel::lessThan( left, right );
@@ -166,7 +166,7 @@ bool KU_UserSortingProxyModel::filterAcceptsRow( int source_row, const QModelInd
     Q_UNUSED(source_parent)
 
     uid_t uid;
-    uid = kug->getUsers()->at( source_row ).getUID();
+    uid = KU_Global::users()->at( source_row ).getUID();
     if ( uid >= mFirstUser )
       return true;
     return false;

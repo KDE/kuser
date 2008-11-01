@@ -30,81 +30,76 @@
 #include "ku_usersystem.h"
 #include "ku_groupsystem.h"
 
-KU_Global::KU_Global()
-{
-  cfg = 0;
-
-  users = 0;
-  groups = 0;
-}
-
 void KU_Global::initCfg( const QString &connection )
 {
-  if ( cfg ) {
-    cfg->writeConfig();
-    delete cfg;
+  if ( mCfg ) {
+    mCfg->writeConfig();
+    delete mCfg;
   }
   KSharedConfig::Ptr config( KGlobal::config() );
-  cfg = new KU_PrefsBase( config, connection );
-  cfg->readConfig();
+  mCfg = new KU_PrefsBase( config, connection );
+  mCfg->readConfig();
 }
 
 void KU_Global::displayUsersError()
 {
-  if ( users->errorDetails().isEmpty() )
-    KMessageBox::error( 0, users->errorString() );
+  if ( mUsers->errorDetails().isEmpty() )
+    KMessageBox::error( 0, mUsers->errorString() );
   else
-    KMessageBox::detailedError( 0, users->errorString(), users->errorDetails() );
+    KMessageBox::detailedError( 0, mUsers->errorString(), mUsers->errorDetails() );
 }
 
 void KU_Global::displayGroupsError()
 {
-  if ( groups->errorDetails().isEmpty() )
-    KMessageBox::error( 0, groups->errorString() );
+  if ( mGroups->errorDetails().isEmpty() )
+    KMessageBox::error( 0, mGroups->errorString() );
   else
-    KMessageBox::detailedError( 0, groups->errorString(), groups->errorDetails() );
+    KMessageBox::detailedError( 0, mGroups->errorString(), mGroups->errorDetails() );
 }
 
 void KU_Global::init()
 {
-  delete users;
-  delete groups;
+  delete mUsers;
+  delete mGroups;
 
-  SID::setAlgRidBase( cfg->samridbase() );
+  SID::setAlgRidBase( mCfg->samridbase() );
   kDebug() << "Algorithmic RID base: " << SID::getAlgRidBase();
-  switch ( cfg->source() ) {
+  switch ( mCfg->source() ) {
     case KU_PrefsBase::EnumSource::Files:
-      users = new KU_UserFiles( cfg );
-      groups = new KU_GroupFiles( cfg );
+      mUsers = new KU_UserFiles( mCfg );
+      mGroups = new KU_GroupFiles( mCfg );
       break;
     case KU_PrefsBase::EnumSource::LDAP:
-      users = new KU_UserLDAP( cfg );
-      groups = new KU_GroupLDAP( cfg );
+      mUsers = new KU_UserLDAP( mCfg );
+      mGroups = new KU_GroupLDAP( mCfg );
       break;
     case KU_PrefsBase::EnumSource::System:
-      users = new KU_UserSystem( cfg );
-      groups = new KU_GroupSystem( cfg );
+      mUsers = new KU_UserSystem( mCfg );
+      mGroups = new KU_GroupSystem( mCfg );
       break;
     default:
       Q_ASSERT(0);
   }
-  if ( !users->reload() ) displayUsersError();
-  if ( !groups->reload() ) displayGroupsError();
+  if ( !mUsers->reload() ) displayUsersError();
+  if ( !mGroups->reload() ) displayGroupsError();
 }
 
-KU_Global::~KU_Global()
+KU_Users *KU_Global::users()
 {
-  delete users;
-  delete groups;
-  delete cfg;
+  return mUsers;
 }
 
-KU_Users *KU_Global::getUsers()
+KU_Groups *KU_Global::groups()
 {
-  return users;
+  return mGroups;
 }
 
-KU_Groups *KU_Global::getGroups()
+KU_PrefsBase *KU_Global::kcfg()
 {
-  return groups;
+  return mCfg;
 }
+
+KU_Users *KU_Global::mUsers;
+KU_Groups *KU_Global::mGroups;
+
+KU_PrefsBase *KU_Global::mCfg;

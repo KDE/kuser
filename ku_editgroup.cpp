@@ -43,8 +43,8 @@ KU_EditGroup::KU_EditGroup(const KU_Group &group, bool add,
   mAdd = add;
   mOldName = group.getName();
   SID sid = group.getSID();
-  ro = kug->getGroups()->getCaps() & KU_Groups::Cap_ReadOnly;
-  mSamba = kug->getGroups()->getCaps() & KU_Groups::Cap_Samba;
+  ro = KU_Global::groups()->getCaps() & KU_Groups::Cap_ReadOnly;
+  mSamba = KU_Global::groups()->getCaps() & KU_Groups::Cap_Samba;
 
   RID rid;
   rid.rid = 512; rid.name = i18n("Domain Admins"); rid.desc = i18n("Admins"); mRids.append( rid );
@@ -194,9 +194,9 @@ KU_EditGroup::KU_EditGroup(const KU_Group &group, bool add,
   m_list_notin->setSortingEnabled( true );
   layout->addWidget( m_list_notin, 8, 2 );
 
-  for ( int i = 0; i<kug->getUsers()->count(); i++ ) {
+  for ( int i = 0; i<KU_Global::users()->count(); i++ ) {
     KU_User user;
-    user = kug->getUsers()->at(i);
+    user = KU_Global::users()->at(i);
     QString userName = user.getName();
     sl.clear();
     sl.append( userName );
@@ -283,7 +283,7 @@ void KU_EditGroup::accept()
   }
 
   if ( legrpname->text() != mOldName &&
-    kug->getGroups()->lookup( legrpname->text() ) != -1 ) {
+    KU_Global::groups()->lookup( legrpname->text() ) != -1 ) {
 
     KMessageBox::sorry( 0,
       i18n("Group with name %1 already exists.", legrpname->text()) );
@@ -291,12 +291,12 @@ void KU_EditGroup::accept()
   }
 
   if ( mAdd ) {
-    if ( mSamba && !cbsamba->isChecked() && kug->getGroups()->lookup_sam( sid ) != -1 ) {
+    if ( mSamba && !cbsamba->isChecked() && KU_Global::groups()->lookup_sam( sid ) != -1 ) {
       KMessageBox::sorry( 0,
         i18n("Group with SID %1 already exists.", sid.getSID() ) );
       return;
     }
-    if (kug->getGroups()->lookup(gid) != -1) {
+    if ( KU_Global::groups()->lookup(gid) != -1 ) {
       KMessageBox::sorry( 0,
         i18n("Group with gid %1 already exists.", gid) );
       return;

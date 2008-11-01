@@ -70,14 +70,14 @@ void KU_AddUser::accept()
 
   mergeUser( mNewUser, mNewUser );
   if ( ( mNewUser.getCaps() & KU_User::Cap_POSIX ) &&
-    kug->getUsers()->lookup( mNewUser.getUID() ) != -1 ) {
+    KU_Global::users()->lookup( mNewUser.getUID() ) != -1 ) {
     KMessageBox::sorry( 0, i18n("User with UID %1 already exists.", mNewUser.getUID() ) );
     return;
   }
 
-  if ( ( kug->getUsers()->getCaps() & KU_Users::Cap_Samba ) &&
+  if ( ( KU_Global::users()->getCaps() & KU_Users::Cap_Samba ) &&
      ( mNewUser.getCaps() & KU_User::Cap_Samba ) ) {
-    if ( kug->getUsers()->lookup_sam( mNewUser.getSID().getRID() ) != -1 ) {
+    if ( KU_Global::users()->lookup_sam( mNewUser.getSID().getRID() ) != -1 ) {
       KMessageBox::sorry( 0, i18n("User with RID %1 already exists.", mNewUser.getSID().getRID() ) );
       return;
     }

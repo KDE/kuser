@@ -116,12 +116,12 @@ void KU_MainWidget::setupActions()
   connect( mShowSys, SIGNAL(triggered(bool)), this, SLOT(showSys(bool)) );
 
   mShowSys->setCheckedState(KGuiItem(i18n("Hide System Users/Groups")));
-  mShowSys->setChecked( kug->kcfg()->showsys() );
+  mShowSys->setChecked( KU_Global::kcfg()->showsys() );
 }
 
 void KU_MainWidget::showSys( bool show )
 {
-  kug->kcfg()->setShowsys( show );
+  KU_Global::kcfg()->setShowsys( show );
   mv->setShowSys( show );
   mv->reloadUsers();
   mv->reloadGroups();
@@ -129,7 +129,7 @@ void KU_MainWidget::showSys( bool show )
 
 void KU_MainWidget::properties()
 {
-  KU_ConfigDlg *configdlg = new KU_ConfigDlg( kug->kcfg(), this );
+  KU_ConfigDlg *configdlg = new KU_ConfigDlg( KU_Global::kcfg(), this );
   connect(configdlg, SIGNAL(settingsChanged(const QString&)), this, SLOT(slotApplySettings()));
 
   configdlg->show();
@@ -146,8 +146,8 @@ void KU_MainWidget::init()
 
   mv->clearUsers();
   mv->clearGroups();
-  kug->init();
-  rw = ! ( kug->getUsers()->getCaps() & KU_Users::Cap_ReadOnly );
+  KU_Global::init();
+  rw = ! ( KU_Global::users()->getCaps() & KU_Users::Cap_ReadOnly );
   kDebug() << "Users rw()" << rw;
   actionCollection()->action("add_user")->setEnabled( rw );
   actionCollection()->action("edit_user")->setEnabled( rw );
@@ -164,7 +164,7 @@ void KU_MainWidget::init()
     disconnect( mv, SIGNAL(userSelected(bool)), 0, 0 );
   }
 
-  rw = ! ( kug->getGroups()->getCaps() & KU_Groups::Cap_ReadOnly );
+  rw = ! ( KU_Global::groups()->getCaps() & KU_Groups::Cap_ReadOnly );
   kDebug() << "Groups rw()" << rw;
   actionCollection()->action("add_group")->setEnabled( rw );
   actionCollection()->action("edit_group")->setEnabled( rw );
@@ -192,14 +192,14 @@ void KU_MainWidget::slotApplyConnection()
 {
   kDebug() << "slotApplyConnection()";
   QString conn = sc->connSelected();
-  kug->kcfg()->setConnection( conn );
-  kug->initCfg( conn );
+  KU_Global::kcfg()->setConnection( conn );
+  KU_Global::initCfg( conn );
   slotApplySettings();
 }
 
 void KU_MainWidget::selectconn()
 {
-  sc = new KU_SelectConn( kug->kcfg()->connection(), this );
+  sc = new KU_SelectConn( KU_Global::kcfg()->connection(), this );
   connect( sc, SIGNAL(applyClicked()), SLOT(slotApplyConnection()) );
   connect( sc, SIGNAL(okClicked()), SLOT(slotApplyConnection()) );
   sc->show();

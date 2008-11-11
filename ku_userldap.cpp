@@ -104,10 +104,10 @@ void KU_UserLDAP::data( KLDAP::LdapSearch *, const KLDAP::LdapObject& data )
   QStringList objectclasses;
 
   KLDAP::LdapAttrMap attrs = data.attributes();
-  for ( KLDAP::LdapAttrMap::ConstIterator it = attrs.begin(); it != attrs.end(); ++it ) {
+  for ( KLDAP::LdapAttrMap::ConstIterator it = attrs.constBegin(); it != attrs.constEnd(); ++it ) {
     QString name = it.key().toLower();
     if ( name == "objectclass" ) {
-      for ( KLDAP::LdapAttrValue::ConstIterator it2 = (*it).begin(); it2 != (*it).end(); ++it2 ) {
+      for ( KLDAP::LdapAttrValue::ConstIterator it2 = (*it).constBegin(); it2 != (*it).constEnd(); ++it2 ) {
         if ( (*it2).toLower() == "posixaccount" )
             user.setCaps( user.getCaps() | KU_User::Cap_POSIX );
         else if ( (*it2).toLower() == "sambasamaccount" )

@@ -102,11 +102,11 @@ void KU_GroupLDAP::data( KLDAP::LdapSearch *, const KLDAP::LdapObject& data )
   KU_Group group;
     
   KLDAP::LdapAttrMap attrs = data.attributes();
-  for ( KLDAP::LdapAttrMap::ConstIterator it = attrs.begin(); it != attrs.end(); ++it ) {
+  for ( KLDAP::LdapAttrMap::ConstIterator it = attrs.constBegin(); it != attrs.constEnd(); ++it ) {
     QString name = it.key().toLower();
 
     if ( name == "objectclass" ) {
-      for ( KLDAP::LdapAttrValue::ConstIterator it2 = (*it).begin(); it2 != (*it).end(); ++it2 ) {
+      for ( KLDAP::LdapAttrValue::ConstIterator it2 = (*it).constBegin(); it2 != (*it).constEnd(); ++it2 ) {
         if ( (*it2).toLower() == "sambagroupmapping" )
           group.setCaps( KU_Group::Cap_Samba );
       }
@@ -114,7 +114,7 @@ void KU_GroupLDAP::data( KLDAP::LdapSearch *, const KLDAP::LdapObject& data )
     }
 
     if ( name == "memberuid" ) {
-      for ( KLDAP::LdapAttrValue::ConstIterator it2 = (*it).begin(); it2 != (*it).end(); ++it2 ) {
+      for ( KLDAP::LdapAttrValue::ConstIterator it2 = (*it).constBegin(); it2 != (*it).constEnd(); ++it2 ) {
         group.addUser( (*it2) );
       }
       continue;

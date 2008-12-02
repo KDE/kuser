@@ -1,4 +1,7 @@
 project(kuser)
+
+find_package(KdepimLibs REQUIRED)
+
 include(CheckFunctionExists)
 
 include(TestBigEndian)
@@ -7,7 +10,8 @@ add_subdirectory(pics)
 add_subdirectory(toolbar)
 add_subdirectory(icon)
 
-include_directories(${CMAKE_SOURCE_DIR}/kuser)
+# use the project-specific _SOURCE_DIR variable (set by the project() call above), Alex
+include_directories(${kuser_SOURCE_DIR} ${KDEPIMLIBS_INCLUDE_DIR})
 
 set(KU_HOMEDIR_PERM 0700 CACHE STRING "Default home directory permissions")
 set(KU_MAILBOX_GID 0 CACHE STRING "Default GID of the created mbox file")

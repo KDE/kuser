@@ -111,7 +111,7 @@ bool KU_UserFiles::loadpwd()
     mErrorString += i18n("Stat call on file %1 failed: %2\nCheck KUser settings.", passwd_filename, QString::fromLocal8Bit(strerror(errno)));
     return false;
   }
-  
+
   pwd_mode = st.st_mode & 0666;
   pwd_uid = st.st_uid;
   pwd_gid = st.st_gid;
@@ -208,7 +208,7 @@ bool KU_UserFiles::loadsdw()
       continue;
     }
     user = at(index);
-    
+
     tmp = QString::fromLocal8Bit( spw->sp_pwdp );
     if ( tmp.startsWith("!!") || tmp == "*" ) {
       user.setDisabled( true );
@@ -270,7 +270,7 @@ bool KU_UserFiles::savepwd()
   passwd_filename = mCfg->passwdsrc();
   QString new_passwd_filename =
     passwd_filename + QString::fromLatin1(KU_CREATE_EXT);
-  QString new_shadow_filename = 
+  QString new_shadow_filename =
     shadow_filename + QString::fromLatin1(KU_CREATE_EXT);
 
   // Backup file(s)
@@ -409,8 +409,8 @@ bool KU_UserFiles::savepwd()
       putspent(&spwd, shadow_fd);
     }
 #endif
-    
-    fputs(s.toLocal8Bit().data(), passwd_fd);
+    if ( passwd_fd )
+        fputs(s.toLocal8Bit().data(), passwd_fd);
   }
 
   if(passwd_fd) {

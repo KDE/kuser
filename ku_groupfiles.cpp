@@ -79,7 +79,7 @@ bool KU_GroupFiles::reload()
 
   rc = stat(QFile::encodeName(group_filename), &st);
   if(rc != 0) {
-    mErrorString = i18n("stat() call on file %1 failed: %2\nCheck KUser settings.", 
+    mErrorString = i18n("stat() call on file %1 failed: %2\nCheck KUser settings.",
         group_filename, QString::fromLocal8Bit(strerror(errno)));
     return false;
   }
@@ -230,7 +230,8 @@ bool KU_GroupFiles::save()
     }
     tmpGe += '\n'; tmpSe += '\n';
 
-    fputs( tmpGe.toLocal8Bit(), group_fd );
+    if ( group_fd )
+        fputs( tmpGe.toLocal8Bit(), group_fd );
     if ( gshadow_fd ) fputs( tmpSe.toLocal8Bit(), gshadow_fd );
   }
 /***********************/

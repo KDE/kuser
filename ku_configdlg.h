@@ -33,7 +33,7 @@
 class Ui_KU_LdapSamba;
 namespace KLDAP { class LdapConfigWidget; }
 namespace KIO { class Job; }
-typedef struct KU_SambaDomain {
+struct KU_SambaDomain {
   QString name;
   QString sid;
   uint ridbase;

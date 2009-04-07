@@ -238,7 +238,7 @@
     </entry>
     <entry name="ldapstructural" type="Enum">
       <label>LDAP Structural objectclass</label>
-      <whatsthis>This option allows to specify the structural objectclass used with users' entries. If you want to use these entries not just for authentication, but for an addressbook, too, then choose inetOrgPerson.</whatsthis>
+      <whatsthis>This option allows to specify the structural objectclass used with users' entries. If you want to use these entries not just for authentication, but for an address book, too, then choose inetOrgPerson.</whatsthis>
       <choices>
         <choice name="account"/>
         <choice name="inetOrgPerson"/>

@@ -1,7 +1,4 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>KU_FilesSettings</class>
  <widget class="QWidget" name="KU_FilesSettings" >
   <property name="geometry" >
@@ -116,8 +113,6 @@
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="6" margin="11" />
- <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
    <class>KLineEdit</class>

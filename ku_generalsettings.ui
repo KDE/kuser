@@ -164,7 +164,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QSpinBox" name="kcfg_defaultgroup" >
+      <widget class="KIntSpinBox" name="kcfg_defaultgroup" >
        <property name="maximum" >
         <number>65536</number>
        </property>
@@ -204,6 +204,11 @@
    <header>klineedit.h</header>
    <container>0</container>
    <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>KIntSpinBox</class>
+   <extends>QSpinBox</extends>
+   <header>knuminput.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

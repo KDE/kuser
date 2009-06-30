@@ -61,6 +61,10 @@ KU_ConfigDlg::KU_ConfigDlg( KConfigSkeleton *config, QWidget *parent, const char
     QFrame *frame = new QFrame ( page1 );
     ui.setupUi( frame );
     page1->addTab( frame, i18n("Password Policy") );
+    ui.kcfg_smax->setSuffix(ki18np(" day", " days"));
+    ui.kcfg_sinact->setSuffix(ki18np(" day", " days"));
+    ui.kcfg_swarn->setSuffix(ki18np(" day", " days"));
+    ui.kcfg_smin->setSuffix(ki18np(" day", " days"));
   }
   addPage( page1, i18n("General"), "kuser", i18n("General Settings") );
 

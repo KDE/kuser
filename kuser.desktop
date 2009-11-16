@@ -2,6 +2,7 @@
 Name=KUser
 Name[af]=Kuser
 Name[ar]=ك.مستخدم
+Name[ast]=KUser
 Name[be]=KUser
 Name[bg]=KUser
 Name[bn]=কে-ব্যবহারকারী
@@ -68,6 +69,7 @@ Name[zh_HK]=KUser
 Name[zh_TW]=KUser
 GenericName=User Manager
 GenericName[af]=Gebruiker Bestuurder
+GenericName[ast]=Xestor d'Usuariu
 GenericName[be]=Кіраванне карыстальнікамі
 GenericName[bg]=Управление на потребителите
 GenericName[bn]=ব্যবহারকারী ম্যানেজার

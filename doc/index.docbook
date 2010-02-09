@@ -45,10 +45,10 @@
 <legalnotice>&FDLNotice;</legalnotice>
 
 
-<date>2002-10-08</date>
-<releaseinfo>1.0</releaseinfo>
+<date>2010-01-18</date>
+<releaseinfo>3.9 (&kde; 4.4)</releaseinfo>
 
-<abstract><para>This documentation describes &kuser; version 1.0. This
+<abstract><para>This documentation describes &kuser; version 3.9. This
 program allows you to manage users and groups on your system.</para>
 </abstract>
 
@@ -72,9 +72,14 @@ information, see <link linkend="using">Usage</link>.</para>
 <para>Actually, you do not need to do anything to begin using &kuser;
 except <link linkend="customizing">configuration</link>.</para>
 
-<para>When you have made the changes you want, you must
+<para>If you do not launch &kuser; in administrator mode, you will get a 
+warning, that the file <filename>/etc/shadow</filename> is not readable.</para>
+
+<!--not in 4.4>
+para>When you have made the changes you want, you must
 <guimenuitem>Save</guimenuitem> them for them to take effect. Either
 choose the Toolbar icon, or use the <guimenu>File</guimenu> menu.</para>
+-->
 
 </chapter>
 
@@ -86,7 +91,7 @@ choose the Toolbar icon, or use the <guimenu>File</guimenu> menu.</para>
 
 <para>&kuser; is a very simple application. In the main window you can
 see two tabs: the list of users and the list of groups. To edit a user
-or a group, just double click on it. The user or group properties dialog
+or a group, just click on it. The user or group properties dialog
 will appear.</para>
 <screenshot>
 <screeninfo>&kuser; Main Window</screeninfo>
@@ -105,13 +110,14 @@ will appear.</para>
 <sect1 id="user-properties">
 <title>User Properties Dialog</title>
 
-<para>The user properties dialog has various tabs.</para>
+<para>The user properties dialog has two tabs.</para>
 
+<!-- is this still valid for 4.4?
 <para>The number of tabs depends on the type of the user storage system
 and whether quotas are being used. Additional tabs will appear if you
 have shadow passwords, or any other similar things such as
 <filename>/etc/master.passwd</filename> in BSD flavor Unices.</para>
-
+-->
 <sect2 id="user-info">
 <title><guilabel>User Info</guilabel> Tab</title>
 
@@ -119,6 +125,7 @@ have shadow passwords, or any other similar things such as
 </para>
 
 <itemizedlist>
+<listitem><para><guilabel>User login</guilabel> with the user name and a <guibutton>Set Password</guibutton> button for this account,</para></listitem>
 <listitem><para><guilabel>User Id</guilabel></para></listitem>
 <listitem><para><guilabel>Full Name</guilabel></para></listitem>
 <listitem><para><guilabel>Login Shell</guilabel> (the list of login shells is
@@ -126,7 +133,7 @@ taken from the <filename>/etc/shells</filename> file)</para></listitem>
 <listitem><para><guilabel>Home Folder</guilabel></para></listitem>
 <listitem><para><guilabel>Two office locations</guilabel></para></listitem>
 <listitem><para><guilabel>Address</guilabel></para></listitem>
-<listitem><para><guilabel>Password</guilabel></para></listitem>
+<listitem><para><guilabel>Account disabled</guilabel></para></listitem>
 </itemizedlist>
 
 </sect2>
@@ -139,8 +146,8 @@ shadow passwords, or any other similar things such as
 <filename>/etc/master.passwd</filename> in <acronym>BSD</acronym> flavor
 Unices.</para>
 
-<para>In the <guilabel>Extended Info</guilabel> tab you can modify
-parameters related to extended account control: </para>
+<!--para>In the <guilabel>Extended Info</guilabel> tab you can modify
+parameters related to extended account control: </para-->
 
 <itemizedlist>
 <listitem><para>Minimum number of days between password 
@@ -160,7 +167,7 @@ dialog.</para>
 
 
 </sect2>
-
+<!-- no quota in kde 3.5 - 4.4 
 <sect2 id="quota">
 <title><guilabel>Quota</guilabel> Tab</title>
 
@@ -184,14 +191,14 @@ quota enabled. File systems can be changed using the <guilabel>Quota
 Filesystem</guilabel> box.</para>
 
 </sect2>
-
+-->
 <sect2 id="group">
 <title><guilabel>Groups</guilabel> Tab</title>
 
 <para>The <guilabel>Groups</guilabel> tab contains all the information about the
 selected user's participation in groups. The primary group to which the user 
 belongs
-is set in the <guilabel>Primary Group</guilabel> box. The user can be assigned
+is set with the <guilabel>Set as Primary</guilabel> button. The user can be assigned
 to additional groups by checking them in the large box.</para>
 
 </sect2>
@@ -224,21 +231,22 @@ same way.</para>
 <sect1 id="defaults">
 <title>Edit user creation defaults</title>
 
-<para>To edit the user creation defaults you can use the <guilabel>Edit
-defaults</guilabel> dialog, which is accessible via the menu
+<para>To edit the user creation defaults you can use the <guilabel>Connection</guilabel> 
+tab on the <guilabel>General</guilabel> page of &kuser;'s configuration dialog, which is accessible via the menu
 <menuchoice><guimenu>Settings</guimenu>
 <guimenuitem>Configure &kuser;</guimenuitem></menuchoice>. There you may
 change the defaults that are used when creating a new user: Shell and
 Home Folder (or home folders volume). You can choose whether to
-make a home folder on <quote>create</quote> or not,and to copy a
+make a home folder on <quote>create</quote> or not, and to copy a
 skeleton (standard configuration files) to the home folder or not. You can 
 also enable
-<guilabel>User Private Group</guilabel> mechanism, which creates a new
+<guilabel>User private group</guilabel> mechanism, which creates a new
 personal group with the creation of a new user, and removes the personal
 group when the user is removed.</para>
+<!--not in kde 4.4
 <para>The skeleton files for new users can be specified in the <guilabel>Sources
 </guilabel> tab.</para>
-
+-->
 </sect1>
 </chapter>
 

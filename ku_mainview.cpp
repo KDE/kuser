@@ -71,7 +71,7 @@ void KU_MainView::init() {
   connect(userview, SIGNAL(activated(const QModelIndex&)), this, SLOT(userSelected()));
   connect(groupview, SIGNAL(activated(const QModelIndex&)), this, SLOT(groupSelected()));
 
-  connect(this, SIGNAL(currentChanged(QWidget *)), this, SLOT(slotTabChanged()));
+  connect(this, SIGNAL(currentChanged(int)), this, SLOT(slotTabChanged()));
 }
 
 KU_MainView::~KU_MainView()

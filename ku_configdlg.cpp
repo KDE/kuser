@@ -41,7 +41,7 @@
 #include "ui_ku_passwordpolicy.h"
 
 KU_ConfigDlg::KU_ConfigDlg( KConfigSkeleton *config, QWidget *parent, const char *name ) :
-  KConfigDialog( parent, name, config),sambaui(0)
+    KConfigDialog( parent, QLatin1String( name ), config),sambaui(0)
 {
   setFaceType(List);
   setButtons(Default|Ok|Apply|Cancel|Help);
@@ -66,13 +66,13 @@ KU_ConfigDlg::KU_ConfigDlg( KConfigSkeleton *config, QWidget *parent, const char
     ui.kcfg_swarn->setSuffix(ki18np(" day", " days"));
     ui.kcfg_smin->setSuffix(ki18np(" day", " days"));
   }
-  addPage( page1, i18n("General"), "kuser", i18n("General Settings") );
+  addPage( page1, i18n("General"), QLatin1String( "kuser" ), i18n("General Settings") );
 
   {
     QFrame *page2 = new QFrame( this );
     Ui::KU_FilesSettings *ui = new Ui::KU_FilesSettings();
     ui->setupUi( page2 );
-    addPage( page2, i18n("Files"), "document-properties", i18n("File Source Settings") );
+    addPage( page2, i18n("Files"), QLatin1String( "document-properties" ), i18n("File Source Settings") );
   }
 
   KTabWidget *page3 = new KTabWidget( this );
@@ -89,8 +89,8 @@ KU_ConfigDlg::KU_ConfigDlg( KConfigSkeleton *config, QWidget *parent, const char
        KLDAP::LdapConfigWidget::W_DN |
        KLDAP::LdapConfigWidget::W_SECBOX |
        KLDAP::LdapConfigWidget::W_AUTHBOX |
-       KLDAP::LdapConfigWidget::W_TIMELIMIT | 
-       KLDAP::LdapConfigWidget::W_SIZELIMIT | 
+       KLDAP::LdapConfigWidget::W_TIMELIMIT |
+       KLDAP::LdapConfigWidget::W_SIZELIMIT |
        KLDAP::LdapConfigWidget::W_PAGESIZE,
         0 );
 
@@ -109,8 +109,8 @@ KU_ConfigDlg::KU_ConfigDlg( KConfigSkeleton *config, QWidget *parent, const char
     connect( sambaui->domQuery, SIGNAL(clicked()), SLOT(slotQueryClicked()) );
     page3->addTab( page3c, i18n("Samba") );
   }
-  addPage( page3, i18n("LDAP"), "network-server-database", i18n("LDAP Source Settings") );
-  setHelp(QString(),"kuser");
+  addPage( page3, i18n("LDAP"), QLatin1String( "network-server-database" ), i18n("LDAP Source Settings") );
+  setHelp(QString(),QLatin1String( "kuser" ));
 }
 
 KU_ConfigDlg::~KU_ConfigDlg()
@@ -124,20 +124,20 @@ void KU_ConfigDlg::slotQueryClicked()
   KLDAP::LdapUrl _url = ldconf->url();
 
   mResult.clear();
-  mDomain.name = "";
-  mDomain.sid = "";
+  mDomain.name.clear();
+  mDomain.sid.clear();
   mDomain.ridbase = 1000;
 
   QStringList attrs;
-  QString filter = "(objectClass=sambaDomain)";
+  QString filter = QLatin1String( "(objectClass=sambaDomain)" );
   QString dom = sambaui->kcfg_samdomain->text();
-  if ( !dom.isEmpty() ) filter = "(&(sambaDomainName=" + dom + ')' + filter + ')';
-  attrs.append("sambaDomainName");
-  attrs.append("sambaSID");
-  attrs.append("sambaAlgorithmicRidBase");
+  if ( !dom.isEmpty() ) filter = QLatin1String( "(&(sambaDomainName=" ) + dom + QLatin1Char( ')' ) + filter + QLatin1Char( ')' );
+  attrs.append(QLatin1String( "sambaDomainName" ));
+  attrs.append(QLatin1String( "sambaSID" ));
+  attrs.append(QLatin1String( "sambaAlgorithmicRidBase" ));
   _url.setAttributes( attrs );
   _url.setScope( KLDAP::LdapUrl::One );
-  _url.setExtension( "x-dir", "base" );
+  _url.setExtension( QLatin1String( "x-dir" ), QLatin1String( "base" ) );
   _url.setFilter( filter );
 
   kDebug() << "sendQuery url: " << _url.prettyUrl();
@@ -160,7 +160,7 @@ void KU_ConfigDlg::slotQueryClicked()
     kDebug() << "query cancelled!";
     job->kill( KJob::Quietly );
   } else {
-    if ( !mErrorMsg.isEmpty() ) 
+    if ( !mErrorMsg.isEmpty() )
       KMessageBox::error( this, mErrorMsg );
     else {
       if ( !mResult.isEmpty() ) {
@@ -191,19 +191,19 @@ void KU_ConfigDlg::loadData( KIO::Job*, const QByteArray& d )
     ret = mLdif.nextItem();
     switch ( ret ) {
       case KLDAP::Ldif::Item:
-        if ( mLdif.attr() == "sambaDomainName" ) 
+        if ( mLdif.attr() == QLatin1String( "sambaDomainName" ) )
           mDomain.name = QString::fromUtf8( mLdif.value(), mLdif.value().size() );
-        else if ( mLdif.attr() == "sambaSID" ) 
+        else if ( mLdif.attr() == QLatin1String( "sambaSID" ) )
           mDomain.sid = QString::fromUtf8( mLdif.value(), mLdif.value().size() );
-        else if ( mLdif.attr() == "sambaAlgorithmicRidBase" )
+        else if ( mLdif.attr() == QLatin1String( "sambaAlgorithmicRidBase" ) )
           mDomain.ridbase = QString::fromUtf8( mLdif.value(), mLdif.value().size() ).toUInt();
         break;
       case KLDAP::Ldif::EndEntry:
         mProg->setValue( 1 );
         if ( !mDomain.name.isEmpty() && !mDomain.sid.isEmpty() )
           mResult.push_back( mDomain );
-        mDomain.sid = "";
-        mDomain.name = "";
+        mDomain.sid.clear();
+        mDomain.name.clear();
         mDomain.ridbase = 1000;
       default:
         break;
@@ -217,7 +217,7 @@ void KU_ConfigDlg::loadResult( KJob* job)
   if ( error && error != KIO::ERR_USER_CANCELED )
     mErrorMsg = job->errorString();
   else
-    mErrorMsg = "";
+    mErrorMsg = QLatin1String( "" );
 
   mProg->hide();
 }

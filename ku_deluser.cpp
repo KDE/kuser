@@ -28,19 +28,19 @@
 #include <klocale.h>
 #include <KStandardGuiItem>
 
-KU_DelUser::KU_DelUser(KU_User *AUser, QWidget *parent) 
+KU_DelUser::KU_DelUser(KU_User *AUser, QWidget *parent)
  : KDialog( parent)
-{ 
+{
   setCaption(i18n("Delete User"));
   setButtons(KDialog::Ok|KDialog::Cancel );
-  setDefaultButton(KDialog::Ok);  
+  setDefaultButton(KDialog::Ok);
   KVBox *page = new KVBox( this );
   setMainWidget( page );
   new QLabel( i18n("<p>Deleting user <b>%1</b>"
                    "<br />Also perform the following actions:</p>", AUser->getName()),
               page);
   m_deleteHomeDir = new QCheckBox(i18n("Delete &home folder: %1", AUser->getHomeDir()), page);
-  QString mailboxpath = QFile::decodeName(MAIL_SPOOL_DIR) + '/' + AUser->getName();
+  QString mailboxpath = QFile::decodeName(MAIL_SPOOL_DIR) + QLatin1Char( '/' ) + AUser->getName();
   m_deleteMailBox = new QCheckBox(i18n("Delete &mailbox: %1", mailboxpath), page);
   setButtonGuiItem(KDialog::Ok, KStandardGuiItem::del());
 }

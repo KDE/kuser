@@ -50,7 +50,7 @@ int main(int argc, char **argv)
   KU_MainWidget *mw = 0;
 
   KApplication a;
-  KGlobal::locale()->insertCatalog("libkldap");
+  KGlobal::locale()->insertCatalog( QLatin1String( "libkldap" ));
   KConfigGroup group( KGlobal::config(), "general" );
   KU_Global::initCfg( group.readEntry( "connection", "default" ) );
 

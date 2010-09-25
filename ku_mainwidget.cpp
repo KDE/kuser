@@ -75,44 +75,44 @@ void KU_MainWidget::setupActions()
   KStandardAction::preferences(this, SLOT(properties()), actionCollection());
   QAction *action;
 
-  action  = new KAction(KIcon("list-add-user"), i18n("&Add..."), this);
-  actionCollection()->addAction("add_user", action );
+  action  = new KAction(KIcon( QLatin1String( "list-add-user") ), i18n("&Add..." ), this);
+  actionCollection()->addAction( QLatin1String( "add_user" ), action );
   connect( action, SIGNAL(triggered(bool)), mv, SLOT(useradd()) );
 
-  action  = new KAction(KIcon("user-properties"), i18n("&Edit..."), this);
-  actionCollection()->addAction("edit_user", action );
+  action  = new KAction(KIcon( QLatin1String( "user-properties") ), i18n("&Edit..." ), this);
+  actionCollection()->addAction( QLatin1String( "edit_user" ), action );
   connect( action, SIGNAL(triggered(bool)), mv, SLOT(useredit()) );
 
-  action  = new KAction(KIcon("list-remove-user"), i18n("&Delete..."), this);
-  actionCollection()->addAction("delete_user", action );
+  action  = new KAction(KIcon( QLatin1String( "list-remove-user") ), i18n("&Delete..." ), this);
+  actionCollection()->addAction( QLatin1String( "delete_user" ), action );
   connect( action, SIGNAL(triggered(bool)), mv, SLOT(userdel()) );
 
-  action  = new KAction(KIcon("preferences-desktop-user-password"), i18n("&Set Password..."), this);
-  actionCollection()->addAction("set_password_user", action );
+  action  = new KAction(KIcon( QLatin1String( "preferences-desktop-user-password") ), i18n("&Set Password..." ), this);
+  actionCollection()->addAction( QLatin1String( "set_password_user" ), action );
   connect( action, SIGNAL(triggered(bool)), mv, SLOT(setpwd()) );
 
-  action  = new KAction(KIcon("user-group-new"), i18n("&Add..."), this);
-  actionCollection()->addAction("add_group", action );
+  action  = new KAction(KIcon( QLatin1String( "user-group-new") ) , i18n("&Add..." ), this);
+  actionCollection()->addAction( QLatin1String( "add_group" ), action );
   connect( action, SIGNAL(triggered(bool)), mv, SLOT(grpadd()) );
 
-  action  = new KAction(KIcon("user-group-properties"), i18n("&Edit..."), this);
-  actionCollection()->addAction("edit_group", action );
+  action  = new KAction(KIcon( QLatin1String( "user-group-properties") ), i18n("&Edit..." ), this);
+  actionCollection()->addAction( QLatin1String( "edit_group" ), action );
   connect( action, SIGNAL(triggered(bool)), mv, SLOT(grpedit()) );
 
-  action  = new KAction(KIcon("user-group-delete"), i18n("&Delete..."), this);
-  actionCollection()->addAction("delete_group", action );
+  action  = new KAction(KIcon( QLatin1String( "user-group-delete") ), i18n("&Delete..." ), this);
+  actionCollection()->addAction( QLatin1String( "delete_group" ), action );
   connect( action, SIGNAL(triggered(bool)), mv, SLOT(grpdel()) );
 
-  action  = new KAction(KIcon("view-refresh"), i18n("&Reload..."), this);
-  actionCollection()->addAction("reload", action );
+  action  = new KAction(KIcon( QLatin1String( "view-refresh") ), i18n("&Reload..." ), this);
+  actionCollection()->addAction( QLatin1String( "reload" ), action );
   connect( action, SIGNAL(triggered(bool)), this, SLOT(reload()) );
 
   action  = new KAction(i18n("&Select Connection..."), this);
-  actionCollection()->addAction("select_conn", action );
+  actionCollection()->addAction( QLatin1String( "select_conn" ), action );
   connect( action, SIGNAL(triggered(bool)), this, SLOT(selectconn()) );
 
   mShowSys  = new KToggleAction(i18n("Show System Users/Groups"), this);
-  actionCollection()->addAction("show_sys", mShowSys );
+  actionCollection()->addAction( QLatin1String( "show_sys" ), mShowSys );
   connect( mShowSys, SIGNAL(triggered(bool)), this, SLOT(showSys(bool)) );
 
   mShowSys->setCheckedState(KGuiItem(i18n("Hide System Users/Groups")));
@@ -149,31 +149,31 @@ void KU_MainWidget::init()
   KU_Global::init();
   rw = ! ( KU_Global::users()->getCaps() & KU_Users::Cap_ReadOnly );
   kDebug() << "Users rw()" << rw;
-  actionCollection()->action("add_user")->setEnabled( rw );
-  actionCollection()->action("edit_user")->setEnabled( rw );
-  actionCollection()->action("delete_user")->setEnabled( rw );
-  actionCollection()->action("set_password_user")->setEnabled( rw );
+  actionCollection()->action(QLatin1String( "add_user" ))->setEnabled( rw );
+  actionCollection()->action(QLatin1String( "edit_user" ))->setEnabled( rw );
+  actionCollection()->action(QLatin1String( "delete_user" ))->setEnabled( rw );
+  actionCollection()->action(QLatin1String( "set_password_user" ))->setEnabled( rw );
   if ( rw ) {
     connect( mv, SIGNAL(userSelected(bool)),
-      actionCollection()->action("edit_user"), SLOT(setEnabled(bool)) );
+      actionCollection()->action(QLatin1String( "edit_user" )), SLOT(setEnabled(bool)) );
     connect( mv, SIGNAL(userSelected(bool)),
-      actionCollection()->action("delete_user"), SLOT(setEnabled(bool)) );
+      actionCollection()->action(QLatin1String( "delete_user" )), SLOT(setEnabled(bool)) );
     connect( mv, SIGNAL(userSelected(bool)),
-      actionCollection()->action("set_password_user"), SLOT(setEnabled(bool)) );
+      actionCollection()->action(QLatin1String( "set_password_user" )), SLOT(setEnabled(bool)) );
   } else {
     disconnect( mv, SIGNAL(userSelected(bool)), 0, 0 );
   }
 
   rw = ! ( KU_Global::groups()->getCaps() & KU_Groups::Cap_ReadOnly );
   kDebug() << "Groups rw()" << rw;
-  actionCollection()->action("add_group")->setEnabled( rw );
-  actionCollection()->action("edit_group")->setEnabled( rw );
-  actionCollection()->action("delete_group")->setEnabled( rw );
+  actionCollection()->action(QLatin1String( "add_group" ))->setEnabled( rw );
+  actionCollection()->action(QLatin1String( "edit_group" ))->setEnabled( rw );
+  actionCollection()->action(QLatin1String( "delete_group" ))->setEnabled( rw );
   if ( rw ) {
     connect( mv, SIGNAL(groupSelected(bool)),
-      actionCollection()->action("edit_group"), SLOT(setEnabled(bool)) );
+      actionCollection()->action(QLatin1String( "edit_group" )), SLOT(setEnabled(bool)) );
     connect( mv, SIGNAL(groupSelected(bool)),
-      actionCollection()->action("delete_group"), SLOT(setEnabled(bool)) );
+      actionCollection()->action(QLatin1String( "delete_group" )), SLOT(setEnabled(bool)) );
   } else {
     disconnect( mv, SIGNAL(groupSelected(bool)), 0, 0 );
   }

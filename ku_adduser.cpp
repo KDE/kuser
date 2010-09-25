@@ -102,7 +102,7 @@ void KU_AddUser::accept()
   saveg();
   done( Accepted );
   kDebug() << "slotOk name: " << mNewUser.getName();
-  
+
 }
 
 bool KU_AddUser::checkHome()
@@ -120,7 +120,7 @@ bool KU_AddUser::checkHome()
     if (S_ISDIR(s.st_mode)) {
        if ( KMessageBox::
          warningContinueCancel ( 0,
-           i18n("Folder %1 already exists.\n%2 may become owner and permissions may change.\nDo you really want to use %3?", 
+           i18n("Folder %1 already exists.\n%2 may become owner and permissions may change.\nDo you really want to use %3?",
            h_dir, mNewUser.getName(), h_dir), QString(), KStandardGuiItem::cont() ) == KMessageBox::Cancel )
 
          return false;
@@ -141,7 +141,7 @@ bool KU_AddUser::checkMailBox()
   struct stat s;
   int r;
 
-  mailboxpath = QFile::decodeName(MAIL_SPOOL_DIR) + '/' + mNewUser.getName();
+  mailboxpath = QFile::decodeName(MAIL_SPOOL_DIR) + QLatin1Char( '/' ) + mNewUser.getName();
   r = stat(QFile::encodeName(mailboxpath), &s);
 
   if ((r == -1) && (errno == ENOENT))

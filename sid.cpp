@@ -16,9 +16,9 @@
  *  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA 02110-1301, USA.
  **/
- 
+
 #include "sid.h"
-#include <kdebug.h> 
+#include <kdebug.h>
 //From Samba
 /* Take the bottom bit. */
 #define RID_MULTIPLIER 2
@@ -82,9 +82,9 @@ void SID::setSID( const QString &sid )
 {
   int pos;
   QString rid;
-  
+
   mSid = sid;
-  pos = sid.lastIndexOf( '-' );
+  pos = sid.lastIndexOf( QLatin1Char( '-' ) );
   mDom = sid.left( pos );
   rid = sid.right( sid.length() - pos - 1 );
   mRid = rid.toUInt();

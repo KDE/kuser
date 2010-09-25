@@ -137,11 +137,11 @@ bool KU_UserFiles::loadpwd()
     user.setGID(p->pw_gid);
     user.setName(QString::fromLocal8Bit(p->pw_name));
     tmp  = QString::fromLocal8Bit( p->pw_passwd );
-    if ( tmp != "x" && tmp != "*" && !tmp.startsWith('!') )
+    if ( tmp != QLatin1String( "x" ) && tmp != QLatin1String( "*" ) && !tmp.startsWith(QLatin1Char( '!' )) )
       user.setDisabled( false );
     else
       user.setDisabled( true );
-    if ( tmp.startsWith('!') ) tmp.remove(0, 1);
+    if ( tmp.startsWith(QLatin1Char( '!' )) ) tmp.remove(0, 1);
     user.setPwd( tmp );
     user.setHomeDir(QString::fromLocal8Bit(p->pw_dir));
     user.setShell(QString::fromLocal8Bit(p->pw_shell));
@@ -210,7 +210,7 @@ bool KU_UserFiles::loadsdw()
     user = at(index);
 
     tmp = QString::fromLocal8Bit( spw->sp_pwdp );
-    if ( tmp.startsWith("!!") || tmp == "*" ) {
+    if ( tmp.startsWith(QLatin1String( "!!" )) || tmp == QLatin1String( "*" ) ) {
       user.setDisabled( true );
       tmp.remove( 0, 2 );
     } else
@@ -243,8 +243,8 @@ bool KU_UserFiles::loadsdw()
 // Save password file
 
 #define escstr(a) tmp2 = user.get##a(); \
-                    tmp2.replace(':',"_"); \
-                    tmp2.replace(',',"_"); \
+                    tmp2.replace(QLatin1Char( ':' ),QLatin1String( "_" )); \
+                    tmp2.replace(QLatin1Char( ',' ),QLatin1String( "_" )); \
                     user.set##a( tmp2 );
 
 
@@ -331,11 +331,11 @@ bool KU_UserFiles::savepwd()
 
     tmp_uid = user.getUID();
     if ( caps & Cap_Shadow )
-      tmp = "x";
+      tmp = QLatin1String( "x" );
     else {
       tmp = user.getPwd();
-      if ( user.getDisabled() && tmp != "x" && tmp != "*" )
-        tmp = '!' + tmp;
+      if ( user.getDisabled() && tmp != QLatin1String( "x" ) && tmp != QLatin1String( "*" ) )
+        tmp = QLatin1Char( '!' ) + tmp;
     }
 
     escstr( Name );
@@ -349,51 +349,51 @@ bool KU_UserFiles::savepwd()
     escstr( WorkPhone );
     escstr( HomePhone );
     s =
-      user.getName() + ':' +
-      tmp + ':' +
-      QString::number( user.getUID() ) + ':' +
-      QString::number( user.getGID() ) + ':' +
-      user.getClass() + ':' +
-      QString::number( user.getLastChange() ) + ':' +
-      QString::number( user.getExpire() ) + ':';
+      user.getName() + QLatin1Char( ':' ) +
+      tmp + QLatin1Char( ':' ) +
+      QString::number( user.getUID() ) + QLatin1Char( ':' ) +
+      QString::number( user.getGID() ) + QLatin1Char( ':' ) +
+      user.getClass() + QLatin1Char( ':' ) +
+      QString::number( user.getLastChange() ) + QLatin1Char( ':' ) +
+      QString::number( user.getExpire() ) + QLatin1Char( ':' );
 
     s1 =
-      user.getFullName() + ',' +
-      user.getOffice() + ',' +
-      user.getWorkPhone() + ',' +
+      user.getFullName() + QLatin1Char( ',' ) +
+      user.getOffice() + QLatin1Char( ',' ) +
+      user.getWorkPhone() + QLatin1Char( ',' ) +
       user.getHomePhone();
 #else
     escstr( Office1 );
     escstr( Office2 );
     escstr( Address );
     s =
-      user.getName() + ':' +
-      tmp + ':' +
-      QString::number( user.getUID() ) + ':' +
-      QString::number( user.getGID() ) + ':';
+      user.getName() + QLatin1Char( ':' ) +
+      tmp + QLatin1Char( ':' ) +
+      QString::number( user.getUID() ) + QLatin1Char( ':' ) +
+      QString::number( user.getGID() ) + QLatin1Char( ':' );
 
     s1 =
-      user.getFullName() + ',' +
-      user.getOffice1() + ',' +
-      user.getOffice2() + ',' +
+      user.getFullName() + QLatin1Char( ',' ) +
+      user.getOffice1() + QLatin1Char( ',' ) +
+      user.getOffice2() + QLatin1Char( ',' ) +
       user.getAddress();
 
 #endif
     for (int j=(s1.length()-1); j>=0; j--) {
-      if (s1[j] != ',')
+      if (s1[j] != QLatin1Char( ',' ))
         break;
       s1.truncate(j);
     }
 
-    s += s1 + ':' +
-      user.getHomeDir() + ':' +
-      user.getShell() + '\n';
+    s += s1 + QLatin1Char( ':' ) +
+      user.getHomeDir() + QLatin1Char( ':' ) +
+      user.getShell() + QLatin1Char( '\n' );
 
 #ifdef HAVE_SHADOW_H
     if ( write_shadow ) {
       strncpy( spwd.sp_namp, user.getName().toLocal8Bit(), 200 );
       if ( user.getDisabled() )
-        strncpy( spwd.sp_pwdp, QString("!!" + user.getSPwd()).toLocal8Bit(), 200 );
+        strncpy( spwd.sp_pwdp, QString(QLatin1String( "!!" ) + user.getSPwd()).toLocal8Bit(), 200 );
       else
         strncpy( spwd.sp_pwdp, user.getSPwd().toLocal8Bit(), 200 );
 

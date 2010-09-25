@@ -137,7 +137,7 @@ void KU_MainView::setpwd()
 {
   QModelIndexList selectedindexes = userview->selectionModel()->selectedIndexes();
   int count = selectedindexes.count() / usermodel->columnCount();
-  
+
   if ( count == 0 ) return;
   if ( count > 1 ) {
     if ( KMessageBox::questionYesNo( 0,
@@ -214,15 +214,15 @@ void KU_MainView::useradd()
     sid.setDOM( users->getDOMSID() );
     sid.setRID( rid );
     user.setSID( sid );
-    user.setProfilePath( KU_Global::kcfg()->samprofilepath().replace( "%U",name,Qt::CaseInsensitive ) );
-    user.setHomePath( KU_Global::kcfg()->samhomepath().replace( "%U", name,Qt::CaseInsensitive ) );
+    user.setProfilePath( KU_Global::kcfg()->samprofilepath().replace( QLatin1String( "%U" ),name,Qt::CaseInsensitive ) );
+    user.setHomePath( KU_Global::kcfg()->samhomepath().replace( QLatin1String( "%U" ), name,Qt::CaseInsensitive ) );
     user.setHomeDrive( KU_Global::kcfg()->samhomedrive() );
     user.setLoginScript( KU_Global::kcfg()->samloginscript() );
     user.setDomain( KU_Global::kcfg()->samdomain() );
   }
 
   user.setShell( KU_Global::kcfg()->shell() );
-  user.setHomeDir( KU_Global::kcfg()->homepath().replace( "%U", name,Qt::CaseInsensitive ) );
+  user.setHomeDir( KU_Global::kcfg()->homepath().replace( QLatin1String( "%U" ), name,Qt::CaseInsensitive ) );
   if ( users->getCaps() & KU_Users::Cap_Shadow || samba ) {
     user.setLastChange( now() );
   }
@@ -301,7 +301,7 @@ void KU_MainView::useredit()
   QModelIndexList selectedindexes = userview->selectionModel()->selectedIndexes();
 
   foreach( const QModelIndex &selectedindex, selectedindexes ) {
-    if ( selectedindex.column() == 0 ) 
+    if ( selectedindex.column() == 0 )
       selected.append( userproxymodel.mapToSource(selectedindex).row() );
   }
   if ( selected.isEmpty() ) return;
@@ -440,7 +440,7 @@ void KU_MainView::grpdel()
   QModelIndexList selectedindexes = groupview->selectionModel()->selectedIndexes();
 
   foreach( const QModelIndex &selectedindex, selectedindexes ) {
-    if ( selectedindex.column() == 0 ) 
+    if ( selectedindex.column() == 0 )
       selected.append( groupproxymodel.mapToSource(selectedindex).row() );
   }
   if ( selected.isEmpty() ) return;

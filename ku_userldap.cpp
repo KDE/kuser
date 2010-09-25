@@ -37,37 +37,37 @@ KU_UserLDAP::KU_UserLDAP(KU_PrefsBase *cfg) : KU_Users( cfg )
   schemaversion = 0;
 
   if ( mCfg->ldapssl() )
-    mUrl.setProtocol("ldaps");
+    mUrl.setProtocol(QLatin1String( "ldaps" ));
   else
-    mUrl.setProtocol("ldap");
+    mUrl.setProtocol(QLatin1String( "ldap" ));
 
   mUrl.setHost( mCfg->ldaphost() );
   mUrl.setPort( mCfg->ldapport() );
-  mUrl.setDn( KLDAP::LdapDN( mCfg->ldapuserbase() + ',' + mCfg->ldapdn() ) );
+  mUrl.setDn( KLDAP::LdapDN( mCfg->ldapuserbase() + QLatin1Char( ',' ) + mCfg->ldapdn() ) );
   if ( !mCfg->ldapanon() ) {
     mUrl.setUser( mCfg->ldapuser() );
     mUrl.setPass( mCfg->ldappassword() );
     QString binddn = mCfg->ldapbinddn();
-    if ( !binddn.isEmpty() ) 
-      mUrl.setExtension( "bindname",binddn );
+    if ( !binddn.isEmpty() )
+      mUrl.setExtension( QLatin1String( "bindname" ),binddn );
   }
   mUrl.setFilter( mCfg->ldapuserfilter() );
 
-  if ( mCfg->ldaptls() ) mUrl.setExtension( "x-tls", "" );
+  if ( mCfg->ldaptls() ) mUrl.setExtension( QLatin1String( "x-tls" ), QLatin1String( "" ) );
   if ( mCfg->ldapsasl() ) {
-    mUrl.setExtension( "x-sasl", "" );
-    mUrl.setExtension( "x-mech", mCfg->ldapsaslmech() );
+    mUrl.setExtension( QLatin1String( "x-sasl" ), QLatin1String( "" ) );
+    mUrl.setExtension( QLatin1String( "x-mech" ), mCfg->ldapsaslmech() );
   }
 
   mUrl.setScope(KLDAP::LdapUrl::One);
-  mUrl.setExtension("x-dir","base");
+  mUrl.setExtension(QLatin1String( "x-dir" ),QLatin1String( "base" ));
 
   if ( mCfg->ldaptimelimit() )
-    mUrl.setExtension("x-timelimit",QString::number(mCfg->ldaptimelimit()));
+    mUrl.setExtension(QLatin1String( "x-timelimit" ),QString::number(mCfg->ldaptimelimit()));
   if ( mCfg->ldapsizelimit() )
-    mUrl.setExtension("x-sizelimit",QString::number(mCfg->ldapsizelimit()));
+    mUrl.setExtension(QLatin1String( "x-sizelimit" ),QString::number(mCfg->ldapsizelimit()));
   if ( mCfg->ldappagesize() )
-    mUrl.setExtension("x-pagesize",QString::number(mCfg->ldappagesize()));
+    mUrl.setExtension(QLatin1String( "x-pagesize" ),QString::number(mCfg->ldappagesize()));
 
   caps = Cap_Passwd | Cap_Disable_POSIX;
   if ( mCfg->ldapshadow() ) caps |= Cap_Shadow;
@@ -119,31 +119,31 @@ void KU_UserLDAP::data( KLDAP::LdapSearch *, const KLDAP::LdapObject& data )
       }
       continue;
     }
-                      
+
     KLDAP::LdapAttrValue values = (*it);
     if ( values.isEmpty() ) continue;
     QString val = QString::fromUtf8( values.first(), values.first().size() );
-    if ( name == "uidnumber" )
+    if ( name == QLatin1String( "uidnumber" ) )
       user.setUID( val.toLong() );
-    else if ( name == "gidnumber" )
+    else if ( name == QLatin1String( "gidnumber" ) )
       user.setGID( val.toLong() );
-    else if ( name == "uid" || name == "userid" )
+    else if ( name == QLatin1String( "uid" ) || name == QLatin1String( "userid" ) )
       user.setName( val );
-    else if ( name == "sn" )
+    else if ( name == QLatin1String( "sn" ) )
       user.setSurname( val );
-    else if ( name == "mail" )
+    else if ( name == QLatin1String( "mail" ) )
       user.setEmail( val );
-    else if ( name == "homedirectory" )
+    else if ( name == QLatin1String( "homedirectory" ) )
       user.setHomeDir( val );
-    else if ( name == "loginshell" )
+    else if ( name == QLatin1String( "loginshell" ) )
       user.setShell( val );
-    else if ( name == "postaladdress" )
+    else if ( name == QLatin1String( "postaladdress" ) )
       user.setAddress( val );
-    else if ( name == "telephonenumber" ) {
+    else if ( name == QLatin1String( "telephonenumber" ) ) {
       user.setOffice1( val );
       if ( values.size() > 1 )
         user.setOffice2( QString::fromUtf8( values[1], values[1].size() ) );
-    } else if ( name == "gecos" ) {
+    } else if ( name == QLatin1String( "gecos" ) ) {
       QString name, f1, f2, f3;
       parseGecos( values.first(), name, f1, f2, f3 );
       if ( user.getFullName().isEmpty() ) user.setFullName( val );
@@ -155,52 +155,52 @@ void KU_UserLDAP::data( KLDAP::LdapSearch *, const KLDAP::LdapObject& data )
         user.setFullName( val );
       if ( user.getName().isEmpty() )
         user.setName( val );
-    } else if ( name == "displayname" ) {
+    } else if ( name == QLatin1String( "displayname" ) ) {
       user.setFullName( val );
-    } else if ( name == "userpassword" ) {
+    } else if ( name == QLatin1String( "userpassword" ) ) {
       if ( !val.isEmpty() ) user.setDisabled( false );
       user.setPwd( val );
-    } else if ( name == "shadowlastchange" ) {
+    } else if ( name == QLatin1String( "shadowlastchange" ) ) {
       if ( user.getLastChange() == 0 ) //sambapwdlastset is more precise
         user.setLastChange( daysToTime( val.toLong() ) );
-    } else if ( name == "shadowmin" )
+    } else if ( name == QLatin1String( "shadowmin" ) )
       user.setMin( val.toInt() );
-    else if ( name == "shadowmax" )
+    else if ( name == QLatin1String( "shadowmax" ) )
       user.setMax( val.toLong() );
-    else if ( name == "shadowwarning" )
+    else if ( name == QLatin1String( "shadowwarning" ) )
       user.setWarn( val.toLong() );
-    else if ( name == "shadowinactive" )
+    else if ( name == QLatin1String( "shadowinactive" ) )
       user.setInactive( val.toLong() );
-    else if ( name == "shadowexpire" )
+    else if ( name == QLatin1String( "shadowexpire" ) )
       user.setExpire( val.toLong() );
-    else if ( name == "shadowflag" )
+    else if ( name == QLatin1String( "shadowflag" ) )
       user.setFlag( val.toLong() );
-    else if ( name == "sambaacctflags" ) {
-      if ( !val.contains( 'D' ) ) user.setDisabled( false );
-    } else if ( name == "sambasid" )
+    else if ( name == QLatin1String( "sambaacctflags" ) ) {
+      if ( !val.contains( QLatin1Char( 'D' ) ) ) user.setDisabled( false );
+    } else if ( name == QLatin1String( "sambasid" ) )
       user.setSID( val );
-    else if ( name == "sambaprimarygroupsid" )
+    else if ( name == QLatin1String( "sambaprimarygroupsid" ) )
       user.setPGSID( val );
-    else if ( name == "sambalmpassword" )
+    else if ( name == QLatin1String( "sambalmpassword" ) )
       user.setLMPwd( val );
-    else if ( name == "sambantpassword" )
+    else if ( name == QLatin1String( "sambantpassword" ) )
       user.setNTPwd( val );
-    else if ( name == "sambahomepath" )
+    else if ( name == QLatin1String( "sambahomepath" ) )
       user.setHomePath( val );
-    else if ( name == "sambahomedrive" )
+    else if ( name == QLatin1String( "sambahomedrive" ) )
       user.setHomeDrive( val );
-    else if ( name == "sambalogonscript" )
+    else if ( name == QLatin1String( "sambalogonscript" ) )
       user.setLoginScript( val );
-    else if ( name == "sambaprofilepath" )
+    else if ( name == QLatin1String( "sambaprofilepath" ) )
       user.setProfilePath( val );
-    else if ( name == "sambauserworkstations" )
+    else if ( name == QLatin1String( "sambauserworkstations" ) )
       user.setWorkstations( val );
-    else if ( name == "sambadomainname" )
+    else if ( name == QLatin1String( "sambadomainname" ) )
       user.setDomain( val );
-    else if ( name == "sambapwdlastset" )
+    else if ( name == QLatin1String( "sambapwdlastset" ) )
       user.setLastChange( val.toLong() );
 //these new attributes introduced around samba 3.0.6
-    else if ( name == "sambapasswordhistory" || name == "sambalogonhours" )
+    else if ( name == QLatin1String( "sambapasswordhistory" ) || name == QLatin1String( "sambalogonhours" ) )
       schemaversion = 1;
 
   }
@@ -235,11 +235,11 @@ bool KU_UserLDAP::reload()
   qApp->processEvents();
   KLDAP::LdapSearch search;
 
-  connect( &search, 
-    SIGNAL( data( KLDAP::LdapSearch*, const KLDAP::LdapObject& ) ), 
+  connect( &search,
+    SIGNAL( data( KLDAP::LdapSearch*, const KLDAP::LdapObject& ) ),
     this, SLOT ( data ( KLDAP::LdapSearch*, const KLDAP::LdapObject&) ) );
-  connect( &search, 
-    SIGNAL( result( KLDAP::LdapSearch* ) ), 
+  connect( &search,
+    SIGNAL( result( KLDAP::LdapSearch* ) ),
     this, SLOT ( result ( KLDAP::LdapSearch* ) ) );
 
   if (search.search( mUrl )) {
@@ -351,7 +351,7 @@ void KU_UserLDAP::createModStruct( const KU_User &user, int oldindex, KLDAP::Lda
 {
   QString gecos, cn, pwd, samflags;
   QList<QByteArray> vals;
-  
+
   bool mod = ( oldindex != -1 );
 
   pwd = user.getPwd();
@@ -391,10 +391,10 @@ void KU_UserLDAP::createModStruct( const KU_User &user, int oldindex, KLDAP::Lda
   }
   ku_add2ops( ops, "objectClass", vals );
   vals.clear();
-  
+
   ku_add2ops( ops, "cn", cn.toUtf8() );
   ku_add2ops( ops, caps & Cap_InetOrg ? "uid" : "userid", user.getName().toUtf8() );
-  
+
   if ( ( user.getCaps() & KU_User::Cap_POSIX ) || ( caps & Cap_InetOrg ) ) {
     ku_add2ops( ops, "userpassword", pwd.toUtf8(), true );
   }
@@ -520,8 +520,8 @@ bool KU_UserLDAP::dbcommit()
     QString newrdn = getRDN( it.value() );
 
     if ( oldrdn != newrdn ) {
-      int ret = op.rename_s( KLDAP::LdapDN( oldrdn + ',' + mUrl.dn().toString() ), 
-        newrdn, 
+      int ret = op.rename_s( KLDAP::LdapDN( oldrdn + QLatin1Char( ',' ) + mUrl.dn().toString() ),
+        newrdn,
         mUrl.dn().toString().toUtf8(),
         true );
 
@@ -535,7 +535,7 @@ bool KU_UserLDAP::dbcommit()
 
     ops.clear();
     createModStruct( it.value(), it.key(), ops );
-    int ret = op.modify_s( KLDAP::LdapDN( getRDN( it.value() ) + ',' + mUrl.dn().toString() ), ops );
+    int ret = op.modify_s( KLDAP::LdapDN( getRDN( it.value() ) + QLatin1Char( ',' ) + mUrl.dn().toString() ), ops );
     if ( ret != KLDAP_SUCCESS ) {
       mErrorString = KLDAP::LdapConnection::errorString(conn.ldapErrorCode());
       mErrorDetails = conn.ldapErrorString();
@@ -551,7 +551,7 @@ bool KU_UserLDAP::dbcommit()
     ops.clear();
     createModStruct( (*it), -1, ops );
     kDebug() << "add name: " << (*it).getName();
-    int ret = op.add_s( KLDAP::LdapDN( getRDN( (*it) ) + ',' + mUrl.dn().toString() ), ops );
+    int ret = op.add_s( KLDAP::LdapDN( getRDN( (*it) ) + QLatin1Char( ',' ) + mUrl.dn().toString() ), ops );
     if ( ret != KLDAP_SUCCESS ) {
       mErrorString = KLDAP::LdapConnection::errorString(conn.ldapErrorCode());
       mErrorDetails = conn.ldapErrorString();
@@ -565,7 +565,7 @@ bool KU_UserLDAP::dbcommit()
   //del
   for ( KU_Users::DelList::Iterator it = mDel.begin(); it != mDel.end(); ++it ) {
     kDebug() << "delete name: " << at((*it)).getName();
-    int ret = op.del_s( KLDAP::LdapDN( getRDN( at((*it)) ) + ',' + mUrl.dn().toString() ) );
+    int ret = op.del_s( KLDAP::LdapDN( getRDN( at((*it)) ) + QLatin1Char( ',' ) + mUrl.dn().toString() ) );
     if ( ret != KLDAP_SUCCESS ) {
       mErrorString = KLDAP::LdapConnection::errorString(conn.ldapErrorCode());
       mErrorDetails = conn.ldapErrorString();
@@ -575,7 +575,7 @@ bool KU_UserLDAP::dbcommit()
       mDelSucc.append( (*it) );
     }
   }
-                               
+
   delete mProg;
   return true;
 }

@@ -28,7 +28,7 @@
 #include <klocale.h>
 
 KU_PwDlg::KU_PwDlg( QWidget* parent )
-  : KDialog(parent) 
+  : KDialog(parent)
 {
   setCaption(i18n("Enter Password"));
   setButtons(Ok | Cancel);
@@ -43,7 +43,7 @@ KU_PwDlg::KU_PwDlg( QWidget* parent )
   lepw1 = new KLineEdit(page);
 
   // ensure it fits at least 12 characters
-  lepw1->setText( "XXXXXXXXXXXX" );
+  lepw1->setText( QLatin1String( "XXXXXXXXXXXX" ) );
   lepw1->setMinimumSize(lepw1->sizeHint());
 
   // clear text
@@ -59,13 +59,13 @@ KU_PwDlg::KU_PwDlg( QWidget* parent )
   lepw2 = new KLineEdit(page);
 
   // ensure it fits at least 12 characters
-  lepw2->setText( "XXXXXXXXXXXX" );
+  lepw2->setText( QLatin1String( "XXXXXXXXXXXX" ) );
   lepw2->setMinimumSize(lepw2->sizeHint());
 
   // clear text
   lepw2->clear();
   lepw2->setEchoMode(KLineEdit::Password);
-  
+
   QGridLayout *layout = new QGridLayout;
   layout->addWidget(lb1, 0, 0);
   layout->addWidget(lepw1, 0, 1);

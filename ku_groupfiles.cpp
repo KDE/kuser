@@ -205,30 +205,30 @@ bool KU_GroupFiles::save()
 
 #ifdef HAVE_SHADOW_H
     if ( addindex && !mCfg->gshadowsrc().isEmpty() )
-      group.setPwd("x");
+      group.setPwd(QLatin1String( "x" ));
 #endif
 
     tmpGe = group.getName();
-    tmpGe.replace( ',', "_" );
-    tmpGe.replace( ':', "_" );
+    tmpGe.replace( QLatin1Char( ',' ), QLatin1String( "_" ) );
+    tmpGe.replace( QLatin1Char( ':' ), QLatin1String( "_" ) );
     group.setName( tmpGe );
 
     tmp_gid = group.getGID();
-    tmpGe += ':' +
-            group.getPwd() + ':' +
-            QString::number( group.getGID() ) + ':';
-    tmpSe = group.getName() + ":!::";	//krazy:exclude=doublequote_chars
+    tmpGe += QLatin1Char( ':' ) +
+            group.getPwd() + QLatin1Char( ':' ) +
+            QString::number( group.getGID() ) + QLatin1Char( ':' );
+    tmpSe = group.getName() + QLatin1String( ":!::" );	//krazy:exclude=doublequote_chars
     for (uint j=0; j<group.count(); j++) {
        if (j != 0) {
-         tmpGe += ',';
-         tmpSe += ',';
+         tmpGe += QLatin1Char( ',' );
+         tmpSe += QLatin1Char( ',' );
        }
-       group.user( j ).replace( ',', "_" );
-       group.user( j ).replace( ':', "_" );
+       group.user( j ).replace( QLatin1Char( ',' ), QLatin1String( "_" ) );
+       group.user( j ).replace( QLatin1Char( ':' ), QLatin1String( "_" ) );
        tmpGe += group.user( j) ;
        tmpSe += group.user( j );
     }
-    tmpGe += '\n'; tmpSe += '\n';
+    tmpGe += QLatin1Char( '\n' ); tmpSe += QLatin1Char( '\n' );
 
     if ( group_fd )
         fputs( tmpGe.toLocal8Bit(), group_fd );

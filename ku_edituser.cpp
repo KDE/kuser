@@ -426,7 +426,7 @@ void KU_EditUser::setLE( KLineEdit *le, const QString &val, bool first )
   }
   if ( val.isEmpty() && le->text().isEmpty() ) return;
   if ( le->text() != val ) {
-    le->setText( "" );
+    le->setText( QLatin1String( "" ) );
     if ( !ro && mNoChanges.contains( le ) ) {
       mNoChanges[ le ]->show();
       mNoChanges[ le ]->setChecked( true );
@@ -506,7 +506,7 @@ void KU_EditUser::selectuser()
     setLE( lefname, user.getFullName(), first );
     QString home;
     home = user.getHomeDir();
-    if ( !one ) home.replace( user.getName(), "%U", Qt::CaseInsensitive );
+    if ( !one ) home.replace( user.getName(), QLatin1String( "%U" ), Qt::CaseInsensitive );
     setLE( lehome, home, first );
 
     QString shell = user.getShell();
@@ -544,11 +544,11 @@ void KU_EditUser::selectuser()
       setLE( leliscript, user.getLoginScript(), first );
       QString profile;
       profile = user.getProfilePath();
-      if ( !one ) profile.replace( user.getName(), "%U", Qt::CaseInsensitive );
+      if ( !one ) profile.replace( user.getName(), QLatin1String( "%U" ), Qt::CaseInsensitive );
       setLE( leprofile, profile, first );
       setLE( lehomedrive, user.getHomeDrive(), first );
       home = user.getHomePath();
-      if ( !one ) home.replace( user.getName(), "%U", Qt::CaseInsensitive );
+      if ( !one ) home.replace( user.getName(), QLatin1String( "%U" ), Qt::CaseInsensitive );
       setLE( lehomepath, home, first );
       setLE( leworkstations, user.getWorkstations(), first );
       setLE( ledomain, user.getDomain(), first );
@@ -561,7 +561,7 @@ void KU_EditUser::selectuser()
          KU_Global::users()->getCaps() & KU_Users::Cap_BSD ) {
 
       if ( user.getLastChange() != lstchg ) {
-        leslstchg->setText( "" );
+        leslstchg->setText( QLatin1String( "" ) );
         lstchg = 0;
       }
 
@@ -633,7 +633,7 @@ void KU_EditUser::loadgroups( bool fixedprivgroup )
         if ( !wasprivgr )
           primaryGroup = groupName;
         else
-          if ( primaryGroup != groupName ) primaryGroup = "";
+          if ( primaryGroup != groupName ) primaryGroup = QLatin1String( "" );
 //      primaryGroupWasOn = group->lookup_user(user->getName());
         wasprivgr = true;
       }
@@ -767,11 +767,11 @@ void KU_EditUser::mergeUser( const KU_User &user, KU_User &newuser )
     newuser.setLoginScript( samba ?
       mergeLE( leliscript, user.getLoginScript(), one ) : QString() );
     newuser.setProfilePath( samba ?
-      mergeLE( leprofile, user.getProfilePath(), one ).replace( "%U", newuser.getName(), Qt::CaseInsensitive ) : QString() );
+      mergeLE( leprofile, user.getProfilePath(), one ).replace( QLatin1String( "%U" ), newuser.getName(), Qt::CaseInsensitive ) : QString() );
     newuser.setHomeDrive( samba ?
       mergeLE( lehomedrive, user.getHomeDrive(), one ) : QString() );
     newuser.setHomePath( samba ?
-      mergeLE( lehomepath, user.getHomePath(), one ).replace( "%U", newuser.getName(), Qt::CaseInsensitive ) : QString() );
+      mergeLE( lehomepath, user.getHomePath(), one ).replace( QLatin1String( "%U" ), newuser.getName(), Qt::CaseInsensitive ) : QString() );
     newuser.setWorkstations( samba ?
       mergeLE( leworkstations, user.getWorkstations(), one ) : QString() );
     newuser.setDomain( samba ?
@@ -790,7 +790,7 @@ void KU_EditUser::mergeUser( const KU_User &user, KU_User &newuser )
   }
 
   newuser.setHomeDir( posix ?
-    mergeLE( lehome, user.getHomeDir(), one ).replace( "%U", newuser.getName(), Qt::CaseInsensitive ) : QString() );
+    mergeLE( lehome, user.getHomeDir(), one ).replace( QLatin1String( "%U" ), newuser.getName(), Qt::CaseInsensitive ) : QString() );
   if ( posix ) {
     if ( leshell->currentIndex() == 0 && ismoreshells ) {
       newuser.setShell( user.getShell() );
@@ -902,7 +902,7 @@ bool KU_EditUser::checkShell(const QString &shell)
 bool KU_EditUser::check()
 {
   kDebug() << "KU_EditUser::check()";
-  
+
   bool one = mSelected.isEmpty();
   bool posix = !( KU_Global::users()->getCaps() & KU_Users::Cap_Disable_POSIX ) || !( cbposix->isChecked() );
 

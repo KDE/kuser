@@ -106,16 +106,16 @@ void KU_UserLDAP::data( KLDAP::LdapSearch *, const KLDAP::LdapObject& data )
   KLDAP::LdapAttrMap attrs = data.attributes();
   for ( KLDAP::LdapAttrMap::ConstIterator it = attrs.constBegin(); it != attrs.constEnd(); ++it ) {
     QString name = it.key().toLower();
-    if ( name == "objectclass" ) {
+    if ( name == QLatin1String( "objectclass" ) ) {
       for ( KLDAP::LdapAttrValue::ConstIterator it2 = (*it).constBegin(); it2 != (*it).constEnd(); ++it2 ) {
         if ( (*it2).toLower() == "posixaccount" )
             user.setCaps( user.getCaps() | KU_User::Cap_POSIX );
-        else if ( (*it2).toLower() == "sambasamaccount" )
+        else if ( (*it2).toLower() ==  "sambasamaccount" )
             user.setCaps( user.getCaps() | KU_User::Cap_Samba );
 	else if ( (*it2).toLower() != "inetorgperson" &&
 	          (*it2).toLower() != "shadowaccount" &&
                   (*it2).toLower() != "account" )
-            objectclasses.append( (*it2) );
+            objectclasses.append( QLatin1String( (*it2) ) );
       }
       continue;
     }
@@ -150,7 +150,7 @@ void KU_UserLDAP::data( KLDAP::LdapSearch *, const KLDAP::LdapObject& data )
       if ( user.getOffice1().isEmpty() ) user.setOffice1( f1 );
       if ( user.getOffice2().isEmpty() ) user.setOffice2( f1 );
       if ( user.getAddress().isEmpty() ) user.setAddress( f1 );
-    } else if ( name == "cn" ) {
+    } else if ( name == QLatin1String( "cn" ) ) {
       if ( user.getFullName().isEmpty() || mCfg->ldapcnfullname() )
         user.setFullName( val );
       if ( user.getName().isEmpty() )
@@ -208,7 +208,7 @@ void KU_UserLDAP::data( KLDAP::LdapSearch *, const KLDAP::LdapObject& data )
   kDebug() << "new user: " << user.getName();
   if ( !objectclasses.isEmpty() ) {
     mObjectClasses.insert( count(), objectclasses );
-    kDebug() << "user: " << user.getName() << " other objectclasses: " << objectclasses.join(",");
+    kDebug() << "user: " << user.getName() << " other objectclasses: " << objectclasses.join(QLatin1String( "," ));
   }
   append( user );
 
@@ -259,16 +259,16 @@ QString KU_UserLDAP::getRDN(const KU_User &user) const
 {
   switch ( mCfg->ldapuserrdn() ) {
     case KU_PrefsBase::EnumLdapuserrdn::uid:
-      return "uid=" + user.getName();
+      return QLatin1String( "uid=" ) + user.getName();
     case KU_PrefsBase::EnumLdapuserrdn::uidNumber:
-      return "uidNumber=" + QString::number( user.getUID() );
+      return QLatin1String( "uidNumber=" ) + QString::number( user.getUID() );
     case KU_PrefsBase::EnumLdapuserrdn::cn: {
       QString cn = mCfg->ldapcnfullname() ? user.getFullName() : user.getName();
       if ( cn.isEmpty() ) cn = user.getName();
-      return "cn=" + cn;
+      return QLatin1String( "cn=" ) + cn;
     }
   }
-  return "";
+  return QLatin1String( "" );
 }
 
 void KU_UserLDAP::createPassword( KU_User &user, const QString &password )
@@ -278,12 +278,12 @@ void KU_UserLDAP::createPassword( KU_User &user, const QString &password )
       user.setPwd( password );
       break;
     case KU_PrefsBase::EnumLdappasswordhash::CRYPT:
-      user.setPwd( "{CRYPT}" + encryptPass( password, false ) );
+      user.setPwd( QLatin1String( "{CRYPT}" ) + encryptPass( password, false ) );
       break;
     case KU_PrefsBase::EnumLdappasswordhash::MD5: {
       QCryptographicHash md5(QCryptographicHash::Md5);
       md5.addData( password.toUtf8() );
-      user.setPwd( "{MD5}" + md5.result().toBase64() );
+      user.setPwd( QLatin1String( "{MD5}" ) + QLatin1String( md5.result().toBase64() ) );
       break;
     }
     case KU_PrefsBase::EnumLdappasswordhash::SMD5: {
@@ -292,14 +292,14 @@ void KU_UserLDAP::createPassword( KU_User &user, const QString &password )
       QByteArray pwd = password.toUtf8() + salt;
 
       md5.addData( pwd );
-      user.setPwd( "{SMD5}" + (md5.result() + salt).toBase64() );
+      user.setPwd( QLatin1String( "{SMD5}" ) + QLatin1String( (md5.result() + salt).toBase64() ) );
       break;
     }
     case KU_PrefsBase::EnumLdappasswordhash::SHA: {
       QCryptographicHash sha1(QCryptographicHash::Sha1);
 
       sha1.addData( password.toUtf8() );
-      user.setPwd( "{SHA}" + sha1.result().toBase64() );
+      user.setPwd( QLatin1String( "{SHA}" ) + QLatin1String( sha1.result().toBase64() ) );
       break;
     }
     case KU_PrefsBase::EnumLdappasswordhash::SSHA: {
@@ -309,7 +309,7 @@ void KU_UserLDAP::createPassword( KU_User &user, const QString &password )
       QByteArray pwd = password.toUtf8() + salt;
 
       sha1.addData( pwd );
-      user.setPwd( "{SSHA}" + (sha1.result() + salt).toBase64() );
+      user.setPwd( QLatin1String( "{SSHA}" ) + QLatin1String( (sha1.result() + salt).toBase64() ));
       break;
     }
   }
@@ -342,7 +342,7 @@ void KU_UserLDAP::createPassword( KU_User &user, const QString &password )
 
       user.setLMPwd( QString::fromLatin1( (const char*) &hex, 32 ) );
     } else {
-      user.setLMPwd( "" );
+      user.setLMPwd( QLatin1String( "" ) );
     }
   }
 }
@@ -355,7 +355,7 @@ void KU_UserLDAP::createModStruct( const KU_User &user, int oldindex, KLDAP::Lda
   bool mod = ( oldindex != -1 );
 
   pwd = user.getPwd();
-  if ( user.getDisabled() ) pwd = "";
+  if ( user.getDisabled() ) pwd = QLatin1String( "" );
 
   cn = mCfg->ldapcnfullname() ? user.getFullName() : user.getName();
   if ( cn.isEmpty() ) cn = user.getName();
@@ -366,9 +366,9 @@ void KU_UserLDAP::createModStruct( const KU_User &user, int oldindex, KLDAP::Lda
     .arg(user.getOffice2())
     .arg(user.getAddress());
 
-  samflags = "[U";
-  samflags += user.getDisabled() ? 'D' : ' ';
-  samflags += "         ]";
+  samflags = QLatin1String( "[U" );
+  samflags += user.getDisabled() ? QLatin1Char( 'D' ) : QLatin1Char( ' ' );
+  samflags += QLatin1String( "         ]" );
 
   vals.append( caps & Cap_InetOrg ? "inetOrgPerson" : "account" );
   if ( user.getCaps() & KU_User::Cap_POSIX ) {
@@ -383,103 +383,103 @@ void KU_UserLDAP::createModStruct( const KU_User &user, int oldindex, KLDAP::Lda
 
   if ( mod && mObjectClasses.contains( oldindex ) ) {
     QStringList ocs = mObjectClasses[ oldindex ];
-    kDebug() << user.getName() << " has additional objectclasses: " << ocs.join(",");
+    kDebug() << user.getName() << " has additional objectclasses: " << ocs.join(QLatin1String( "," ));
     QStringList::iterator it;
     for ( it = ocs.begin(); it != ocs.end(); ++it ) {
       vals.append( (*it).toUtf8() );
     }
   }
-  ku_add2ops( ops, "objectClass", vals );
+  ku_add2ops( ops, QLatin1String( "objectClass" ), vals );
   vals.clear();
 
-  ku_add2ops( ops, "cn", cn.toUtf8() );
-  ku_add2ops( ops, caps & Cap_InetOrg ? "uid" : "userid", user.getName().toUtf8() );
+  ku_add2ops( ops, QLatin1String( "cn" ), cn.toUtf8() );
+  ku_add2ops( ops, caps & Cap_InetOrg ? QLatin1String( "uid" ) : QLatin1String( "userid" ), user.getName().toUtf8() );
 
   if ( ( user.getCaps() & KU_User::Cap_POSIX ) || ( caps & Cap_InetOrg ) ) {
-    ku_add2ops( ops, "userpassword", pwd.toUtf8(), true );
+    ku_add2ops( ops, QLatin1String( "userpassword" ), pwd.toUtf8(), true );
   }
 
   if ( user.getCaps() & KU_User::Cap_POSIX ) {
-    ku_add2ops( ops, "uidnumber", QString::number(user.getUID()).toUtf8() );
-    ku_add2ops( ops, "gidnumber", QString::number(user.getGID()).toUtf8() );
-    ku_add2ops( ops, "gecos", !mCfg->ldapgecos() ? QByteArray() : QByteArray( gecos.toLatin1() ) );
-    ku_add2ops( ops, "homedirectory", user.getHomeDir().toUtf8() );
-    ku_add2ops( ops, "loginshell", user.getShell().toUtf8() );
+    ku_add2ops( ops, QLatin1String( "uidnumber" ), QString::number(user.getUID()).toUtf8() );
+    ku_add2ops( ops, QLatin1String( "gidnumber" ), QString::number(user.getGID()).toUtf8() );
+    ku_add2ops( ops, QLatin1String( "gecos" ), !mCfg->ldapgecos() ? QByteArray() : QByteArray( gecos.toLatin1() ) );
+    ku_add2ops( ops, QLatin1String( "homedirectory" ), user.getHomeDir().toUtf8() );
+    ku_add2ops( ops, QLatin1String( "loginshell" ), user.getShell().toUtf8() );
   } else if (mod) {
-    ku_add2ops( ops, "uidnumber" );
-    ku_add2ops( ops, "gidnumber" );
-    ku_add2ops( ops, "gecos" );
-    ku_add2ops( ops, "homedirectory" );
-    ku_add2ops( ops, "loginshell" );
+    ku_add2ops( ops, QLatin1String( "uidnumber" ) );
+    ku_add2ops( ops, QLatin1String( "gidnumber" ) );
+    ku_add2ops( ops, QLatin1String( "gecos" ) );
+    ku_add2ops( ops, QLatin1String( "homedirectory" ) );
+    ku_add2ops( ops, QLatin1String( "loginshell" ) );
   }
 
   if ( caps & Cap_InetOrg ) {
-    ku_add2ops( ops, "sn", user.getSurname().toUtf8() );
-    ku_add2ops( ops, "mail", user.getEmail().toUtf8() );
-    ku_add2ops( ops, "displayName", user.getFullName().toUtf8() );
-    ku_add2ops( ops, "postaladdress", user.getAddress().toUtf8() );
+    ku_add2ops( ops, QLatin1String( "sn" ), user.getSurname().toUtf8() );
+    ku_add2ops( ops, QLatin1String( "mail" ), user.getEmail().toUtf8() );
+    ku_add2ops( ops, QLatin1String( "displayName" ), user.getFullName().toUtf8() );
+    ku_add2ops( ops, QLatin1String( "postaladdress" ), user.getAddress().toUtf8() );
     vals.append( user.getOffice1().toUtf8() );
     vals.append( user.getOffice2().toUtf8() );
-    ku_add2ops( ops, "telephoneNumber", vals );
+    ku_add2ops( ops, QLatin1String( "telephoneNumber" ), vals );
     vals.clear();
   }
 
   if ( caps & Cap_Samba ) {
     if ( user.getCaps() & KU_User::Cap_Samba ) {
-      ku_add2ops( ops, "sambadomainname", user.getDomain().toUtf8() );
-      ku_add2ops( ops, "sambauserworkstations", user.getWorkstations().toUtf8() );
-      ku_add2ops( ops, "sambahomepath", user.getHomePath().toUtf8() );
-      ku_add2ops( ops, "sambahomedrive", user.getHomeDrive().toUtf8() );
-      ku_add2ops( ops, "sambalogonscript", user.getLoginScript().toUtf8() );
-      ku_add2ops( ops, "sambaprofilepath", user.getProfilePath().toUtf8() );
-      ku_add2ops( ops, "sambalmpassword", user.getLMPwd().toUtf8() );
-      ku_add2ops( ops, "sambantpassword", user.getNTPwd().toUtf8() );
-      ku_add2ops( ops, "sambasid", user.getSID().getSID().toUtf8() );
-      ku_add2ops( ops, "sambaacctflags", samflags.toUtf8() );
-      ku_add2ops( ops, "sambaprimarygroupsid", user.getPGSID().getSID().toUtf8() );
-      ku_add2ops( ops, "sambapwdlastset", QString::number( user.getLastChange() ).toUtf8() );
+      ku_add2ops( ops, QLatin1String( "sambadomainname" ), user.getDomain().toUtf8() );
+      ku_add2ops( ops, QLatin1String( "sambauserworkstations" ), user.getWorkstations().toUtf8() );
+      ku_add2ops( ops, QLatin1String( "sambahomepath" ), user.getHomePath().toUtf8() );
+      ku_add2ops( ops, QLatin1String( "sambahomedrive" ), user.getHomeDrive().toUtf8() );
+      ku_add2ops( ops, QLatin1String( "sambalogonscript" ), user.getLoginScript().toUtf8() );
+      ku_add2ops( ops, QLatin1String( "sambaprofilepath" ), user.getProfilePath().toUtf8() );
+      ku_add2ops( ops, QLatin1String( "sambalmpassword" ), user.getLMPwd().toUtf8() );
+      ku_add2ops( ops, QLatin1String( "sambantpassword" ), user.getNTPwd().toUtf8() );
+      ku_add2ops( ops, QLatin1String( "sambasid" ), user.getSID().getSID().toUtf8() );
+      ku_add2ops( ops, QLatin1String( "sambaacctflags" ), samflags.toUtf8() );
+      ku_add2ops( ops, QLatin1String( "sambaprimarygroupsid" ), user.getPGSID().getSID().toUtf8() );
+      ku_add2ops( ops, QLatin1String( "sambapwdlastset" ), QString::number( user.getLastChange() ).toUtf8() );
       if ( user.getExpire() != -1 )
         vals.append( QString::number( user.getExpire() ).toUtf8() );
-      ku_add2ops( ops, "sambakickofftime", vals );
+      ku_add2ops( ops, QLatin1String( "sambakickofftime" ), vals );
       vals.clear();
     } else if (mod) {
-      ku_add2ops( ops, "sambadomainname" );
-      ku_add2ops( ops, "sambauserworkstations" );
-      ku_add2ops( ops, "sambahomepath" );
-      ku_add2ops( ops, "sambahomedrive" );
-      ku_add2ops( ops, "sambalogonscript" );
-      ku_add2ops( ops, "sambaprofilepath" );
-      ku_add2ops( ops, "sambalmpassword" );
-      ku_add2ops( ops, "sambantpassword" );
-      ku_add2ops( ops, "sambasid" );
-      ku_add2ops( ops, "sambaacctflags" );
-      ku_add2ops( ops, "sambaprimarygroupsid" );
-      ku_add2ops( ops, "sambapwdlastset" );
-      ku_add2ops( ops, "sambakickofftime" );
+      ku_add2ops( ops, QLatin1String( "sambadomainname" ) );
+      ku_add2ops( ops, QLatin1String( "sambauserworkstations" ) );
+      ku_add2ops( ops, QLatin1String( "sambahomepath" ) );
+      ku_add2ops( ops, QLatin1String( "sambahomedrive" ) );
+      ku_add2ops( ops, QLatin1String( "sambalogonscript" ) );
+      ku_add2ops( ops, QLatin1String( "sambaprofilepath" ) );
+      ku_add2ops( ops, QLatin1String( "sambalmpassword" ) );
+      ku_add2ops( ops, QLatin1String( "sambantpassword" ) );
+      ku_add2ops( ops, QLatin1String( "sambasid" ) );
+      ku_add2ops( ops, QLatin1String( "sambaacctflags" ) );
+      ku_add2ops( ops, QLatin1String( "sambaprimarygroupsid" ) );
+      ku_add2ops( ops, QLatin1String( "sambapwdlastset" ) );
+      ku_add2ops( ops, QLatin1String( "sambakickofftime" ) );
       if ( schemaversion > 0 ) {
-        ku_add2ops( ops, "sambapasswordhistory" );
-        ku_add2ops( ops, "sambalogonhours" );
+        ku_add2ops( ops, QLatin1String( "sambapasswordhistory" ) );
+        ku_add2ops( ops, QLatin1String( "sambalogonhours" ) );
       }
     }
   }
 
   if ( caps & Cap_Shadow ) {
     if ( user.getCaps() & KU_User::Cap_POSIX ) {
-      ku_add2ops( ops, "shadowlastchange",  QString::number( timeToDays( user.getLastChange() ) ).toUtf8() );
-      ku_add2ops( ops, "shadowmin", QString::number( user.getMin() ).toUtf8() );
-      ku_add2ops( ops, "shadowmax", QString::number( user.getMax() ).toUtf8() );
-      ku_add2ops( ops, "shadowwarning", QString::number( user.getWarn() ).toUtf8() );
-      ku_add2ops( ops, "shadowinactive", QString::number( user.getInactive() ).toUtf8() );
-      ku_add2ops( ops, "shadowexpire", QString::number( timeToDays( user.getExpire() ) ).toUtf8() );
-      ku_add2ops( ops, "shadowflag", QString::number( user.getFlag() ).toUtf8() );
+      ku_add2ops( ops, QLatin1String( "shadowlastchange" ),  QString::number( timeToDays( user.getLastChange() ) ).toUtf8() );
+      ku_add2ops( ops, QLatin1String( "shadowmin" ), QString::number( user.getMin() ).toUtf8() );
+      ku_add2ops( ops, QLatin1String( "shadowmax" ), QString::number( user.getMax() ).toUtf8() );
+      ku_add2ops( ops, QLatin1String( "shadowwarning" ), QString::number( user.getWarn() ).toUtf8() );
+      ku_add2ops( ops, QLatin1String( "shadowinactive" ), QString::number( user.getInactive() ).toUtf8() );
+      ku_add2ops( ops, QLatin1String( "shadowexpire" ), QString::number( timeToDays( user.getExpire() ) ).toUtf8() );
+      ku_add2ops( ops, QLatin1String( "shadowflag" ), QString::number( user.getFlag() ).toUtf8() );
     } else if (mod) {
-      ku_add2ops( ops, "shadowlastchange" );
-      ku_add2ops( ops, "shadowmin" );
-      ku_add2ops( ops, "shadowmax" );
-      ku_add2ops( ops, "shadowwarning" );
-      ku_add2ops( ops, "shadowinactive" );
-      ku_add2ops( ops, "shadowexpire" );
-      ku_add2ops( ops, "shadowflag" );
+      ku_add2ops( ops, QLatin1String( "shadowlastchange" ) );
+      ku_add2ops( ops, QLatin1String( "shadowmin" ) );
+      ku_add2ops( ops, QLatin1String( "shadowmax" ) );
+      ku_add2ops( ops, QLatin1String( "shadowwarning" ) );
+      ku_add2ops( ops, QLatin1String( "shadowinactive" ) );
+      ku_add2ops( ops, QLatin1String( "shadowexpire" ) );
+      ku_add2ops( ops, QLatin1String( "shadowflag" ) );
     }
   }
 }
@@ -522,7 +522,7 @@ bool KU_UserLDAP::dbcommit()
     if ( oldrdn != newrdn ) {
       int ret = op.rename_s( KLDAP::LdapDN( oldrdn + QLatin1Char( ',' ) + mUrl.dn().toString() ),
         newrdn,
-        mUrl.dn().toString().toUtf8(),
+                             QLatin1String( mUrl.dn().toString().toUtf8() ),
         true );
 
       if ( ret != KLDAP_SUCCESS ) {

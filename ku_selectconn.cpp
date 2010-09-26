@@ -54,8 +54,8 @@ KU_SelectConn::KU_SelectConn(const QString &selected, QWidget *parent) :
   QStringList::iterator it = conns.begin();
   int i = 0, sel = 0;
   while ( it != conns.end() ) {
-    if ( (*it).startsWith( "connection-" ) ) {
-      (*it).remove( QRegExp("^connection-") );
+    if ( (*it).startsWith( QLatin1String( "connection-" ) ) ) {
+      (*it).remove( QRegExp(QLatin1String( "^connection-" )) );
       if ( (*it) == mSelected ) sel = i;
       i++;
       it++;
@@ -63,12 +63,13 @@ KU_SelectConn::KU_SelectConn(const QString &selected, QWidget *parent) :
       it = conns.erase( it );
   }
   mCombo->insertItems( 0, conns );
-  if ( mCombo->count() == 0 ) mCombo->addItem( "default" );
+  //TODO i18n ?
+  if ( mCombo->count() == 0 ) mCombo->addItem( QLatin1String( "default" ) );
   mCombo->setCurrentIndex( sel );
   mSelected = connSelected();
   topLayout->addWidget( label );
   topLayout->addWidget( mCombo );
-  
+
   connect( this, SIGNAL(user1Clicked()), SLOT(slotUser1()) );
   connect( this, SIGNAL(user2Clicked()), SLOT(slotUser2()) );
   connect( this, SIGNAL(user3Clicked()), SLOT(slotUser3()) );
@@ -85,7 +86,7 @@ void KU_SelectConn::slotUser3()
   newconn = KInputDialog::getText( QString::null,	//krazy:exclude=nullstrassign for old broken gcc
     i18n("Please type the name of the new connection:") );
   if ( newconn.isEmpty() ) return;
-  if ( KGlobal::config()->groupList().contains( "connection-" + newconn ) ) {
+  if ( KGlobal::config()->groupList().contains( QLatin1String( "connection-" ) + newconn ) ) {
     KMessageBox::sorry( 0, i18n("A connection with this name already exists.") );
     return;
   }
@@ -126,14 +127,15 @@ void KU_SelectConn::slotUser2()
 void KU_SelectConn::slotUser1()
 {
   QString conn = connSelected();
-  if ( KMessageBox::warningContinueCancel( 0, i18n("Do you really want to delete the connection '%1'?", 
+  if ( KMessageBox::warningContinueCancel( 0, i18n("Do you really want to delete the connection '%1'?",
      conn ),i18n("Delete Connection"),KStandardGuiItem::del() ) == KMessageBox::Cancel ) return;
 
-  KGlobal::config()->deleteGroup( "connection-" + conn );
+  KGlobal::config()->deleteGroup( QLatin1String( "connection-" ) + conn );
   KGlobal::config()->sync();
   mCombo->removeItem( mCombo->currentIndex() );
   if ( mCombo->count() == 0 ) {
-    mCombo->addItem( "default" );
+      //TODO i18n ?
+    mCombo->addItem( QLatin1String( "default" ) );
     mCombo->setCurrentIndex( 0 );
   }
   kDebug() << "slotUser1: " << conn << " " << mSelected;

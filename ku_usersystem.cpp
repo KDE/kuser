@@ -47,7 +47,7 @@ KU_UserSystem::~KU_UserSystem()
 {
 }
 
-bool KU_UserSystem::reload() 
+bool KU_UserSystem::reload()
 {
   mErrorString = mErrorDetails = QString();
   if (!loadpwd())
@@ -75,11 +75,11 @@ bool KU_UserSystem::loadpwd()
     user.setGID(p->pw_gid);
     user.setName(QString::fromLocal8Bit(p->pw_name));
     tmp  = QString::fromLocal8Bit( p->pw_passwd );
-    if ( tmp != "x" && tmp != "*" && !tmp.startsWith('!') )
+    if ( tmp != QLatin1String( "x" ) && tmp != QLatin1String( "*" ) && !tmp.startsWith(QLatin1Char( '!' )) )
       user.setDisabled( false );
     else
       user.setDisabled( true );
-    if ( tmp.startsWith('!') ) tmp.remove(0, 1);
+    if ( tmp.startsWith(QLatin1Char( '!' )) ) tmp.remove(0, 1);
     user.setPwd( tmp );
     user.setHomeDir(QString::fromLocal8Bit(p->pw_dir));
     user.setShell(QString::fromLocal8Bit(p->pw_shell));
@@ -107,7 +107,7 @@ bool KU_UserSystem::loadsdw()
   KU_User user;
   QString tmp;
   int index;
-  
+
   setspent();
   while ((spw = getspent())) {     // read a shadow password structure
 
@@ -118,7 +118,7 @@ bool KU_UserSystem::loadsdw()
 
     user = at( index );
     tmp = QString::fromLocal8Bit( spw->sp_pwdp );
-    if ( tmp.startsWith("!!") || tmp == "*" ) {
+    if ( tmp.startsWith(QLatin1String( "!!" )) || tmp == QLatin1String( "*" ) ) {
       user.setDisabled( true );
       tmp.remove( 0, 2 );
     } else
@@ -138,6 +138,6 @@ bool KU_UserSystem::loadsdw()
   }
 
   endspent();
-#endif //HAVE_SHADOW_H  
+#endif //HAVE_SHADOW_H
   return true;
 }

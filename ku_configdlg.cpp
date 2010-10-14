@@ -98,8 +98,8 @@ KU_ConfigDlg::KU_ConfigDlg( KConfigSkeleton *config, QWidget *parent, const char
 
   {
     QFrame *page3b = new QFrame( 0 );
-    Ui::KU_LdapSettings *ui = new Ui::KU_LdapSettings();
-    ui->setupUi( page3b );
+    ldapui = new Ui::KU_LdapSettings();
+    ldapui->setupUi( page3b );
     page3->addTab( page3b, i18n("Settings") );
   }
   {
@@ -116,6 +116,7 @@ KU_ConfigDlg::KU_ConfigDlg( KConfigSkeleton *config, QWidget *parent, const char
 KU_ConfigDlg::~KU_ConfigDlg()
 {
   delete sambaui;
+  delete ldapui;
 }
 
 void KU_ConfigDlg::slotQueryClicked()

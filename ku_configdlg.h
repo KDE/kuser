@@ -32,6 +32,7 @@
 
 class Ui_KU_LdapSamba;
 class Ui_KU_LdapSettings;
+class Ui_KU_FilesSettings;
 namespace KLDAP { class LdapConfigWidget; }
 namespace KIO { class Job; }
 struct KU_SambaDomain {
@@ -49,7 +50,7 @@ private:
   QProgressDialog *mProg;
   Ui_KU_LdapSamba *sambaui;
   Ui_KU_LdapSettings *ldapui;
-
+  Ui_KU_FilesSettings *fileui;
   KLDAP::LdapConfigWidget *ldconf;
   KLDAP::Ldif mLdif;
   QString mErrorMsg;

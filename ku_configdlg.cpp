@@ -70,8 +70,8 @@ KU_ConfigDlg::KU_ConfigDlg( KConfigSkeleton *config, QWidget *parent, const char
 
   {
     QFrame *page2 = new QFrame( this );
-    Ui::KU_FilesSettings *ui = new Ui::KU_FilesSettings();
-    ui->setupUi( page2 );
+    fileui = new Ui::KU_FilesSettings();
+    fileui->setupUi( page2 );
     addPage( page2, i18n("Files"), QLatin1String( "document-properties" ), i18n("File Source Settings") );
   }
 
@@ -117,6 +117,7 @@ KU_ConfigDlg::~KU_ConfigDlg()
 {
   delete sambaui;
   delete ldapui;
+  delete fileui;
 }
 
 void KU_ConfigDlg::slotQueryClicked()

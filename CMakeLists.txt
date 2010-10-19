@@ -81,6 +81,6 @@ install(TARGETS kuser ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 ########### install files ###############
 
-install(FILES kuser.desktop DESTINATION ${XDG_APPS_INSTALL_DIR})
+install(PROGRAMS kuser.desktop DESTINATION ${XDG_APPS_INSTALL_DIR})
 install(FILES kuserui.rc DESTINATION ${DATA_INSTALL_DIR}/kuser)
 install(FILES kuser.kcfg  DESTINATION ${KCFG_INSTALL_DIR})

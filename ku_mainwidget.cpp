@@ -115,7 +115,6 @@ void KU_MainWidget::setupActions()
   actionCollection()->addAction( QLatin1String( "show_sys" ), mShowSys );
   connect( mShowSys, SIGNAL(triggered(bool)), this, SLOT(showSys(bool)) );
 
-  mShowSys->setCheckedState(KGuiItem(i18n("Hide System Users/Groups")));
   mShowSys->setChecked( KU_Global::kcfg()->showsys() );
 }
 

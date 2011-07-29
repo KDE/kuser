@@ -146,10 +146,10 @@ void KU_ConfigDlg::slotQueryClicked()
   mLdif.startParsing();
   KIO::Job *job = KIO::get( _url, KIO::Reload, KIO::HideProgressInfo );
 //  job->addMetaData("no-auth-prompt","true");
-  connect( job, SIGNAL( data( KIO::Job*, const QByteArray& ) ),
-    this, SLOT( loadData( KIO::Job*, const QByteArray& ) ) );
-  connect( job, SIGNAL( result( KJob* ) ),
-    this, SLOT( loadResult( KJob* ) ) );
+  connect( job, SIGNAL(data(KIO::Job*,QByteArray)),
+    this, SLOT(loadData(KIO::Job*,QByteArray)) );
+  connect( job, SIGNAL(result(KJob*)),
+    this, SLOT(loadResult(KJob*)) );
 
   mProg = new QProgressDialog( 0 );
   mProg->setLabel( new QLabel(_url.prettyUrl()) );

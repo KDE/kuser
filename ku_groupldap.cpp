@@ -163,11 +163,11 @@ bool KU_GroupLDAP::reload()
 
   KLDAP::LdapSearch search;
   connect( &search,
-    SIGNAL( data( KLDAP::LdapSearch*, const KLDAP::LdapObject& ) ),
-    this, SLOT ( data ( KLDAP::LdapSearch*, const KLDAP::LdapObject&) ) );
+    SIGNAL(data(KLDAP::LdapSearch*,KLDAP::LdapObject)),
+    this, SLOT (data(KLDAP::LdapSearch*,KLDAP::LdapObject)) );
   connect( &search,
-    SIGNAL( result( KLDAP::LdapSearch* ) ),
-    this, SLOT ( result ( KLDAP::LdapSearch* ) ) );
+    SIGNAL(result(KLDAP::LdapSearch*)),
+    this, SLOT (result(KLDAP::LdapSearch*)) );
 
   if (search.search( mUrl )) {
     mProg->exec();

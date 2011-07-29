@@ -95,7 +95,7 @@ void KU_SelectConn::slotUser3()
   KU_PrefsBase kcfg( config, newconn );
 
   KU_ConfigDlg cfgdlg( &kcfg, this );
-  connect(&cfgdlg, SIGNAL(settingsChanged(const QString&)), this, SLOT(slotNewApplySettings()));
+  connect(&cfgdlg, SIGNAL(settingsChanged(QString)), this, SLOT(slotNewApplySettings()));
   cfgdlg.exec();
 
   if ( newconn.isEmpty() )
@@ -120,7 +120,7 @@ void KU_SelectConn::slotUser2()
   kcfg.readConfig();
 
   KU_ConfigDlg cfgdlg( &kcfg, this );
-  connect( &cfgdlg, SIGNAL(settingsChanged(const QString&)), this, SLOT(slotApplySettings()) );
+  connect( &cfgdlg, SIGNAL(settingsChanged(QString)), this, SLOT(slotApplySettings()) );
   cfgdlg.exec();
 }
 

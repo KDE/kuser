@@ -121,7 +121,7 @@ void KU_EditUser::initDlg()
 //    whatstr = i18n("WHAT IS THIS: User Id");
     leid->setValidator(new QIntValidator(frame));
     addRow(frame, layout, row++, leid, i18n("&User ID:"), whatstr);
-    connect(leid, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
+    connect(leid, SIGNAL(textChanged(QString)), this, SLOT(changed()));
 
     if ( !ro ) {
       pbsetpwd = new QPushButton(i18n("Set &Password..."), frame);
@@ -133,19 +133,19 @@ void KU_EditUser::initDlg()
     lefname = new KLineEdit(frame);
 //    whatstr = i18n("WHAT IS THIS: Full Name");
     addRow(frame, layout, row++, lefname, i18n("Full &name:"), whatstr);
-    connect(lefname, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
+    connect(lefname, SIGNAL(textChanged(QString)), this, SLOT(changed()));
     lefname->setFocus();
 
     if ( KU_Global::users()->getCaps() & KU_Users::Cap_InetOrg ) {
       lesurname = new KLineEdit(frame);
 //    whatstr = i18n("WHAT IS THIS: Surname");
       addRow(frame, layout, row++, lesurname, i18n("Surname:"), whatstr);
-      connect(lesurname, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
+      connect(lesurname, SIGNAL(textChanged(QString)), this, SLOT(changed()));
 
       lemail = new KLineEdit(frame);
 //    whatstr = i18n("WHAT IS THIS: Email");
       addRow(frame, layout, row++, lemail, i18n("Email address:"), whatstr);
-      connect(lemail, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
+      connect(lemail, SIGNAL(textChanged(QString)), this, SLOT(changed()));
     }
 
     leshell = new KComboBox(true, frame);
@@ -155,13 +155,13 @@ void KU_EditUser::initDlg()
     QStringList shells = readShells();
     shells.sort();
     leshell->insertItems( 1, shells );
-    connect(leshell, SIGNAL(activated(const QString &)), this, SLOT(changed()));
-    connect(leshell, SIGNAL(editTextChanged(const QString &)), this, SLOT(changed()));
+    connect(leshell, SIGNAL(activated(QString)), this, SLOT(changed()));
+    connect(leshell, SIGNAL(editTextChanged(QString)), this, SLOT(changed()));
 //    whatstr = i18n("WHAT IS THIS: Login Shell");
     addRow(frame, layout, row++, leshell, i18n("&Login shell:"), whatstr);
 
     lehome = new KLineEdit(frame);
-    connect(lehome, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
+    connect(lehome, SIGNAL(textChanged(QString)), this, SLOT(changed()));
 //    whatstr = i18n("WHAT IS THIS: Home Directory");
     addRow(frame, layout, row++, lehome, i18n("&Home folder:"), whatstr);
 
@@ -169,37 +169,37 @@ void KU_EditUser::initDlg()
     // differently than Linux.
     if ( KU_Global::users()->getCaps() & KU_Users::Cap_BSD ) {
       leoffice = new KLineEdit(frame);
-      connect(leoffice, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
+      connect(leoffice, SIGNAL(textChanged(QString)), this, SLOT(changed()));
 //    whatstr = i18n("WHAT IS THIS: Office");
       addRow(frame, layout, row++, leoffice, i18n("&Office:"), whatstr);
 
       leophone = new KLineEdit(frame);
-      connect(leophone, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
+      connect(leophone, SIGNAL(textChanged(QString)), this, SLOT(changed()));
 //    whatstr = i18n("WHAT IS THIS: Office Phone");
       addRow(frame, layout, row++, leophone, i18n("Offi&ce Phone:"), whatstr);
 
       lehphone = new KLineEdit(frame);
-      connect(lehphone, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
+      connect(lehphone, SIGNAL(textChanged(QString)), this, SLOT(changed()));
 //    whatstr = i18n("WHAT IS THIS: Home Phone");
       addRow(frame, layout, row++, lehphone, i18n("Ho&me Phone:"), whatstr);
 
       leclass = new KLineEdit(frame);
-      connect(leclass, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
+      connect(leclass, SIGNAL(textChanged(QString)), this, SLOT(changed()));
 //    whatstr = i18n("WHAT IS THIS: Login class");
       addRow(frame, layout, row++, leclass, i18n("Login class:"), whatstr, true);
     } else {
       leoffice1 = new KLineEdit(frame);
-      connect(leoffice1, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
+      connect(leoffice1, SIGNAL(textChanged(QString)), this, SLOT(changed()));
 //    whatstr = i18n("WHAT IS THIS: Office1");
       addRow(frame, layout, row++, leoffice1, i18n("&Office #1:"), whatstr);
 
       leoffice2 = new KLineEdit(frame);
-      connect(leoffice2, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
+      connect(leoffice2, SIGNAL(textChanged(QString)), this, SLOT(changed()));
 //    whatstr = i18n("WHAT IS THIS: Office2");
       addRow(frame, layout, row++, leoffice2, i18n("O&ffice #2:"), whatstr);
 
       leaddress = new KLineEdit(frame);
-      connect(leaddress, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
+      connect(leaddress, SIGNAL(textChanged(QString)), this, SLOT(changed()));
 //    whatstr = i18n("WHAT IS THIS: Address");
       addRow(frame, layout, row++, leaddress, i18n("&Address:"), whatstr);
     }
@@ -260,7 +260,7 @@ void KU_EditUser::initDlg()
     cbexpire = new QCheckBox( i18n("Never"), frame );
     layout->addWidget( cbexpire, row++, 3 );
 
-    connect( lesexpire, SIGNAL(valueChanged(const QDateTime&)), this, SLOT(changed()) );
+    connect( lesexpire, SIGNAL(valueChanged(QDateTime)), this, SLOT(changed()) );
     connect( cbexpire, SIGNAL(stateChanged(int)), this, SLOT(changed()) );
     connect( cbexpire, SIGNAL(toggled(bool)), lesexpire, SLOT(setDisabled(bool)) );
   }
@@ -276,42 +276,42 @@ void KU_EditUser::initDlg()
 //  whatstr = i18n("WHAT IS THIS: Rid");
     lerid->setValidator(new QIntValidator(frame));
     addRow(frame, layout, row++, lerid, i18n("RID:"), whatstr);
-    connect(lerid, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
+    connect(lerid, SIGNAL(textChanged(QString)), this, SLOT(changed()));
 
     leliscript = new KLineEdit(frame);
 //  whatstr = i18n("WHAT IS THIS: Login script");
     addRow(frame, layout, row++, leliscript, i18n("Login script:"), whatstr);
-    connect(leliscript, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
+    connect(leliscript, SIGNAL(textChanged(QString)), this, SLOT(changed()));
 
     leprofile = new KLineEdit(frame);
 //  whatstr = i18n("WHAT IS THIS: Login script");
     addRow(frame, layout, row++, leprofile, i18n("Profile path:"), whatstr);
-    connect(leprofile, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
+    connect(leprofile, SIGNAL(textChanged(QString)), this, SLOT(changed()));
 
     lehomedrive = new KLineEdit(frame);
 //  whatstr = i18n("WHAT IS THIS: Login script");
     addRow(frame, layout, row++, lehomedrive, i18n("Home drive:"), whatstr);
-    connect(lehomedrive, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
+    connect(lehomedrive, SIGNAL(textChanged(QString)), this, SLOT(changed()));
 
     lehomepath = new KLineEdit(frame);
 //  whatstr = i18n("WHAT IS THIS: Login script");
     addRow(frame, layout, row++, lehomepath, i18n("Home path:"), whatstr);
-    connect(lehomepath, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
+    connect(lehomepath, SIGNAL(textChanged(QString)), this, SLOT(changed()));
 
     leworkstations = new KLineEdit(frame);
 //  whatstr = i18n("WHAT IS THIS: Login script");
     addRow(frame, layout, row++, leworkstations, i18n("User workstations:"), whatstr);
-    connect(leworkstations, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
+    connect(leworkstations, SIGNAL(textChanged(QString)), this, SLOT(changed()));
 
     ledomain = new KLineEdit(frame);
 //  whatstr = i18n("WHAT IS THIS: Login script");
     addRow(frame, layout, row++, ledomain, i18n("Domain name:"), whatstr);
-    connect(ledomain, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
+    connect(ledomain, SIGNAL(textChanged(QString)), this, SLOT(changed()));
 
     ledomsid = new KLineEdit(frame);
 //  whatstr = i18n("WHAT IS THIS: Login script");
     addRow(frame, layout, row++, ledomsid, i18n("Domain SID:"), whatstr);
-    connect(ledomsid, SIGNAL(textChanged(const QString &)), this, SLOT(changed()));
+    connect(ledomsid, SIGNAL(textChanged(QString)), this, SLOT(changed()));
 
     cbsamba = new QCheckBox(frame);
     connect(cbsamba, SIGNAL(stateChanged(int)), this, SLOT(changed()));
@@ -339,9 +339,9 @@ void KU_EditUser::initDlg()
       layout->addWidget( pbprigr, 1, 1 );
       connect( pbprigr, SIGNAL(clicked()), this, SLOT(setpgroup()) );
     }
-    connect( lstgrp, SIGNAL(itemClicked(QListWidgetItem *)), this, SLOT(gchanged()) );
+    connect( lstgrp, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(gchanged()) );
   }
-//  connect( this, SIGNAL( okClicked() ), SLOT( slotOk() ) );
+//  connect( this, SIGNAL(okClicked()), SLOT(slotOk()) );
 }
 
 KU_EditUser::KU_EditUser( const QList<int> &selected,

@@ -68,8 +68,8 @@ void KU_MainView::init() {
   groupview->setUniformRowHeights( true );
   addTab( groupview, i18n("Groups") );
 
-  connect(userview, SIGNAL(activated(const QModelIndex&)), this, SLOT(userSelected()));
-  connect(groupview, SIGNAL(activated(const QModelIndex&)), this, SLOT(groupSelected()));
+  connect(userview, SIGNAL(activated(QModelIndex)), this, SLOT(userSelected()));
+  connect(groupview, SIGNAL(activated(QModelIndex)), this, SLOT(groupSelected()));
 
   connect(this, SIGNAL(currentChanged(int)), this, SLOT(slotTabChanged()));
 }

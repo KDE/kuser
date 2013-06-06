@@ -1,5 +1,17 @@
 project(kuser)
 
+# search packages used by KDE
+find_package(KDE4 REQUIRED)
+include (KDE4Defaults)
+include (MacroLibrary)
+
+add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
+add_definitions( -DQT_NO_CAST_FROM_ASCII )
+add_definitions( -DQT_NO_CAST_TO_ASCII )
+add_definitions(-DQT_USE_FAST_CONCATENATION -DQT_USE_FAST_OPERATOR_PLUS)
+
+include_directories (${QDBUS_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES})
+
 find_package(KdepimLibs REQUIRED)
 
 include(CheckFunctionExists)
@@ -10,6 +22,7 @@ include(TestBigEndian)
 add_subdirectory(pics)
 add_subdirectory(toolbar)
 add_subdirectory(icon)
+add_subdirectory(doc)
 
 # use the project-specific _SOURCE_DIR variable (set by the project() call above), Alex
 include_directories(${kuser_SOURCE_DIR} ${KDEPIMLIBS_INCLUDE_DIR})

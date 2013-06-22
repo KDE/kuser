@@ -45,8 +45,8 @@
 <legalnotice>&FDLNotice;</legalnotice>
 
 
-<date>2010-01-18</date>
-<releaseinfo>3.9 (&kde; 4.4)</releaseinfo>
+<date>2013-06-22</date>
+<releaseinfo>3.9 (&kde; 4.11)</releaseinfo>
 
 <abstract><para>This documentation describes &kuser; version 3.9. This
 program allows you to manage users and groups on your system.</para>
@@ -66,6 +66,8 @@ program allows you to manage users and groups on your system.</para>
 <chapter id="start">
 <title>Getting Started</title>
 
+<para>&kuser; allows you to manage users and groups on your system.
+</para>
 <para>This is a short introduction to &kuser;. For more detailed
 information, see <link linkend="using">Usage</link>.</para>
 
@@ -107,7 +109,10 @@ will appear.</para>
 
 </sect1>
 
-<sect1 id="user-properties">
+<sect1 id="properties">
+<title>User and Group Properties</title>
+
+<sect2 id="user-properties">
 <title>User Properties Dialog</title>
 
 <para>The user properties dialog has two tabs.</para>
@@ -118,8 +123,8 @@ and whether quotas are being used. Additional tabs will appear if you
 have shadow passwords, or any other similar things such as
 <filename>/etc/master.passwd</filename> in BSD flavor Unices.</para>
 -->
-<sect2 id="user-info">
-<title><guilabel>User Info</guilabel> Tab</title>
+<sect3 id="user-info">
+<title>User Info Tab</title>
 
 <para>In the <guilabel>User Info</guilabel> tab you can modify:
 </para>
@@ -131,18 +136,18 @@ have shadow passwords, or any other similar things such as
 <listitem><para><guilabel>Login Shell</guilabel> (the list of login shells is
 taken from the <filename>/etc/shells</filename> file)</para></listitem>
 <listitem><para><guilabel>Home Folder</guilabel></para></listitem>
-<listitem><para><guilabel>Two office locations</guilabel></para></listitem>
+<listitem><para>Two office locations</para></listitem>
 <listitem><para><guilabel>Address</guilabel></para></listitem>
 <listitem><para><guilabel>Account disabled</guilabel></para></listitem>
 </itemizedlist>
 
-</sect2>
+</sect3>
 
-<sect2 id="password-management-info">
-<title><guilabel>Password Management</guilabel> Tab</title>
+<sect3 id="password-management-info">
+<title>Password Management Tab</title>
 
-<para>The <guilabel>Password Management</guilabel> tab will appear if you have
-shadow passwords, or any other similar things such as
+<para>The <guilabel>Password Management</guilabel> tab will appear in administrator mode
+if you have shadow passwords, or any other similar things such as
 <filename>/etc/master.passwd</filename> in <acronym>BSD</acronym> flavor
 Unices.</para>
 
@@ -166,8 +171,9 @@ systems)</para></listitem>
 dialog.</para>
 
 
-</sect2>
-<!-- no quota in kde 3.5 - 4.4 
+</sect3>
+<!-- no quota in kde 3.5 - 4.11, 
+was removed with http://lists.kde.org/?l=kde-commits&m=108486541029598&w=2
 <sect2 id="quota">
 <title><guilabel>Quota</guilabel> Tab</title>
 
@@ -192,8 +198,8 @@ Filesystem</guilabel> box.</para>
 
 </sect2>
 -->
-<sect2 id="group">
-<title><guilabel>Groups</guilabel> Tab</title>
+<sect3 id="group">
+<title>Groups Tab</title>
 
 <para>The <guilabel>Groups</guilabel> tab contains all the information about the
 selected user's participation in groups. The primary group to which the user 
@@ -201,26 +207,29 @@ belongs
 is set with the <guilabel>Set as Primary</guilabel> button. The user can be assigned
 to additional groups by checking them in the large box.</para>
 
+</sect3>
 </sect2>
-</sect1>
 
-<sect1 id="group-properties">
-<title><guilabel>Group Properties</guilabel></title>
+<sect2 id="group-properties">
+<title>Group Properties</title>
 
 <para>The <guilabel>Group Properties</guilabel> dialog contains a list of all 
-users. Check
-the boxes for each user to be assigned to the selected group.</para>
+users in the selected group on the left and a list of all other users.</para> 
+<para>Select a user in one of both lists and use the <guibutton>Add</guibutton> and 
+<guibutton>Remove</guibutton> buttons to manage members of the group.</para>
+
+</sect2>
 
 </sect1>
 
-<sect1 id="add-user">
-<title>Adding, Editing and Deleting Users or Groups</title>
+<sect1 id="managing-users-groups">
+<title>Managing Users or Groups</title>
 
 <para>To add a user or group to the system, either choose
 <guimenuitem>Add</guimenuitem> from the <guimenu>User</guimenu> or
 <guimenu>Group</guimenu> menu, or click the relevant <guiicon>Add</guiicon> 
-button on
-the toolbar. The selected user or group can also be edited or deleted in the 
+button on the toolbar.</para>
+<para>A selected user or group can also be edited or deleted in the 
 same way.</para>
 </sect1>
 </chapter>
@@ -234,7 +243,8 @@ same way.</para>
 <para>To edit the user creation defaults you can use the <guilabel>Connection</guilabel> 
 tab on the <guilabel>General</guilabel> page of &kuser;'s configuration dialog, which is accessible via the menu
 <menuchoice><guimenu>Settings</guimenu>
-<guimenuitem>Configure &kuser;</guimenuitem></menuchoice>. There you may
+<guimenuitem>Configure &kuser;</guimenuitem></menuchoice>.</para> 
+<para>There you may
 change the defaults that are used when creating a new user: Shell and
 Home Folder (or home folders volume). You can choose whether to
 make a home folder on <quote>create</quote> or not, and to copy a
@@ -247,6 +257,19 @@ group when the user is removed.</para>
 <para>The skeleton files for new users can be specified in the <guilabel>Sources
 </guilabel> tab.</para>
 -->
+<!--FIXME missing
+Password Policy tab 
+Times for password changes and expiration of passwords and accounts
+
+Files page
+Location of user and group data files
+shadow passwords
+
+LDAP page preferences for users in a local network 
+Connection tab
+Settings tabs
+Samba tabs
+  -->
 </sect1>
 </chapter>
 

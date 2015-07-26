@@ -1,3 +1,4 @@
+cmake_minimum_required(VERSION 2.8.9)
 project(kuser)
 
 # search packages used by KDE
@@ -86,7 +87,7 @@ kde4_add_ui_files(kuser_SRCS ku_filessettings.ui ku_generalsettings.ui ku_ldapse
 
 kde4_add_executable(kuser ${kuser_SRCS})
 
-target_link_libraries(kuser ${KDE4_KIO_LIBS} ${KDE4_KLDAP_LIBS} kntlm)
+target_link_libraries(kuser ${KDE4_KIO_LIBS} ${KDE4_KLDAP_LIBS} ${KDE4_TARGET_PREFIX}kntlm)
 if(HAVE_CRYPT_LIBRARY)
 	target_link_libraries(kuser crypt)
 endif(HAVE_CRYPT_LIBRARY)

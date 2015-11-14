@@ -16,6 +16,7 @@ include_directories (${QDBUS_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DI
 find_package(KdepimLibs REQUIRED)
 
 include(CheckFunctionExists)
+include(CheckIncludeFiles)
 include(CheckLibraryExists)
 
 include(TestBigEndian)
